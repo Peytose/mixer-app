@@ -11,10 +11,7 @@ import SwiftUI
 struct EventVisibilityView: View {
     @StateObject var viewModel = CreateEventViewModel()
     @Environment(\.presentationMode) var presentationMode
-    
-    var colors = ["Invite Only", "Green", "Blue", "Tartan"]
-    @State private var selectedColor = "Invite Only"
-    
+        
     var body: some View {
         ZStack {
             Color.mixerBackground
@@ -25,11 +22,11 @@ struct EventVisibilityView: View {
                 visibilityToggle
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Invite only Event Description")
+                    Text("Description")
                         .font(.title).bold()
                         .padding(.bottom, -15)
                     
-                    Text(viewModel.isPrivate == .yes ? "Only invited attendees can view and attend a Private Party" : "Anyone can view a Public Party and join its guestlist")
+                    Text(viewModel.isPrivate == .yes ? "Only invited users can see a private event" : "Everyone can see an open event and its details")
                         .font(.title3).fontWeight(.medium)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -58,11 +55,11 @@ struct EventVisibilityView: View {
             }
         }
         .overlay(alignment: .bottom, content: {
-            NavigationLink(destination: EventFlyerUploadView()) {
-                NextButton()
+            NavigationLink(destination: ReviewCreatedEventView()) {
+                NextButton() 
             }
         })
-        .navigationBarTitle(Text("Event Settings"), displayMode: .large)
+        .navigationBarTitle(Text("Visibility Settings"), displayMode: .large)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -77,7 +74,7 @@ struct EventVisibilityView: View {
     
     var visibilityToggle: some View {
         Picker("Invite only", selection: self.$viewModel.isPrivate.animation()) {
-            Text("Public").tag(isPrivate.no)
+            Text("Open").tag(isPrivate.no)
             Text("Private").tag(isPrivate.yes)
         }
         .pickerStyle(.segmented)

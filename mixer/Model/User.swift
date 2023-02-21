@@ -8,7 +8,7 @@
 import FirebaseFirestoreSwift
 import Firebase
 
-enum UserRelationship: Int, Decodable {
+enum UserRelationship: Int, Codable {
     case friends
     case sentRequest
     case receivedRequest
@@ -33,16 +33,15 @@ enum UserRelationship: Int, Decodable {
     }
 }
 
-struct User: Identifiable, Decodable {
+struct User: Identifiable, Codable {
     @DocumentID var id: String?
     let username: String
     let email: String
-    let profileImageUrl: String
-    let firstName: String
-    let lastName: String
-    let age: String
+    var profileImageUrl: String
+    var name: String
+    let age: Int
     let university: String
-    let major: String
+    let dateJoined: Timestamp
     
     var bio: String?
     var relationshiptoUser: UserRelationship?

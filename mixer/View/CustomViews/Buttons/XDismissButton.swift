@@ -13,8 +13,9 @@ struct XDismissButton: View {
             .font(.system(size: 17, weight: .bold))
             .foregroundColor(.secondary)
             .padding(8)
-            .background(.ultraThinMaterial, in: Circle())
-            .backgroundStyle(cornerRadius: 18)
+            .background(.ultraThinMaterial)
+            .backgroundColor(opacity: 0.2)
+            .clipShape(Circle())
     }
 }
 

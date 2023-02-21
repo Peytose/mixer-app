@@ -73,6 +73,7 @@ extension Color {
     
     //MARK: Chosen Background Colors
     static let mixerBackground = Color(red: 15/255, green: 14/255, blue: 18/255)
+//    static let mixerBackground = Color(red: 0/255, green: 0/255, blue: 0/255)
     static let mixerSecondaryBackground = Color(red: 28/255, green: 27/255, blue: 32/255)
 
     //MARK: Font Colors
@@ -81,7 +82,6 @@ extension Color {
     //MARK: Other Colors
     static let harvardCrimson = Color(red: 165/255, green: 28/255, blue: 48/255)
     static let girlPink = Color(red: 255/255, green: 105/255, blue: 180/255)
-
     
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

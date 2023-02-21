@@ -30,7 +30,7 @@ enum PlaceholderImage {
     static let crest      = UIImage(named: "Theta Chi Crest")!
     static let banner     = UIImage(named: "default-banner-asset")!
     static let university = UIImage(named: "default-university-asset")!
-    static let event      = UIImage(named: "blurred-flyer")!
+    static let event      = UIImage(named: "theta-chi-party-poster")!
 }
 
 enum ImageDimension {

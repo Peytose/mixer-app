@@ -9,16 +9,18 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-
+//    @State var selectedIndex = 0
+    
     var body: some View {
-//        Group {
-//            if viewModel.userSession != nil, let user = viewModel.currentUser {
-//                MainTabView(user: user)
-//            } else {
-//                AuthFlow()
-//            }
-//        }
-        MainTabView()
+        Group {
+            if viewModel.userSession == nil {
+                LoginView()
+            } else {
+                if let user = viewModel.currentUser {
+                    MainTabView(user: user)
+                }
+            }
+        }
     }
 }
 
@@ -26,6 +28,5 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
             .environmentObject(AuthViewModel())
-            .environmentObject(Model())
     }
 }

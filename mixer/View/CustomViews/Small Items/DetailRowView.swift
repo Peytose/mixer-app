@@ -21,6 +21,14 @@ struct DetailRow: View {
                 .backgroundStyle(cornerRadius: 10, opacity: 0.5)
             
             Text(text)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
+    }
+}
+
+struct DetailRow_Previews: PreviewProvider {
+    static var previews: some View {
+        DetailRow(image: "heart", text: "Testing")
     }
 }

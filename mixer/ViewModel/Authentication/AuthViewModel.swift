@@ -261,6 +261,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseAuth
 
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
@@ -338,10 +339,19 @@ class AuthViewModel: ObservableObject {
     
     
     func fetchUser() {
-        guard let uid = userSession?.uid else { return }
+        guard let uid = userSession?.uid else {
+            print("DEBUG: couldn't get uid")
+            return
+        }
+        
+        print("DEBUG: \(uid)")
         
         COLLECTION_USERS.document(uid).getDocument { snapshot, _ in
-            guard let user = try? snapshot?.data(as: User.self) else { return }
+            guard let user = try? snapshot?.data(as: User.self) else {
+                print("DEBUG: Error getting user")
+                print(String(describing: snapshot?.data()))
+                return
+            }
             self.currentUser = user
             
             guard let isHost = user.isHost else { return }

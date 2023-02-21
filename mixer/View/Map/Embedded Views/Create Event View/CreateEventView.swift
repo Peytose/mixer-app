@@ -11,7 +11,6 @@ import MapItemPicker
 struct CreateEventView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = CreateEventViewModel()
-    @State var showAddressPicker = false
     
     var body: some View {
         NavigationView {
@@ -26,14 +25,15 @@ struct CreateEventView: View {
                     
                     dateSection
                     
-                    addressSection
+                    attireDescriptionSection
                     
-                    Section(header: Text("Map Preview")) {
-                        MapSnapshotView(location: viewModel.coordinates, span: 0.001, delay: 0)
-                            .cornerRadius(12)
-                            .padding(.bottom, 60)
-                    }
-                    .listRowBackground(Color.clear)
+                    noteSection
+                    
+                    eventAttendanceSection
+                    
+                    Rectangle()
+                        .fill(Color.clear)
+                        .listRowBackground(Color.clear)
                 }
                 .tint(.mixerIndigo)
                 .preferredColorScheme(.dark)
@@ -41,7 +41,7 @@ struct CreateEventView: View {
                 .scrollIndicators(.hidden)
             }
             .overlay(alignment: .bottom, content: {
-                NavigationLink(destination: EventVisibilityView()) {
+                NavigationLink(destination: EventLocationView()) {
                     NextButton()
                 }
             })
@@ -54,35 +54,27 @@ struct CreateEventView: View {
                     .foregroundColor(.blue)
                 })
             }
-            .mapItemPicker(isPresented: $showAddressPicker) { item in
-                if let name = item?.name {
-                    print("Selected \(name)")
-                }
-            }
             .sheet(isPresented: $viewModel.isShowingPhotoPicker) { PhotoPicker(image: $viewModel.flyer) }
         }
     }
     
     var flyerSection: some View {
-        Section(header: Text("Upload flyer")) {
-            VStack {
-                Image(uiImage: viewModel.flyer)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .cornerRadius(12)
-                    .frame(width: 140, height: 140)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            }
-            .padding()
-            .onTapGesture {
-                let impact = UIImpactFeedbackGenerator(style: .medium)
-                impact.impactOccurred()
-                
-                viewModel.isShowingPhotoPicker = true
-            }
-            .listRowBackground(Color.clear)
+        VStack {
+            Image(uiImage: viewModel.flyer)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .cornerRadius(12)
+                .frame(width: 140, height: 140)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        
+        .padding()
+        .onTapGesture {
+            let impact = UIImpactFeedbackGenerator(style: .medium)
+            impact.impactOccurred()
+            
+            viewModel.isShowingPhotoPicker = true
+        }
+        .listRowBackground(Color.clear)
     }
     
     var mainDetailsSection: some View {
@@ -107,45 +99,54 @@ struct CreateEventView: View {
     var dateSection: some View {
         Section(header: Text("Date Details")) {
             EventDatePicker(text: "Start date*", selection: $viewModel.startDate)
-            
+                .padding(.vertical, -4)
+
             EventDatePicker(text: "End date*", selection: $viewModel.endDate)
-            
+                .padding(.vertical, -4)
+
             Picker("Wet or Dry", selection: $viewModel.selectedWetDry) {
                 Text("Dry").tag(WetOrDry.dry)
                 Text("Wet").tag(WetOrDry.wet)
             }
             .pickerStyle(.segmented)
-            .padding(.vertical, 8)
+            .padding(.vertical, 4)
         }
         .listRowBackground(Color.mixerSecondaryBackground)
     }
     
-    var addressSection: some View {
-        Section(header: Text("Location Details")) {
-            Picker("Wet or Dry", selection: $viewModel.selectedAddress) {
-                Text("Default Address").tag(UseCustomAddress.no)
-                Text("Custom Address").tag(UseCustomAddress.yes)
-            }
-            .pickerStyle(.segmented)
-            .padding(.vertical, 8)
-            
-            if viewModel.selectedAddress == .yes {
-                Text("Tap to change")
-                    .font(.body.weight(.semibold))
-                    .foregroundColor(Color.secondary)
-                    .onTapGesture {
-                        showAddressPicker.toggle()
+    var attireDescriptionSection: some View {
+        Section {
+            TextField("e.g. Halloween costume required", text: $viewModel.attireDescription)
+                .foregroundColor(Color.mainFont)
+        } header: {
+            Text("Attire Description")
+        }
+        .listRowBackground(Color.mixerSecondaryBackground)
+    }
+    
+    var noteSection: some View {
+        Section {
+            TextField("Bring your own beer 🍺 or no entry", text: $viewModel.note)
+                .foregroundColor(Color.mainFont)
+        } header: {
+            Text("Note for guest")
+        }
+        .listRowBackground(Color.mixerSecondaryBackground)
+    }
+    
+    var eventAttendanceSection: some View {
+        Section {
+            Toggle("Event Attendance Public?", isOn: $viewModel.showAttendanceCount.animation())
+                .font(.body)
+                .listRowBackground(Color.mixerSecondaryBackground)
 
-                    }
-            } else {
-                Text("Theta Chi House - 528 Beacon St")
-                    .font(.body.weight(.semibold))
-            }
-            
+        } header: {
+            Text("Event Attendance")
+        } footer: {
+            Text("This allows mixer to make your event's attendance count public information")
+
         }
-        .listRowBackground(Color.mixerSecondaryBackground)
     }
-    
 }
 
 

@@ -17,7 +17,7 @@ struct CustomTabItemStyle: TabItemStyle {
                     .foregroundColor(isSelected ? Color.mainFont : .systemGray)
                     .scaleEffect(isSelected ? 1.2 : 1.1)
                     .frame(width: 32.0, height: 32.0)
-                    .frame(width: 40)
+                    .frame(width: 60)
                     .contentShape(Rectangle())
             } else {
                 Image(systemName: isSelected ? "\(icon).fill" : icon )
@@ -25,7 +25,7 @@ struct CustomTabItemStyle: TabItemStyle {
                     .foregroundColor(isSelected ? Color.mainFont : .systemGray)
                     .scaleEffect(isSelected ? 1.2 : 1.1)
                     .frame(width: 32.0, height: 32.0)
-                    .frame(width: 40)
+                    .frame(width: 60)
                     .contentShape(Rectangle())
             }
             Text(title)

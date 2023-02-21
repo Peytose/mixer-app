@@ -21,15 +21,15 @@ enum ListType {
 }
 
 struct EventLists {
-    static func loadUsers(eventUid: String, type: ListType) -> ([User], ListenerRegistration) {
+    static func loadUsers(eventUid: String, type: ListType) -> [User] {
         var users = [User]()
         
-        var listener = COLLECTION_EVENTS.document(eventUid).collection("attendance-list")
-            .whereField("status", isEqualTo: type.fieldValue).addSnapshotListener { snapshot, _ in
+        COLLECTION_EVENTS.document(eventUid).collection("attendance-list")
+            .whereField("status", isEqualTo: type.fieldValue).getDocuments() { snapshot, _ in
                 guard let snapshot = snapshot else { return }
                 users = snapshot.documents.compactMap({ try? $0.data(as: User.self) })
             }
         
-        return (users, listener)
+        return users
     }
 }

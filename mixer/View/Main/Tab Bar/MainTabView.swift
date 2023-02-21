@@ -9,29 +9,28 @@ import SwiftUI
 import TabBar
 
 struct MainTabView: View {
-    //    let user: User
+    let user: User
+    
     enum Item: Int, Tabbable {
         case first = 0
         case second
         case third
         case fourth
         case fifth
-
         
         var icon: String {
             switch self {
-                case .first: return "person.3"
+                case .first: return "music.note.house"
                 case .second: return "map"
                 case .third: return "magnifyingglass"
                 case .fourth: return "person"
                 case .fifth: return "house"
-
             }
         }
         
         var title: String {
             switch self {
-                case .first: return "Social"
+                case .first: return "Explore"
                 case .second: return "Map"
                 case .third: return "Search"
                 case .fourth: return "Profile"
@@ -45,22 +44,21 @@ struct MainTabView: View {
     
     var body: some View {
         TabBar(selection: $selection, visibility: .constant(visibility)) {
-            ExplorePageView(tabBarVisibility: $visibility)
-                .tabItem(for: Item.first)
-            
-            MapView()
+            NavigationView {
+                ExploreView()
+            }
+            .tabItem(for: Item.first)
+
+            MapTemp()
                 .tabItem(for: Item.second)
             
+            SearchView()
+                .tabItem(for: Item.third)
+
             NavigationView {
-                SearchPageView()
+                ProfileView(user: user)
             }
-            .tabItem(for: Item.third)
-            
-            UserProfilePrototypeView()
-                .tabItem(for: Item.fourth)
-            
-            HostDashboardView(tabBarVisibility: $visibility)
-                .tabItem(for: Item.fifth)
+            .tabItem(for: Item.fourth)
         }
         .tabBar(style: CustomTabBarStyle(height: selection == .second ? 300 : 370))
         .tabItem(style: CustomTabItemStyle())
@@ -70,23 +68,23 @@ struct MainTabView: View {
 
 struct MainTabView_Previews: PreviewProvider {
     static var previews: some View {
-//        MainTabView(user: Mockdata.user)
-        MainTabView()
-            .environmentObject(Model())
+        MainTabView(user: Mockdata.user)
+            .environmentObject(EventManager())
+            .environmentObject(HostManager())
     }
 }
 
 struct TabViewItem: View {
     
     enum TabViewItemType: String {
-        case social  = "Social"
+        case social  = "Explore"
         case map   = "Map"
         case search = "Search"
         case profile = "Profile"
 
         var image: Image {
             switch self {
-            case .social:  return Image(systemName: "person.3.fill")
+            case .social:  return Image(systemName: "music.note.house.fill")
             case .map:  return Image(systemName: "map.fill")
             case .search:  return Image(systemName: "magnifyingglass")
             case .profile:  return Image(systemName: "person.fill")

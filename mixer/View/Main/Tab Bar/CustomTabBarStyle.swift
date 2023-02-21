@@ -15,6 +15,7 @@ struct CustomTabBarStyle: TabBarStyle {
     public func tabBar(with geometry: GeometryProxy, itemsContainer: @escaping () -> AnyView) -> some View {
         itemsContainer()
             .frame(height: 80)
+            .background(Color.mixerBackground.opacity(0.01))
             .background(content: {
                 Rectangle()
                     .fill(Color.mixerBackground)

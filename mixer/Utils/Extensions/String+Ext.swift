@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 extension String {
     func applyPattern(pattern: String = "##  ##  ####", replacmentCharacter: Character = "#") -> String {
@@ -18,5 +19,20 @@ extension String {
             pureNumber.insert(patternCharacter, at: stringIndex)
         }
         return pureNumber
+    }
+    
+    func coordinates() async throws -> CLLocationCoordinate2D? {
+        let geocoder = CLGeocoder()
+        do {
+            let placemarks = try await geocoder.geocodeAddressString(self)
+            if let location = placemarks.first?.location {
+                return location.coordinate
+            } else {
+                return nil
+            }
+        } catch let error {
+            print("Error: \(error)")
+            return nil
+        }
     }
 }

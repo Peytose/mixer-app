@@ -6,9 +6,12 @@
 //
 
 import FirebaseFirestoreSwift
+import FirebaseFirestore
+import CoreLocation
 
-struct Host: Identifiable, Decodable {
+struct Host: Hashable, Identifiable, Codable {
     @DocumentID var id: String?
+    let name: String
     let ownerUuid: String
     let username: String
     let hostImageUrl: String
@@ -16,9 +19,7 @@ struct Host: Identifiable, Decodable {
     let typesOfEventsHeld: [EventType]
     
     var instagramHandle: String?
-    var rating: Float?
+    var website: String?
     var address: String?
     var bio: String?
-    var isFollowed: Bool? = false
-    var isCurrentHost: Bool?
 }
