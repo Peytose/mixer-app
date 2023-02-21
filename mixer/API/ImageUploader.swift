@@ -13,7 +13,6 @@ enum UploadType {
     case profile
     case post
     
-    
     var filePath: StorageReference {
         let filename = NSUUID().uuidString
         switch self {

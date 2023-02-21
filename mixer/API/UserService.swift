@@ -37,7 +37,6 @@ struct UserService {
     }
     
     
-    
     static func sendFriendRequest(uid: String, completion: FirestoreCompletion) {
         guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"

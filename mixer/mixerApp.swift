@@ -16,12 +16,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         return true
     }
-    
+
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         print("\(#function)")
         Auth.auth().setAPNSToken(deviceToken, type: .sandbox)
     }
-    
+
     func application(_ application: UIApplication, didReceiveRemoteNotification notification: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         print("\(#function)")
         if Auth.auth().canHandleNotification(notification) {
@@ -29,7 +29,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return
         }
     }
-    
+
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
         print("\(#function)")
         if Auth.auth().canHandle(url) {
@@ -37,7 +37,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
         return false
     }
-    
+
     //    func application(_ application: UIApplication,
     //                     continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     //        let handled = DynamicLinks.dynamicLinks()
@@ -52,7 +52,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct mixerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView().environmentObject(AuthViewModel.shared)
