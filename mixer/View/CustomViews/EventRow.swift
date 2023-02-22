@@ -41,8 +41,8 @@ struct EventRow: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                Divider()
                 
+                Divider()
             }
             .lineLimit(1)
             .minimumScaleFactor(0.75)

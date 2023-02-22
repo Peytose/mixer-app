@@ -30,18 +30,19 @@ final class EventDetailViewModel: ObservableObject {
         
         batch.commit { _ in
             self.event.didSave = true
-            do {
-                try EventCache.shared.cacheEvent(self.event)
-            } catch {
-                print("DEBUG: didSave (save) cache event error! \(error.localizedDescription)")
+            Task {
+                do {
+                    try await EventCache.shared.updateSavedCache(event: self.event, isSaving: true, key: "savedEvents-\(uid)")
+                } catch {
+                    print("DEBUG: didSave (save) cache event error! \(error.localizedDescription)")
+                }
             }
         }
     }
 
 
     func unsave() {
-        guard let uid = AuthViewModel.shared.userSession?.uid else { return }
-        guard let eventId = event.id else { return }
+        guard let uid = AuthViewModel.shared.userSession?.uid, let eventId = event.id else { return }
         
         let eventSavesRef = COLLECTION_EVENTS.document(eventId).collection("event-saves").document(uid)
         let userSavesRef = COLLECTION_USERS.document(uid).collection("user-saves").document(eventId)
@@ -52,10 +53,13 @@ final class EventDetailViewModel: ObservableObject {
         
         batch.commit { _ in
             self.event.didSave = false
-            do {
-                try EventCache.shared.cacheEvent(self.event)
-            } catch {
-                print("DEBUG: didSave (unsave) cache event error! \(error.localizedDescription)")
+            
+            Task {
+                do {
+                    try await EventCache.shared.updateSavedCache(event: self.event, isSaving: false, key: "savedEvents-\(uid)")
+                } catch {
+                    print("DEBUG: didSave (unsave) cache event error! \(error.localizedDescription)")
+                }
             }
         }
     }

@@ -32,32 +32,26 @@ class EventCache {
         let key = "savedEvents-\(uid)"
         guard let currentUid = AuthViewModel.shared.currentUser?.id else { return [] }
         
-        let currentUserSaveQuery = COLLECTION_USERS.document(currentUid).collection("user-saves")
-            .whereField("endDate", isGreaterThan: Timestamp(date: Date()))
-        let currentUserSavedEvents = try await fetchEvents(for: currentUserSaveQuery, key: key)
+        let currentUserSavesQuery = COLLECTION_USERS.document(currentUid).collection("user-saves")
+        let currentUserEvents = try await fetchEvents(for: currentUserSavesQuery, key: "savedEvents-\(currentUid)")
+        let currentUserSavedIds = currentUserEvents.filter({ $0.endDate.dateValue() > Date() }).compactMap { $0.id }
         
         if uid == currentUid {
-            return currentUserSavedEvents
+            return currentUserEvents
         } else {
-            // Query the "event-saves" subcollection of each event to see if the friend has saved it
-            let eventIds = currentUserSavedEvents.compactMap { $0.id }
-            
-            let queryList = eventIds.compactMap { id in
+            let queryList = currentUserSavedIds.compactMap { id in
                 return COLLECTION_EVENTS.document(id).collection("event-saves").document(uid)
             }
             
-            // Wait for all subcollection queries to complete and combine the results
-            var mutualEvents: [CachedEvent] = []
+            var mutualEvents = [CachedEvent]()
             let group = DispatchGroup()
+            
             for query in queryList {
                 group.enter()
                 let snapshot = try await query.getDocument()
                 if snapshot.exists {
-                    if let id = query.parent.parent?.documentID {
-                        if let event = currentUserSavedEvents.first(where: { $0.id == id }) {
-                            mutualEvents.append(event)
-                            group.leave()
-                        }
+                    if let eventId = query.parent.parent?.documentID {
+                        mutualEvents.append(try await getEvent(withId: eventId))
                     }
                 }
                 
@@ -67,6 +61,29 @@ class EventCache {
             group.notify(queue: .main) { }
             
             return mutualEvents
+        }
+    }
+    
+    
+    func updateSavedCache(event: CachedEvent, isSaving: Bool, key: String) async throws {
+        try EventCache.shared.cacheEvent(event)
+        
+        if let eventId = event.id {
+            guard var cachedEventIdsDict = cache.readDictionary(forKey: key) as? [String: Date], !cachedEventIdsDict.isEmpty else {
+                if isSaving {
+                    let dictionary = [eventId: Date()]
+                    EventCache.shared.cache.write(dictionary: [event.id: Date()], forKey: key)
+                }
+                
+                return
+            }
+            
+            if isSaving {
+                cachedEventIdsDict[eventId] = Date()
+                EventCache.shared.cache.write(dictionary: cachedEventIdsDict, forKey: key)
+            } else {
+                EventCache.shared.cache.write(dictionary: cachedEventIdsDict.filter({ $0.key != eventId }), forKey: key)
+            }
         }
     }
     
@@ -123,7 +140,7 @@ class EventCache {
     
     
     private func fetchEvents(for query: Query, key: String) async throws -> [CachedEvent] {
-        guard let cachedEventIdsDict = cache.readDictionary(forKey: key) as? [String: Date] else {
+        guard let cachedEventIdsDict = cache.readDictionary(forKey: key) as? [String: Date], !cachedEventIdsDict.isEmpty else {
             return try await getFromFirebaseAndCache(for: query, key: key)
         }
         
@@ -164,15 +181,18 @@ class EventCache {
                 
                 for id in eventIds {
                     cachedEvents.append(try await getEvent(withId: id))
+                    idsDict[id] = Date()
                 }
             } else {
                 events = documents.compactMap({ try? $0.data(as: Event.self) })
+                print("DEBUG: \(events)")
                 cachedEvents = events.map { CachedEvent(from: $0.self) }
-            }
-            
-            for event in cachedEvents {
-                if let id = event.id {
-                    idsDict[id] = Date()
+                print("DEBUG: \(cachedEvents)")
+                
+                for event in cachedEvents {
+                    if let id = event.id {
+                        idsDict[id] = Date()
+                    }
                 }
             }
             

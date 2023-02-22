@@ -12,27 +12,18 @@ import Combine
 
 final class SearchViewModel: ObservableObject {
     @Published var text: String = ""
-    private var bag = Set<AnyCancellable>()
-    private (set) var users = [User]()
-    
-    public init(dueTime: TimeInterval = 2.0) {
-        $text
-            .removeDuplicates()
-            .debounce(for: .seconds(dueTime), scheduler: DispatchQueue.main)
-            .sink(receiveValue: { [weak self] value in
-                self?.executeSearch(for: value)
-            })
-            .store(in: &bag)
-    }
+    private (set) var users     = [User]()
+    @Published var isLoading    = false
     
     
     func executeSearch(for search: String) {
-        if search != "" {
+        if !search.isEmpty {
             print("DEBUG: Executing search ...")
+            
             COLLECTION_USERS
-                .order(by: "name")
-                .whereField("name", isGreaterThanOrEqualTo: search)
-                .whereField("name", isLessThan: search + "\u{f8ff}")
+                .order(by: "username")
+                .whereField("username", isGreaterThanOrEqualTo: search)
+                .whereField("username", isLessThan: search + "\u{f8ff}")
                 .limit(to: 7)
                 .getDocuments { snapshot, error in
                     if let error = error {
@@ -48,12 +39,14 @@ final class SearchViewModel: ObservableObject {
                         DispatchQueue.main.async {
                             self.users = results
                         }
-                        
+                    } else {
+                        print("DEBUG: Found NO documents for this search!")
                     }
-                    
-                    print("DEBUG: Found NO documents for this search!")
                 }
         }
     }
+    
+    
+    private func showLoadingView() { isLoading = true }
+    private func hideLoadingView() { isLoading = false }
 }
-

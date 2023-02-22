@@ -23,11 +23,14 @@ struct EventDetailView: View {
     var body: some View {
         ZStack {
             ScrollView(showsIndicators: false) {
-                EventCoverView(viewModel: viewModel, isShowingModal: $isShowingModal)
-                
-                if let host = viewModel.host {
-                    EventInfoView(event: viewModel.event, host: host)
+                VStack {
+                    EventCoverView(viewModel: viewModel, isShowingModal: $isShowingModal)
+                    
+                    if let host = viewModel.host {
+                        EventInfoView(event: viewModel.event, host: host)
+                    }
                 }
+                .padding(.bottom, 120)
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
@@ -94,9 +97,10 @@ fileprivate struct EventInfoView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            Divider()
+            
             HostedBySection(type: event.type,
-                            name: host.name,
-                            imageUrl: host.hostImageUrl,
+                            host: host,
                             ageLimit: event.ageLimit,
                             cost: event.cost,
                             hasAlcohol: event.alcoholPresence)
@@ -158,7 +162,7 @@ fileprivate struct EventInfoView: View {
             //                .cornerRadius(12)
         }
         .padding(.horizontal)
-        .frame(maxHeight: UIScreen.main.bounds.size.height)
+//        .frame(maxHeight: UIScreen.main.bounds.size.height)
     }
 }
 
@@ -180,28 +184,6 @@ fileprivate struct EventCoverView: View {
                                     .foregroundColor(.white)
                                     .lineLimit(2)
                                     .minimumScaleFactor(0.75)
-                                
-                                Spacer()
-                            }
-                            
-                            HStack {
-                                if let host = viewModel.host {
-                                    NavigationLink(destination: HostDetailView(viewModel: HostDetailViewModel(host: host))) {
-                                        HStack {
-                                            KFImage(URL(string: host.hostImageUrl))
-                                                .resizable()
-                                                .scaledToFill()
-                                                .clipShape(Circle())
-                                                .frame(width: 25, height: 25)
-                                            
-                                            Text(host.name)
-                                                .font(.body)
-                                                .foregroundColor(.primary.opacity(0.7))
-                                                .lineLimit(1)
-                                                .minimumScaleFactor(0.75)
-                                        }
-                                    }
-                                }
                                 
                                 Spacer()
                                 
@@ -284,14 +266,17 @@ fileprivate struct EventCoverView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: scrollY > 0 ? 500 + scrollY : 500)  //MARK: Change Flyer Height
+            .frame(height: scrollY > 0 ? 500 + scrollY : 500)  // Change Flyer Height
         }
-        .frame(height: 500)
+        .frame(height: 600)
     }
 }
 
-struct EventInfoView_Previews: PreviewProvider {
+struct EventDetailView_Previews: PreviewProvider {
     static var previews: some View {
+//        EventDetailView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event), host: CachedHost(from: Mockdata.host)))
+//            .preferredColorScheme(.dark)
+//        EventCoverView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), isShowingModal: .constant(false))
         EventInfoView(event: CachedEvent(from: Mockdata.event), host: CachedHost(from: Mockdata.host))
             .preferredColorScheme(.dark)
     }
@@ -338,8 +323,7 @@ fileprivate struct HeadingBottomRowView: View {
 
 fileprivate struct HostedBySection: View {
     let type: EventType
-    let name: String
-    let imageUrl: String
+    let host: CachedHost
     var ageLimit: Int?
     var cost: Float?
     var hasAlcohol: Bool?
@@ -348,7 +332,7 @@ fileprivate struct HostedBySection: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 3) {
-                Text("\(type.eventStringSing) by \(name)")
+                Text("\(type.eventStringSing) by \(host.name)")
                     .font(.title2)
                     .bold()
                     .lineLimit(1)
@@ -381,11 +365,15 @@ fileprivate struct HostedBySection: View {
             
             Spacer()
             
-            KFImage(URL(string: imageUrl))
-                .resizable()
-                .scaledToFill()
-                .clipShape(Circle())
-                .frame(width: 63, height: 63)
+            NavigationLink(destination: HostDetailView(viewModel: HostDetailViewModel(host: host))) {
+                KFImage(URL(string: host.hostImageUrl))
+                    .resizable()
+                    .scaledToFill()
+                    .clipShape(Circle())
+                    .frame(width: 63, height: 63)
+            }
+            
+            
         }
     }
 }

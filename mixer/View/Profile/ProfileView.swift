@@ -41,9 +41,9 @@ struct ProfileView: View {
                 }
                 .padding(.top, -40)
             
-            VStack {
+            VStack(alignment: .leading) {
                 HStack(alignment: .center) {
-                    VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 2) {
                         HStack {
                             Text(showUsername ? "@\(viewModel.user.username)" : "\(viewModel.user.name)")
                                 .textSelection(.enabled)
@@ -126,6 +126,9 @@ struct ProfileView: View {
                                         ForEach(viewModel.savedEvents) { event in
                                             NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event))) {
                                                 EventCellView(event: event, hasStarted: false)
+                                                    .padding(.horizontal)
+                                                
+                                                Divider()
                                             }
                                             .frame(height: 380)
                                             .onChange(of: event.didSave) { _ in
