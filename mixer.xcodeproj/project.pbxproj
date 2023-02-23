@@ -88,6 +88,7 @@
 		9C99EAE629A56EB700D66FEB /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C99EAE429A56EB700D66FEB /* UserService.swift */; };
 		9C99EAE729A56EB700D66FEB /* ImageUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C99EAE529A56EB700D66FEB /* ImageUploader.swift */; };
 		9C99EAEA29A674B500D66FEB /* DebouncedOnChange in Frameworks */ = {isa = PBXBuildFile; productRef = 9C99EAE929A674B500D66FEB /* DebouncedOnChange */; };
+		9C99EAF429A6B33600D66FEB /* EventInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C99EAF329A6B33600D66FEB /* EventInfoView.swift */; };
 		A613C3602978C61B00C4015C /* GuestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A613C35F2978C61B00C4015C /* GuestListView.swift */; };
 		A6430446294FBDBF0058C0F0 /* CreateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430445294FBDBF0058C0F0 /* CreateEventView.swift */; };
 		A6430448294FBEC80058C0F0 /* CreateEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */; };
@@ -206,6 +207,7 @@
 		9C9331BB292739700079E039 /* GetCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetCode.swift; sourceTree = "<group>"; };
 		9C99EAE429A56EB700D66FEB /* UserService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		9C99EAE529A56EB700D66FEB /* ImageUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUploader.swift; sourceTree = "<group>"; };
+		9C99EAF329A6B33600D66FEB /* EventInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInfoView.swift; sourceTree = "<group>"; };
 		A613C35F2978C61B00C4015C /* GuestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestListView.swift; sourceTree = "<group>"; };
 		A6430445294FBDBF0058C0F0 /* CreateEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventView.swift; sourceTree = "<group>"; };
 		A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventViewModel.swift; sourceTree = "<group>"; };
@@ -452,6 +454,7 @@
 				9C2B898329947EAF0011FC56 /* HostMapAnnotation.swift */,
 				9C2B898E29A179A20011FC56 /* LoadingView.swift */,
 				9C2B899029A2DB2C0011FC56 /* QRCodeView.swift */,
+				A6B9E6752953B6DA009C936E /* LogoView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -618,6 +621,15 @@
 			path = Buttons;
 			sourceTree = "<group>";
 		};
+		9C99EAEB29A6A56D00D66FEB /* EventDetail */ = {
+			isa = PBXGroup;
+			children = (
+				A6B9E6722953B549009C936E /* EventDetailView.swift */,
+				9C99EAF329A6B33600D66FEB /* EventInfoView.swift */,
+			);
+			path = EventDetail;
+			sourceTree = "<group>";
+		};
 		A6430444294FBDA00058C0F0 /* Create Event View */ = {
 			isa = PBXGroup;
 			children = (
@@ -688,7 +700,7 @@
 			children = (
 				A6B9E65629518A3C009C936E /* EventCellView.swift */,
 				9C4B0E502983795600A9D963 /* EventListView.swift */,
-				A6B9E6722953B549009C936E /* EventDetailView.swift */,
+				9C99EAEB29A6A56D00D66FEB /* EventDetail */,
 			);
 			path = Events;
 			sourceTree = "<group>";
@@ -696,7 +708,6 @@
 		A6B9E6742953B6CF009C936E /* Small Items */ = {
 			isa = PBXGroup;
 			children = (
-				A6B9E6752953B6DA009C936E /* LogoView.swift */,
 				A682CC552970915B008EA546 /* DetailRowView.swift */,
 			);
 			path = "Small Items";
@@ -858,6 +869,7 @@
 				9C99EAE629A56EB700D66FEB /* UserService.swift in Sources */,
 				A6430453294FC3A00058C0F0 /* PreferenceKeys.swift in Sources */,
 				9C9331B22926D3560079E039 /* GetEmail.swift in Sources */,
+				9C99EAF429A6B33600D66FEB /* EventInfoView.swift in Sources */,
 				9C99EAE729A56EB700D66FEB /* ImageUploader.swift in Sources */,
 				9C9331BC292739700079E039 /* GetCode.swift in Sources */,
 				A6BAEF63295D40D700410DED /* SocialPageNavigationBar.swift in Sources */,

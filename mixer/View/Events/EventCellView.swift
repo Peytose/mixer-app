@@ -88,6 +88,7 @@ struct EventCellView: View {
                     .foregroundColor(.white.opacity(0.7))
                     .lineLimit(3)
                     .minimumScaleFactor(0.75)
+                    .multilineTextAlignment(.leading)
             }
             .padding(.trailing)
         }

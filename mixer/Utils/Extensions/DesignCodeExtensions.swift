@@ -201,8 +201,7 @@ struct AnimatableFontModifier: AnimatableModifier {
             .font(.system(size: size, weight: weight, design: design))
     }
 }
-
-
+    
 struct AnimatableGradientModifier: AnimatableModifier {
     let fromGradient: Gradient
     let toGradient: Gradient
@@ -213,7 +212,6 @@ struct AnimatableGradientModifier: AnimatableModifier {
         set { progress = newValue }
     }
  
-    
     func body(content: Content) -> some View {
         var gradientColors = [Color]()
  
@@ -227,7 +225,6 @@ struct AnimatableGradientModifier: AnimatableModifier {
         return LinearGradient(gradient: Gradient(colors: gradientColors), startPoint: .topLeading, endPoint: .bottomTrailing)
     }
  
-    
     func colorMixer(fromColor: UIColor, toColor: UIColor, progress: CGFloat) -> Color {
         guard let fromColor = fromColor.cgColor.components else { return Color(fromColor) }
         guard let toColor = toColor.cgColor.components else { return Color(toColor) }

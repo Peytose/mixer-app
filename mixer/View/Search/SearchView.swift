@@ -52,7 +52,7 @@ fileprivate struct UserSearchCell: View {
                 .resizable()
                 .scaledToFill()
                 .clipShape(Circle())
-                .frame(width: 34, height: 34)
+                .frame(width: 37, height: 37)
             
             VStack(alignment: .leading) {
                 Text(name)
@@ -64,7 +64,6 @@ fileprivate struct UserSearchCell: View {
                     .foregroundColor(.secondary)
             }
         }
-        .padding(.horizontal)
     }
 }
 
