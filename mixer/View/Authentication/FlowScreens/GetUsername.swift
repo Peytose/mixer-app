@@ -16,8 +16,7 @@ struct GetUsername: View {
     
     var body: some View {
         VStack {
-            SignUpTextField(title: "Choose a username",
-                            input: $username,
+            SignUpTextField(input: $username, title: "Choose a username",
                             placeholder: "ex. \(firstName.lowercased()).\(lastName.lowercased())123",
                             footnote: "This will not be changeable in the near future, so choose wisely. All usernames are unique.",
                             keyboard: .default)

@@ -7,13 +7,23 @@
 
 import SwiftUI
 import Kingfisher
+import CoreLocation
 
 struct EventInfoView: View {
     let event: CachedEvent
     let host: CachedHost
+    let unsave: () -> Void
+    let save: () -> Void
+    let coordinates: CLLocationCoordinate2D?
+    @Binding var showAllAmenities: Bool
+    
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
+            EventModal(event: event,
+                       unsave: unsave,
+                       save: save)
+            
             Divider()
             
             HostedBySection(type: event.type,
@@ -54,15 +64,17 @@ struct EventInfoView: View {
                 HStack {
                     Spacer()
                     
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .foregroundColor(.DesignCodeWhite)
-                            .frame(width: 350, height: 45)
-                        
-                        Text("Show all \(event.amenities.count) amenities")
-                            .font(.body)
-                            .fontWeight(.medium)
-                            .foregroundColor(.black)
+                    Button { showAllAmenities = true } label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundColor(.DesignCodeWhite)
+                                .frame(width: 350, height: 45)
+                            
+                            Text("Show all \(event.amenities.count) amenities")
+                                .font(.body)
+                                .fontWeight(.medium)
+                                .foregroundColor(.black)
+                        }
                     }
                     
                     Spacer()
@@ -71,12 +83,14 @@ struct EventInfoView: View {
             
             Divider()
             
-            Text("Where you'll be")
-                .font(.title2)
-                .bold()
-            
-            //            MapSnapshotView(location: coordinates)
-            //                .cornerRadius(12)
+            if let coords = coordinates {
+                Text("Where you'll be")
+                    .font(.title2)
+                    .bold()
+                
+                MapSnapshotView(location: coords, isInvited: !event.isInviteOnly)
+//                    .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coordinates) }
+            }
         }
         .padding(.horizontal)
 //        .frame(maxHeight: UIScreen.main.bounds.size.height)
@@ -85,7 +99,12 @@ struct EventInfoView: View {
 
 struct EventInfoView_Previews: PreviewProvider {
     static var previews: some View {
-        EventInfoView(event: CachedEvent(from: Mockdata.event), host: CachedHost(from: Mockdata.host))
+        EventInfoView(event: CachedEvent(from: Mockdata.event),
+                      host: CachedHost(from: Mockdata.host),
+                      unsave: {},
+                      save: {},
+                      coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
+                      showAllAmenities: .constant(false))
             .preferredColorScheme(.dark)
     }
 }
@@ -140,6 +159,73 @@ fileprivate struct HostedBySection: View {
                     .scaledToFill()
                     .clipShape(Circle())
                     .frame(width: 63, height: 63)
+            }
+        }
+    }
+}
+
+fileprivate struct EventModal: View {
+    let event: CachedEvent
+    let unsave: () -> Void
+    let save: () -> Void
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .center) {
+                Text(event.title)
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.white)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.75)
+                
+                Spacer()
+                
+                if event.hasStarted == false {
+                    if let didSave = event.didSave {
+                        Button { didSave ? unsave() : save() } label: {
+                            Image(systemName: didSave ? "bookmark.fill" : "bookmark")
+                                .resizable()
+                                .scaledToFill()
+                                .foregroundColor(didSave ? Color.mixerPurple : .secondary)
+                                .frame(width: 17, height: 17)
+                                .padding(4)
+                        }
+                    }
+                }
+            }
+            
+            Divider()
+            
+            HStack(alignment: .center) {
+                VStack(alignment: .leading) {
+                    Text(event.startDate.getTimestampString(format: "EEEE, MMMM d"))
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                    
+                    Text("\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                
+                Spacer()
+                
+                VStack(alignment: .center, spacing: 4) {
+                    Image(systemName: event.isInviteOnly ? "lock.fill" : "globe")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .foregroundColor(.secondary)
+                        .frame(width: 22, height: 22)
+                        .background(.ultraThinMaterial)
+                        .backgroundStyle(cornerRadius: 10, opacity: 0.6)
+                        .cornerRadius(10)
+                    
+                    Text(event.isInviteOnly ? "Invite Only" : "Public")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
             }
         }
     }

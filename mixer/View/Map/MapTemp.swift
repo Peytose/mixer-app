@@ -46,9 +46,9 @@ struct MapTemp: View {
             Spacer()
             
             LogoView(frameWidth: 75)
-                .modifier(AnimatableGradientModifier(fromGradient: gradient1,
-                                                     toGradient: gradient2,
-                                                     progress: progress))
+                .animatableGradient(fromGradient: gradient1,
+                                    toGradient: gradient2,
+                                    progress: progress)
                 .frame(height: 75)
                 .mask(LogoView(frameWidth: 75))
                 .shadow(radius: 10)

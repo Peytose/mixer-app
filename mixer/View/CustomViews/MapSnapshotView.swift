@@ -11,19 +11,28 @@ import MapKit
 struct MapSnapshotView: View {
     let location: CLLocationCoordinate2D
     var span: CLLocationDegrees = 0.001
-    var delay: CGFloat = 0.3
-    var width: CGFloat = 350
-    var height: CGFloat = 220
-    @State private var snapshotImage: UIImage? = nil
+    var delay: CGFloat          = 0.3
+    var width: CGFloat          = 350
+    var height: CGFloat         = 220
+    var isInvited: Bool         = false
+    @State private var mapPreviewImageView: Image?
     
     var body: some View {
         Group {
-            if let image = snapshotImage {
-                Image(uiImage: image)
+            if let previewImage = mapPreviewImageView {
+                ZStack(alignment: .center) {
+                    previewImage
+                        .blur(radius: isInvited ? 0 : 6)
+                    
+                    Image(systemName: isInvited ? "mappin.and.ellipse" : "exclamationmark.lock.fill")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundColor(.mixerIndigo)
+                        .shadow(radius: 7)
+                        .frame(width: isInvited ? 20 : 40)
+                }
             } else {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle())
-                    .background(Color(UIColor.secondarySystemBackground))
+                LoadingView()
             }
         }
         .onAppear {
@@ -48,25 +57,25 @@ struct MapSnapshotView: View {
         mapOptions.showsBuildings = true
         mapOptions.traitCollection = UITraitCollection(userInterfaceStyle: .dark)
         
+        let bgQueue = DispatchQueue.global(qos: .background)
         let snapshotter = MKMapSnapshotter(options: mapOptions)
-        snapshotter.start { (snapshotOrNil, errorOrNil) in
-            if let error = errorOrNil {
-                print(error)
+        snapshotter.start(with: bgQueue, completionHandler: { snapshot, error in
+            if let error = error {
+                print("DEBUG: Error generating snapshot. \(error.localizedDescription)")
                 return
             }
-            if let snapshot = snapshotOrNil {
-                self.snapshotImage = snapshot.image
-            }
-        }
+            
+            guard let snapshot = snapshot else { return }
+            self.mapPreviewImageView = Image(uiImage: snapshot.image)
+        })
     }
 }
 
 struct testView: View {
     let coordinates = CLLocationCoordinate2D(latitude: 37.332077, longitude: -122.02962) // Apple Park, California
+    
     var body: some View {
-        VStack {
-            MapSnapshotView(location: coordinates)
-        }
+        VStack { MapSnapshotView(location: coordinates) }
     }
 }
 

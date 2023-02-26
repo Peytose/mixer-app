@@ -12,7 +12,6 @@
 //    @EnvironmentObject var viewModel: AuthViewModel
 //    @State private var showHeaderItems = false
 //    
-//    
 //    var body: some View {
 //        ZStack {
 //            Color.black.ignoresSafeArea()
@@ -39,7 +38,7 @@
 //                GetGender(gender: $viewModel.gender) { viewModel.next() }
 //                    .tag(AuthViewModel.Screen.gender)
 //                
-//                GetProfilePicture(firstName: viewModel.firstName, avatar: $viewModel.avatar) { viewModel.register() }
+//                GetProfilePicture(firstName: viewModel.firstName, avatar: $viewModel.image) { viewModel.register() }
 //                    .tag(AuthViewModel.Screen.avatar)
 //            }
 //            .animation(.easeInOut, value: viewModel.active)

@@ -7,6 +7,7 @@
 
 import FirebaseFirestoreSwift
 import Firebase
+import CoreLocation
 
 struct CachedEvent: Hashable, Identifiable, Codable {
     var id: String?
@@ -33,6 +34,8 @@ struct CachedEvent: Hashable, Identifiable, Codable {
     var hasStarted: Bool? = false
     var didSave: Bool? = false
     var didAttend: Bool? = false
+    var latitude: CLLocationDegrees?
+    var longitude: CLLocationDegrees?
     
     init(from event: Event) {
         self.id              = event.id as String?

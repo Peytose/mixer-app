@@ -46,6 +46,6 @@ struct User: Identifiable, Codable {
     var bio: String?
     var relationshiptoUser: UserRelationship?
     var isHost: Bool? = false
-    var isFollowed: Bool? = false
+    var isSignedUp: Bool? = false
     var isCurrentUser: Bool { return AuthViewModel.shared.userSession?.uid == id }
 }

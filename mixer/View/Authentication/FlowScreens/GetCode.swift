@@ -15,8 +15,7 @@ struct GetCode: View {
     
     var body: some View {
         VStack {
-            SignUpTextField(title: "What's the verification code?",
-                            input: $code,
+            SignUpTextField(input: $code, title: "What's the verification code?",
                             placeholder: "My code is",
                             footnote: "We will send a text with a verification code. Message and data rates apply.",
                             keyboard: .numberPad)

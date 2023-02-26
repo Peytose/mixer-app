@@ -7,15 +7,18 @@
 
 import SwiftUI
 import Firebase
+import CoreLocation
 
 final class EventDetailViewModel: ObservableObject {
     @Published var event: CachedEvent
     @Published var host: CachedHost?
+    private (set) var coordinates: CLLocationCoordinate2D?
 
     init(event: CachedEvent) {
         self.event = event
         checkIfUserSavedEvent()
         fetchEventHost()
+        getEventCoordinates()
     }
 
     func save() {
@@ -86,6 +89,15 @@ final class EventDetailViewModel: ObservableObject {
             } catch {
                 print("DEBUG: Error fetching event host. \(error.localizedDescription)")
             }
+        }
+    }
+    
+    
+    private func getEventCoordinates() {
+        if event.isInviteOnly { return }
+        
+        if let longitude = event.longitude, let latitude = event.latitude {
+            self.coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         }
     }
 }

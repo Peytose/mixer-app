@@ -72,7 +72,7 @@ class EventCache {
             guard var cachedEventIdsDict = cache.readDictionary(forKey: key) as? [String: Date], !cachedEventIdsDict.isEmpty else {
                 if isSaving {
                     let dictionary = [eventId: Date()]
-                    EventCache.shared.cache.write(dictionary: [event.id: Date()], forKey: key)
+                    EventCache.shared.cache.write(dictionary: dictionary, forKey: key)
                 }
                 
                 return
@@ -189,12 +189,25 @@ class EventCache {
                 cachedEvents = events.map { CachedEvent(from: $0.self) }
                 print("DEBUG: \(cachedEvents)")
                 
-                for event in cachedEvents {
+                for var event in cachedEvents {
                     if let id = event.id {
+                        if let coords = try await event.address.coordinates() {
+                            print("DEBUG: event coords. \(coords)")
+                            event.latitude = coords.latitude
+                            event.longitude = coords.longitude
+                            
+                            if let existingEventIndex = cachedEvents.firstIndex(where: { $0.id == event.id }) {
+                                cachedEvents.remove(at: existingEventIndex)
+                                cachedEvents.append(event)
+                            }
+                        }
+                        
                         idsDict[id] = Date()
                     }
                 }
             }
+            
+            print("DEBUG: \(cachedEvents)")
             
             print("DEBUG: ids Dict \(idsDict)")
             

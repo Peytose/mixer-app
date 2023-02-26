@@ -16,8 +16,7 @@ struct GetBirthday: View {
     
     var body: some View {
         VStack {
-            SignUpTextField(title: "Just a few more details \(firstName.capitalized), when's your birthday?",
-                            input: $birthday,
+            SignUpTextField(input: $birthday, title: "Just a few more details \(firstName.capitalized), when's your birthday?",
                             placeholder: "MM  DD  YYYY",
                             footnote: "Mixer uses your birthday for research and verification purposes. It will not be public.",
                             keyboard: .numberPad)

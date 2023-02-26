@@ -8,38 +8,43 @@
 import SwiftUI
 
 struct SignUpTextField: View {
-    var title: String
-    var input: Binding<String>
+    @Binding var input: String
+    var title: String?
     var placeholder: String
-    var footnote: String
+    var footnote: String?
     var keyboard: UIKeyboardType
     
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
-            Text(title)
-                .foregroundColor(.mainFont)
-                .font(.title.weight(.semibold))
-                .lineLimit(2)
-                .minimumScaleFactor(0.75)
-                .padding(.bottom, 5)
+            if let title = title {
+                Text(title)
+                    .foregroundColor(.mainFont)
+                    .font(.title)
+                    .fontWeight(.semibold)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.75)
+                    .padding(.bottom, 10)
+            }
             
-            TextField(placeholder, text: input)
+            TextField(placeholder, text: $input)
                 .keyboardType(keyboard)
                 .disableAutocorrection(true)
                 .foregroundColor(Color.mainFont)
-                .font(.system(size: 25))
-                .tint(Color.purple)
+                .font(.title2)
+                .tint(Color.mixerIndigo)
                 .padding(.bottom, -5)
             
             Rectangle()
                 .frame(height: 1)
                 .foregroundColor(.gray)
             
-            Text(footnote)
-                .foregroundColor(.secondary)
-                .font(.footnote)
+            if let footnote = footnote {
+                Text(footnote)
+                    .foregroundColor(.secondary)
+                    .font(.footnote)
+            }
         }
-        .frame(width: 300)
+        .frame(width: DeviceTypes.ScreenSize.width / 1.2)
     }
 }
 
@@ -47,7 +52,7 @@ struct SignUpTextField_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color.black
-            SignUpTextField(title: "Peyton, is this a placeholder?", input: .constant(""), placeholder: "Placeholder", footnote: "This is a footnote placeholder.", keyboard: .default)
+            SignUpTextField(input: .constant(""), title: "Peyton, is this a placeholder?", placeholder: "Placeholder", footnote: "This is a footnote placeholder.", keyboard: .default)
         }
         .preferredColorScheme(.dark)
     }

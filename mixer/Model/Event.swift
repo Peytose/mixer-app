@@ -36,12 +36,12 @@ enum EventType: Int, Codable {
     }
 }
 
-enum AmenityCategory: String {
-    case refreshments
-    case entertainment
-    case furnitureEquipment
-    case outdoorAreas
-    case convenientFeatures
+enum AmenityCategory: String, CaseIterable {
+    case refreshments       = "Refreshments"
+    case entertainment      = "Entertainment"
+    case furnitureEquipment = "Furniture Equipment"
+    case outdoorAreas       = "Outdoor Areas"
+    case convenientFeatures = "Convenient Features"
 }
 
 enum EventAmenities: String, Codable {

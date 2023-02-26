@@ -17,8 +17,7 @@ struct GetEmail: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            SignUpTextField(title: "What's your email?",
-                            input: $email,
+            SignUpTextField(input: $email, title: "What's your email?",
                             placeholder: "yourmum@milf.edu",
                             footnote: "For safety reasons, mixer is only available to college students at this time.",
                             keyboard: .emailAddress)
