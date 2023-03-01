@@ -1,9 +1,4 @@
 //
-//class AuthViewModel: ObservableObject {
-//    @Published var userSession: FirebaseAuth.User?
-//    @Published var currentUser: User?
-
-//
 //  AuthViewModel.swift
 //  InstagramClone
 //
@@ -13,40 +8,41 @@
 import SwiftUI
 import Firebase
 import FirebaseAuth
+import FirebaseFirestoreSwift
 
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
     @Published var emailIsVerified           = false
-    @Published var firstName                 = ""
-    @Published var lastName                  = ""
-    @Published var phoneNumber               = ""
-    @Published var code                      = ""
+    @Published var name                      = ""
     @Published var email                     = ""
-    @Published var username                  = ""
+    @Published var emailCode                 = ""
+    @Published var university                = ""
+    @Published var phoneNumber               = ""
+    @Published var countryCode               = ""
+    @Published var code                      = ""
+    @Published var image: UIImage?
+    @Published var bio                       = ""
     @Published var birthdayString            = "" { didSet { checkValidBirthday() } }
     @Published var birthday                  = Date.now { didSet { isValidBirthday = true } }
     @Published var gender                    = "Female"
-    @Published var university                = ""
-    @Published var image: UIImage?
+    @Published var username                  = ""
     @Published var isValidBirthday           = false
     @Published var didSendResentPasswordLink = false
     @Published var active                    = Screen.allCases.first!
-    @Published var hasError                  = false
+    //    @Published var hasError                  = false
     @Published var alertItem: AlertItem?
     var hosts = [Host?]()
     
     static let shared = AuthViewModel()
     
     enum Screen: Int, CaseIterable {
-        case name
-        case phone
+        case nameAndPhone
         case code
         case email
+        case picAndBio
+        case personal
         case username
-        case birthday
-        case gender
-        case avatar
     }
     
     init() {
@@ -67,23 +63,31 @@ class AuthViewModel: ObservableObject {
     }
     
     
-    func login(withEmail email: String, password: String) {
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let error = error {
-                print("DEBUG: Login failed \(error.localizedDescription)")
-                return
-            }
-            
-            guard let user = result?.user else { return }
-            self.userSession = user
-            self.fetchUser()
-        }
-    }
+    //    func login(withEmail email: String, password: String) {
+    //        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+    //            if let error = error {
+    //                print("DEBUG: Login failed \(error.localizedDescription)")
+    //                return
+    //            }
+    //
+    //            guard let user = result?.user else { return }
+    //            self.userSession = user
+    //            self.fetchUser()
+    //        }
+    //    }
     
     
     func signOut() {
-        self.userSession = nil
-        try? Auth.auth().signOut()
+        DispatchQueue.main.async {
+            self.active      = Screen.allCases.first!
+            self.name        = ""
+            self.phoneNumber = ""
+            self.countryCode = ""
+            self.code        = ""
+            self.userSession = nil
+            self.currentUser = nil
+            try? Auth.auth().signOut()
+        }
     }
     
     
@@ -129,52 +133,86 @@ class AuthViewModel: ObservableObject {
     }
     
     
-    func checkVerification() {
-        // Get current user's Firestore profile
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        let docRef = Firestore.firestore().collection("users").document(uid)
-        // Observe user's Firestore profile for updates
-        docRef.addSnapshotListener { snapshot, error in
+    func sendEmailLink() {
+        print("DEBUG: BUTTON PRESSED ✅")
+        if !email.hasSuffix(".edu") { return } // make sure email ends in .edu (temp solution)
+        
+        // Create action code settings object
+        let actionCodeSettings = ActionCodeSettings()
+        actionCodeSettings.url = URL(string: "https://mixer.page.link/email-login?email=\(email)")
+        actionCodeSettings.dynamicLinkDomain = "mixer.page.link"
+        actionCodeSettings.handleCodeInApp = true
+        // Send email link with Firebase Auth
+        Auth.auth().sendSignInLink(toEmail: self.email, actionCodeSettings: actionCodeSettings) { error in
             if let error = error as? NSError {
                 self.handleAuthError(error)
-                print(error)
+                print("DEBUG: Error sending email link. \(error.localizedDescription)")
                 return
             }
-            // Check if flag is updated to true
-            if snapshot?.data()?["verified"] as? Bool == true {
-                self.next()
+            
+            print("DEBUG: EMAIL SENT ✅")
+            self.alertItem = AlertContext.sentEmailLink
+        }
+    }
+    
+    
+    func handleEmailLink(_ url: URL) {
+        print("DEBUG: Got email link. \(url)")
+        
+        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+           let queryItems = components.queryItems {
+            // Extract the "link" parameter from the query items
+            if let linkParam = queryItems.first(where: { $0.name == "link" }),
+               let linkString = linkParam.value,
+               let linkUrl = URL(string: linkString),
+               let linkQueryItems = URLComponents(url: linkUrl, resolvingAgainstBaseURL: true)?.queryItems {
+                let continueUrlQueryItem = linkQueryItems.first(where: { $0.name == "continueUrl" })
+                let continueUrl = continueUrlQueryItem?.value
+                
+                if let continueUrl = continueUrl,
+                   let continueUrlComponents = URLComponents(string: continueUrl),
+                   let continueUrlQueryItems = continueUrlComponents.queryItems {
+                    
+                    // Extract the email parameter
+                    let emailQueryItem = continueUrlQueryItems.first(where: { $0.name == "email" })
+                    if emailQueryItem?.value == email {
+                        print("DEBUG: email from link. \(email)")
+                        let link = url.absoluteString
+                        
+                        let credential = EmailAuthProvider.credential(withEmail: email, link: link)
+                        
+                        guard let user = userSession else { return }
+                        user.link(with: credential) { authResult, error in
+                            if let error = error {
+                                self.handleAuthError(error as NSError)
+                                print("DEBUG: Error linking email. \(error.localizedDescription)")
+                                return
+                            }
+                            
+                            guard let user = authResult?.user else { return }
+                            self.userSession = user
+                            print("DEBUG: Sucessfully linked email! Moving to next screen ...")
+                            self.next()
+                        }
+                    }
+                }
             }
         }
     }
     
     
-    //    func handleEmailLink(_ url: Foundation.URL) {
-    //        let link = url.absoluteString
-    //        guard let email = UserDefaults.standard.string(forKey: "Email") else { return }
-    //
-    //        let credential = EmailAuthProvider.credential(withEmail: email, link: link)
-    //
-    //        userSession?.link(with: credential, completion: { _, error in
-    //            if let error = error as? NSError {
-    //                self.handleAuthError(error)
-    //                return
-    //            }
-    //
-    //            self.next()
-    //        })
-    //    }
-    
-    
     func sendPhoneVerification() {
-        PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumber, uiDelegate: nil) { verificationID, error in
+        let phoneNumWithCode = "\(countryCode)\(phoneNumber)"
+        print("DEBUG: phone number with country code. \(phoneNumWithCode)")
+        
+        PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumWithCode, uiDelegate: nil) { verificationID, error in
             if let error = error as? NSError {
                 self.handleAuthError(error)
                 return
             }
             
-            self.next()
-            
             UserDefaults.standard.set(verificationID, forKey: "authVerificationID")
+            self.next()
         }
     }
     
@@ -191,44 +229,54 @@ class AuthViewModel: ObservableObject {
             
             guard let user = result?.user else { return }
             self.userSession = user
+            print("Successfully verified phone number!")
             self.fetchUser()
-            
-            // Not sure if the check is necessary.
-            if self.currentUser?.isSignedUp == nil { self.next() }
+            self.next()
         }
     }
     
     
     func register() {
-        guard let image = image else { return }
+        print("DEBUG: Register button tapped!")
+        guard let image = image else {
+            print("DEBUG: image not found.")
+            return
+        }
+        
+        print("DEBUG: Image found.")
         
         ImageUploader.uploadImage(image: image, type: .profile) { imageUrl in
-            guard let uid = self.userSession?.uid else { return }
-            print("✅ Successfully registered user ... ")
+            guard let uid = self.userSession?.uid else {
+                print("DEBUG: couldn't get userSession uid.")
+                return
+            }
+            print("DEBUG: ✅ Successfully registered user ... ")
             
-            let data = ["firstName": self.firstName,
-                        "lastName": self.lastName,
+            let data = ["name": self.name,
                         "email": self.email.lowercased(),
+                        "profileImageUrl": imageUrl,
+                        "bio": self.bio,
                         "username": self.username.lowercased(),
                         "birthday": Timestamp(date: self.birthday),
                         "gender": self.gender,
-                        "profileImageUrl": imageUrl,
                         "university": self.university,
-                        "uid": uid]
+                        "uid": uid,
+                        "dateJoined": Timestamp()]
             
             COLLECTION_USERS.document(uid).setData(data) { _ in
-                print("✅ Succesfully uploaded user data ...")
+                print("DEBUG: ✅ Succesfully uploaded user data ...")
                 self.fetchUser()
             }
         }
     }
-    
     
     private func convertStringToDate() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM  dd  yyyy"
         
         let date = dateFormatter.date(from: birthdayString)!
+        
+        print("DEBUG: birthday is \(date)")
         
         if date < Date.now { birthday = date } else { return }
     }

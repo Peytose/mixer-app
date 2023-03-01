@@ -13,8 +13,8 @@ struct ContentView: View {
     
     var body: some View {
         Group {
-            if viewModel.userSession == nil {
-//                LoginView()
+            if viewModel.userSession == nil || viewModel.currentUser == nil {
+                AuthFlow()
             } else {
                 if let user = viewModel.currentUser {
                     MainTabView(user: user)

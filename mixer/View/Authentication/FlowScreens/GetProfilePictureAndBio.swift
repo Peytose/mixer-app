@@ -9,19 +9,14 @@ import SwiftUI
 
 struct GetProfilePictureAndBio: View {
     @Binding var bio: String
-    @State var image: Image?
-    @State var imagePickerPresented = false
+    @Binding var selectedImage: UIImage?
     let action: () -> Void
     
     var body: some View {
-        ZStack {
-            Color.mixerBackground
-                .ignoresSafeArea()
-            
+        ScrollView(.vertical, showsIndicators: false) {
             VStack(spacing: 50) {
                 SignUpPictureView(title: "Choose a profile picture.",
-                                  image: $image,
-                                  imagePickerPresented: $imagePickerPresented)
+                                  selectedImage: $selectedImage)
                 
                 Divider().padding(.horizontal)
                 
@@ -32,8 +27,9 @@ struct GetProfilePictureAndBio: View {
                 
                 Spacer()
             }
-            .padding(.top)
         }
+        .padding(.top)
+        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
         .overlay(alignment: .bottom) {
             ContinueSignUpButton(text: "Continue", action: action)
                 .padding(.bottom, 30)
@@ -41,12 +37,12 @@ struct GetProfilePictureAndBio: View {
     }
 }
 
-struct GetProfilePictureAndBio_Previews: PreviewProvider {
-    static var previews: some View {
-        GetProfilePictureAndBio(bio: .constant(""), action: {  })
-            .preferredColorScheme(.dark)
-    }
-}
+//struct GetProfilePictureAndBio_Previews: PreviewProvider {
+//    static var previews: some View {
+//        GetProfilePictureAndBio(bio: .constant(""), selectedImage: .constant(""), action: {  })
+//            .preferredColorScheme(.dark)
+//    }
+//}
 
 fileprivate struct BioTextField: View {
     @Binding var bio: String
@@ -67,19 +63,19 @@ fileprivate struct BioTextField: View {
             }
             
             VStack(alignment: .leading, spacing: 5) {
-                    TextField(placeholder, text: $bio, axis: .vertical)
-                        .frame(width: DeviceTypes.ScreenSize.width / 1.3)
-                        .lineLimit(3, reservesSpace: true)
-                        .keyboardType(keyboard)
-                        .disableAutocorrection(true)
-                        .foregroundColor(Color.mainFont)
-                        .font(.body)
-                        .tint(Color.mixerIndigo)
-                        .padding()
-                        .background(alignment: .center) {
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(lineWidth: 2)
-                        }
+                TextField(placeholder, text: $bio, axis: .vertical)
+                    .frame(width: DeviceTypes.ScreenSize.width / 1.3)
+                    .lineLimit(3, reservesSpace: true)
+                    .keyboardType(keyboard)
+                    .disableAutocorrection(true)
+                    .foregroundColor(Color.mainFont)
+                    .font(.body)
+                    .tint(Color.mixerIndigo)
+                    .padding()
+                    .background(alignment: .center) {
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(lineWidth: 2)
+                    }
                 
                 CharactersRemainView(currentCount: bio.count)
             }
@@ -90,9 +86,9 @@ fileprivate struct BioTextField: View {
 
 fileprivate struct SignUpPictureView: View {
     var title: String?
-    @State private var selectedImage: UIImage?
-    @Binding var image: Image?
-    @Binding var imagePickerPresented: Bool
+    @Binding var selectedImage: UIImage?
+    @State private var image: Image?
+    @State var imagePickerPresented = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
@@ -124,13 +120,14 @@ fileprivate struct SignUpPictureView: View {
                             .foregroundColor(.white)
                     }
                 }
+                .sheet(isPresented: $imagePickerPresented) {
+                    ImagePicker(image: $selectedImage)
+                }
+                .onChange(of: selectedImage) { _ in loadImage() }
+                .padding(.bottom, -5)
                 
                 Spacer()
             }
-            .sheet(isPresented: $imagePickerPresented, onDismiss: loadImage) {
-                ImagePicker(image: $selectedImage)
-            }
-            .padding(.bottom, -5)
         }
         .frame(width: DeviceTypes.ScreenSize.width / 1.2)
     }

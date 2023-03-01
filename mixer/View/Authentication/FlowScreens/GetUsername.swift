@@ -8,23 +8,22 @@
 import SwiftUI
 
 struct GetUsername: View {
-    let firstName: String
-    let lastName: String
-    @FocusState private var focusState: Bool
+    let name: String
     @Binding var username: String
     let action: () -> Void
     
     var body: some View {
         VStack {
-            SignUpTextField(input: $username, title: "Choose a username",
-                            placeholder: "ex. \(firstName.lowercased()).\(lastName.lowercased())123",
-                            footnote: "This will not be changeable in the near future, so choose wisely. All usernames are unique.",
+            SignUpTextField(input: $username,
+                            title: "Last question \(name)! Choose a username",
+                            placeholder: "ex. \(name.lowercased())_loves_mixer3",
+                            footnote: "This will not be changeable in the near future, so choose wisely. Username must be unique.",
                             keyboard: .default)
-            .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { focusState = true } }
-            .focused($focusState)
             
             Spacer()
         }
+        .padding(.top)
+        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
         .overlay(alignment: .bottom) {
             ContinueSignUpButton(text: "Continue", action: action)
                 .disabled(username.isEmpty)
@@ -36,7 +35,8 @@ struct GetUsername: View {
 
 struct GetUsername_Previews: PreviewProvider {
     static var previews: some View {
-        GetUsername(firstName: "Josey", lastName: "Martinez", username: .constant("")) {}
+        GetUsername(name: "Peyton",
+                    username: .constant("")) { }
             .preferredColorScheme(.dark)
     }
 }

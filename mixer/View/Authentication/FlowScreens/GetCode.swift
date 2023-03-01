@@ -8,22 +8,22 @@
 import SwiftUI
 
 struct GetCode: View {
-    @FocusState private var focusState: Bool
     @Binding var code: String
     let action: () -> Void
     @State var countdown = 5
     
     var body: some View {
         VStack {
-            SignUpTextField(input: $code, title: "What's the verification code?",
+            SignUpTextField(input: $code,
+                            title: "What's the verification code?",
                             placeholder: "My code is",
                             footnote: "We will send a text with a verification code. Message and data rates apply.",
                             keyboard: .numberPad)
-            .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { focusState = true } }
-            .focused($focusState)
             
             Spacer()
         }
+        .padding(.top)
+        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
         .overlay(alignment: .bottom) {
             HStack {
                 ContinueSignUpButton(text: "Submit", action: action)

@@ -52,16 +52,12 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct mixerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    let eventManager = EventManager()
-    let hostManager = HostManager()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.dark)
                 .environmentObject(AuthViewModel.shared)
-                .environmentObject(eventManager)
-                .environmentObject(hostManager)
         }
     }
 }

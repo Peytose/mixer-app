@@ -93,6 +93,12 @@ struct ProfileSettingsView: View {
                 }
                 .listRowBackground(Color.mixerSecondaryBackground)
                 
+                Section {
+                    Button { AuthViewModel.shared.signOut() } label: {
+                        Text("Logout").foregroundColor(.black)
+                    }
+                }
+                
                 Section(footer: EasterEggView(text: viewModel.getDateJoined())) { }
             }
             .scrollContentBackground(.hidden)

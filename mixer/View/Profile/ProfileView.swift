@@ -57,10 +57,10 @@ struct ProfileView: View {
                                     }
                                 }
                             
-                            Text("\(viewModel.user.age)")
-                                .foregroundColor(.secondary)
-                                .font(.title2)
-                                .lineLimit(1)
+//                            Text("\(viewModel.user.age)")
+//                                .foregroundColor(.secondary)
+//                                .font(.title2)
+//                                .lineLimit(1)
                         }
                         
                         HStack {
