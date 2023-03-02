@@ -140,7 +140,6 @@ class AuthViewModel: ObservableObject {
         // Create action code settings object
         let actionCodeSettings = ActionCodeSettings()
         actionCodeSettings.url = URL(string: "https://mixer.page.link/email-login?email=\(email)")
-        actionCodeSettings.dynamicLinkDomain = "mixer.page.link"
         actionCodeSettings.handleCodeInApp = true
         // Send email link with Firebase Auth
         Auth.auth().sendSignInLink(toEmail: self.email, actionCodeSettings: actionCodeSettings) { error in
@@ -150,7 +149,7 @@ class AuthViewModel: ObservableObject {
                 return
             }
             
-            print("DEBUG: EMAIL SENT ✅")
+            print("DEBUG: Sent email to \(self.email). ✅")
             self.alertItem = AlertContext.sentEmailLink
         }
     }
