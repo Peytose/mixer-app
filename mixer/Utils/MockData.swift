@@ -29,7 +29,7 @@ struct Mockdata {
                      startDate: Timestamp(date: Date()),
                      endDate: Timestamp(date: Date()),
                      address: "528 Beacon St, Boston, MA 02215",
-                     type: EventType.fratParty,
+                     type: EventType.kickback,
                      isInviteOnly: false,
                      isFull: true,
                      amenities: [EventAmenities.snacks, EventAmenities.alcohol, EventAmenities.outdoorSpace, EventAmenities.soundSystem, EventAmenities.security, EventAmenities.smokingArea, EventAmenities.food, EventAmenities.bathrooms, EventAmenities.nonAlcohol, EventAmenities.firePit, EventAmenities.rooftop, EventAmenities.danceFloor, EventAmenities.dj, EventAmenities.lighting, EventAmenities.drinkingGames],
@@ -45,10 +45,10 @@ struct Mockdata {
                     username: "mitthetachi",
                     hostImageUrl: "https://www.instagram.com/p/CleaBwQOeKV/media?size=l",
                     university: "MIT",
-                    typesOfEventsHeld: [.fratParty, .houseParty],
+                    typesOfEventsHeld: [.kickback, .mixer],
                     instagramHandle: "mitthetachi",
                     website: "http://ox.mit.edu/main/",
                     address: "528 Beacon St, Boston, MA 02215",
-                    bio: "We are Theta Chi.")
+                    bio: "The best frat in the greater Boston area")
     }
 }

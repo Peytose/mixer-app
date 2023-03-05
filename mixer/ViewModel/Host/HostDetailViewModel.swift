@@ -12,7 +12,8 @@ import MapKit
 
 final class HostDetailViewModel: ObservableObject {
     @Published var host: CachedHost
-    @Published var recentEvents = [Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event, Mockdata.event]
+    @Published var recentEvents: [CachedEvent]   = []
+    @Published var upcomingEvents: [CachedEvent] = []
     private (set) var coordinates: CLLocationCoordinate2D?
     
     init(host: CachedHost) {

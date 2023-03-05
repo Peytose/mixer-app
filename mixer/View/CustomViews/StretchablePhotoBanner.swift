@@ -18,7 +18,7 @@ struct StretchablePhotoBanner: View {
             KFImage(URL(string: imageUrl))
                 .resizable()
                 .scaledToFill()
-                .frame(width: UIScreen.main.bounds.size.width, height: 400)
+                .frame(width: UIScreen.main.bounds.size.width, height: 450)
                 .mask(Color.profileGradient) // mask the blurred image using the gradient's alpha values
                 .offset(y: scrollY > 0 ? -scrollY : 0)
                 .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)

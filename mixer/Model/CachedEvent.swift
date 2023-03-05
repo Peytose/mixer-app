@@ -34,6 +34,7 @@ struct CachedEvent: Hashable, Identifiable, Codable {
     var hasStarted: Bool? = false
     var didSave: Bool? = false
     var didAttend: Bool? = false
+    var saves: Int? = 0
     var latitude: CLLocationDegrees?
     var longitude: CLLocationDegrees?
     

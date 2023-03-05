@@ -63,7 +63,7 @@ struct EventCellView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         
-                        Text("\(event.type.eventStringSing)")
+                        Text("\(event.type.rawValue)")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }

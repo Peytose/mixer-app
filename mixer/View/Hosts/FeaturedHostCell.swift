@@ -18,8 +18,6 @@
  2. Verified Checkmark
  Components:
  1. Badge - is an sf symbol "checkmark.seal.fill" with a template rendering mode modifier applied to it to achieve the desired color palette
- 2. @State variable showAlert triggers an alert to be shown
- 3. Alert - an IOS alert that pops up upon the verified badge being clicked.
 
  3. Social/share links
  Components:
@@ -33,11 +31,12 @@
  4. Follower count
  Components:
  1. Text -  Just a simple text view.
+ Comments:
+ Make the follower count optional[''
  
  General Comments:
  1. I still need to go back and implement the matched geometry effect.
- 2. Should we even have the alert in this view? I think it should only be in the actual host homepage view. Thoughts?
- 3. I got rid of the rating section. I don't think its appropriate in this view especially considering the limited real estate. Maybe in the actual host homepage?
+ 2. I got rid of the rating section. I don't think its appropriate in this view especially considering the limited real estate. Maybe in the actual host homepage?
  */
 import SwiftUI
 import Kingfisher
@@ -46,7 +45,6 @@ struct FeaturedHostCell: View {
     let host: CachedHost
     let namespace: Namespace.ID
     @State var showHostView = false
-    @State var showAlert = false
     @State var isFollowing = false
     let link = URL(string: "https://mixer.llc")! // Temporary url for UI prototype
 
@@ -60,113 +58,22 @@ struct FeaturedHostCell: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
                         .matchedGeometryEffect(id: "name", in: namespace)
-                    
-                    Image(systemName: "checkmark.seal.fill")
-                        .symbolRenderingMode(.palette)
-                        .foregroundStyle(.white, .blue)
-                        .onTapGesture {
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            withAnimation(.spring()) {
-                                showAlert.toggle()
-                            }
-                            
-                        }
-                        .alert("Verified Host", isPresented: $showAlert, actions: {}) {
-                            Text("Verified badges are awarded to hosts that have provided proof of identity and have demonstrated that they have the necessary experience and qualifications to host a safe event")
-                        }
-                        .matchedGeometryEffect(id: "checkmark", in: namespace)
-                    
-                    Spacer()
-                    
-                    Text(isFollowing ? "Following" : "Follow")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
-                        .background {
-                            Capsule()
-                                .stroke()
-                        }
-                        .onTapGesture {
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            withAnimation(.spring()) {
-                                isFollowing.toggle()
-                            }
-                        }
-                        .matchedGeometryEffect(id: "follow", in: namespace)
                 }
                 
                 HStack(spacing: 10) {
                     Text("@\(host.username)")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.white.opacity(0.8))
+                        .foregroundColor(.secondary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                         .matchedGeometryEffect(id: "username", in: namespace)
                     
                     Spacer()
-                    
-                    Link(destination: link) {
-                        Image("instagram-glyph-icon-black")
-                            .renderingMode(.template)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 22, height: 22)
-                    }
-                    .matchedGeometryEffect(id: "instagram", in: namespace)
-                    
-                    Link(destination: link) {
-                        Image(systemName: "globe")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .foregroundColor(Color.white)
-                            .frame(width: 22, height: 22)
-                    }
-                    .matchedGeometryEffect(id: "website", in: namespace)
-                    
-                    ShareLink(item: link) {
-                        Image(systemName: "square.and.arrow.up")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .fontWeight(.medium)
-                            .frame(width: 22, height: 22)
-                    }
-                    .buttonStyle(.plain)
-                    .matchedGeometryEffect(id: "share", in: namespace)
-                    
-//                    if let rating = host.rating {
-//                        HStack(alignment: .center) {
-//                            Image(systemName: "star.fill")
-//                                .resizable()
-//                                .scaledToFit()
-//                                .foregroundColor(.white)
-//                                .frame(width: 20, height: 20)
-//
-//                            Text(rating.roundToDigits(2))
-//                                .font(.subheadline)
-//                                .fontWeight(.semibold)
-//                                .foregroundColor(.secondary)
-//                                .lineLimit(1)
-//                                .minimumScaleFactor(0.7)
-//                                .matchedGeometryEffect(id: "rating", in: namespace)
-//
-//
-//                        }
-//                    }
                 }
-                Text("1845 Followers")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .matchedGeometryEffect(id: "subtitle", in: namespace)
                 
                 Text(host.bio ?? "")
-                    .font(.body)
-                    .fontWeight(.semibold)
+                    .font(.subheadline.weight(.regular))
                     .foregroundColor(.white.opacity(0.8))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)

@@ -8,32 +8,35 @@
 import FirebaseFirestoreSwift
 import Firebase
 
-enum EventType: Int, Codable {
-    case school
-    case club
-    case houseParty
-    case fratParty
-    case mixer
+enum EventType: String, Codable {
+    case school   = "School event"
+    case club     = "Club event"
+    case party    = "Party"
+    case mixer    = "Mixer"
+    case rager    = "Rager"
+    case darty    = "Darty"
+    case kickback = "Kickback"
+//    case
     
-    var eventStringPlur: String {
-        switch self {
-            case .school: return "School Events"
-            case .club: return "Club Events"
-            case .houseParty: return "House Parties"
-            case .fratParty: return "Frat Parties"
-            case .mixer: return "Mixers"
-        }
-    }
-    
-    var eventStringSing: String {
-        switch self {
-            case .school: return "School event"
-            case .club: return "Club event"
-            case .houseParty: return "House party"
-            case .fratParty: return "Frat party"
-            case .mixer: return "Mixer"
-        }
-    }
+//    var eventStringPlur: String {
+//        switch self {
+//            case .school: return "School Events"
+//            case .club: return "Club Events"
+//            case .houseParty: return "House Parties"
+//            case .fratParty: return "Frat Parties"
+//            case .mixer: return "Mixers"
+//        }
+//    }
+//
+//    var eventStringSing: String {
+//        switch self {
+//            case .school: return "School event"
+//            case .club: return "Club event"
+//            case .houseParty: return "House party"
+//            case .fratParty: return "Frat party"
+//            case .mixer: return "Mixer"
+//        }
+//    }
 }
 
 enum AmenityCategory: String, CaseIterable {

@@ -17,7 +17,6 @@ struct EventInfoView: View {
     let coordinates: CLLocationCoordinate2D?
     @Binding var showAllAmenities: Bool
     
-    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             EventModal(event: event,
@@ -120,7 +119,7 @@ fileprivate struct HostedBySection: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 3) {
-                Text("\(type.eventStringSing) by \(host.name)")
+                Text("\(type.rawValue) at \(host.name)")
                     .font(.title2)
                     .bold()
                     .lineLimit(1)
@@ -171,26 +170,74 @@ fileprivate struct EventModal: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .center) {
-                Text(event.title)
-                    .font(.title)
-                    .bold()
-                    .foregroundColor(.white)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.75)
-                
-                Spacer()
-                
-                if event.hasStarted == false {
-                    if let didSave = event.didSave {
-                        Button { didSave ? unsave() : save() } label: {
-                            Image(systemName: didSave ? "bookmark.fill" : "bookmark")
-                                .resizable()
-                                .scaledToFill()
-                                .foregroundColor(didSave ? Color.mixerPurple : .secondary)
-                                .frame(width: 17, height: 17)
-                                .padding(4)
+            VStack {
+                HStack(alignment: .center) {
+                    Text(event.title)
+                        .font(.title)
+                        .bold()
+                        .foregroundColor(.white)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.75)
+                    
+                    Spacer()
+                    
+                    if event.hasStarted == false {
+                        if let didSave = event.didSave {
+                            Button { didSave ? unsave() : save() } label: {
+                                Image(systemName: didSave ? "bookmark.fill" : "bookmark")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .foregroundColor(didSave ? Color.mixerPurple : .secondary)
+                                    .frame(width: 17, height: 17)
+                                    .padding(4)
+                            }
                         }
+                    }
+                }
+                
+                HStack(spacing: 5) {
+                    Image(systemName: "person.3.fill")
+                        .symbolRenderingMode(.hierarchical)
+                    
+                    if let saves = event.saves {
+                        Text("\(saves) interested")
+                            .font(.body)
+                            .fontWeight(.semibold)
+                    }
+                    
+                    Spacer()
+                    
+                    HStack(spacing: -8) {
+                        Circle()
+                            .stroke()
+                            .foregroundColor(.mixerSecondaryBackground)
+                            .frame(width: 28, height: 46)
+                            .overlay {
+                                Image("profile-banner-1")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .clipShape(Circle())
+                            }
+                        
+                        Circle()
+                            .stroke()
+                            .foregroundColor(.mixerSecondaryBackground)
+                            .frame(width: 28, height: 46)
+                            .overlay {
+                                Image("mock-user-1")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .clipShape(Circle())
+                            }
+                        
+                        Circle()
+                            .fill(Color.mixerSecondaryBackground)
+                            .frame(width: 28, height: 46)
+                            .overlay {
+                                Text("+99")
+                                    .foregroundColor(.white)
+                                    .font(.footnote)
+                            }
                     }
                 }
             }
@@ -227,6 +274,12 @@ fileprivate struct EventModal: View {
                         .foregroundColor(.secondary)
                 }
             }
+        }
+        .padding(EdgeInsets(top: 15, leading: 15, bottom: 15, trailing: 15))
+        .background {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .backgroundStyle(cornerRadius: 30)
         }
     }
 }
