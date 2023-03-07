@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestoreSwift
 import CoreLocation
 
 final class EventDetailViewModel: ObservableObject {
@@ -21,6 +22,7 @@ final class EventDetailViewModel: ObservableObject {
         getEventCoordinates()
     }
 
+    
     func save() {
         guard let uid = AuthViewModel.shared.userSession?.uid, let eventId = event.id else { return }
         
@@ -68,7 +70,7 @@ final class EventDetailViewModel: ObservableObject {
     }
     
     
-    func checkIfUserSavedEvent() {
+    private func checkIfUserSavedEvent() {
         guard let uid = AuthViewModel.shared.userSession?.uid else { return }
         guard let eventId = event.id else { return }
         
@@ -79,7 +81,7 @@ final class EventDetailViewModel: ObservableObject {
     }
     
     
-    func fetchEventHost() {
+    private func fetchEventHost() {
         Task {
             do {
                 let eventHost = try await HostCache.shared.getHost(withId: event.hostUuid)

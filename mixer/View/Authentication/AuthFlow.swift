@@ -10,7 +10,7 @@ import FirebaseAuth
 
 struct AuthFlow: View {
     @EnvironmentObject var viewModel: AuthViewModel
-    @State private var showHeaderItems = false
+    @State private var showArrow = false
     
     var body: some View {
         ZStack {
@@ -27,7 +27,7 @@ struct AuthFlow: View {
                     .tag(AuthViewModel.Screen.code)
                 
                 GetEmail(name: viewModel.name,
-                        email: $viewModel.email) { viewModel.sendEmailLink() }
+                         email: $viewModel.email) { viewModel.sendEmailLink() }
                     .tag(AuthViewModel.Screen.email)
                 
                 GetProfilePictureAndBio(bio: $viewModel.bio, selectedImage: $viewModel.image) { viewModel.next() }
@@ -49,7 +49,7 @@ struct AuthFlow: View {
         }
         .overlay(alignment: .top) {
             HStack(alignment: .center) {
-                if showHeaderItems {
+                if showArrow {
                     Button(action: viewModel.previous) {
                         Image(systemName: "chevron.backward")
                             .resizable()
@@ -68,18 +68,16 @@ struct AuthFlow: View {
                 
                 Spacer()
                 
-                if showHeaderItems {
-                    ProgressView(value: Double(viewModel.active.rawValue) / 8.0)
-                        .frame(width: 50)
-                }
+                ProgressView(value: Double(viewModel.active.rawValue) / 6.0)
+                    .frame(width: 50)
             }
             .padding(.horizontal, 5)
         }
-        .animation(.easeInOut, value: showHeaderItems)
+        .animation(.easeInOut, value: showArrow)
         .onAppear { UIScrollView.appearance().isScrollEnabled = false }
         .onDisappear { UIScrollView.appearance().isScrollEnabled = true }
         .onChange(of: viewModel.active) { newValue in
-            showHeaderItems = newValue == AuthViewModel.Screen.allCases.first ? false : true
+            showArrow = newValue == AuthViewModel.Screen.allCases.first ? false : true
         }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .onOpenURL { url in viewModel.handleEmailLink(url) }

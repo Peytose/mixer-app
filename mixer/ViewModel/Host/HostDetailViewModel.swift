@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestoreSwift
 import CoreLocation
 import MapKit
 
@@ -19,6 +20,8 @@ final class HostDetailViewModel: ObservableObject {
     init(host: CachedHost) {
         self.host = host
         getHostCoordinates()
+        getHostUpcomingEvents()
+        getHostPastEvents()
     }
     
     
@@ -38,11 +41,34 @@ final class HostDetailViewModel: ObservableObject {
         }
     }
     
-//    func fetchRecentEvents() {
-//        guard let hostId = host.id else { return }
-//        COLLECTION_EVENTS.whereField("hostUuid", isEqualTo: hostId).getDocuments { snapshot, _ in
-//            guard let documents = snapshot?.documents else { return }
-//            self.recentEvents = documents.compactMap({ try? $0.data(as: Event.self) })
-//        }
-//    }
+    
+    private func getHostPastEvents() {
+        guard let hostId = host.id else { return }
+        
+        Task {
+            do {
+                let events = try await EventCache.shared.fetchPastEvents(for: .host, id: hostId)
+                
+                DispatchQueue.main.async { self.recentEvents = events }
+            } catch {
+                print("DEBUG: Error getting host's past events. \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    
+    private func getHostUpcomingEvents() {
+        guard let hostId = host.id else { return }
+        
+        Task {
+            do {
+                let futureEvents = try await EventCache.shared.fetchFutureEvents()
+                let hostEvents = futureEvents.filter({ $0.hostUuid == hostId })
+                
+                DispatchQueue.main.async { self.upcomingEvents = hostEvents }
+            } catch {
+                print("DEBUG: Error getting host's upcoming events. \(error.localizedDescription)")
+            }
+        }
+    }
 }

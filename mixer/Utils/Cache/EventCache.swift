@@ -95,12 +95,12 @@ class EventCache {
             switch type {
             case .user:
                 return COLLECTION_USERS.document(id).collection("user-history")
-                    .whereField("endDate", isLessThanOrEqualTo: Timestamp(date: Date()))
+                    .whereField("endDate", isLessThanOrEqualTo: Timestamp())
                     .whereField("endDate", isGreaterThanOrEqualTo: Timestamp(date: thirtyDaysBeforeToday))
             case .host:
                 return COLLECTION_EVENTS
                     .whereField("hostUid", isEqualTo: id)
-                    .whereField("endDate", isLessThanOrEqualTo: Timestamp(date: Date()))
+                    .whereField("endDate", isLessThanOrEqualTo: Timestamp())
                     .whereField("endDate", isGreaterThanOrEqualTo: Timestamp(date: thirtyDaysBeforeToday))
             }
         }
