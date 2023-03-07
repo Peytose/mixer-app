@@ -24,10 +24,10 @@ struct CachedHost: Hashable, Identifiable, Codable {
     var bio: String?
     var isCurrentHost: Bool? = false
     var hasCurrentEvent: Bool? = false
+    var isFollowed: Bool? = false
     var latitude: CLLocationDegrees?
     var longitude: CLLocationDegrees?
     
-    // , latitude: CLLocationDegrees?, longitude: CLLocationDegrees?
     init(from host: Host) {
         self.id                = host.id
         self.name              = host.name

@@ -44,7 +44,11 @@ struct HostInfoView: View {
                 VStack(alignment: .leading) {
                     HostSubheading(text: "Upcoming Events")
                     
-                    // Insert Upcoming Events
+                    ForEach(viewModel.upcomingEvents) { event in
+                        NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event))) {
+                            // Insert upcoming event cell here.
+                        }
+                    }
                 }
                 
                 Divider()
@@ -65,7 +69,11 @@ struct HostInfoView: View {
                 VStack(alignment: .leading) {
                     HostSubheading(text: "Recent Events")
                     
-                    // Insert Recents Events
+                    ForEach(viewModel.recentEvents) { event in
+                        NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event))) {
+                            // Insert recent event cell here.
+                        }
+                    }
                 }
                 
                 Divider()
@@ -74,12 +82,6 @@ struct HostInfoView: View {
         .padding(.horizontal)
     }
 }
-
-//struct HostInfoView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        HostInfoView()
-//    }
-//}
 
 fileprivate struct NameAndLinksRow: View {
     let host: CachedHost
