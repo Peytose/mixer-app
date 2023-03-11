@@ -12,7 +12,7 @@ import FirebaseFirestore
 
 struct HostDetailView: View {
     @ObservedObject var viewModel: HostDetailViewModel
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     @State var isFollowing  = false
     @State var showUsername = false
     

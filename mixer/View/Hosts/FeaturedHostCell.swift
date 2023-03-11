@@ -10,7 +10,7 @@ import Kingfisher
 
 struct FeaturedHostCell: View {
     let host: CachedHost
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     @State var showHostView = false
     
     var body: some View {
@@ -23,7 +23,7 @@ struct FeaturedHostCell: View {
                     .bold()
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
-                    .matchedGeometryEffect(id: "name", in: namespace)
+                    .matchedGeometryEffect(id: host.name, in: namespace)
                 
                 HStack {
                     Text("@\(host.username)")
@@ -32,6 +32,7 @@ struct FeaturedHostCell: View {
                         .foregroundColor(.white.opacity(0.8))
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
+                        .matchedGeometryEffect(id: host.username, in: namespace)
                     
                     Spacer()
                     
@@ -42,7 +43,6 @@ struct FeaturedHostCell: View {
                                 .scaledToFit()
                                 .foregroundColor(.white)
                                 .frame(width: 20, height: 20)
-                                .matchedGeometryEffect(id: "star", in: namespace)
                             
                             Text(rating.roundToDigits(2))
                                 .font(.subheadline)
@@ -50,9 +50,6 @@ struct FeaturedHostCell: View {
                                 .foregroundColor(.secondary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.75)
-                                .matchedGeometryEffect(id: "rating", in: namespace)
-                            
-                            
                         }
                     }
                 }
@@ -64,7 +61,7 @@ struct FeaturedHostCell: View {
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
-                        .matchedGeometryEffect(id: "bio", in: namespace)
+                        .matchedGeometryEffect(id: "\(host.name)-bio", in: namespace)
                 }
             }
             .padding(EdgeInsets(top: 20, leading: 20, bottom: 15, trailing: 20))
@@ -76,7 +73,6 @@ struct FeaturedHostCell: View {
                     .padding(-10)
                     .padding(.horizontal, -15)
                     .blur(radius: 30)
-                    .matchedGeometryEffect(id: "blur", in: namespace)
             }
         }
         .foregroundStyle(.white)
@@ -85,11 +81,10 @@ struct FeaturedHostCell: View {
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .mask(Color.profileGradient)
-                .matchedGeometryEffect(id: "image", in: namespace)
+                .matchedGeometryEffect(id: host.hostImageUrl, in: namespace)
         }
         .mask {
             RoundedRectangle(cornerRadius: 30, style: .continuous)
-                .matchedGeometryEffect(id: "mask", in: namespace)
         }
         .frame(width: DeviceTypes.ScreenSize.width / 1.1, height: DeviceTypes.ScreenSize.height / 2.8)
         .preferredColorScheme(.dark)

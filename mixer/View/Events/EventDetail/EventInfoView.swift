@@ -16,22 +16,28 @@ struct EventInfoView: View {
     let save: () -> Void
     let coordinates: CLLocationCoordinate2D?
     @Binding var showAllAmenities: Bool
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             EventModal(event: event,
                        unsave: unsave,
-                       save: save)
+                       save: save,
+                       namespace: namespace)
             
             Divider()
             
-            HostedBySection(type: event.type,
-                            host: host,
-                            ageLimit: event.ageLimit,
-                            cost: event.cost,
-                            hasAlcohol: event.alcoholPresence,
-                            namespace: namespace)
+            NavigationLink {
+                HostDetailView(viewModel: HostDetailViewModel(host: host),
+                               namespace: namespace)
+            } label: {
+                HostedBySection(type: event.type,
+                                host: host,
+                                ageLimit: event.ageLimit,
+                                cost: event.cost,
+                                hasAlcohol: event.alcoholPresence,
+                                namespace: namespace)
+            }
             
             Divider()
             
@@ -120,7 +126,7 @@ fileprivate struct HostedBySection: View {
     var cost: Float?
     var hasAlcohol: Bool?
     let dot: Text = Text("•").font(.callout).foregroundColor(.secondary)
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     
     var body: some View {
         HStack {
@@ -158,14 +164,11 @@ fileprivate struct HostedBySection: View {
             
             Spacer()
             
-            NavigationLink(destination: HostDetailView(viewModel: HostDetailViewModel(host: host),
-                                                       namespace: namespace)) {
-                KFImage(URL(string: host.hostImageUrl))
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
-                    .frame(width: 63, height: 63)
-            }
+            KFImage(URL(string: host.hostImageUrl))
+                .resizable()
+                .scaledToFill()
+                .clipShape(Circle())
+                .frame(width: 63, height: 63)
         }
     }
 }
@@ -174,6 +177,7 @@ fileprivate struct EventModal: View {
     let event: CachedEvent
     let unsave: () -> Void
     let save: () -> Void
+    var namespace: Namespace.ID
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -185,6 +189,7 @@ fileprivate struct EventModal: View {
                         .foregroundColor(.white)
                         .lineLimit(2)
                         .minimumScaleFactor(0.75)
+                        .matchedGeometryEffect(id: event.title, in: namespace)
                     
                     Spacer()
                     
@@ -263,6 +268,7 @@ fileprivate struct EventModal: View {
                 }
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
+                .matchedGeometryEffect(id: "\(event.title)-time", in: namespace)
                 
                 Spacer()
                 
@@ -280,6 +286,7 @@ fileprivate struct EventModal: View {
                         .font(.footnote)
                         .foregroundColor(.secondary)
                 }
+                .matchedGeometryEffect(id: "\(event.title)-isInviteOnly", in: namespace)
             }
         }
         .padding(EdgeInsets(top: 15, leading: 15, bottom: 15, trailing: 15))

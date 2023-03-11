@@ -45,10 +45,8 @@ struct MainTabView: View {
     
     var body: some View {
         TabBar(selection: $selection, visibility: .constant(visibility)) {
-            NavigationView {
-                ExploreView()
-            }
-            .tabItem(for: Item.first)
+            ExploreView()
+                .tabItem(for: Item.first)
 
             MapTemp(namespace: namespace)
                 .tabItem(for: Item.second)

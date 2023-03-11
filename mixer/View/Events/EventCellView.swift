@@ -11,6 +11,7 @@ import Kingfisher
 struct EventCellView: View {
     let event: CachedEvent
     let hasStarted: Bool
+    var namespace: Namespace.ID
     
     var body: some View {
         VStack(spacing: 15) {
@@ -23,10 +24,12 @@ struct EventCellView: View {
                         .foregroundColor(.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
+                        .matchedGeometryEffect(id: event.title, in: namespace)
                     
                     Text("@\(event.hostUsername)")
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(.secondary)
+                        .matchedGeometryEffect(id: event.hostUsername, in: namespace)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 15)
@@ -48,6 +51,7 @@ struct EventCellView: View {
                 KFImage(URL(string: event.eventImageUrl))
                     .resizable()
                     .aspectRatio(contentMode: .fill)
+                    .matchedGeometryEffect(id: event.eventImageUrl, in: namespace)
             )
             .mask(
                 RoundedRectangle(cornerRadius: 20)
@@ -62,6 +66,7 @@ struct EventCellView: View {
                             .foregroundColor(.white)
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
+                            .matchedGeometryEffect(id: "\(event.title)-time", in: namespace)
                         
                         Text("\(event.type.rawValue)")
                             .font(.subheadline)
@@ -81,6 +86,7 @@ struct EventCellView: View {
                             .font(.footnote)
                             .foregroundColor(.secondary)
                     }
+                    .matchedGeometryEffect(id: "\(event.title)-isInviteOnly", in: namespace)
                 }
                 
                 Text(event.description)

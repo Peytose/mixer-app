@@ -44,6 +44,7 @@ class HostCache {
     func fetchAndCache(for query: Query) async throws -> [CachedHost] {
         let snapshot = try await query.getDocuments()
         let documents = snapshot.documents
+        print("DEBUG: Found documents (hosts) in firebase! \(documents)")
         let hosts = documents.compactMap({ try? $0.data(as: Host.self) })
         print("DEBUG: Found hosts on Firebase! \(hosts)")
         // Store in cache

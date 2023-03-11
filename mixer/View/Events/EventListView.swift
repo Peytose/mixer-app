@@ -10,19 +10,26 @@ import SwiftUI
 struct EventListView: View {
     var events: [CachedEvent] = []
     let hasStarted: Bool
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
+    @Binding var selectedEvent: CachedEvent?
+    @Binding var showEventView: Bool
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             if !events.isEmpty {
                 ForEach(events) { event in
-                    NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
-                                                                namespace: namespace)) {
-                        CustomStickyHeaderView(headerView: { CellDateView(event: event, hasStarted: hasStarted) },
-                                               contentView: { EventCellView(event: event, hasStarted: hasStarted) })
-                        
-                    }
+                    CustomStickyHeaderView(headerView: {
+                        CellDateView(event: event, hasStarted: hasStarted)
+                    }, contentView: {
+                        EventCellView(event: event, hasStarted: hasStarted, namespace: namespace)
+                    })
                     .frame(height: 380)
+                    .onTapGesture {
+                        withAnimation(.openCard) {
+                            self.selectedEvent = event
+                            self.showEventView = true
+                        }
+                    }
                 }
             } else {
                 Text("Nothin' to see here. 🙅‍♂️")

@@ -11,7 +11,7 @@ import CoreLocation
 struct HostInfoView: View {
     let host: CachedHost
     let coordinates: CLLocationCoordinate2D?
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     @Binding var isFollowing: Bool
     @ObservedObject var viewModel: HostDetailViewModel
     
@@ -32,7 +32,7 @@ struct HostInfoView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                     .padding(.top, 5)
-                    .matchedGeometryEffect(id: "bio", in: namespace)
+                    .matchedGeometryEffect(id: "\(host.name)-bio", in: namespace)
             }
             
             Divider()
@@ -92,7 +92,7 @@ fileprivate struct NameAndLinksRow: View {
     var website: String?
     @Binding var isFollowing: Bool
     @State var showUsername = false
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     
     var body: some View {
         HStack(alignment: .center) {
@@ -103,7 +103,8 @@ fileprivate struct NameAndLinksRow: View {
                 .foregroundColor(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
-                .matchedGeometryEffect(id: "name", in: namespace)
+                .matchedGeometryEffect(id: host.name, in: namespace)
+                .matchedGeometryEffect(id: host.username, in: namespace)
                 .onTapGesture {
                     withAnimation(.easeInOut) {
                         showUsername.toggle()

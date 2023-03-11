@@ -11,9 +11,10 @@ import FirebaseFirestore
 
 struct ExploreView: View {
     @ObservedObject var viewModel = ExploreViewModel()
-    @State var selectedHost: Host?
-    @State var selectedEvent: Event?
+    @State var selectedHost: CachedHost?
+    @State var selectedEvent: CachedEvent?
     @State var showHostView = false
+    @State var showEventView = false
     @Namespace var namespace
     
     var body: some View {
@@ -28,12 +29,13 @@ struct ExploreView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             ForEach(viewModel.hosts) { host in
-                                NavigationLink {
-                                    HostDetailView(viewModel: HostDetailViewModel(host: host),
-                                                   namespace: namespace)
-                                } label: {
-                                    FeaturedHostCell(host: host, namespace: namespace)
-                                }
+                                FeaturedHostCell(host: host, namespace: namespace)
+                                    .onTapGesture {
+                                        withAnimation(.openCard) {
+                                            self.selectedHost = host
+                                            self.showHostView = true
+                                        }
+                                    }
                             }
                         }
                     }
@@ -44,11 +46,15 @@ struct ExploreView: View {
                             if viewModel.eventSection == .today {
                                 EventListView(events: viewModel.todayEvents,
                                               hasStarted: true,
-                                              namespace: namespace)
+                                              namespace: namespace,
+                                              selectedEvent: $selectedEvent,
+                                              showEventView: $showEventView)
                             } else if viewModel.eventSection == .future {
                                 EventListView(events: viewModel.futureEvents,
                                               hasStarted: false,
-                                              namespace: namespace)
+                                              namespace: namespace,
+                                              selectedEvent: $selectedEvent,
+                                              showEventView: $showEventView)
                             }
                         } header: {
                             viewModel.stickyHeader()
@@ -58,6 +64,34 @@ struct ExploreView: View {
                 .padding(.bottom, 120)
             }
             .refreshable { viewModel.refresh() }
+            
+            if let host = selectedHost, showHostView {
+                HostDetailView(viewModel: HostDetailViewModel(host: host),
+                               namespace: namespace)
+                .toolbar {
+                    XDismissButton()
+                        .onTapGesture {
+                            withAnimation(.closeCard) {
+                                self.showHostView = false
+                                self.selectedHost = nil
+                            }
+                        }
+                }
+            }
+            
+            if let event = selectedEvent, showEventView {
+                EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                namespace: namespace)
+                .toolbar {
+                    XDismissButton()
+                        .onTapGesture {
+                            withAnimation(.closeCard) {
+                                self.showEventView = false
+                                self.selectedEvent = nil
+                            }
+                        }
+                }
+            }
         }
         .task {
             viewModel.getHosts()

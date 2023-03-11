@@ -17,7 +17,7 @@ struct MapTemp: View {
     @State private var progress: CGFloat = 0
     let gradient1 = Gradient(colors: [.purple, .yellow])
     let gradient2 = Gradient(colors: [.blue, .purple])
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     
     var body: some View {
         ZStack(alignment: .top) {

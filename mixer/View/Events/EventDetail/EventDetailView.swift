@@ -15,7 +15,7 @@ struct EventDetailView: View {
     @State var isShowingModal         = false
     @State var showAllAmenities       = false
     @State private var showingOptions = false
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     
     init(viewModel: EventDetailViewModel, namespace: Namespace.ID) {
         self.viewModel = viewModel

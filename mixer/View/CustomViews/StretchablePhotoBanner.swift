@@ -10,7 +10,7 @@ import Kingfisher
 
 struct StretchablePhotoBanner: View {
     let imageUrl: String
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID
     
     var body: some View {
         GeometryReader { proxy in
@@ -24,7 +24,7 @@ struct StretchablePhotoBanner: View {
                 .offset(y: scrollY > 0 ? -scrollY : 0)
                 .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
                 .blur(radius: scrollY > 0 ? scrollY / 40 : 0)
-                .matchedGeometryEffect(id: "image", in: namespace)
+                .matchedGeometryEffect(id: imageUrl, in: namespace)
         }
         .frame(width: UIScreen.main.bounds.size.width, height: 350)
     }

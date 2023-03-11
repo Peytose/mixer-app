@@ -129,7 +129,7 @@ struct ProfileView: View {
                                                 EventDetailView(viewModel: EventDetailViewModel(event: event),
                                                                 namespace: namespace)
                                             } label: {
-                                                EventCellView(event: event, hasStarted: false)
+                                                EventCellView(event: event, hasStarted: false, namespace: namespace)
                                                     .padding(.horizontal)
                                                 
                                                 Divider()
@@ -147,9 +147,9 @@ struct ProfileView: View {
                                     }
                                 }
                             } else {
-                                EventListView(events: viewModel.pastEvents,
-                                              hasStarted: true,
-                                              namespace: namespace)
+//                                EventListView(events: viewModel.pastEvents,
+//                                              hasStarted: true,
+//                                              namespace: namespace)
                             }
                         } header: { viewModel.stickyHeader() }
                     }
