@@ -12,22 +12,24 @@ import FirebaseFirestore
 
 struct HostDetailView: View {
     @ObservedObject var viewModel: HostDetailViewModel
-    @Namespace var namespace
+    let namespace: Namespace.ID
     @State var isFollowing  = false
     @State var showUsername = false
     
-    init(viewModel: HostDetailViewModel) {
+    init(viewModel: HostDetailViewModel, namespace: Namespace.ID) {
         self.viewModel = viewModel
+        self.namespace = namespace
     }
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
-                StretchablePhotoBanner(imageUrl: viewModel.host.hostImageUrl)
+                StretchablePhotoBanner(imageUrl: viewModel.host.hostImageUrl,
+                                       namespace: namespace)
                 
                 HostInfoView(host: viewModel.host,
                              coordinates: viewModel.coordinates,
-                             namespace: _namespace,
+                             namespace: namespace,
                              isFollowing: $isFollowing,
                              viewModel: viewModel)
             }
@@ -41,8 +43,10 @@ struct HostDetailView: View {
 }
 
 struct HostDetailView_Previews: PreviewProvider {
+    @Namespace static var namespace
+    
     static var previews: some View {
-        HostDetailView(viewModel: HostDetailViewModel(host: CachedHost(from: Mockdata.host)))
+        HostDetailView(viewModel: HostDetailViewModel(host: CachedHost(from: Mockdata.host)), namespace: namespace)
     }
 }
 

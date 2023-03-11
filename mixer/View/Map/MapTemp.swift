@@ -17,6 +17,7 @@ struct MapTemp: View {
     @State private var progress: CGFloat = 0
     let gradient1 = Gradient(colors: [.purple, .yellow])
     let gradient2 = Gradient(colors: [.blue, .purple])
+    let namespace: Namespace.ID
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -63,7 +64,8 @@ struct MapTemp: View {
             ZStack {
                 if let event = selectedEvent {
                     NavigationView {
-                        EventDetailView(viewModel: EventDetailViewModel(event: event))
+                        EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                        namespace: namespace)
                             .toolbar {
                                 Button("Dismiss", action: { isShowingDetailView = false })
                             }
@@ -71,7 +73,7 @@ struct MapTemp: View {
                     }
                 } else if let host = selectedHost {
                     NavigationView {
-                        HostDetailView(viewModel: HostDetailViewModel(host: host))
+                        HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
                             .toolbar {
                                 Button("Dismiss", action: { isShowingDetailView = false })
                             }
@@ -100,7 +102,9 @@ struct MapTemp: View {
 }
 
 struct MapTemp_Previews: PreviewProvider {
+    @Namespace static var namespace
+    
     static var previews: some View {
-        MapTemp()
+        MapTemp(namespace: namespace)
     }
 }

@@ -41,6 +41,7 @@ struct MainTabView: View {
     
     @State private var selection: Item = .second
     @State private var visibility: TabBarVisibility = .visible
+    @Namespace var namespace
     
     var body: some View {
         TabBar(selection: $selection, visibility: .constant(visibility)) {
@@ -49,7 +50,7 @@ struct MainTabView: View {
             }
             .tabItem(for: Item.first)
 
-            MapTemp()
+            MapTemp(namespace: namespace)
                 .tabItem(for: Item.second)
             
             SearchView()

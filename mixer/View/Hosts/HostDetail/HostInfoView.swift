@@ -11,7 +11,7 @@ import CoreLocation
 struct HostInfoView: View {
     let host: CachedHost
     let coordinates: CLLocationCoordinate2D?
-    @Namespace var namespace
+    let namespace: Namespace.ID
     @Binding var isFollowing: Bool
     @ObservedObject var viewModel: HostDetailViewModel
     
@@ -20,7 +20,8 @@ struct HostInfoView: View {
             NameAndLinksRow(host: host,
                             handle: host.instagramHandle,
                             website: host.website,
-                            isFollowing: $isFollowing)
+                            isFollowing: $isFollowing,
+                            namespace: namespace)
             
             Divider()
             
@@ -31,7 +32,7 @@ struct HostInfoView: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                     .padding(.top, 5)
-                    .matchedGeometryEffect(id: "text", in: namespace)
+                    .matchedGeometryEffect(id: "bio", in: namespace)
             }
             
             Divider()
@@ -45,7 +46,8 @@ struct HostInfoView: View {
                     HostSubheading(text: "Upcoming Events")
                     
                     ForEach(viewModel.upcomingEvents) { event in
-                        NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event))) {
+                        NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                                                    namespace: namespace)) {
                             // Insert upcoming event cell here.
                         }
                     }
@@ -70,7 +72,8 @@ struct HostInfoView: View {
                     HostSubheading(text: "Recent Events")
                     
                     ForEach(viewModel.recentEvents) { event in
-                        NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event))) {
+                        NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                                                    namespace: namespace)) {
                             // Insert recent event cell here.
                         }
                     }
@@ -89,6 +92,7 @@ fileprivate struct NameAndLinksRow: View {
     var website: String?
     @Binding var isFollowing: Bool
     @State var showUsername = false
+    let namespace: Namespace.ID
     
     var body: some View {
         HStack(alignment: .center) {
@@ -98,7 +102,8 @@ fileprivate struct NameAndLinksRow: View {
                 .bold()
                 .foregroundColor(.white)
                 .lineLimit(1)
-                .minimumScaleFactor(0.6)
+                .minimumScaleFactor(0.75)
+                .matchedGeometryEffect(id: "name", in: namespace)
                 .onTapGesture {
                     withAnimation(.easeInOut) {
                         showUsername.toggle()

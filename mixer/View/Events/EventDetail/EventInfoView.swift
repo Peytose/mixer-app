@@ -16,6 +16,7 @@ struct EventInfoView: View {
     let save: () -> Void
     let coordinates: CLLocationCoordinate2D?
     @Binding var showAllAmenities: Bool
+    let namespace: Namespace.ID
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -29,7 +30,8 @@ struct EventInfoView: View {
                             host: host,
                             ageLimit: event.ageLimit,
                             cost: event.cost,
-                            hasAlcohol: event.alcoholPresence)
+                            hasAlcohol: event.alcoholPresence,
+                            namespace: namespace)
             
             Divider()
             
@@ -97,13 +99,16 @@ struct EventInfoView: View {
 }
 
 struct EventInfoView_Previews: PreviewProvider {
+    @Namespace static var namespace
+    
     static var previews: some View {
         EventInfoView(event: CachedEvent(from: Mockdata.event),
                       host: CachedHost(from: Mockdata.host),
                       unsave: {},
                       save: {},
                       coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
-                      showAllAmenities: .constant(false))
+                      showAllAmenities: .constant(false),
+                      namespace: namespace)
             .preferredColorScheme(.dark)
     }
 }
@@ -115,6 +120,7 @@ fileprivate struct HostedBySection: View {
     var cost: Float?
     var hasAlcohol: Bool?
     let dot: Text = Text("•").font(.callout).foregroundColor(.secondary)
+    let namespace: Namespace.ID
     
     var body: some View {
         HStack {
@@ -152,7 +158,8 @@ fileprivate struct HostedBySection: View {
             
             Spacer()
             
-            NavigationLink(destination: HostDetailView(viewModel: HostDetailViewModel(host: host))) {
+            NavigationLink(destination: HostDetailView(viewModel: HostDetailViewModel(host: host),
+                                                       namespace: namespace)) {
                 KFImage(URL(string: host.hostImageUrl))
                     .resizable()
                     .scaledToFill()

@@ -15,16 +15,19 @@ struct EventDetailView: View {
     @State var isShowingModal         = false
     @State var showAllAmenities       = false
     @State private var showingOptions = false
+    let namespace: Namespace.ID
     
-    init(viewModel: EventDetailViewModel) {
+    init(viewModel: EventDetailViewModel, namespace: Namespace.ID) {
         self.viewModel = viewModel
+        self.namespace = namespace
     }
     
     var body: some View {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack {
-                    StretchablePhotoBanner(imageUrl: viewModel.event.eventImageUrl)
+                    StretchablePhotoBanner(imageUrl: viewModel.event.eventImageUrl,
+                                           namespace: namespace)
                         .onLongPressGesture(minimumDuration: 0.3) {
                             let impact = UIImpactFeedbackGenerator(style: .heavy)
                             impact.impactOccurred()
@@ -39,7 +42,8 @@ struct EventDetailView: View {
                                       unsave: viewModel.unsave,
                                       save: viewModel.save,
                                       coordinates: viewModel.coordinates,
-                                      showAllAmenities: $showAllAmenities)
+                                      showAllAmenities: $showAllAmenities,
+                                      namespace: namespace)
                     }
                 }
                 .padding(.bottom, 180)
@@ -52,7 +56,6 @@ struct EventDetailView: View {
             }
         }
         .ignoresSafeArea()
-        .task { viewModel.fetchEventHost() }
         .sheet(isPresented: $showAllAmenities) {
             AmenityListView(amenities: viewModel.event.amenities)
                 .presentationDetents([.medium, .large])

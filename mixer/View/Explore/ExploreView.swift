@@ -23,13 +23,15 @@ struct ExploreView: View {
                     // Featured Hosts Section
                     Text("Featured Hosts")
                         .font(.largeTitle.weight(.bold))
-                        .padding(.leading)
-                        .padding(.top, 100)
+                        .padding()
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             ForEach(viewModel.hosts) { host in
-                                NavigationLink(destination: HostDetailView(viewModel: HostDetailViewModel(host: host))) {
+                                NavigationLink {
+                                    HostDetailView(viewModel: HostDetailViewModel(host: host),
+                                                   namespace: namespace)
+                                } label: {
                                     FeaturedHostCell(host: host, namespace: namespace)
                                 }
                             }
@@ -40,9 +42,13 @@ struct ExploreView: View {
                     LazyVStack(pinnedViews: [.sectionHeaders]) {
                         Section {
                             if viewModel.eventSection == .today {
-                                EventListView(events: viewModel.todayEvents, hasStarted: true)
+                                EventListView(events: viewModel.todayEvents,
+                                              hasStarted: true,
+                                              namespace: namespace)
                             } else if viewModel.eventSection == .future {
-                                EventListView(events: viewModel.futureEvents, hasStarted: false)
+                                EventListView(events: viewModel.futureEvents,
+                                              hasStarted: false,
+                                              namespace: namespace)
                             }
                         } header: {
                             viewModel.stickyHeader()

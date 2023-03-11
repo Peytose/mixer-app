@@ -20,7 +20,8 @@ struct ProfileView: View {
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl)
+            StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl,
+                                   namespace: namespace)
                 .overlay(alignment: .topTrailing) {
                     if viewModel.user.isCurrentUser {
                         ProfileCornerButton(action: { showEditProfile.toggle() },
@@ -124,7 +125,10 @@ struct ProfileView: View {
                                 ScrollView(.vertical, showsIndicators: false) {
                                     if !viewModel.savedEvents.isEmpty {
                                         ForEach(viewModel.savedEvents) { event in
-                                            NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event))) {
+                                            NavigationLink {
+                                                EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                                                namespace: namespace)
+                                            } label: {
                                                 EventCellView(event: event, hasStarted: false)
                                                     .padding(.horizontal)
                                                 
@@ -143,7 +147,9 @@ struct ProfileView: View {
                                     }
                                 }
                             } else {
-                                EventListView(events: viewModel.pastEvents, hasStarted: true)
+                                EventListView(events: viewModel.pastEvents,
+                                              hasStarted: true,
+                                              namespace: namespace)
                             }
                         } header: { viewModel.stickyHeader() }
                     }

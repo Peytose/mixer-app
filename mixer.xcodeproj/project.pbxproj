@@ -22,8 +22,6 @@
 		9C2B896B298F873E0011FC56 /* EventCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B896A298F873E0011FC56 /* EventCache.swift */; };
 		9C2B8971298F8B7B0011FC56 /* DataCache in Frameworks */ = {isa = PBXBuildFile; productRef = 9C2B8970298F8B7B0011FC56 /* DataCache */; };
 		9C2B8973299170670011FC56 /* HostCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B8972299170670011FC56 /* HostCache.swift */; };
-		9C2B8976299196760011FC56 /* EventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B8975299196760011FC56 /* EventManager.swift */; };
-		9C2B89782991B1EE0011FC56 /* HostManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B89772991B1EE0011FC56 /* HostManager.swift */; };
 		9C2B89802992D53F0011FC56 /* CachedHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B897F2992D53F0011FC56 /* CachedHost.swift */; };
 		9C2B8982299377E70011FC56 /* CachedEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B8981299377E70011FC56 /* CachedEvent.swift */; };
 		9C2B898429947EAF0011FC56 /* HostMapAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B898329947EAF0011FC56 /* HostMapAnnotation.swift */; };
@@ -85,6 +83,7 @@
 		9C99EAEA29A674B500D66FEB /* DebouncedOnChange in Frameworks */ = {isa = PBXBuildFile; productRef = 9C99EAE929A674B500D66FEB /* DebouncedOnChange */; };
 		9C99EAF429A6B33600D66FEB /* EventInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C99EAF329A6B33600D66FEB /* EventInfoView.swift */; };
 		9C99EAF829A6F12900D66FEB /* AmenityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C99EAF729A6F12900D66FEB /* AmenityListView.swift */; };
+		9CCD9A3929B91AF50043F1C8 /* CachedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CCD9A3829B91AF50043F1C8 /* CachedUser.swift */; };
 		9CF84C9929AAA38A005BE430 /* GetNameAndPhoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9829AAA38A005BE430 /* GetNameAndPhoneView.swift */; };
 		9CF84C9B29AAE337005BE430 /* GetProfilePictureAndBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9A29AAE337005BE430 /* GetProfilePictureAndBio.swift */; };
 		9CF84CA329AE8ADA005BE430 /* GetPersonalInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84CA229AE8ADA005BE430 /* GetPersonalInfo.swift */; };
@@ -148,8 +147,6 @@
 		9C2B8967298F53510011FC56 /* MapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewModel.swift; sourceTree = "<group>"; };
 		9C2B896A298F873E0011FC56 /* EventCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCache.swift; sourceTree = "<group>"; };
 		9C2B8972299170670011FC56 /* HostCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostCache.swift; sourceTree = "<group>"; };
-		9C2B8975299196760011FC56 /* EventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventManager.swift; sourceTree = "<group>"; };
-		9C2B89772991B1EE0011FC56 /* HostManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostManager.swift; sourceTree = "<group>"; };
 		9C2B897F2992D53F0011FC56 /* CachedHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedHost.swift; sourceTree = "<group>"; };
 		9C2B8981299377E70011FC56 /* CachedEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedEvent.swift; sourceTree = "<group>"; };
 		9C2B898329947EAF0011FC56 /* HostMapAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostMapAnnotation.swift; sourceTree = "<group>"; };
@@ -204,6 +201,7 @@
 		9C99EAE529A56EB700D66FEB /* ImageUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUploader.swift; sourceTree = "<group>"; };
 		9C99EAF329A6B33600D66FEB /* EventInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventInfoView.swift; sourceTree = "<group>"; };
 		9C99EAF729A6F12900D66FEB /* AmenityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmenityListView.swift; sourceTree = "<group>"; };
+		9CCD9A3829B91AF50043F1C8 /* CachedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedUser.swift; sourceTree = "<group>"; };
 		9CF84C9829AAA38A005BE430 /* GetNameAndPhoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetNameAndPhoneView.swift; sourceTree = "<group>"; };
 		9CF84C9A29AAE337005BE430 /* GetProfilePictureAndBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetProfilePictureAndBio.swift; sourceTree = "<group>"; };
 		9CF84CA229AE8ADA005BE430 /* GetPersonalInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPersonalInfo.swift; sourceTree = "<group>"; };
@@ -291,15 +289,6 @@
 				9C2B898A299D8C200011FC56 /* UserCache.swift */,
 			);
 			path = Cache;
-			sourceTree = "<group>";
-		};
-		9C2B8974299196650011FC56 /* Managers */ = {
-			isa = PBXGroup;
-			children = (
-				9C2B8975299196760011FC56 /* EventManager.swift */,
-				9C2B89772991B1EE0011FC56 /* HostManager.swift */,
-			);
-			path = Managers;
 			sourceTree = "<group>";
 		};
 		9C2B8987299D879B0011FC56 /* Search */ = {
@@ -393,6 +382,7 @@
 				9C4B0E2D298240E400A9D963 /* Host.swift */,
 				9C2B897F2992D53F0011FC56 /* CachedHost.swift */,
 				9C4B0E2B298240E400A9D963 /* User.swift */,
+				9CCD9A3829B91AF50043F1C8 /* CachedUser.swift */,
 				9C4B0E312982410600A9D963 /* Feedback.swift */,
 			);
 			path = Model;
@@ -401,7 +391,6 @@
 		9C3BADCA291F551A009C8043 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				9C2B8974299196650011FC56 /* Managers */,
 				9C2B8969298F87320011FC56 /* Cache */,
 				9C3BADCB291F551E009C8043 /* Extensions */,
 				9C3BADD6291F55D1009C8043 /* Constants.swift */,
@@ -820,6 +809,7 @@
 			files = (
 				A682CC5A2970F60C008EA546 /* EventRow.swift in Sources */,
 				A6F003AA29807646007E8CCA /* FeaturedHostCell.swift in Sources */,
+				9CCD9A3929B91AF50043F1C8 /* CachedUser.swift in Sources */,
 				9C4B0E2E298240E400A9D963 /* User.swift in Sources */,
 				9C4B0E30298240E400A9D963 /* Host.swift in Sources */,
 				9C4B0E4C298241CF00A9D963 /* EventLists.swift in Sources */,
@@ -836,7 +826,6 @@
 				A6BAEF612955064200410DED /* ReviewCreatedEventView.swift in Sources */,
 				A6B9E67C2953B9A3009C936E /* XDismissButton.swift in Sources */,
 				9C93318B29201CA00079E039 /* MapView.swift in Sources */,
-				9C2B8976299196760011FC56 /* EventManager.swift in Sources */,
 				9C05C1C82983BB2B00841100 /* HostDetailView.swift in Sources */,
 				9C2B89802992D53F0011FC56 /* CachedHost.swift in Sources */,
 				A6AB6C7C2960E20F007E9BF0 /* PinchZoomImageModifier.swift in Sources */,
@@ -906,7 +895,6 @@
 				9C4B0E352982417000A9D963 /* WaitlistViewModel.swift in Sources */,
 				9C2B8982299377E70011FC56 /* CachedEvent.swift in Sources */,
 				A6B9E690295464A8009C936E /* EventLocationView.swift in Sources */,
-				9C2B89782991B1EE0011FC56 /* HostManager.swift in Sources */,
 				A682CC582970F4A4008EA546 /* StretchablePhotoBanner.swift in Sources */,
 				A6A731C12974FA3A008DAC17 /* CustomStackView.swift in Sources */,
 				A68971CD296E7E5D00289516 /* CustomTabBarStyle.swift in Sources */,

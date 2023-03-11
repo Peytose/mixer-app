@@ -10,12 +10,14 @@ import SwiftUI
 struct EventListView: View {
     var events: [CachedEvent] = []
     let hasStarted: Bool
+    let namespace: Namespace.ID
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             if !events.isEmpty {
                 ForEach(events) { event in
-                    NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event))) {
+                    NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                                                namespace: namespace)) {
                         CustomStickyHeaderView(headerView: { CellDateView(event: event, hasStarted: hasStarted) },
                                                contentView: { EventCellView(event: event, hasStarted: hasStarted) })
                         
