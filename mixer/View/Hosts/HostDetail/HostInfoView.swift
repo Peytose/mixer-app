@@ -14,72 +14,80 @@ struct HostInfoView: View {
     var namespace: Namespace.ID
     @Binding var isFollowing: Bool
     @ObservedObject var viewModel: HostDetailViewModel
+    @State var showMore = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            NameAndLinksRow(host: host,
-                            handle: host.instagramHandle,
-                            website: host.website,
-                            isFollowing: $isFollowing,
-                            namespace: namespace)
+        VStack(alignment: .leading, spacing: 20) {
             
-            Divider()
-            
-            if let bio = host.bio {
-                Text(bio)
-                    .font(.subheadline.weight(.regular))
-                    .foregroundColor(.white.opacity(0.8))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-                    .padding(.top, 5)
-                    .matchedGeometryEffect(id: "\(host.name)-bio", in: namespace)
-            }
-            
-            Divider()
-            
-            FriendsWhoFollowView()
-            
-            Divider()
-            
-            if !viewModel.upcomingEvents.isEmpty {
-                VStack(alignment: .leading) {
-                    HostSubheading(text: "Upcoming Events")
-                    
-                    ForEach(viewModel.upcomingEvents) { event in
-                        NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
-                                                                    namespace: namespace)) {
-                            // Insert upcoming event cell here.
-                        }
-                    }
+            VStack(alignment: .leading, spacing: 10) {
+                NameAndLinksRow(host: host,
+                                handle: host.instagramHandle,
+                                website: host.website,
+                                isFollowing: $isFollowing,
+                                namespace: namespace)
+                
+                if let bio = host.bio {
+                    Text(bio)
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.8))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.7)
+                        .matchedGeometryEffect(id: "\(host.name)-bio", in: namespace)
                 }
                 
-                Divider()
+                FriendsWhoFollowView()
+            }
+            
+            
+            if !viewModel.upcomingEvents.isEmpty {
+                HostSubheading(text: "Upcoming Events")
+                
+                ForEach(viewModel.upcomingEvents) { event in
+                    NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                                                namespace: namespace)) {
+                        // Insert upcoming event cell here.
+                    }
+                }
+            }
+            
+            VStack(alignment: .leading, spacing: 10) {
+                HostSubheading(text: "About this host")
+                
+                Text("Established in 1902, Theta Chi Beta Chapter is the oldest active Theta Chi chapter in the country, and is one of the first fraternities founded at MIT. We have a storied history of developing leaders: our alumni go on to start companies, build self-driving cars, cure diseases, get involved in politics, serve in the military, and change the world. The brothers of Theta Chi are dedicated to helping each other achieve their goals and give back to the community.Theta Chi is committed to fostering a fun, engaging environment built on a foundation of scholarship, love, and respect. We develop lifelong friendships that grow beyond the four short years we spend together at MIT.")
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .lineLimit(showMore ? nil : 4)
+                
+                Text(showMore ? "Show less" : "Show more")
+                    .fontWeight(.semibold)
+                    .foregroundColor(.blue)
+                    .frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .leading)
+                    .onTapGesture {
+                        withAnimation(.spring()) {
+                            showMore.toggle()
+                        }
+                    }
+                    .padding(.top, -8)
+
             }
             
             if let coordinates = coordinates {
-                VStack(alignment: .leading) {
-                    HostSubheading(text: "Located At")
-                    
-                    MapSnapshotView(location: coordinates, isInvited: true)
-                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coordinates) }
-                }
+                HostSubheading(text: "Located At")
                 
-                Divider()
+                MapSnapshotView(location: coordinates, isInvited: true)
+                    .cornerRadius(16)
+                    .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coordinates) }
             }
             
             if !viewModel.recentEvents.isEmpty {
-                VStack(alignment: .leading) {
-                    HostSubheading(text: "Recent Events")
-                    
-                    ForEach(viewModel.recentEvents) { event in
-                        NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
-                                                                    namespace: namespace)) {
-                            // Insert recent event cell here.
-                        }
+                HostSubheading(text: "Recent Events")
+                
+                ForEach(viewModel.recentEvents) { event in
+                    NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                                                namespace: namespace)) {
+                        // Insert recent event cell here.
                     }
                 }
-                
-                Divider()
             }
         }
         .padding(.horizontal)
@@ -95,38 +103,30 @@ fileprivate struct NameAndLinksRow: View {
     var namespace: Namespace.ID
     
     var body: some View {
-        HStack(alignment: .center) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(showUsername ? "@\(host.username)" : "\(host.name)")
                 .textSelection(.enabled)
                 .font(.largeTitle)
                 .bold()
-                .foregroundColor(.white)
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
                 .matchedGeometryEffect(id: host.name, in: namespace)
-                .matchedGeometryEffect(id: host.username, in: namespace)
                 .onTapGesture {
                     withAnimation(.easeInOut) {
                         showUsername.toggle()
                     }
                 }
             
-            Spacer()
-            
-            HStack(alignment: .center, spacing: 13) {
-                Image(systemName: isFollowing ? "checkmark.circle" : "plus.circle")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(Color.mainFont)
-                    .frame(width: 26, height: 26)
-                    .rotationEffect(Angle(degrees: isFollowing ? 360 : 0))
-                    .onTapGesture {
-                        let impact = UIImpactFeedbackGenerator(style: .light)
-                        impact.impactOccurred()
-                        withAnimation(.follow) {
-                            isFollowing.toggle()
-                        }
-                    }
+            HStack(alignment: .center, spacing: 10) {
+                Text("@\(host.username)")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .matchedGeometryEffect(id: host.username, in: namespace)
+                
+                
+                Spacer()
                 
                 if let handle = handle {
                     HostLinkIcon(url: "https://instagram.com/\(handle)", icon: "Instagram_Glyph_Gradient 1", isAsset: true)
@@ -135,6 +135,28 @@ fileprivate struct NameAndLinksRow: View {
                 if let website = website {
                     HostLinkIcon(url: website, icon: "globe")
                 }
+                
+                Text(isFollowing ? "Following" : "Follow")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundColor(isFollowing ? .white : .black)
+                    .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
+                    .background {
+                        if isFollowing {
+                            Capsule()
+                                .stroke()
+                        } else {
+                            Capsule()
+                        }
+                        
+                    }
+                    .onTapGesture {
+                        let impact = UIImpactFeedbackGenerator(style: .light)
+                        impact.impactOccurred()
+                        withAnimation(.follow) {
+                            isFollowing.toggle()
+                        }
+                    }
+                    .matchedGeometryEffect(id: "follow\(host.id)", in: namespace)
             }
         }
     }
@@ -151,13 +173,13 @@ fileprivate struct HostLinkIcon: View {
                 Image(icon)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 25, height: 25)
+                    .frame(width: 24, height: 24)
             } else {
                 Image(systemName: icon)
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(Color.mainFont)
-                    .frame(width: 25, height: 25)
+                    .frame(width: 24, height: 24)
             }
         }
     }
@@ -193,19 +215,19 @@ fileprivate struct FriendsWhoFollowView: View {
             VStack(alignment: .leading) {
                 HStack(spacing: 3) {
                     Text("Followed by")
-                        .font(.subheadline)
+                        .font(.footnote)
                         .foregroundColor(.secondary)
                     
-                    Text("peytonlyons2002, fishcoop")
-                        .font(.subheadline)
+                    Text("peytonlyons2002, fishcoop, jose")
+                        .font(.footnote)
                         .fontWeight(.semibold)
                         .foregroundColor(.white.opacity(0.8))
                 }
                 .lineLimit(1)
-                .minimumScaleFactor(0.8)
+                .minimumScaleFactor(0.9)
                 
                 Text("and 3 more")
-                    .font(.subheadline)
+                    .font(.footnote)
                     .foregroundColor(.secondary)
             }
         }

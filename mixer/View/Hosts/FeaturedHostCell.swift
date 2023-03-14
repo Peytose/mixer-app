@@ -12,55 +12,62 @@ struct FeaturedHostCell: View {
     let host: CachedHost
     var namespace: Namespace.ID
     @State var showHostView = false
+    @State var isFollowing = false
     
     var body: some View {
         VStack {
             Spacer()
             
-            VStack(alignment: .leading, spacing: 4) {
-                Text(host.name)
-                    .font(.largeTitle)
-                    .bold()
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
-                    .matchedGeometryEffect(id: host.name, in: namespace)
-                
-                HStack {
-                    Text("@\(host.username)")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white.opacity(0.8))
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(host.name)
+                        .font(.largeTitle)
+                        .bold()
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
-                        .matchedGeometryEffect(id: host.username, in: namespace)
+                        .matchedGeometryEffect(id: host.name, in: namespace)
                     
-                    Spacer()
-                    
-                    if let rating = host.rating {
-                        HStack(alignment: .center) {
-                            Image(systemName: "star.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundColor(.white)
-                                .frame(width: 20, height: 20)
-                            
-                            Text(rating.roundToDigits(2))
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.75)
-                        }
+                    HStack {
+                        Text("@\(host.username)")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                            .matchedGeometryEffect(id: host.username, in: namespace)
+                        
+                        Spacer()
+                        
+//                        Text(isFollowing ? "Following" : "Follow")
+//                            .font(.footnote.weight(.semibold))
+//                            .foregroundColor(isFollowing ? .white : .black)
+//                            .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
+//                            .background {
+//                                if isFollowing {
+//                                    Capsule()
+//                                        .stroke()
+//                                } else {
+//                                    Capsule()
+//                                }
+//
+//                            }
+//                            .onTapGesture {
+//                                let impact = UIImpactFeedbackGenerator(style: .light)
+//                                impact.impactOccurred()
+//                                withAnimation(.follow) {
+//                                    isFollowing.toggle()
+//                                }
+//                            }
+//                            .matchedGeometryEffect(id: "follow\(host.id)", in: namespace)
+                        
                     }
                 }
                 
                 if let bio = host.bio {
                     Text(bio)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.8))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.7)
                         .matchedGeometryEffect(id: "\(host.name)-bio", in: namespace)
                 }
             }
