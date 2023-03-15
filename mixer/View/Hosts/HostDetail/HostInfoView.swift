@@ -50,6 +50,8 @@ struct HostInfoView: View {
                 }
             }
             
+            UpcomingEventCellView(title: "Neon Party", duration: "10:00 PM - 1:00 PM", visibility: "Open Event", dateMonth: "Mar", dateNumber: "15", dateDay: "Fri")
+            
             VStack(alignment: .leading, spacing: 10) {
                 HostSubheading(text: "About this host")
                 
