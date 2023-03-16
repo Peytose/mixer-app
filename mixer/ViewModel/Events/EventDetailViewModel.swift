@@ -17,9 +17,9 @@ final class EventDetailViewModel: ObservableObject {
 
     init(event: CachedEvent) {
         self.event = event
-        checkIfUserSavedEvent()
-        fetchEventHost()
-        getEventCoordinates()
+//        checkIfUserSavedEvent()
+//        fetchEventHost()
+//        getEventCoordinates()
     }
 
     

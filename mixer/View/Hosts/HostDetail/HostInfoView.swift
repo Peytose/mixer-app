@@ -146,8 +146,12 @@ fileprivate struct NameAndLinksRow: View {
                         if isFollowing {
                             Capsule()
                                 .stroke()
+                                .matchedGeometryEffect(id: "\(host.id)hostFollowButton", in: namespace)
+
                         } else {
                             Capsule()
+                                .matchedGeometryEffect(id: "\(host.id)hostFollowButton", in: namespace)
+
                         }
                         
                     }
@@ -195,18 +199,18 @@ fileprivate struct FriendsWhoFollowView: View {
                 Image("profile-banner-1")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 28, height: 28)
+                    .frame(width: 30, height: 30)
                     .clipShape(Circle())
                 
                 Image("mock-user-1")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 28, height: 28)
+                    .frame(width: 30, height: 30)
                     .clipShape(Circle())
                 
                 Circle()
                     .fill(Color.mixerSecondaryBackground)
-                    .frame(width: 28, height: 28)
+                    .frame(width: 30, height: 30)
                     .overlay(alignment: .center) {
                         Text("+3")
                             .foregroundColor(.white)

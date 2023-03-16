@@ -90,6 +90,7 @@
 		A6077A9229C0E5380038E1ED /* UpcomingEventCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6077A9129C0E5380038E1ED /* UpcomingEventCellView.swift */; };
 		A613C3602978C61B00C4015C /* GuestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A613C35F2978C61B00C4015C /* GuestListView.swift */; };
 		A61D12B429B42D3D00AE0EED /* HostInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61D12B329B42D3D00AE0EED /* HostInfoView.swift */; };
+		A63853B929C2933600719E5D /* EventViewTemporary.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63853B829C2933600719E5D /* EventViewTemporary.swift */; };
 		A6430446294FBDBF0058C0F0 /* CreateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430445294FBDBF0058C0F0 /* CreateEventView.swift */; };
 		A6430448294FBEC80058C0F0 /* CreateEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */; };
 		A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */; };
@@ -209,6 +210,7 @@
 		A6077A9129C0E5380038E1ED /* UpcomingEventCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingEventCellView.swift; sourceTree = "<group>"; };
 		A613C35F2978C61B00C4015C /* GuestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestListView.swift; sourceTree = "<group>"; };
 		A61D12B329B42D3D00AE0EED /* HostInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInfoView.swift; sourceTree = "<group>"; };
+		A63853B829C2933600719E5D /* EventViewTemporary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventViewTemporary.swift; sourceTree = "<group>"; };
 		A6430445294FBDBF0058C0F0 /* CreateEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventView.swift; sourceTree = "<group>"; };
 		A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventViewModel.swift; sourceTree = "<group>"; };
 		A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignCodeExtensions.swift; sourceTree = "<group>"; };
@@ -616,6 +618,7 @@
 				A6B9E6722953B549009C936E /* EventDetailView.swift */,
 				9C99EAF329A6B33600D66FEB /* EventInfoView.swift */,
 				9C99EAF729A6F12900D66FEB /* AmenityListView.swift */,
+				A63853B829C2933600719E5D /* EventViewTemporary.swift */,
 			);
 			path = EventDetail;
 			sourceTree = "<group>";
@@ -885,6 +888,7 @@
 				9C3D48372987227D00116C9E /* Timestamp+Ext.swift in Sources */,
 				9C3BADBA291F54B4009C8043 /* mixerApp.swift in Sources */,
 				9C9331B42926D4CB0079E039 /* ContinueSignUpButton.swift in Sources */,
+				A63853B929C2933600719E5D /* EventViewTemporary.swift in Sources */,
 				A6430455294FC4470058C0F0 /* UserProfileViewModel.swift in Sources */,
 				A6B9E65D29539729009C936E /* temp.swift in Sources */,
 				9C05C1C32983A21700841100 /* CustomTextField.swift in Sources */,

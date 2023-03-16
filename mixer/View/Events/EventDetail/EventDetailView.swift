@@ -36,15 +36,22 @@ struct EventDetailView: View {
                             }
                         }
                     
-                    if let host = viewModel.host {
-                        EventInfoView(event: viewModel.event,
-                                      host: host,
-                                      unsave: viewModel.unsave,
-                                      save: viewModel.save,
-                                      coordinates: viewModel.coordinates,
-                                      showAllAmenities: $showAllAmenities,
-                                      namespace: namespace)
-                    }
+//                    if let host = viewModel.host {
+//                        EventInfoView(event: viewModel.event,
+//                                      host: host,
+//                                      unsave: viewModel.unsave,
+//                                      save: viewModel.save,
+//                                      coordinates: viewModel.coordinates,
+//                                      showAllAmenities: $showAllAmenities,
+//                                      namespace: namespace)
+//                    }
+                    EventInfoView(event: CachedEvent(from: Mockdata.event),
+                                  host: CachedHost(from: Mockdata.host),
+                                  unsave: {},
+                                  save: {},
+                                  coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
+                                  showAllAmenities: .constant(false),
+                                  namespace: namespace)
                 }
                 .padding(.bottom, 180)
             }
@@ -84,5 +91,14 @@ fileprivate struct EventImageModalView: View {
                     Button { withAnimation { isShowingModal = false } } label: { XDismissButton() }
                 }
         }
+    }
+}
+
+struct EventDetailView_Previews: PreviewProvider {
+    @Namespace static var namespace
+    
+    static var previews: some View {
+        EventDetailView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), namespace: namespace)
+            .preferredColorScheme(.dark)
     }
 }
