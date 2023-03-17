@@ -51,6 +51,8 @@ enum AmenityCategory: String, CaseIterable {
 enum EventAmenities: String, Codable {
     case alcohol       = "Alcoholic Drinks"
     case nonAlcohol    = "Non-Alcoholic Drinks"
+    case beer          = "Beer"
+    case water         = "Water"
     case snacks        = "Snacks"
     case food          = "Food"
     case dj            = "DJ"
@@ -81,8 +83,8 @@ enum EventAmenities: String, Codable {
     
     var category: AmenityCategory {
         switch self {
-            case .alcohol, .nonAlcohol, .dj, .danceFloor, .drinkingGames, .rooftop, .security, .coatCheck, .bathrooms, .freeParking, .paidParking: return .keyAmenities
-            case .alcohol, .nonAlcohol, .snacks, .food: return .refreshments
+        case .beer, .dj, .danceFloor, .rooftop, .security, .coatCheck, .freeParking, .paidParking: return .keyAmenities
+        case .alcohol, .nonAlcohol, .water, .beer, .snacks, .food: return .refreshments
             case .dj, .liveMusic, .danceFloor, .karaoke, .videoGames,
                  .indoorGames, .outdoorGames, .drinkingGames: return .entertainment
             case .seating, .soundSystem, .projector, .lighting: return .furnitureEquipment
@@ -95,6 +97,8 @@ enum EventAmenities: String, Codable {
         switch self {
         case .alcohol: return "wineglass.fill"
         case .nonAlcohol: return "cup.and.saucer.fill"
+        case .beer: return "mug.fill"
+        case .water: return "drop.fill"
         case .snacks: return "carrot.fill"
         case .food: return "fork.knife"
         case .dj: return "music.note.list"

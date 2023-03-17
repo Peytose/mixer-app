@@ -26,15 +26,15 @@ struct EventDetailView: View {
         ZStack {
             ScrollView(showsIndicators: false) {
                 VStack {
-                    StretchablePhotoBanner(imageUrl: viewModel.event.eventImageUrl,
-                                           namespace: namespace)
-                        .onLongPressGesture(minimumDuration: 0.3) {
-                            let impact = UIImpactFeedbackGenerator(style: .heavy)
-                            impact.impactOccurred()
-                            withAnimation() {
-                                isShowingModal.toggle()
-                            }
-                        }
+//                    StretchablePhotoBanner(imageUrl: viewModel.event.eventImageUrl,
+//                                           namespace: namespace)
+//                        .onLongPressGesture(minimumDuration: 0.3) {
+//                            let impact = UIImpactFeedbackGenerator(style: .heavy)
+//                            impact.impactOccurred()
+//                            withAnimation() {
+//                                isShowingModal.toggle()
+//                            }
+//                        }
                     
 //                    if let host = viewModel.host {
 //                        EventInfoView(event: viewModel.event,
@@ -45,12 +45,11 @@ struct EventDetailView: View {
 //                                      showAllAmenities: $showAllAmenities,
 //                                      namespace: namespace)
 //                    }
-                    EventInfoView(event: CachedEvent(from: Mockdata.event),
+                    EventInfoView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), event: CachedEvent(from: Mockdata.event),
                                   host: CachedHost(from: Mockdata.host),
                                   unsave: {},
                                   save: {},
                                   coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
-                                  showAllAmenities: .constant(false),
                                   namespace: namespace)
                 }
                 .padding(.bottom, 180)
