@@ -40,6 +40,7 @@ enum EventType: String, Codable {
 }
 
 enum AmenityCategory: String, CaseIterable {
+    case keyAmenities       = "Key Amenities"
     case refreshments       = "Refreshments"
     case entertainment      = "Entertainment"
     case furnitureEquipment = "Furniture Equipment"
@@ -80,6 +81,7 @@ enum EventAmenities: String, Codable {
     
     var category: AmenityCategory {
         switch self {
+            case .alcohol, .nonAlcohol, .dj, .danceFloor, .drinkingGames, .rooftop, .security, .coatCheck, .bathrooms, .freeParking, .paidParking: return .keyAmenities
             case .alcohol, .nonAlcohol, .snacks, .food: return .refreshments
             case .dj, .liveMusic, .danceFloor, .karaoke, .videoGames,
                  .indoorGames, .outdoorGames, .drinkingGames: return .entertainment

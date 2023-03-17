@@ -33,7 +33,7 @@ struct Mockdata {
                      type: EventType.party,
                      isInviteOnly: false,
                      isFull: true,
-                     amenities: [EventAmenities.snacks, EventAmenities.alcohol, EventAmenities.outdoorSpace, EventAmenities.soundSystem, EventAmenities.security, EventAmenities.smokingArea, EventAmenities.food, EventAmenities.bathrooms, EventAmenities.nonAlcohol, EventAmenities.firePit, EventAmenities.rooftop, EventAmenities.danceFloor, EventAmenities.dj, EventAmenities.lighting, EventAmenities.drinkingGames],
+                     amenities: [EventAmenities.alcohol, EventAmenities.soundSystem, EventAmenities.smokingArea, EventAmenities.bathrooms, EventAmenities.nonAlcohol, EventAmenities.rooftop, EventAmenities.danceFloor, EventAmenities.dj, EventAmenities.drinkingGames],
                      tags: ["example", "test"],
                      ageLimit: 21,
                      capacity: 250,

@@ -23,7 +23,9 @@ struct EventView: View {
     let unsave: () -> Void
     let save: () -> Void
     let coordinates: CLLocationCoordinate2D?
-    @Binding var showAllAmenities: Bool
+//    @Binding var showAllAmenities: Bool
+    @State private var showAllAmenities = false
+
     var namespace: Namespace.ID
 
     let link = URL(string: "https://mixer.llc")!
@@ -434,45 +436,209 @@ struct EventView: View {
 //            Text("Amenities")
 //                .font(.title).bold()
 //                .padding(.bottom, -14)
-            
-            VStack(alignment: .leading) {
-                Text("What this event offers")
-                    .font(.title2)
-                    .bold()
-                
-                ForEach(event.amenities.shuffled().prefix(upTo: 4), id: \.self) { amenity in
+            ScrollView {
+                VStack(alignment: .leading) {
+                    Text("What this event offers")
+                        .font(.title2)
+                        .bold()
+                    
+                    ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
+                        if let amenitiesInCategory = event.amenities.filter({ $0.category == category }), !amenitiesInCategory.isEmpty {
+                            Section(header: Text(category.rawValue)) {
+                                ForEach(amenitiesInCategory, id: \.self) { amenity in
+                                    HStack {
+                                        Image(systemName: amenity.icon)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 15, height: 15)
+                                        
+                                        Text(amenity.rawValue)
+                                            .font(.body)
+                                            .foregroundColor(.secondary)
+                                        
+                                        Spacer()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
                     HStack {
-                        Image(systemName: amenity.icon)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 15, height: 15)
+                        Spacer()
                         
-                        Text(amenity.rawValue)
-                            .font(.body)
-                            .foregroundColor(.secondary)
+                        Button {
+                            withAnimation() {
+                                showAllAmenities.toggle()
+                            }
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 10)
+                                    .foregroundColor(.DesignCodeWhite)
+                                    .frame(width: 350, height: 45)
+                                
+                                Text(showAllAmenities ? "Show less" : "Show all \(event.amenities.count) amenities")
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.black)
+                            }
+                        }
                         
                         Spacer()
                     }
-                }
-                
-                HStack {
-                    Spacer()
                     
-                    Button { showAllAmenities = true } label: {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 10)
-                                .foregroundColor(.DesignCodeWhite)
-                                .frame(width: 350, height: 45)
-                            
-                            Text("Show all \(event.amenities.count) amenities")
-                                .font(.body)
-                                .fontWeight(.medium)
-                                .foregroundColor(.black)
-                        }
-                    }
                     Spacer()
                 }
             }
+
+//            ScrollView {
+//                VStack(alignment: .leading) {
+//                    Text("What this event offers")
+//                        .font(.title2)
+//                        .bold()
+//
+//                    ForEach(AmenityCategory.allCases, id: \.self) { category in
+//                        Section(header: Text(category.rawValue)) {
+//                            ForEach(event.amenities.filter { $0.category == category }.prefix(showAllAmenities ? event.amenities.count : 3), id: \.self) { amenity in
+//                                HStack {
+//                                    Image(systemName: amenity.icon)
+//                                        .resizable()
+//                                        .scaledToFill()
+//                                        .frame(width: 15, height: 15)
+//
+//                                    Text(amenity.rawValue)
+//                                        .font(.body)
+//                                        .foregroundColor(.secondary)
+//
+//                                    Spacer()
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    HStack {
+//                        Spacer()
+//
+//                        Button {
+//                            withAnimation() {
+//                                showAllAmenities.toggle()
+//                            }
+//
+//                        } label: {
+//                            ZStack {
+//                                RoundedRectangle(cornerRadius: 10)
+//                                    .foregroundColor(.DesignCodeWhite)
+//                                    .frame(width: 350, height: 45)
+//
+//                                Text(showAllAmenities ? "Show less" : "Show all \(event.amenities.count) amenities")
+//                                    .font(.body)
+//                                    .fontWeight(.medium)
+//                                    .foregroundColor(.black)
+//                            }
+//                        }
+//                        Spacer()
+//                    }
+//                    Spacer()
+//                }
+//            }
+
+//            ScrollView {
+//                VStack(alignment: .leading) {
+//                    Text("What this event offers")
+//                        .font(.title2)
+//                        .bold()
+//
+//
+//                    ForEach(event.amenities.prefix(showAllAmenities ? event.amenities.count : 4), id: \.self) { amenity in
+//                        HStack {
+//                            Image(systemName: amenity.icon)
+//                                .resizable()
+//                                .scaledToFill()
+//                                .frame(width: 15, height: 15)
+//
+//                            Text(amenity.rawValue)
+//                                .font(.body)
+//                                .foregroundColor(.secondary)
+//
+//                            Spacer()
+//                        }
+//                    }
+//
+//                    HStack {
+//                        Spacer()
+//
+//                        Button {
+//                            withAnimation() {
+//                                showAllAmenities.toggle()
+//                            }
+//
+//                        } label: {
+//                            ZStack {
+//                                RoundedRectangle(cornerRadius: 10)
+//                                    .foregroundColor(.DesignCodeWhite)
+//                                    .frame(width: 350, height: 45)
+//
+//                                Text("Show all \(event.amenities.count) amenities")
+//                                    .font(.body)
+//                                    .fontWeight(.medium)
+//                                    .foregroundColor(.black)
+//                            }
+//                        }
+//                        Spacer()
+//                    }
+//                    Spacer()
+//                }
+//            }
+//            ScrollView {
+//                VStack(alignment: .leading) {
+//                    Text("What this event offers")
+//                        .font(.title2)
+//                        .bold()
+//
+//                    ForEach(AmenityCategory.allCases, id: \.self) { category in
+//                        Section(header: Text(category.rawValue)) {
+//                            ForEach(event.amenities.filter { $0.category == category }, id: \.self) { amenity in
+//                                HStack {
+//                                    Image(systemName: amenity.icon)
+//                                        .resizable()
+//                                        .scaledToFill()
+//                                        .frame(width: 15, height: 15)
+//
+//                                    Text(amenity.rawValue)
+//                                        .font(.body)
+//                                        .foregroundColor(.secondary)
+//
+//                                    Spacer()
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    HStack {
+//                        Spacer()
+//
+//                        Button {
+//                            withAnimation() {
+//                                showAllAmenities.toggle()
+//                            }
+//
+//                        } label: {
+//                            ZStack {
+//                                RoundedRectangle(cornerRadius: 10)
+//                                    .foregroundColor(.DesignCodeWhite)
+//                                    .frame(width: 350, height: 45)
+//
+//                                Text("Show all \(event.amenities.count) amenities")
+//                                    .font(.body)
+//                                    .fontWeight(.medium)
+//                                    .foregroundColor(.black)
+//                            }
+//                        }
+//                        Spacer()
+//                    }
+//                    Spacer()
+//                }
+//            }
+
         }
     }
     
@@ -500,7 +666,6 @@ struct EventView_Previews: PreviewProvider {
                   unsave: {},
                   save: {},
                   coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
-                  showAllAmenities: .constant(false),
                   namespace: namespace)
             .preferredColorScheme(.dark)
     }
