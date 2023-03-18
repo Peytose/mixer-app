@@ -45,12 +45,12 @@ struct EventDetailView: View {
 //                                      showAllAmenities: $showAllAmenities,
 //                                      namespace: namespace)
 //                    }
-                    EventInfoView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), event: CachedEvent(from: Mockdata.event),
-                                  host: CachedHost(from: Mockdata.host),
-                                  unsave: {},
-                                  save: {},
-                                  coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
-                                  namespace: namespace)
+//                    EventInfoView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), event: CachedEvent(from: Mockdata.event),
+//                                  host: CachedHost(from: Mockdata.host),
+//                                  unsave: {},
+//                                  save: {},
+//                                  coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
+//                                  namespace: namespace)
                 }
                 .padding(.bottom, 180)
             }
