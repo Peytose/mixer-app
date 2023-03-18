@@ -37,7 +37,8 @@ class AuthViewModel: ObservableObject {
     static let shared = AuthViewModel()
     
     enum Screen: Int, CaseIterable {
-        case nameAndPhone
+        case name
+        case phone
         case code
         case email
         case picAndBio

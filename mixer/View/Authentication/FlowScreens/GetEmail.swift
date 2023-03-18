@@ -16,8 +16,9 @@ struct GetEmail: View {
     
     var body: some View {
         VStack {
-            SignUpTextField(input: $email,
-                            title: "Ok \(name), please enter and verify your email",
+            SignUpTextField2(input: $email,
+                            title: "What's your email?",
+                            note: "Don't lose access to your account, verify your email",
                             placeholder: "you@school.edu",
                             footnote: "For safety reasons, mixer is only available to college students at this time.",
                             keyboard: .emailAddress)

@@ -1,31 +1,25 @@
 //
-//  GetNameAndPhoneView.swift
+//  GetPhoneView.swift
 //  mixer
 //
-//  Created by Peyton Lyons on 2/25/23.
+//  Created by Jose Martinez on 3/18/23.
 //
 
 import SwiftUI
 import iPhoneNumberField
 
-struct GetNameAndPhoneView: View {
-    @Binding var name: String
+struct GetPhoneView: View {
     @Binding var phoneNumber: String
     @Binding var countryCode: String
     @State private var disableButton = false
     let action: () -> Void
     
     var body: some View {
-        VStack(spacing: 50) {
-            SignUpTextField(input: $name,
-                            title: "Hey, let's start with your name!",
-                            placeholder: "your name",
-                            keyboard: .default)
-            
-            Divider().padding(.horizontal)
-            
-            PhoneNumberTextField(title: "And what's your number?",
-                                 footnote: "We will send a text with a verification code. Message and data rates apply.",
+        VStack {            
+            PhoneNumberTextField(title: "Verify your phone number with a code",
+                                 footnote: "Message and data rates apply.",
+                                 note: "We'll send you a code, it helps us keep your account secure.",
+                                 textfieldHeader: "Your phone number",
                                  keyboard: .phonePad,
                                  input: $phoneNumber,
                                  countryCode: $countryCode)
@@ -40,65 +34,84 @@ struct GetNameAndPhoneView: View {
                     disableButton = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
                 }
-                .disabled(name.isEmpty || phoneNumber.isEmpty)
-                .opacity(name.isEmpty || phoneNumber.isEmpty ? 0.2 : 0.85)
+                .disabled(phoneNumber.isEmpty)
+                .opacity(phoneNumber.isEmpty ? 0.2 : 0.85)
                 .padding(.bottom, 30)
         }
     }
 }
-
-struct GetNameAndPhoneView_Previews: PreviewProvider {
+struct GetPhoneView_Previews: PreviewProvider {
     static var previews: some View {
-        GetNameAndPhoneView(name: .constant(""),
-                            phoneNumber: .constant(""),
-                            countryCode: .constant(""),
-                            action: {  })
+        GetPhoneView(phoneNumber: .constant(""),
+                     countryCode: .constant(""),
+                     action: {  })
         .preferredColorScheme(.dark)
     }
 }
 
-
 fileprivate struct PhoneNumberTextField: View {
     let title: String
     let footnote: String
+    let note: String
+    let textfieldHeader: String
     let keyboard: UIKeyboardType
     @Binding var input: String
     @Binding var countryCode: String
+    @State var isEditing = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 7) {
+        VStack(alignment: .leading, spacing: 10) {
+            
             Text(title)
+                .font(.largeTitle)
                 .foregroundColor(.mainFont)
-                .font(.title)
                 .fontWeight(.semibold)
                 .lineLimit(2)
                 .minimumScaleFactor(0.75)
-                .padding(.bottom, 5)
+                .padding(.bottom, 10)
+
+            Text(note)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .padding(.bottom)
+                .padding(.top, -6)
+
+            Text(textfieldHeader)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
             
-            iPhoneNumberField(text: $input) {
+            iPhoneNumberField(text: $input, isEditing: $isEditing) {
                 if let code = $0.phoneNumber?.countryCode {
                     DispatchQueue.main.async {
                         countryCode = "+\(code)"
                     }
                 }
-            }
+                if isEditing {
+                    withAnimation(.easeIn(duration: 0.02)) {
+                        isEditing = true
+                    }
+                } else {
+                    withAnimation(.easeIn(duration: 0.02)) {
+                        isEditing = false
+                    }
+                }            }
                 .flagHidden(false)
                 .flagSelectable(true)
                 .prefixHidden(false)
                 .formatted()
                 .foregroundColor(Color.mainFont)
-                .font(.title2)
+                .font(.title3)
                 .tint(Color.mixerIndigo)
-                .padding(.bottom, -5)
-            
-            Rectangle()
-                .frame(height: 1)
-                .foregroundColor(.gray)
+                .padding(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(lineWidth: isEditing ? 3 : 1)
+                }
             
             Text(footnote)
                 .foregroundColor(.secondary)
                 .font(.footnote)
         }
-        .frame(width: DeviceTypes.ScreenSize.width / 1.2)
+        .frame(width: DeviceTypes.ScreenSize.width * 0.9)
     }
 }

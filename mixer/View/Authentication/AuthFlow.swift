@@ -17,13 +17,14 @@ struct AuthFlow: View {
             Color.mixerBackground.ignoresSafeArea()
             
             TabView(selection: $viewModel.active) {
-                GetNameAndPhoneView(name: $viewModel.name,
-                                    phoneNumber: $viewModel.phoneNumber,
-                                    countryCode: $viewModel.countryCode,
-                                    action: viewModel.sendPhoneVerification)
-                    .tag(AuthViewModel.Screen.nameAndPhone)
+                GetNameView(name: $viewModel.name) { viewModel.next() }
+                    .tag(AuthViewModel.Screen.name)
                 
-                GetCode(code: $viewModel.code) { viewModel.verifyPhoneNumber() }
+                GetPhoneView(phoneNumber: $viewModel.phoneNumber, countryCode: $viewModel.countryCode, action: viewModel.sendPhoneVerification)
+                    .tag(AuthViewModel.Screen.phone)
+
+                GetCode(phoneNumber: viewModel.phoneNumber,
+                        code: $viewModel.code) { viewModel.verifyPhoneNumber() }
                     .tag(AuthViewModel.Screen.code)
                 
                 GetEmail(name: viewModel.name,
@@ -45,8 +46,9 @@ struct AuthFlow: View {
             }
             .animation(.easeInOut, value: viewModel.active)
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .padding(.top, 70)
+            .padding(.top, 40)
         }
+        
         .overlay(alignment: .top) {
             HStack(alignment: .center) {
                 if showArrow {
@@ -58,20 +60,13 @@ struct AuthFlow: View {
                     }
                     .frame(width: 50)
                 }
-                
-                Spacer()
-                
-                Image("mixer-icon-white")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 50)
-                
+                                                
                 Spacer()
                 
                 ProgressView(value: Double(viewModel.active.rawValue) / 6.0)
                     .frame(width: 50)
             }
-            .padding(.horizontal, 5)
+            .padding(.horizontal, 4)
         }
         .animation(.easeInOut, value: showArrow)
         .onAppear { UIScrollView.appearance().isScrollEnabled = false }
@@ -79,6 +74,9 @@ struct AuthFlow: View {
         .onChange(of: viewModel.active) { newValue in
             showArrow = newValue == AuthViewModel.Screen.allCases.first ? false : true
         }
+        .onTapGesture {
+                  self.hideKeyboard()
+                }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .onOpenURL { url in viewModel.handleEmailLink(url) }
     }
