@@ -110,6 +110,7 @@ struct SignUpTextField2: View {
                 .background {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(lineWidth: isEditing ? 3 : 1)
+                        .foregroundColor(Color.mixerIndigo)
                 }
             
             if let footnote = footnote {

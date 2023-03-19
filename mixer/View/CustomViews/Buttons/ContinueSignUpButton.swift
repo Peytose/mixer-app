@@ -14,14 +14,14 @@ struct ContinueSignUpButton: View {
     var body: some View {
         Button(action: action) {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(Color.DesignCodeWhite)
+                .fill(Color.mixerIndigo)
                 .frame(width: 250, height: 50)
                 .shadow(radius: 20, x: -8, y: -8)
                 .shadow(radius: 20, x: 8, y: 8)
                 .overlay {
                     Text(text)
-                        .font(.title2.weight(.semibold))
-                        .foregroundColor(.black)
+                        .font(.title3.weight(.medium))
+                        .foregroundColor(.white)
                 }
         }
     }
