@@ -106,6 +106,7 @@ fileprivate struct PhoneNumberTextField: View {
                 .background {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(lineWidth: isEditing ? 3 : 1)
+                        .foregroundColor(Color.mixerIndigo)
                 }
             
             Text(footnote)

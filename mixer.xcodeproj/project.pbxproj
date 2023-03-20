@@ -91,6 +91,9 @@
 		A613C3602978C61B00C4015C /* GuestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A613C35F2978C61B00C4015C /* GuestListView.swift */; };
 		A61D12B429B42D3D00AE0EED /* HostInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61D12B329B42D3D00AE0EED /* HostInfoView.swift */; };
 		A62BE19829C66ABA0052D34F /* Keyboard+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19729C66ABA0052D34F /* Keyboard+Ext.swift */; };
+		A62BE19B29C8221C0052D34F /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19A29C8221C0052D34F /* Card.swift */; };
+		A62BE19D29C8231A0052D34F /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19C29C8231A0052D34F /* CardView.swift */; };
+		A62BE19F29C8258F0052D34F /* LandingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19E29C8258F0052D34F /* LandingPageView.swift */; };
 		A6430446294FBDBF0058C0F0 /* CreateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430445294FBDBF0058C0F0 /* CreateEventView.swift */; };
 		A6430448294FBEC80058C0F0 /* CreateEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */; };
 		A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */; };
@@ -212,6 +215,9 @@
 		A613C35F2978C61B00C4015C /* GuestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestListView.swift; sourceTree = "<group>"; };
 		A61D12B329B42D3D00AE0EED /* HostInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInfoView.swift; sourceTree = "<group>"; };
 		A62BE19729C66ABA0052D34F /* Keyboard+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Keyboard+Ext.swift"; sourceTree = "<group>"; };
+		A62BE19A29C8221C0052D34F /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		A62BE19C29C8231A0052D34F /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
+		A62BE19E29C8258F0052D34F /* LandingPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandingPageView.swift; sourceTree = "<group>"; };
 		A6430445294FBDBF0058C0F0 /* CreateEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventView.swift; sourceTree = "<group>"; };
 		A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventViewModel.swift; sourceTree = "<group>"; };
 		A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignCodeExtensions.swift; sourceTree = "<group>"; };
@@ -547,6 +553,7 @@
 				9C93319E2925B0390079E039 /* AuthFlow.swift */,
 				9C05C1BC2983A1E100841100 /* LoginView.swift */,
 				9C05C1BD2983A1E100841100 /* RegistrationView.swift */,
+				A62BE19929C821F60052D34F /* LandingPage */,
 				9C9331A32925B7540079E039 /* FlowScreens */,
 			);
 			path = Authentication;
@@ -633,6 +640,16 @@
 				A61D12B329B42D3D00AE0EED /* HostInfoView.swift */,
 			);
 			path = HostDetail;
+			sourceTree = "<group>";
+		};
+		A62BE19929C821F60052D34F /* LandingPage */ = {
+			isa = PBXGroup;
+			children = (
+				A62BE19A29C8221C0052D34F /* Card.swift */,
+				A62BE19C29C8231A0052D34F /* CardView.swift */,
+				A62BE19E29C8258F0052D34F /* LandingPageView.swift */,
+			);
+			path = LandingPage;
 			sourceTree = "<group>";
 		};
 		A6430444294FBDA00058C0F0 /* Create Event View */ = {
@@ -869,6 +886,7 @@
 				9C4B0E44298241AE00A9D963 /* GuestListViewModel.swift in Sources */,
 				9C567AA02934FCFF00EA5FCB /* GetUsername.swift in Sources */,
 				9C05C1C52983A72000841100 /* ExploreViewModel.swift in Sources */,
+				A62BE19F29C8258F0052D34F /* LandingPageView.swift in Sources */,
 				A643045B294FC72F0058C0F0 /* Model.swift in Sources */,
 				9C99EAF829A6F12900D66FEB /* AmenityListView.swift in Sources */,
 				9C9331B729272D7F0079E039 /* GetEmail.swift in Sources */,
@@ -895,6 +913,7 @@
 				A6430455294FC4470058C0F0 /* UserProfileViewModel.swift in Sources */,
 				A6B9E65D29539729009C936E /* temp.swift in Sources */,
 				9C05C1C32983A21700841100 /* CustomTextField.swift in Sources */,
+				A62BE19D29C8231A0052D34F /* CardView.swift in Sources */,
 				9C2B898B299D8C200011FC56 /* UserCache.swift in Sources */,
 				9C3D48352987019600116C9E /* Float+Ext.swift in Sources */,
 				A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */,
@@ -903,6 +922,7 @@
 				A6B9E6782953B8A3009C936E /* MapSnapshotView.swift in Sources */,
 				A6B9E65929518AB2009C936E /* CustomStickyHeader.swift in Sources */,
 				9C3BADD7291F55D1009C8043 /* Constants.swift in Sources */,
+				A62BE19B29C8221C0052D34F /* Card.swift in Sources */,
 				9C4B0E352982417000A9D963 /* WaitlistViewModel.swift in Sources */,
 				9C2B8982299377E70011FC56 /* CachedEvent.swift in Sources */,
 				A6B9E690295464A8009C936E /* EventLocationView.swift in Sources */,
