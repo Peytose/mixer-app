@@ -15,8 +15,8 @@ struct CardView: View {
             Image(card.image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 320, height: 320)
-                .offset(y: -50)
+                .frame(width: 300, height: 300)
+                .offset(y: -40)
             
             VStack {
                 Rectangle()

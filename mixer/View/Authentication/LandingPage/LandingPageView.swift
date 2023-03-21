@@ -49,7 +49,7 @@ struct LandingPageView: View {
                     ForEach(0..<testData.count){
                         index in CardView(card : testData[index]).tag(index)
                     }
-                    .offset(y: -15)
+                    .offset(y: 0)
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                 }
