@@ -18,7 +18,7 @@ struct Card: Identifiable {
 var testData:[Card] = [
 // Card( image: "blank",title: "Trying to join Netflix", description: "You can't sign up for Netflix in the app. We know it's a hassle."),
 
- Card(image: "LandingPage-Image-1", title: "One notification every day"),
+ Card(image: "landingPage-image-1-blur-4", title: "One notification every day"),
  
  Card( image: "screen2",title: "Within 2 minutes, capture & share what you're doing"),
  

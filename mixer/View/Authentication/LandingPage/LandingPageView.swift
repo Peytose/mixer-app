@@ -27,14 +27,14 @@ struct LandingPageView: View {
             
             if (selectedPage == 0)
             {
-                Image("landingpage-background-1")
+                Image("")
                     .resizable()
                     .opacity(0.8)
                     .edgesIgnoringSafeArea(.all)
                 
-                Image("gradient")
-                    .resizable()
-                    .edgesIgnoringSafeArea(.all)
+//                Image("gradient")
+//                    .resizable()
+//                    .edgesIgnoringSafeArea(.all)
                    
             }
             
