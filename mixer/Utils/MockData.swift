@@ -26,7 +26,7 @@ struct Mockdata {
                      hostUsername: "mitthetachi",
                      title: "Neon Party",
                      description: "This is an example description!!",
-                     eventImageUrl: "https://www.instagram.com/p/B3zxvY7H3Yf/media?size=l",
+                     eventImageUrl: "https://www.instagram.com/p/CqBwaJ3gcyU/media?size=l",
                      startDate: Timestamp(date: Date()),
                      endDate: Timestamp(date: Date()),
                      address: "528 Beacon St, Boston, MA 02215",

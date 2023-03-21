@@ -11,33 +11,35 @@ struct CardView: View {
     var card : Card
     
     var body: some View {
-        VStack {
+        ZStack {
             Image(card.image)
                 .resizable()
-                .frame(width: 400, height: 400)
+                .scaledToFill()
+                .frame(width: 200, height: 200)
             
-            Text(card.title)
-                .font(.system(size: 40))
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-               
-            
-            Text(card.description)
-                .fontWeight(.light)
-                .multilineTextAlignment(.center)
-                .font(.system(size: 22))
-                .foregroundColor(.white)
-                .frame(width: 335, height: 100)
-                .padding(5)
-        
+            VStack {
+                Rectangle()
+                    .fill(Color.clear)
+                    .frame(width: 400, height: 400)
+
+                    .mask(Color.profileGradient) // mask the blurred image using the gradient's alpha values
+
+                
+                Text(card.title)
+                    .font(.system(size: 40).weight(.bold))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+            }
+            .padding()
         }
-        .padding()
-        .offset(x: 0, y: 0)
+        
+        
     }
 }
 
 struct CardView_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(card: testData[1])
+        CardView(card: testData[0])
+            .preferredColorScheme(.dark)
     }
 }

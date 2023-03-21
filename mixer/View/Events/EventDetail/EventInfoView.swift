@@ -47,9 +47,9 @@ struct EventInfoView: View {
         }
         .preferredColorScheme(.dark)
         .ignoresSafeArea()
-        .overlay {
-            closeButton
-        }
+//        .overlay {
+//            closeButton
+//        }
         .sheet(isPresented: $showHost) {
             HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
         }

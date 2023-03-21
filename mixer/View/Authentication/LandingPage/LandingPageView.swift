@@ -27,7 +27,7 @@ struct LandingPageView: View {
             
             if (selectedPage == 0)
             {
-                Image("screen")
+                Image("landingpage-background-1")
                     .resizable()
                     .opacity(0.8)
                     .edgesIgnoringSafeArea(.all)
@@ -40,7 +40,7 @@ struct LandingPageView: View {
             
             
             
-            VStack{
+            VStack {
           
                 
                 ZStack{
@@ -49,25 +49,27 @@ struct LandingPageView: View {
                     ForEach(0..<testData.count){
                         index in CardView(card : testData[index]).tag(index)
                     }
+                    .offset(y: -15)
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
-                }.offset(x: 0, y: 20)
+                }
+                .offset(y: -10)
                 
              
                 
-                ZStack{
-                    RoundedRectangle(cornerRadius: 10)
-                        .frame(width: 380, height: 75)
-                        .foregroundColor(Color("buttonbg"))
-                        .padding(20)
-                    
-                    Text("SIGN IN")
-                        .fontWeight(.regular)
-                        .font(.system(size: 26))
-                        .foregroundColor(.white)
-                        .shadow(color: .gray, radius: 1, x: 1, y: 1)
-                        
-                }
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(lineWidth: 2)
+                    .fill(Color.white.opacity(0.4))
+                    .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 50)
+                    .shadow(radius: 20, x: -8, y: -8)
+                    .shadow(radius: 20, x: 8, y: 8)
+                    .overlay {
+                        Text("Continue")
+                            .font(.body.weight(.medium))
+                            .foregroundColor(.white)
+                    }
+                    .offset(y: -20)
+
             }
             
             if (selectedPage == 1){

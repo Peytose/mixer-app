@@ -20,7 +20,7 @@ struct ContinueSignUpButton: View {
                 .shadow(radius: 20, x: 8, y: 8)
                 .overlay {
                     Text(text)
-                        .font(.title3.weight(.medium))
+                        .font(.body.weight(.medium))
                         .foregroundColor(.white)
                 }
         }
