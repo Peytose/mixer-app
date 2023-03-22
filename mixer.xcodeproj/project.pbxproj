@@ -91,9 +91,13 @@
 		A613C3602978C61B00C4015C /* GuestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A613C35F2978C61B00C4015C /* GuestListView.swift */; };
 		A61D12B429B42D3D00AE0EED /* HostInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61D12B329B42D3D00AE0EED /* HostInfoView.swift */; };
 		A62BE19829C66ABA0052D34F /* Keyboard+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19729C66ABA0052D34F /* Keyboard+Ext.swift */; };
-		A62BE19B29C8221C0052D34F /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19A29C8221C0052D34F /* Card.swift */; };
+		A62BE19B29C8221C0052D34F /* LaunchScreenCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19A29C8221C0052D34F /* LaunchScreenCard.swift */; };
 		A62BE19D29C8231A0052D34F /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19C29C8231A0052D34F /* CardView.swift */; };
 		A62BE19F29C8258F0052D34F /* LandingPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE19E29C8258F0052D34F /* LandingPageView.swift */; };
+		A62BE1A229CA4EFC0052D34F /* QRCodeBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A129CA4EFC0052D34F /* QRCodeBoxView.swift */; };
+		A62BE1A429CA4F250052D34F /* QRCodeRoundedCornerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A329CA4F250052D34F /* QRCodeRoundedCornerView.swift */; };
+		A62BE1A629CA4FCA0052D34F /* UIScreen+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */; };
+		A62BE1A829CA501F0052D34F /* QRCodeAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */; };
 		A6430446294FBDBF0058C0F0 /* CreateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430445294FBDBF0058C0F0 /* CreateEventView.swift */; };
 		A6430448294FBEC80058C0F0 /* CreateEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */; };
 		A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */; };
@@ -215,9 +219,13 @@
 		A613C35F2978C61B00C4015C /* GuestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestListView.swift; sourceTree = "<group>"; };
 		A61D12B329B42D3D00AE0EED /* HostInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInfoView.swift; sourceTree = "<group>"; };
 		A62BE19729C66ABA0052D34F /* Keyboard+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Keyboard+Ext.swift"; sourceTree = "<group>"; };
-		A62BE19A29C8221C0052D34F /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		A62BE19A29C8221C0052D34F /* LaunchScreenCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenCard.swift; sourceTree = "<group>"; };
 		A62BE19C29C8231A0052D34F /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		A62BE19E29C8258F0052D34F /* LandingPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LandingPageView.swift; sourceTree = "<group>"; };
+		A62BE1A129CA4EFC0052D34F /* QRCodeBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeBoxView.swift; sourceTree = "<group>"; };
+		A62BE1A329CA4F250052D34F /* QRCodeRoundedCornerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeRoundedCornerView.swift; sourceTree = "<group>"; };
+		A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScreen+Ext.swift"; sourceTree = "<group>"; };
+		A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeAnimationView.swift; sourceTree = "<group>"; };
 		A6430445294FBDBF0058C0F0 /* CreateEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventView.swift; sourceTree = "<group>"; };
 		A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventViewModel.swift; sourceTree = "<group>"; };
 		A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignCodeExtensions.swift; sourceTree = "<group>"; };
@@ -434,6 +442,7 @@
 				9C3D48362987227D00116C9E /* Timestamp+Ext.swift */,
 				9C2B8985299C55450011FC56 /* Array+Ext.swift */,
 				A62BE19729C66ABA0052D34F /* Keyboard+Ext.swift */,
+				A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -457,6 +466,8 @@
 				9C2B898E29A179A20011FC56 /* LoadingView.swift */,
 				9C2B899029A2DB2C0011FC56 /* QRCodeView.swift */,
 				A6B9E6752953B6DA009C936E /* LogoView.swift */,
+				A62BE1A129CA4EFC0052D34F /* QRCodeBoxView.swift */,
+				A62BE1A329CA4F250052D34F /* QRCodeRoundedCornerView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -553,7 +564,8 @@
 				9C93319E2925B0390079E039 /* AuthFlow.swift */,
 				9C05C1BC2983A1E100841100 /* LoginView.swift */,
 				9C05C1BD2983A1E100841100 /* RegistrationView.swift */,
-				A62BE19929C821F60052D34F /* LandingPage */,
+				A62BE19929C821F60052D34F /* LaunchScreen */,
+				A62BE1A029CA4E820052D34F /* QRCodeAnimation */,
 				9C9331A32925B7540079E039 /* FlowScreens */,
 			);
 			path = Authentication;
@@ -642,14 +654,22 @@
 			path = HostDetail;
 			sourceTree = "<group>";
 		};
-		A62BE19929C821F60052D34F /* LandingPage */ = {
+		A62BE19929C821F60052D34F /* LaunchScreen */ = {
 			isa = PBXGroup;
 			children = (
-				A62BE19A29C8221C0052D34F /* Card.swift */,
+				A62BE19A29C8221C0052D34F /* LaunchScreenCard.swift */,
 				A62BE19C29C8231A0052D34F /* CardView.swift */,
 				A62BE19E29C8258F0052D34F /* LandingPageView.swift */,
 			);
-			path = LandingPage;
+			path = LaunchScreen;
+			sourceTree = "<group>";
+		};
+		A62BE1A029CA4E820052D34F /* QRCodeAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */,
+			);
+			path = QRCodeAnimation;
 			sourceTree = "<group>";
 		};
 		A6430444294FBDA00058C0F0 /* Create Event View */ = {
@@ -872,6 +892,7 @@
 				9C4B0E322982410600A9D963 /* Feedback.swift in Sources */,
 				9C4B0E45298241AE00A9D963 /* CheckInViewModel.swift in Sources */,
 				9C9331AB2925D2ED0079E039 /* Color+Ext.swift in Sources */,
+				A62BE1A429CA4F250052D34F /* QRCodeRoundedCornerView.swift in Sources */,
 				9C93319D29255D8D0079E039 /* AlertItem.swift in Sources */,
 				9C567A98292FFF1800EA5FCB /* String+Ext.swift in Sources */,
 				A6B9E67A2953B95E009C936E /* Animation+Ext.swift in Sources */,
@@ -897,6 +918,7 @@
 				9C99EAE729A56EB700D66FEB /* ImageUploader.swift in Sources */,
 				9C9331BC292739700079E039 /* GetCode.swift in Sources */,
 				A6BAEF63295D40D700410DED /* SocialPageNavigationBar.swift in Sources */,
+				A62BE1A829CA501F0052D34F /* QRCodeAnimationView.swift in Sources */,
 				A682CC562970915B008EA546 /* DetailRowView.swift in Sources */,
 				9C3BADBC291F54B4009C8043 /* ContentView.swift in Sources */,
 				A6B9E6692953A889009C936E /* MapClusterView.swift in Sources */,
@@ -922,7 +944,7 @@
 				A6B9E6782953B8A3009C936E /* MapSnapshotView.swift in Sources */,
 				A6B9E65929518AB2009C936E /* CustomStickyHeader.swift in Sources */,
 				9C3BADD7291F55D1009C8043 /* Constants.swift in Sources */,
-				A62BE19B29C8221C0052D34F /* Card.swift in Sources */,
+				A62BE19B29C8221C0052D34F /* LaunchScreenCard.swift in Sources */,
 				9C4B0E352982417000A9D963 /* WaitlistViewModel.swift in Sources */,
 				9C2B8982299377E70011FC56 /* CachedEvent.swift in Sources */,
 				A6B9E690295464A8009C936E /* EventLocationView.swift in Sources */,
@@ -931,8 +953,10 @@
 				A68971CD296E7E5D00289516 /* CustomTabBarStyle.swift in Sources */,
 				9C4B0E3E2982419F00A9D963 /* HostDetailViewModel.swift in Sources */,
 				9C05C1BF2983A1E100841100 /* RegistrationView.swift in Sources */,
+				A62BE1A229CA4EFC0052D34F /* QRCodeBoxView.swift in Sources */,
 				A6430459294FC6D00058C0F0 /* NavigationBar.swift in Sources */,
 				A6CD2C84297B201C00AA0B98 /* PlaceHolderColorModifier.swift in Sources */,
+				A62BE1A629CA4FCA0052D34F /* UIScreen+Ext.swift in Sources */,
 				A61D12B429B42D3D00AE0EED /* HostInfoView.swift in Sources */,
 				9C93319429203D8B0079E039 /* Notification.swift in Sources */,
 				9C2B898429947EAF0011FC56 /* HostMapAnnotation.swift in Sources */,

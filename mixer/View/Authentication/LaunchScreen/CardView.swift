@@ -7,40 +7,35 @@
 
 import SwiftUI
 
-struct CardView: View {
-    var card : Card
+struct LaunchScreenCardView: View {
+    var screen : LaunchScreenCard
     
     var body: some View {
         ZStack {
-            Image(card.image)
+            Image(screen.image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 300, height: 300)
-                .offset(y: -40)
+                .frame(width: 260, height: 260)
+                .offset(y: -10)
             
             VStack {
-                Rectangle()
-                    .fill(Color.clear)
-                    .frame(width: 400, height: 400)
-
-                    .mask(Color.profileGradient) // mask the blurred image using the gradient's alpha values
-
+                Spacer()
                 
-                Text(card.title)
+                Text(screen.title)
                     .font(.system(size: 40).weight(.bold))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
+                    .frame(width: 370, height: 100, alignment: .center)
             }
             .padding()
+            .padding(.bottom, 50)
         }
-        
-        
     }
 }
 
-struct CardView_Previews: PreviewProvider {
+struct LaunchScreenCardView_Previews: PreviewProvider {
     static var previews: some View {
-        CardView(card: testData[0])
+        LaunchScreenCardView(screen: screens[2])
             .preferredColorScheme(.dark)
     }
 }

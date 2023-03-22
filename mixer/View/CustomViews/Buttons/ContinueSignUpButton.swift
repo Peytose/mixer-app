@@ -13,9 +13,9 @@ struct ContinueSignUpButton: View {
     
     var body: some View {
         Button(action: action) {
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color.mixerIndigo)
-                .frame(width: 250, height: 50)
+                .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
                 .shadow(radius: 20, x: -8, y: -8)
                 .shadow(radius: 20, x: 8, y: 8)
                 .overlay {

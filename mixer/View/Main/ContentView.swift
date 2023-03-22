@@ -18,13 +18,13 @@ struct ContentView: View {
         Group {
             if viewModel.userSession == nil || viewModel.currentUser == nil {
 //                AuthFlow()
-//                LandingPageView()
-                EventInfoView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), event: CachedEvent(from: Mockdata.event),
-                          host: CachedHost(from: Mockdata.host),
-                          unsave: {},
-                          save: {},
-                          coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
-                          namespace: namespace)
+                LaunchPageView()
+//                EventInfoView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), event: CachedEvent(from: Mockdata.event),
+//                          host: CachedHost(from: Mockdata.host),
+//                          unsave: {},
+//                          save: {},
+//                          coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
+//                          namespace: namespace)
             } else {
                 if let user = viewModel.currentUser {
                     MainTabView(user: user)

@@ -19,7 +19,7 @@ struct GetNameView: View {
                             title: "My name is",
                             placeholder: "John Doe",
                             textfieldHeader: "Your name", keyboard: .default)
-            
+
             Spacer()
         }
         .padding(.top)

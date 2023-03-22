@@ -65,6 +65,8 @@ extension Color {
     
     static let gradientPurple1 = Color(red: 112/255, green: 63/255, blue: 213/255)
     static let gradientPurple2 = Color(red: 76/255, green: 20/255, blue: 178/255)
+    static let iPhoneStrokeGradient =  LinearGradient(gradient:Gradient(colors: [Color.mixerSecondaryBackground, Color(#colorLiteral(red: 0.05978041142, green: 0.05417759717, blue: 0.07162817568, alpha: 1))]), startPoint: .top, endPoint: .bottom)
+    
     
     //MARK: Chosen Colors
     static let mixerPurple = Color(red: 90/255, green: 60/255, blue: 196/255) //MARK: The main purple we are using (its more of an indigo)
