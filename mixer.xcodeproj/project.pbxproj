@@ -593,9 +593,9 @@
 				9C93319E2925B0390079E039 /* AuthFlow.swift */,
 				9C05C1BC2983A1E100841100 /* LoginView.swift */,
 				9C05C1BD2983A1E100841100 /* RegistrationView.swift */,
+				9C9331A32925B7540079E039 /* FlowScreens */,
 				A62BE19929C821F60052D34F /* LaunchScreen */,
 				A62BE1A029CA4E820052D34F /* QRCodeAnimation */,
-				9C9331A32925B7540079E039 /* FlowScreens */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";

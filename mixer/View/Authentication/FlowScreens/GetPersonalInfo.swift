@@ -36,12 +36,12 @@ struct GetPersonalInfo: View {
         }
         .padding(.top)
         .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-        .overlay(alignment: .bottom) {
-            ContinueSignUpButton(text: "Continue", action: action)
-                .disabled(!isValidBirthday)
-                .opacity(!isValidBirthday ? 0.2 : 0.85)
-                .padding(.bottom, 30)
-        }
+//        .overlay(alignment: .bottom) {
+//            ContinueSignUpButton(text: "Continue", action: action)
+//                .disabled(!isValidBirthday)
+//                .opacity(!isValidBirthday ? 0.2 : 0.85)
+//                .padding(.bottom, 30)
+//        }
     }
 }
 

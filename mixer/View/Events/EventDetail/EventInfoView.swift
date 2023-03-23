@@ -289,7 +289,7 @@ fileprivate struct HostedBySection: View {
                         .foregroundColor(Color.mixerIndigo)
                         .bold()
                         .lineLimit(1)
-//                        .minimumScaleFactor(0.8)
+                        .minimumScaleFactor(0.8)
 
                     Spacer()
 

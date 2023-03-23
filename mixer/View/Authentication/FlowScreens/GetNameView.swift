@@ -11,6 +11,7 @@ import iPhoneNumberField
 struct GetNameView: View {
     @Binding var name: String
     @State private var disableButton = false
+    
     let action: () -> Void
     
     var body: some View {
@@ -25,14 +26,21 @@ struct GetNameView: View {
         .padding(.top)
         .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
         .overlay(alignment: .bottom) {
-            ContinueSignUpButton(text: "Continue", action: action)
-                .onTapGesture {
-                    disableButton = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                }
-                .disabled(name.isEmpty)
-                .opacity(name.isEmpty ? 0.2 : 0.85)
-                .padding(.bottom, 30)
+            if name.isEmpty {
+                ContinueSignUpButton(text: "Continue", action: action, isActive: false)
+                    .onTapGesture {
+                        disableButton = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                    }
+                    .disabled(true)
+            } else {
+                ContinueSignUpButton(text: "Continue", action: action, isActive: true)
+                    .onTapGesture {
+                        disableButton = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                    }
+                    .disabled(false)
+            }
         }
     }
 }
