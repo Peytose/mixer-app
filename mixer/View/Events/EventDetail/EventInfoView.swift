@@ -59,9 +59,8 @@ struct EventInfoView: View {
         VStack(alignment: .leading, spacing: 20) {
             HostedBySection(type: event.type,
                             host: host,
-                            ageLimit: event.ageLimit,
                             cost: event.cost,
-                            hasAlcohol: event.alcoholPresence,
+                            hasAlcohol: event.amenities.contains(EventAmenities.alcohol),
                             namespace: namespace)
             .onTapGesture {
                 showHost.toggle()
