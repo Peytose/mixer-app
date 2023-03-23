@@ -192,7 +192,9 @@ class AuthViewModel: ObservableObject {
                             guard let user = authResult?.user else { return }
                             self.userSession = user
                             print("DEBUG: Sucessfully linked email! Moving to next screen ...")
-                            self.next()
+                            if self.fetchUniversity() {
+                                self.next()
+                            }
                         }
                     }
                 }
@@ -269,6 +271,35 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
+    
+    
+    private func fetchUniversity() -> Bool {
+        var isFinishedLoading = false
+        if email.isValidEmail { return isFinishedLoading }
+        let emailComponents = email.split(separator: "@")
+        
+        if emailComponents.count != 2 { return isFinishedLoading }
+        let domain = String(emailComponents[1])
+        
+        COLLECTION_UNIVERSITIES.whereField("domain", isEqualTo: domain).getDocuments { snapshot, error in
+            if let error = error {
+                print("DEBUG: Error getting domain from email. \(error.localizedDescription)")
+                return
+            }
+            
+            guard let documents = snapshot?.documents else { return }
+            
+            if let university = documents.first?["name"] as? String {
+                self.university = university
+                return
+            }
+            
+            isFinishedLoading = true
+        }
+        
+        return isFinishedLoading
+    }
+    
     
     private func convertStringToDate() {
         let dateFormatter = DateFormatter()
