@@ -16,27 +16,6 @@ enum EventType: String, Codable {
     case rager    = "Rager"
     case darty    = "Darty"
     case kickback = "Kickback"
-//    case
-    
-//    var eventStringPlur: String {
-//        switch self {
-//            case .school: return "School Events"
-//            case .club: return "Club Events"
-//            case .houseParty: return "House Parties"
-//            case .fratParty: return "Frat Parties"
-//            case .mixer: return "Mixers"
-//        }
-//    }
-//
-//    var eventStringSing: String {
-//        switch self {
-//            case .school: return "School event"
-//            case .club: return "Club event"
-//            case .houseParty: return "House party"
-//            case .fratParty: return "Frat party"
-//            case .mixer: return "Mixer"
-//        }
-//    }
 }
 
 enum AmenityCategory: String, CaseIterable {
@@ -48,7 +27,7 @@ enum AmenityCategory: String, CaseIterable {
     case convenientFeatures = "Convenient Features"
 }
 
-enum EventAmenities: String, Codable {
+enum EventAmenities: String, Codable, CaseIterable {
     case alcohol       = "Alcoholic Drinks"
     case nonAlcohol    = "Non-Alcoholic Drinks"
     case beer          = "Beer"
@@ -83,8 +62,9 @@ enum EventAmenities: String, Codable {
     
     var category: AmenityCategory {
         switch self {
-        case .beer, .dj, .danceFloor, .rooftop, .security, .coatCheck, .freeParking, .paidParking: return .keyAmenities
-        case .alcohol, .nonAlcohol, .water, .beer, .snacks, .food: return .refreshments
+            case .beer, .dj, .danceFloor, .rooftop, .security, .coatCheck,
+                .freeParking, .paidParking: return .keyAmenities
+            case .alcohol, .nonAlcohol, .water, .beer, .snacks, .food: return .refreshments
             case .dj, .liveMusic, .danceFloor, .karaoke, .videoGames,
                  .indoorGames, .outdoorGames, .drinkingGames: return .entertainment
             case .seating, .soundSystem, .projector, .lighting: return .furnitureEquipment
@@ -145,12 +125,9 @@ struct Event: Identifiable, Codable {
     var isFull: Bool?
     var averageRating: Float?
     let amenities: [EventAmenities]
-    let tags: [String]
     
-    var ageLimit: Int?
     var capacity: Int?
     var attendance: Int?
-    var alcoholPresence: Bool?
     
     static func ==(lhs: Event, rhs: CachedEvent) -> Bool {
         // Define how two events are equal

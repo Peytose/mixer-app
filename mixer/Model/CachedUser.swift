@@ -21,6 +21,7 @@ struct CachedUser: Hashable, Identifiable, Codable {
     var isHost: Bool? = false
     var isSignedUp: Bool? = false
     var isCurrentUser: Bool { return AuthViewModel.shared.userSession?.uid == id }
+    var associatedHostAccount: CachedHost?
     
     init(from user: User) {
         self.id = user.id
@@ -44,6 +45,10 @@ struct CachedUser: Hashable, Identifiable, Codable {
         
         if let isSignedUp = user.isSignedUp {
             self.isSignedUp = isSignedUp
+        }
+        
+        if let associatedHostAccount = user.associatedHostAccount {
+            self.associatedHostAccount = associatedHostAccount
         }
     }
 }

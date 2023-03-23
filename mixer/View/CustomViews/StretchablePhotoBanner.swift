@@ -19,13 +19,13 @@ struct StretchablePhotoBanner: View {
             KFImage(URL(string: imageUrl))
                 .resizable()
                 .scaledToFill()
-                .frame(width: UIScreen.main.bounds.size.width, height: 450)
+                .frame(width: UIScreen.main.bounds.size.width, height: DeviceTypes.ScreenSize.height / 2.3)
                 .mask(Color.profileGradient) // mask the blurred image using the gradient's alpha values
                 .offset(y: scrollY > 0 ? -scrollY : 0)
                 .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
                 .blur(radius: scrollY > 0 ? scrollY / 40 : 0)
                 .matchedGeometryEffect(id: imageUrl, in: namespace)
         }
-        .frame(width: UIScreen.main.bounds.size.width, height: 350)
+        .frame(width: DeviceTypes.ScreenSize.width, height: DeviceTypes.ScreenSize.height / 2.5)
     }
 }

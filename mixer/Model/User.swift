@@ -48,4 +48,5 @@ struct User: Identifiable, Codable {
     var isHost: Bool? = false
     var isSignedUp: Bool? = false
     var isCurrentUser: Bool { return AuthViewModel.shared.userSession?.uid == id }
+    var associatedHostAccount: CachedHost?
 }

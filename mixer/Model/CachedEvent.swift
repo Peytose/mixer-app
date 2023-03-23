@@ -25,12 +25,9 @@ struct CachedEvent: Hashable, Identifiable, Codable {
     var isFull: Bool?
     var averageRating: Float?
     var amenities: [EventAmenities]
-    var tags: [String]
     
-    var ageLimit: Int?
     var capacity: Int?
     var attendance: Int?
-    var alcoholPresence: Bool?
     var hasStarted: Bool? = false
     var didSave: Bool? = false
     var didAttend: Bool? = false
@@ -54,10 +51,7 @@ struct CachedEvent: Hashable, Identifiable, Codable {
         self.isFull          = event.isFull as Bool?
         self.averageRating   = event.averageRating as Float?
         self.amenities       = event.amenities as [EventAmenities]
-        self.tags            = event.tags as [String]
-        self.ageLimit        = event.ageLimit as Int?
         self.capacity        = event.capacity as Int?
         self.attendance      = event.attendance as Int?
-        self.alcoholPresence = event.alcoholPresence as Bool?
     }
 }

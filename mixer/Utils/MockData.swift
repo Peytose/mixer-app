@@ -34,10 +34,7 @@ struct Mockdata {
                      isInviteOnly: false,
                      isFull: true,
                      amenities: [EventAmenities.alcohol, EventAmenities.beer, EventAmenities.water, EventAmenities.bathrooms, EventAmenities.danceFloor, EventAmenities.dj],
-                     tags: ["example", "test"],
-                     ageLimit: 21,
-                     capacity: 250,
-                     alcoholPresence: true)
+                     capacity: 250)
     }
     
     static var host: Host {

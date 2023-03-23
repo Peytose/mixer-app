@@ -77,7 +77,7 @@ fileprivate struct BioTextField: View {
                             .stroke(lineWidth: 2)
                     }
                 
-                CharactersRemainView(currentCount: bio.count)
+                CharactersRemainView(valueName: "Bio", currentCount: bio.count)
             }
         }
         .frame(width: DeviceTypes.ScreenSize.width / 1.2)
@@ -137,24 +137,5 @@ extension SignUpPictureView {
     func loadImage() {
         guard let selectedImage = selectedImage else { return }
         image = Image(uiImage: selectedImage)
-    }
-}
-
-fileprivate struct CharactersRemainView: View {
-    var currentCount: Int
-    
-    var body: some View {
-        Text("Bio: ")
-            .font(.callout)
-            .foregroundColor(.secondary)
-        +
-        Text("\(100 - currentCount)")
-            .bold()
-            .font(.callout)
-            .foregroundColor(currentCount <= 100 ? .mixerIndigo : Color(.systemPink))
-        +
-        Text(" characters remain")
-            .font(.callout)
-            .foregroundColor(.secondary)
     }
 }

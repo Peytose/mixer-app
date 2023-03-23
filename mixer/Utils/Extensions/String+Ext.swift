@@ -35,4 +35,26 @@ extension String {
             return nil
         }
     }
+    
+    var formattedAsCurrency: String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .currency
+        numberFormatter.currencySymbol = "$"
+        numberFormatter.minimumFractionDigits = 2
+        numberFormatter.maximumFractionDigits = 2
+
+        // Remove all non-numeric characters
+        let filteredString = self.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+
+        // Convert to a decimal number
+        guard let decimalNumber = Decimal(string: filteredString) else {
+            return ""
+        }
+
+        // Divide by 100 to get the correct decimal value
+        let amount = decimalNumber / Decimal(100)
+
+        // Format the number as currency
+        return numberFormatter.string(from: NSDecimalNumber(decimal: amount)) ?? ""
+    }
 }

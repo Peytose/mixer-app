@@ -7,21 +7,34 @@
 import SwiftUI
 
 struct NextButton: View {
-    var padding: CGFloat = 90
     var text: String = "Next"
+    @State private var progress: CGFloat = 0
+    let gradient1 = Gradient(colors: [.mixerPurple, .mixerPurple])
+    let gradient2 = Gradient(colors: [.mixerIndigo, .mixerIndigo])
+    let action: () -> Void
     
     var body: some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .fill(Color.mixerPurpleGradient)
-            .frame(maxWidth: .infinity)
-            .frame(height: 60)
-            .padding(.horizontal, padding)
-            .shadow(radius: 15)
-            .shadow(radius: 5, y: 10)
-            .overlay(content: {
+        Button(action: action) {
+            ZStack(alignment: .center) {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .animatableGradient(fromGradient: gradient1,
+                                        toGradient: gradient2,
+                                        progress: progress)
+                    .frame(height: 75)
+                    .mask(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .shadow(radius: 10)
+                    .allowsHitTesting(false)
+                    .onAppear {
+                        withAnimation(.linear(duration: 5.0).repeatForever(autoreverses: true)) {
+                            self.progress = 1.0
+                        }
+                    }
+                
                 Text(text)
                     .foregroundColor(Color.white)
-                    .font(.title2.weight(.semibold))
-            })
+                    .font(.title2)
+                    .fontWeight(.semibold)
+            }
+        }
     }
 }
