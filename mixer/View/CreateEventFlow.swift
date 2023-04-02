@@ -21,13 +21,13 @@ struct CreateEventFlow: View {
                                description: $viewModel.description,
                                privacy: $viewModel.privacy,
                                action: viewModel.next)
-                .tag(CreateEventViewModel.Screen.basicInfo)
+                    .tag(CreateEventViewModel.Screen.basicInfo)
                 
                 EventLocationAndDates(startDate: $viewModel.startDate,
                                       endDate: $viewModel.endDate,
                                       address: $viewModel.address,
                                       action: viewModel.next)
-                .tag(CreateEventViewModel.Screen.locationAndDates)
+                    .tag(CreateEventViewModel.Screen.locationAndDates)
                 
                 EventGuestsAndInvitations(startDate: viewModel.startDate,
                                           privacy: viewModel.privacy,
@@ -36,12 +36,22 @@ struct CreateEventFlow: View {
                                           memberInviteLimit: $viewModel.memberInviteLimit,
                                           registrationDeadlineDate: $viewModel.registrationDeadlineDate,
                                           checkInMethod: $viewModel.checkInMethod,
+                                          isManualApprovalEnabled: $viewModel.isManualApprovalEnabled,
+                                          isGuestLimitEnabled: $viewModel.isGuestLimitEnabled,
+                                          isWaitlistEnabled: $viewModel.isWaitlistEnabled,
+                                          isMemberInviteLimitEnabled: $viewModel.isMemberInviteLimitEnabled,
+                                          isGuestInviteLimitEnabled: $viewModel.isGuestInviteLimitEnabled,
+                                          isRegistrationDeadlineEnabled: $viewModel.isRegistrationDeadlineEnabled,
+                                          isCheckInOptionsEnabled: $viewModel.isCheckInOptionsEnabled,
                                           action: viewModel.next)
-                .tag(CreateEventViewModel.Screen.guestsAndInvitations)
+                    .tag(CreateEventViewModel.Screen.guestsAndInvitations)
                 
                 EventAmenitiesAndCost(selectedAmenities: $viewModel.selectedAmenities,
                                       action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.costAndAmenities)
+                
+                ReviewCreatedEventView(viewModel: viewModel)
+                    .tag(CreateEventViewModel.Screen.review)
             }
             .animation(.easeInOut, value: viewModel.active)
             .tabViewStyle(.page(indexDisplayMode: .never))

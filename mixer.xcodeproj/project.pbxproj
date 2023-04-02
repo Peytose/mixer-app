@@ -542,7 +542,6 @@
 				9C2B8967298F53510011FC56 /* MapViewModel.swift */,
 				9C4B0E342982417000A9D963 /* WaitlistViewModel.swift */,
 				9C4B0E41298241AE00A9D963 /* GuestListViewModel.swift */,
-				A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */,
 				9C4B0E43298241AE00A9D963 /* CheckInViewModel.swift */,
 				A6B9E66B2953B3F9009C936E /* Mock View Models */,
 			);
@@ -627,6 +626,7 @@
 		9C58B38C29C7F8190024CB7E /* CreateEventFlow */ = {
 			isa = PBXGroup;
 			children = (
+				A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */,
 				9C58B38629C7F8180024CB7E /* CreateEventFlow.swift */,
 				9C58B38D29C7F8190024CB7E /* CEFlowScreens */,
 			);
@@ -640,6 +640,7 @@
 				9C58B38E29C7F8190024CB7E /* EventLocationAndDates.swift */,
 				9C58B39029C7F8190024CB7E /* EventGuestsAndInvitations.swift */,
 				9C58B3C729CA69C70024CB7E /* EventAmenitiesAndCost.swift */,
+				A6BAEF602955064200410DED /* ReviewCreatedEventView.swift */,
 			);
 			path = CEFlowScreens;
 			sourceTree = "<group>";
@@ -735,7 +736,6 @@
 				A6430445294FBDBF0058C0F0 /* CreateEventView.swift */,
 				A6B9E68F295464A8009C936E /* EventLocationView.swift */,
 				A6B9E68929544ECA009C936E /* EventVisibilityView.swift */,
-				A6BAEF602955064200410DED /* ReviewCreatedEventView.swift */,
 			);
 			path = "Create Event View";
 			sourceTree = "<group>";

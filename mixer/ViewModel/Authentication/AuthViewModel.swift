@@ -32,7 +32,7 @@ class AuthViewModel: ObservableObject {
     @Published var active                    = Screen.allCases.first!
     //    @Published var hasError                  = false
     @Published var alertItem: AlertItem?
-    var hosts = [Host?]()
+    var hosts = [Host]()
     
     static let shared = AuthViewModel()
     
@@ -118,6 +118,7 @@ class AuthViewModel: ObservableObject {
                 print(String(describing: snapshot?.data()))
                 return
             }
+            
             self.currentUser = user
             
             guard let isHost = user.isHost else { return }
@@ -127,7 +128,12 @@ class AuthViewModel: ObservableObject {
     
     
     private func fetchHost(uid: String) {
-        COLLECTION_HOSTS.whereField("ownerUuid", isEqualTo: uid).getDocuments { snapshot, _ in
+        COLLECTION_HOSTS.whereField("ownerUuid", isEqualTo: uid).getDocuments { snapshot, error in
+            if let error = error {
+                print("DEBUG: Error fetching host. \(error.localizedDescription)")
+                return
+            }
+            
             guard let documents = snapshot?.documents else { return }
             self.hosts = documents.compactMap({ try? $0.data(as: Host.self) })
         }

@@ -118,16 +118,28 @@ struct Event: Identifiable, Codable {
     let eventImageUrl: String
     let startDate: Timestamp
     var endDate: Timestamp
+    var registrationDeadlineDate: Timestamp
     let address: String
     let type: EventType
     let isInviteOnly: Bool
-    var cost: Float?
-    var isFull: Bool?
-    var averageRating: Float?
-    let amenities: [EventAmenities]
+    let guestLimit: String
+    let guestInviteLimit: String
+    let memberInviteLimit: String
+    let privacy: CreateEventViewModel.PrivacyType
+    let selectedAmenities: [EventAmenities]
+    let alcoholPresence: Bool
+    var isManualApprovalEnabled: Bool
+    var isGuestLimitEnabled: Bool
+    var isWaitlistEnabled: Bool
+    var isMemberInviteLimitEnabled: Bool
+    var isGuestInviteLimitEnabled: Bool
+    var isRegistrationDeadlineEnabled: Bool
+    var isCheckInOptionsEnabled: Bool
     
-    var capacity: Int?
-    var attendance: Int?
+    let timePosted: Timestamp
+    var checkInMethod: CreateEventViewModel.CheckInMethod?
+    var cost: Float?
+    var averageRating: Float?
     
     static func ==(lhs: Event, rhs: CachedEvent) -> Bool {
         // Define how two events are equal

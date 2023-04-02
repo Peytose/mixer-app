@@ -16,13 +16,13 @@ struct EventGuestsAndInvitations: View {
     @Binding var memberInviteLimit: String
     @Binding var registrationDeadlineDate: Date?
     @Binding var checkInMethod: CreateEventViewModel.CheckInMethod?
-    @State private var isManualApprovalEnabled: Bool       = false
-    @State private var isGuestLimitEnabled: Bool           = false
-    @State private var isWaitlistEnabled: Bool             = false
-    @State private var isMemberInviteLimitEnabled: Bool    = false
-    @State private var isGuestInviteLimitEnabled: Bool     = false
-    @State private var isRegistrationDeadlineEnabled: Bool = false
-    @State private var isCheckInOptionsEnabled: Bool       = false
+    @Binding var isManualApprovalEnabled: Bool
+    @Binding var isGuestLimitEnabled: Bool
+    @Binding var isWaitlistEnabled: Bool
+    @Binding var isMemberInviteLimitEnabled: Bool
+    @Binding var isGuestInviteLimitEnabled: Bool
+    @Binding var isRegistrationDeadlineEnabled: Bool
+    @Binding var isCheckInOptionsEnabled: Bool
     let action: () -> Void
     
     var body: some View {
@@ -98,7 +98,6 @@ struct EventGuestsAndInvitations: View {
                             .foregroundColor(.mixerPurple)
                     }
                     .disabled(!isRegistrationDeadlineEnabled)
-                    
                 }
                 
                 // Check-In Options
@@ -166,7 +165,14 @@ struct EventGuestsAndInvitations_Previews: PreviewProvider {
                                   guestInviteLimit: .constant(""),
                                   memberInviteLimit: .constant(""),
                                   registrationDeadlineDate: .constant(Date()),
-                                  checkInMethod: .constant(nil)) {}
+                                  checkInMethod: .constant(nil),
+                                  isManualApprovalEnabled: .constant(false),
+                                  isGuestLimitEnabled: .constant(false),
+                                  isWaitlistEnabled: .constant(false),
+                                  isMemberInviteLimitEnabled: .constant(false),
+                                  isGuestInviteLimitEnabled: .constant(false),
+                                  isRegistrationDeadlineEnabled: .constant(false),
+                                  isCheckInOptionsEnabled: .constant(false)) {}
         .preferredColorScheme(.dark)
     }
 }
