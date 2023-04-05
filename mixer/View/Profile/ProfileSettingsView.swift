@@ -10,6 +10,7 @@ import FirebaseAuth
 
 struct ProfileSettingsView: View {
     @State private var name: String
+    @State private var bio: String
     @Environment(\.presentationMode) var mode
     @ObservedObject private var viewModel: ProfileSettingsViewModel
     @Binding var user: User
@@ -18,6 +19,7 @@ struct ProfileSettingsView: View {
         self._user = user
         self.viewModel = ProfileSettingsViewModel(user: self._user.wrappedValue)
         self._name = State(initialValue: _user.wrappedValue.name)
+        self._bio = State(initialValue: _user.wrappedValue.bio!)
     }
     
     var body: some View {
@@ -29,14 +31,23 @@ struct ProfileSettingsView: View {
                 .padding(.top)
             
             List {
-                Section(header: Text("Personal Information").fontWeight(.semibold),
-                        footer: Text("Right now, you can only edit your name.")) {
+                Section(header: Text("Profile").fontWeight(.semibold),
+                        footer: Text("Right now, you can only edit your name and bio.")) {
                     EditableRow(viewModel: viewModel,
                                 rowTitle: "Name",
                                 rowContent: name,
                                 alertTitle: "Name Change",
                                 alertMessage: "Please enter your preferred name.",
                                 alertPlaceholder: "Preferred name",
+                                icon: "person")
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    EditableRow(viewModel: viewModel,
+                                rowTitle: "Bio",
+                                rowContent: bio,
+                                alertTitle: "Bio Change",
+                                alertMessage: "Please enter your new bio.",
+                                alertPlaceholder: "New Bio",
                                 icon: "signature")
                     .listRowBackground(Color.mixerSecondaryBackground)
                     
@@ -57,7 +68,7 @@ struct ProfileSettingsView: View {
                     
                 }
                 
-                Section(header: Text("Support").fontWeight(.semibold),
+                Section(header: Text("Feedback & Support").fontWeight(.semibold),
                         footer: Text("Yes, these are the same link. We're lazy ...")) {
                     LinkRow(linkUrl: viewModel.supportLink,
                             title: "Feature Request",
@@ -73,9 +84,10 @@ struct ProfileSettingsView: View {
                             title: "Questions",
                             icon: "questionmark.circle")
                     .listRowBackground(Color.mixerSecondaryBackground)
+
                 }
-                
-                Section(header: Text("LEGAL").fontWeight(.semibold)) {
+
+                Section(header: Text("Legal & Policies").fontWeight(.semibold)) {
                     LinkRow(linkUrl: "https://mixer.llc/privacy-policy/",
                             title: "Privacy Policy",
                             icon: "lock.doc")
@@ -95,9 +107,11 @@ struct ProfileSettingsView: View {
                 
                 Section {
                     Button { AuthViewModel.shared.signOut() } label: {
-                        Text("Logout").foregroundColor(.black)
+                        Text("Logout").foregroundColor(.blue)
                     }
+                    .listRowBackground(Color.mixerSecondaryBackground)
                 }
+
                 
                 Section(footer: EasterEggView(text: viewModel.getDateJoined())) { }
             }
@@ -148,8 +162,9 @@ fileprivate struct EditableRow: View {
                 Text(rowContent)
                     .font(.body)
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
                 
-                Image(systemName: "chevron.right")
+                Image(systemName: "pencil")
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(.secondary)
@@ -216,6 +231,7 @@ fileprivate struct SettingIcon: View {
             .scaledToFit()
             .foregroundColor(color)
             .frame(width: 18, height: 18)
+            .fontWeight(.medium)
     }
 }
 
@@ -225,7 +241,7 @@ fileprivate struct SettingNameAndIcon: View {
     
     var body: some View {
         HStack {
-            SettingIcon(icon: icon, color: .mixerIndigo)
+            SettingIcon(icon: icon, color: .mainFont)
             
             Text(title)
                 .font(.body)
