@@ -15,32 +15,38 @@ struct GetNameView: View {
     let action: () -> Void
     
     var body: some View {
-        VStack {
-            SignUpTextField2(input: $name,
-                            title: "My name is",
-                            placeholder: "John Doe",
-                            textfieldHeader: "Your name", keyboard: .default)
+        ZStack {
+            Color.mixerBackground.ignoresSafeArea()
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
+            
+            VStack {
+                SignUpTextField2(input: $name,
+                                title: "My name is",
+                                placeholder: "John Doe",
+                                 footnote: "This is how it will appear in mixer", textfieldHeader: "Your name", keyboard: .default)
 
-            Spacer()
-        }
-        .padding(.top)
-        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-        .overlay(alignment: .bottom) {
-            if name.isEmpty {
-                ContinueSignUpButton(text: "Continue", action: action, isActive: false)
-                    .onTapGesture {
-                        disableButton = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                    }
-                    .disabled(true)
-            } else {
-                ContinueSignUpButton(text: "Continue", action: action, isActive: true)
-                    .onTapGesture {
-                        disableButton = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                    }
-                    .disabled(false)
+                Spacer()
             }
+            .padding(.top)
+            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
+            .overlay(alignment: .bottom) {
+                if name.isEmpty {
+                    ContinueSignUpButton(text: "Continue", action: action, isActive: false)
+                        .onTapGesture {
+                            disableButton = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                        }
+                        .disabled(true)
+                } else {
+                    ContinueSignUpButton(text: "Continue", action: action, isActive: true)
+                        .onTapGesture {
+                            disableButton = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                        }
+                }
+        }
         }
     }
 }

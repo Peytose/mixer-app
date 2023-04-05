@@ -13,23 +13,29 @@ struct GetUsername: View {
     let action: () -> Void
     
     var body: some View {
-        VStack {
-            SignUpTextField(input: $username,
-                            title: "Last question \(name)! Choose a username",
-                            placeholder: "ex. \(name.lowercased())_loves_mixer3",
-                            footnote: "This will not be changeable in the near future, so choose wisely. Username must be unique.",
-                            keyboard: .default)
+        ZStack {
+            Color.mixerBackground.ignoresSafeArea()
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
             
-            Spacer()
+            VStack {
+                SignUpTextField2(input: $username, title: "Last thing \(name)! Choose a username", placeholder: "ex. \(name.lowercased())_loves_mixer3", footnote: "This will not be changeable in the near future, so choose wisely. Username must be unique.", textfieldHeader: "Your username", keyboard: .default)
+                
+                Spacer()
+            }
+            .padding(.top)
+            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
+            .overlay(alignment: .bottom) {
+                if username.isEmpty {
+                    ContinueSignUpButton(text: "Continue", action: action, isActive: false)
+                        .disabled(true)
+                } else {
+                    ContinueSignUpButton(text: "Continue", action: action, isActive: true)
+                        .disabled(false)
+                }
         }
-        .padding(.top)
-        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-//        .overlay(alignment: .bottom) {
-//            ContinueSignUpButton(text: "Continue", action: action)
-//                .disabled(username.isEmpty)
-//                .opacity(username.isEmpty ? 0.2 : 0.85)
-//                .padding(.bottom, 30)
-//        }
+        }
     }
 }
 

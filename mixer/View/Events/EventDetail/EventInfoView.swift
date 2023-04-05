@@ -162,8 +162,30 @@ struct EventInfoView: View {
                     Text("What this event offers")
                         .font(.title).bold()
 
+//                    ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
+//                        if let amenitiesInCategory = event.amenities.filter({ $0.category == category }), !amenitiesInCategory.isEmpty {
+//                            Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
+//                                ForEach(amenitiesInCategory, id: \.self) { amenity in
+//                                    HStack {
+//                                        Image(systemName: amenity.icon)
+//                                            .resizable()
+//                                            .scaledToFill()
+//                                            .frame(width: 15, height: 15)
+//
+//                                        Text(amenity.rawValue)
+//                                            .font(.body)
+//
+//                                        Spacer()
+//                                    }
+//                                    .foregroundColor(.white.opacity(0.7))
+//                                }
+//                            }
+//                        }
+//                    }
+                    
                     ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
-                        if let amenitiesInCategory = event.amenities.filter({ $0.category == category }), !amenitiesInCategory.isEmpty {
+                        let amenitiesInCategory = event.amenities.filter({ $0.category == category })
+                        if !amenitiesInCategory.isEmpty {
                             Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
                                 ForEach(amenitiesInCategory, id: \.self) { amenity in
                                     HStack {

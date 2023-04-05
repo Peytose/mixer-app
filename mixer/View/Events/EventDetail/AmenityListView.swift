@@ -20,35 +20,35 @@ struct AmenityListView: View {
                 .padding(.leading)
                 .padding(.top)
             
-            List {
-                ForEach(AmenityCategory.allCases, id: \.self) { category in
-                    if let amenities = amenities.filter({ $0.category == category }) {
-                        if !amenities.isEmpty {
-                            Section(header: CustomHeader(text: category.rawValue)) {
-                                ForEach(amenities, id: \.self) { amenity in
-                                    HStack(spacing: 15) {
-                                        Image(systemName: amenity.icon)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 20, height: 20)
-                                        
-                                        Text(amenity.rawValue)
-                                            .font(.body)
-                                            .foregroundColor(.secondary)
-                                        
-                                        Spacer()
-                                    }
-                                }
-                            }
-                            .listSectionSeparator(.hidden)
-                            .listRowBackground(Color.clear)
-                            .textCase(.none)
-                        }
-                    }
-                }
-            }
-            .scrollContentBackground(.hidden)
-            .listStyle(.grouped)
+//            List {
+//                ForEach(AmenityCategory.allCases, id: \.self) { category in
+//                    if let amenities = amenities.filter({ $0.category == category }) {
+//                        if !amenities.isEmpty {
+//                            Section(header: CustomHeader(text: category.rawValue)) {
+//                                ForEach(amenities, id: \.self) { amenity in
+//                                    HStack(spacing: 15) {
+//                                        Image(systemName: amenity.icon)
+//                                            .resizable()
+//                                            .scaledToFit()
+//                                            .frame(width: 20, height: 20)
+//                                        
+//                                        Text(amenity.rawValue)
+//                                            .font(.body)
+//                                            .foregroundColor(.secondary)
+//                                        
+//                                        Spacer()
+//                                    }
+//                                }
+//                            }
+//                            .listSectionSeparator(.hidden)
+//                            .listRowBackground(Color.clear)
+//                            .textCase(.none)
+//                        }
+//                    }
+//                }
+//            }
+//            .scrollContentBackground(.hidden)
+//            .listStyle(.grouped)
         }
         .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
         .overlay(alignment: .topTrailing) {

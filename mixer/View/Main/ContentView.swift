@@ -17,8 +17,13 @@ struct ContentView: View {
     var body: some View {
         Group {
             if viewModel.userSession == nil || viewModel.currentUser == nil {
-//                AuthFlow()
-                LaunchPageView()
+                AuthFlow()
+//                LaunchPageView()
+//                NotificationFeedView()
+//                ProfileView(user: Mockdata.user)
+//                    .preferredColorScheme(.dark)
+//                    .statusBar(hidden: false)
+
 //                EventInfoView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), event: CachedEvent(from: Mockdata.event),
 //                          host: CachedHost(from: Mockdata.host),
 //                          unsave: {},

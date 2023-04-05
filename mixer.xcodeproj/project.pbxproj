@@ -101,7 +101,6 @@
 		9C99EAF829A6F12900D66FEB /* AmenityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C99EAF729A6F12900D66FEB /* AmenityListView.swift */; };
 		9CF84C9929AAA38A005BE430 /* GetNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9829AAA38A005BE430 /* GetNameView.swift */; };
 		9CF84C9B29AAE337005BE430 /* GetProfilePictureAndBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9A29AAE337005BE430 /* GetProfilePictureAndBio.swift */; };
-		9CF84CA329AE8ADA005BE430 /* GetPersonalInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84CA229AE8ADA005BE430 /* GetPersonalInfo.swift */; };
 		A6077A9229C0E5380038E1ED /* UpcomingEventCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6077A9129C0E5380038E1ED /* UpcomingEventCellView.swift */; };
 		A613C3602978C61B00C4015C /* GuestListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A613C35F2978C61B00C4015C /* GuestListView.swift */; };
 		A61D12B429B42D3D00AE0EED /* HostInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A61D12B329B42D3D00AE0EED /* HostInfoView.swift */; };
@@ -148,6 +147,11 @@
 		A6B9E690295464A8009C936E /* EventLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B9E68F295464A8009C936E /* EventLocationView.swift */; };
 		A6BAEF612955064200410DED /* ReviewCreatedEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BAEF602955064200410DED /* ReviewCreatedEventView.swift */; };
 		A6BAEF63295D40D700410DED /* SocialPageNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BAEF62295D40D700410DED /* SocialPageNavigationBar.swift */; };
+		A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */; };
+		A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */; };
+		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
+		A6C99FC629DA691C0046D61B /* NotificationFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC529DA691C0046D61B /* NotificationFeedView.swift */; };
+		A6C99FC829DA694F0046D61B /* FollowRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC729DA694F0046D61B /* FollowRequestCell.swift */; };
 		A6CD2C84297B201C00AA0B98 /* PlaceHolderColorModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CD2C83297B201C00AA0B98 /* PlaceHolderColorModifier.swift */; };
 		A6CD2C8F297B482A00AA0B98 /* MapItemPicker in Frameworks */ = {isa = PBXBuildFile; productRef = A6CD2C8E297B482A00AA0B98 /* MapItemPicker */; };
 		A6F003AA29807646007E8CCA /* FeaturedHostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F003A929807646007E8CCA /* FeaturedHostCell.swift */; };
@@ -240,7 +244,6 @@
 		9C99EAF729A6F12900D66FEB /* AmenityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmenityListView.swift; sourceTree = "<group>"; };
 		9CF84C9829AAA38A005BE430 /* GetNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetNameView.swift; sourceTree = "<group>"; };
 		9CF84C9A29AAE337005BE430 /* GetProfilePictureAndBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetProfilePictureAndBio.swift; sourceTree = "<group>"; };
-		9CF84CA229AE8ADA005BE430 /* GetPersonalInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPersonalInfo.swift; sourceTree = "<group>"; };
 		A6077A9129C0E5380038E1ED /* UpcomingEventCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingEventCellView.swift; sourceTree = "<group>"; };
 		A613C35F2978C61B00C4015C /* GuestListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestListView.swift; sourceTree = "<group>"; };
 		A61D12B329B42D3D00AE0EED /* HostInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInfoView.swift; sourceTree = "<group>"; };
@@ -285,6 +288,11 @@
 		A6B9E68F295464A8009C936E /* EventLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLocationView.swift; sourceTree = "<group>"; };
 		A6BAEF602955064200410DED /* ReviewCreatedEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewCreatedEventView.swift; sourceTree = "<group>"; };
 		A6BAEF62295D40D700410DED /* SocialPageNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialPageNavigationBar.swift; sourceTree = "<group>"; };
+		A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBirthdayView.swift; sourceTree = "<group>"; };
+		A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGenderView.swift; sourceTree = "<group>"; };
+		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
+		A6C99FC529DA691C0046D61B /* NotificationFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationFeedView.swift; sourceTree = "<group>"; };
+		A6C99FC729DA694F0046D61B /* FollowRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowRequestCell.swift; sourceTree = "<group>"; };
 		A6CD2C83297B201C00AA0B98 /* PlaceHolderColorModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceHolderColorModifier.swift; sourceTree = "<group>"; };
 		A6F003A929807646007E8CCA /* FeaturedHostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedHostCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -467,6 +475,7 @@
 				A62BE19729C66ABA0052D34F /* Keyboard+Ext.swift */,
 				9C58B3C929CAD4D50024CB7E /* Binding+Ext.swift */,
 				A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */,
+				A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -516,6 +525,7 @@
 			children = (
 				9C05C1B82983A14200841100 /* ProfileView.swift */,
 				A643044B294FC2960058C0F0 /* ProfileSettingsView.swift */,
+				A6C99FC529DA691C0046D61B /* NotificationFeedView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -676,7 +686,8 @@
 				9C9331BB292739700079E039 /* GetCode.swift */,
 				9C9331B629272D7F0079E039 /* GetEmail.swift */,
 				9CF84C9A29AAE337005BE430 /* GetProfilePictureAndBio.swift */,
-				9CF84CA229AE8ADA005BE430 /* GetPersonalInfo.swift */,
+				A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */,
+				A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */,
 				9C567A9F2934FCFF00EA5FCB /* GetUsername.swift */,
 			);
 			path = FlowScreens;
@@ -809,6 +820,7 @@
 			children = (
 				A682CC552970915B008EA546 /* DetailRowView.swift */,
 				A6077A9129C0E5380038E1ED /* UpcomingEventCellView.swift */,
+				A6C99FC729DA694F0046D61B /* FollowRequestCell.swift */,
 			);
 			path = "Small Items";
 			sourceTree = "<group>";
@@ -937,6 +949,7 @@
 				9C93318D29201D010079E039 /* MockData.swift in Sources */,
 				9C58B3AF29C8E5CA0024CB7E /* CharactersRemainView.swift in Sources */,
 				A613C3602978C61B00C4015C /* GuestListView.swift in Sources */,
+				A6C99FC629DA691C0046D61B /* NotificationFeedView.swift in Sources */,
 				9C4B0E512983795600A9D963 /* EventListView.swift in Sources */,
 				A6B9E6882953E9CB009C936E /* OffsetModifier.swift in Sources */,
 				9C2B8966298F53320011FC56 /* MapTemp.swift in Sources */,
@@ -960,12 +973,12 @@
 				9C05C1CC2985C04E00841100 /* GeometryProxy+Ext.swift in Sources */,
 				9C93318329201C3F0079E039 /* MainTabView.swift in Sources */,
 				9C9331A92925D0D20079E039 /* SignUpTextField.swift in Sources */,
-				9CF84CA329AE8ADA005BE430 /* GetPersonalInfo.swift in Sources */,
 				9C58B39B29C7F8190024CB7E /* EventGuestsAndInvitations.swift in Sources */,
 				9C2B8973299170670011FC56 /* HostCache.swift in Sources */,
 				9C4B0E44298241AE00A9D963 /* GuestListViewModel.swift in Sources */,
 				9C567AA02934FCFF00EA5FCB /* GetUsername.swift in Sources */,
 				9C05C1C52983A72000841100 /* ExploreViewModel.swift in Sources */,
+				A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */,
 				A62BE19F29C8258F0052D34F /* LandingPageView.swift in Sources */,
 				A643045B294FC72F0058C0F0 /* Model.swift in Sources */,
 				9C99EAF829A6F12900D66FEB /* AmenityListView.swift in Sources */,
@@ -993,7 +1006,9 @@
 				9C2B898F29A179A20011FC56 /* LoadingView.swift in Sources */,
 				A6B9E6762953B6DA009C936E /* LogoView.swift in Sources */,
 				9C3D48372987227D00116C9E /* Timestamp+Ext.swift in Sources */,
+				A6C99FC829DA694F0046D61B /* FollowRequestCell.swift in Sources */,
 				9C3BADBA291F54B4009C8043 /* mixerApp.swift in Sources */,
+				A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */,
 				9C58B3AE29C8E5CA0024CB7E /* OptionView.swift in Sources */,
 				A6430455294FC4470058C0F0 /* UserProfileViewModel.swift in Sources */,
 				9C58B39929C7F8190024CB7E /* EventLocationAndDates.swift in Sources */,
@@ -1008,6 +1023,7 @@
 				A6B9E6782953B8A3009C936E /* MapSnapshotView.swift in Sources */,
 				A6B9E65929518AB2009C936E /* CustomStickyHeader.swift in Sources */,
 				9C3BADD7291F55D1009C8043 /* Constants.swift in Sources */,
+				A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */,
 				A62BE19B29C8221C0052D34F /* LaunchScreenCard.swift in Sources */,
 				9C4B0E352982417000A9D963 /* WaitlistViewModel.swift in Sources */,
 				A6B9E690295464A8009C936E /* EventLocationView.swift in Sources */,

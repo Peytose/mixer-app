@@ -135,7 +135,11 @@ struct Event: Identifiable, Codable {
     var isGuestInviteLimitEnabled: Bool
     var isRegistrationDeadlineEnabled: Bool
     var isCheckInOptionsEnabled: Bool
-    
+    var capacity: Int?
+    var attendance: Int?
+    var isFull: Bool?
+    var amenities: [EventAmenities]
+
     let timePosted: Timestamp
     var checkInMethod: CreateEventViewModel.CheckInMethod?
     var cost: Float?

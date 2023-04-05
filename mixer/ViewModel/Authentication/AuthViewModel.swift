@@ -14,6 +14,7 @@ class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     @Published var currentUser: User?
     @Published var emailIsVerified           = false
+    @Published var showAuthFlow              = false
     @Published var name                      = ""
     @Published var email                     = ""
     @Published var emailCode                 = ""
@@ -26,6 +27,7 @@ class AuthViewModel: ObservableObject {
     @Published var birthdayString            = "" { didSet { checkValidBirthday() } }
     @Published var birthday                  = Date.now { didSet { isValidBirthday = true } }
     @Published var gender                    = "Female"
+    @Published var isGenderPublic            = true
     @Published var username                  = ""
     @Published var isValidBirthday           = false
     @Published var didSendResentPasswordLink = false
@@ -42,7 +44,8 @@ class AuthViewModel: ObservableObject {
         case code
         case email
         case picAndBio
-        case personal
+        case birthday
+        case gender
         case username
     }
     

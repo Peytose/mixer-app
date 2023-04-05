@@ -14,41 +14,32 @@ struct GetProfilePictureAndBio: View {
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 50) {
-                SignUpPictureView(title: "Choose a profile picture.",
-                                  selectedImage: $selectedImage)
+            ZStack {
+                Color.mixerBackground.ignoresSafeArea()
+                    .onTapGesture {
+                        self.hideKeyboard()
+                    }
                 
-                Divider().padding(.horizontal)
-                
-                BioTextField(bio: $bio,
-                             title: "Write a bio.",
-                             placeholder: "bio",
-                             keyboard: .default)
-                
-                Spacer()
+                VStack(spacing: 50) {
+                    SignUpPictureView(title: "Choose a profile picture.",
+                                      selectedImage: $selectedImage)
+                    
+                    Divider().padding(.horizontal)
+                    
+                    BioTextField(bio: $bio,
+                                 title: "Write a bio.",
+                                 placeholder: "bio",
+                                 keyboard: .default)
+                    
+                    Spacer()
+                }
             }
         }
         .padding(.top)
         .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-//        .overlay(alignment: .bottom) {
-//            if email.isEmpty {
-//                ContinueSignUpButton(text: "Continue", action: action, isActive: false)
-//                    .onTapGesture {
-//                        disableButton = true
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-//                    }
-//                    .disabled(true)
-//            } else {
-//                ContinueSignUpButton(text: "Continue", action: action, isActive: true)
-//                    .onTapGesture {
-//                        disableButton = true
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-//                    }
-//                    .disabled(false)
-//            }
-//            ContinueSignUpButton(text: "Continue", action: action)
-//                .padding(.bottom, 30)
-//        }
+        .overlay(alignment: .bottom) {
+            ContinueSignUpButton(text: "Continue", action: action, isActive: true)
+        }
     }
 }
 

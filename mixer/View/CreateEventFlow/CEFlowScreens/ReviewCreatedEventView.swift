@@ -26,7 +26,7 @@ struct ReviewCreatedEventView: View {
                 
                 Divider().foregroundColor(.secondary)
                 
-                Text(viewModel.startDate.getTimestampString(format: <#T##String#>))
+//                Text(viewModel.startDate.getTimestampString(format: <#T##String#>))
 //                Text("\(viewModel.isPrivate.stringVersion) Event \(Image(systemName: viewModel.isPrivate == .yes ? "lock.fill": "globe"))")
 //                    .font(.title3).fontWeight(.medium)
 //                    .foregroundColor(.secondary)
@@ -98,6 +98,7 @@ struct ReviewCreatedEventView: View {
 struct ReviewCreatedEventView_Previews: PreviewProvider {
     static var previews: some View {
         ReviewCreatedEventView(viewModel: CreateEventViewModel())
+            .preferredColorScheme(.dark)
     }
 }
 

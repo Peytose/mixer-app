@@ -15,35 +15,41 @@ struct GetPhoneView: View {
     let action: () -> Void
     
     var body: some View {
-        VStack {            
-            PhoneNumberTextField(title: "Verify your phone number with a code",
-                                 footnote: "Message and data rates apply.",
-                                 note: "We'll send you a code, it helps us keep your account secure.",
-                                 textfieldHeader: "Your phone number",
-                                 keyboard: .phonePad,
-                                 input: $phoneNumber,
-                                 countryCode: $countryCode)
+        ZStack {
+            Color.mixerBackground.ignoresSafeArea()
+//                .onTapGesture {
+//                    self.hideKeyboard()
+//                }
             
-            Spacer()
-        }
-        .padding(.top)
-        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-        .overlay(alignment: .bottom) {
-            if phoneNumber.isEmpty {
-                ContinueSignUpButton(text: "Continue", action: action, isActive: false)
-                    .onTapGesture {
-                        disableButton = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                    }
-                    .disabled(true)
-            } else {
-                ContinueSignUpButton(text: "Continue", action: action, isActive: true)
-                    .onTapGesture {
-                        disableButton = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                    }
-                    .disabled(false)
+            VStack {
+                PhoneNumberTextField(title: "My number is",
+                                     footnote: "Message and data rates apply.",
+                                     note: "We'll send you a code, it helps us keep your account secure.",
+                                     textfieldHeader: "Your phone number",
+                                     keyboard: .phonePad,
+                                     input: $phoneNumber,
+                                     countryCode: $countryCode)
+                
+                Spacer()
             }
+            .padding(.top)
+            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
+            .overlay(alignment: .bottom) {
+                if phoneNumber.isEmpty {
+                    ContinueSignUpButton(text: "Continue", action: action, isActive: false)
+                        .onTapGesture {
+                            disableButton = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                        }
+                        .disabled(true)
+                } else {
+                    ContinueSignUpButton(text: "Continue", action: action, isActive: true)
+                        .onTapGesture {
+                            disableButton = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                        }
+                }
+        }
         }
     }
 }

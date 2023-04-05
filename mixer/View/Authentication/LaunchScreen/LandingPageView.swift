@@ -10,9 +10,7 @@ import SwiftUI
 
 struct LaunchPageView: View {
     @EnvironmentObject var viewModel: AuthViewModel
-
     @State var selectedPage = 0
-    @State var showAuthFlow = false
     
     init() {
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Color.mixerIndigo)
@@ -60,7 +58,7 @@ struct LaunchPageView: View {
                             let impact = UIImpactFeedbackGenerator(style: .light)
                             impact.impactOccurred()
                             withAnimation() {
-                                showAuthFlow.toggle()
+                                viewModel.showAuthFlow.toggle()
                             }
                             
                             Button("Show keyboard") {
@@ -100,7 +98,7 @@ struct LaunchPageView: View {
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .center)
         }
-        .fullScreenCover(isPresented: $showAuthFlow) {
+        .fullScreenCover(isPresented: $viewModel.showAuthFlow) {
             AuthFlow()
         }
     }

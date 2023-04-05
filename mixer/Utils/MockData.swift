@@ -22,19 +22,20 @@ struct Mockdata {
     }
     
     static var event: Event {
-        return Event(hostUuid: "",
-                     hostUsername: "mitthetachi",
-                     title: "Neon Party",
-                     description: "This is an example description!!",
-                     eventImageUrl: "https://www.instagram.com/p/CqBwaJ3gcyU/media?size=l",
-                     startDate: Timestamp(date: Date()),
-                     endDate: Timestamp(date: Date()),
-                     address: "528 Beacon St, Boston, MA 02215",
-                     type: EventType.party,
-                     isInviteOnly: false,
-                     isFull: true,
-                     amenities: [EventAmenities.alcohol, EventAmenities.beer, EventAmenities.water, EventAmenities.bathrooms, EventAmenities.danceFloor, EventAmenities.dj],
-                     capacity: 250)
+//        return Event(hostUuid: "",
+//                     hostUsername: "mitthetachi",
+//                     title: "Neon Party",
+//                     description: "This is an example description!!",
+//                     eventImageUrl: "https://www.instagram.com/p/CqBwaJ3gcyU/media?size=l",
+//                     startDate: Timestamp(date: Date()),
+//                     endDate: Timestamp(date: Date()),
+//                     address: "528 Beacon St, Boston, MA 02215",
+//                     type: EventType.party,
+//                     isInviteOnly: false,
+//                     isFull: true,
+//                     amenities: [EventAmenities.alcohol, EventAmenities.beer, EventAmenities.water, EventAmenities.bathrooms, EventAmenities.danceFloor, EventAmenities.dj],
+//                     capacity: 250)
+            return Event(hostUuid: "", hostUsername: "mitthetachi", title: "Neon Party", description: "Neon party at Theta Chi, need we say more?", eventImageUrl: "https://www.instagram.com/p/CqBwaJ3gcyU/media?size=l", startDate: Timestamp(date: Date()), endDate: Timestamp(date: Date()), registrationDeadlineDate: Timestamp(date: Date()), address: "528 Beacon St, Boston, MA 02215", type: .party, isInviteOnly: true, guestLimit: "50", guestInviteLimit: "10", memberInviteLimit: "10", privacy: .inviteOnly, selectedAmenities: [], alcoholPresence: true, isManualApprovalEnabled: true, isGuestLimitEnabled: true, isWaitlistEnabled: false, isMemberInviteLimitEnabled: false, isGuestInviteLimitEnabled: false, isRegistrationDeadlineEnabled: false, isCheckInOptionsEnabled: false, amenities: [EventAmenities.alcohol, EventAmenities.beer, EventAmenities.water, EventAmenities.bathrooms, EventAmenities.danceFloor, EventAmenities.dj], timePosted: Timestamp(date: Date()))
     }
     
     static var host: Host {

@@ -16,7 +16,7 @@ struct LaunchScreenCard: Identifiable {
 }
 
 var screens: [LaunchScreenCard] = [
-    LaunchScreenCard( image: "landingPage-Image-1", title: "Never miss an event again"),
+    LaunchScreenCard( image: "LandingPage-Image-1", title: "Never miss an event again"),
     //Event picture
     
     LaunchScreenCard( image: "landingPage-image-3", title: "Discover hosts and events near you"),

@@ -15,33 +15,39 @@ struct GetEmail: View {
     let action: () -> Void
     
     var body: some View {
-        VStack {
-            SignUpTextField2(input: $email,
-                            title: "What's your email?",
-                            note: "Don't lose access to your account, verify your email",
-                            placeholder: "you@school.edu",
-                            footnote: "For safety reasons, mixer is only available to college students at this time.",
-                            keyboard: .emailAddress)
+        ZStack {
+            Color.mixerBackground.ignoresSafeArea()
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
             
-            Spacer()
-        }
-        .padding(.top)
-        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-        .overlay(alignment: .bottom) {
-            if email.isEmpty {
-                ContinueSignUpButton(text: "Continue", action: action, isActive: false)
-                    .onTapGesture {
-                        disableButton = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                    }
-                    .disabled(true)
-            } else {
-                ContinueSignUpButton(text: "Continue", action: action, isActive: true)
-                    .onTapGesture {
-                        disableButton = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                    }
-                    .disabled(false)
+            VStack {
+                SignUpTextField2(input: $email,
+                                 title: "What's your email?",
+                                 note: "Don't lose access to your account, verify your email",
+                                 placeholder: "you@school.edu",
+                                 footnote: "For safety reasons, mixer is only available to college students at this time.", textfieldHeader: "Your email",
+                                 keyboard: .emailAddress)
+                
+                Spacer()
+            }
+            .padding(.top)
+            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
+            .overlay(alignment: .bottom) {
+                if email.isEmpty {
+                    ContinueSignUpButton(text: "Continue", action: action, isActive: false)
+                        .onTapGesture {
+                            disableButton = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                        }
+                        .disabled(true)
+                } else {
+                    ContinueSignUpButton(text: "Continue", action: action, isActive: true)
+                        .onTapGesture {
+                            disableButton = true
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                        }
+                }
             }
         }
     }

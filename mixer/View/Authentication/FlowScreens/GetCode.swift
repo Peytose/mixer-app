@@ -14,40 +14,38 @@ struct GetCode: View {
     @State var countdown = 5
     
     var body: some View {
-        VStack {
-            SignUpTextField2(input: $code,
-                             title: "Verify your number with a code",
-                             note: "Enter the security code we sent to \(phoneNumber)",
-                             placeholder: "My code is",
-                             keyboard: .numberPad)
+        ZStack {
+            Color.mixerBackground.ignoresSafeArea()
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
             
-//            Button(action: action, label: {
-//                ResendVerificationButton(remaining: $countdown)
-//                    .onTapGesture { countdown = 5 }
-//            })
-//            .disabled(countdown != 0)
-//            .opacity(countdown != 0 ? 0.2 : 0.85)
-            
-            Button(action: action, label: {
-                TempView(remaining: $countdown)
-                    .onTapGesture { countdown = 5 }
-            })
-            .disabled(countdown != 0)
-            .opacity(countdown != 0 ? 0 : 0.85)
-            .padding(.top, 50)
-
-            
-            Spacer()
-        }
-        .padding(.top)
-        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-        .overlay(alignment: .bottom) {
-            if code.isEmpty {
-                ContinueSignUpButton(text: "Submit", action: action, isActive: false)
-                    .disabled(true)
-            } else {
-                ContinueSignUpButton(text: "Submit", action: action, isActive: true)
-                    .disabled(false)
+            VStack {
+                SignUpTextField2(input: $code,
+                                 title: "Verify your number with a code",
+                                 note: "Enter the security code we sent to \n\(phoneNumber)",
+                                 placeholder: "My code is", textfieldHeader: "Your code",
+                                 keyboard: .numberPad)
+                
+                Button(action: action, label: {
+                    ResendVerificationTextButton(remaining: $countdown)
+                        .onTapGesture { countdown = 5 }
+                })
+                .disabled(countdown != 0)
+                .opacity(countdown != 0 ? 0.1 : 1)
+                .padding(.top, 50)
+                
+                Spacer()
+            }
+            .padding(.top)
+            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
+            .overlay(alignment: .bottom) {
+                if code.isEmpty {
+                    ContinueSignUpButton(text: "Submit", action: action, isActive: false)
+                        .disabled(true)
+                } else {
+                    ContinueSignUpButton(text: "Submit", action: action, isActive: true)
+                }
             }
         }
     }
@@ -79,7 +77,7 @@ fileprivate struct ResendVerificationButton: View {
     }
 }
 
-fileprivate struct TempView: View {
+fileprivate struct ResendVerificationTextButton: View {
     let timer = Timer.publish(every: 1, on: .current, in: .common).autoconnect()
     @Binding var remaining: Int
     
