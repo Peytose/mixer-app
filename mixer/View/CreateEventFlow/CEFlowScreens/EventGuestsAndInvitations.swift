@@ -24,6 +24,7 @@ struct EventGuestsAndInvitations: View {
     @Binding var isRegistrationDeadlineEnabled: Bool
     @Binding var isCheckInOptionsEnabled: Bool
     let action: () -> Void
+    @State private var selectedMethod: Selection<CreateEventViewModel.CheckInMethod>?
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -94,8 +95,8 @@ struct EventGuestsAndInvitations: View {
                     .padding()
                     .background(alignment: .center) {
                         RoundedRectangle(cornerRadius: 9)
-                            .stroke(lineWidth: 2)
-                            .foregroundColor(.mixerPurple)
+                            .stroke(lineWidth: isRegistrationDeadlineEnabled ? 2 : 1)
+                            .foregroundColor(.mixerPurple.opacity(isRegistrationDeadlineEnabled ? 1 : 0.75))
                     }
                     .disabled(!isRegistrationDeadlineEnabled)
                 }
@@ -110,7 +111,10 @@ struct EventGuestsAndInvitations: View {
                         checkInMethod = newValue ? .qrCode : nil
                     }
 
-                    CheckInPicker()
+                    SelectionPicker(selections: CreateEventViewModel.CheckInMethod.allCases.map { Selection($0) }, selectedSelection: $selectedMethod)
+                        .onChange(of: selectedMethod) { newValue in
+                            self.checkInMethod = newValue?.value
+                        }
                 }
                 
                 VStack(alignment: .center) { NextButton(action: action) }
@@ -118,42 +122,6 @@ struct EventGuestsAndInvitations: View {
             .padding()
         }
         .background(Color.mixerBackground.ignoresSafeArea())
-    }
-}
-
-extension EventGuestsAndInvitations {
-    @ViewBuilder func CheckInPicker() -> some View {
-        HStack(alignment: .center) {
-            ForEach(CreateEventViewModel.CheckInMethod.allCases, id: \.self) { option in
-                VStack(spacing: 8) {
-                    HStack {
-                        Image(systemName: option.checkInIcon)
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(checkInMethod == option ? .white : .gray)
-                            .frame(width: 22, height: 22, alignment: .center)
-                        
-                        Text(option.rawValue)
-                            .font(.title3)
-                            .fontWeight(checkInMethod == option ? .semibold : .medium)
-                            .foregroundColor(checkInMethod == option ? .white : .secondary)
-                        
-                    }
-                    
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .fill(checkInMethod == option ? Color.mixerPurple : Color.clear)
-                        .padding(.horizontal, 8)
-                        .frame(height: 2)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.easeInOut) {
-                        self.checkInMethod = option
-                    }
-                }
-            }
-        }
-        .disabled(!isCheckInOptionsEnabled)
     }
 }
 
@@ -224,8 +192,8 @@ fileprivate struct LimitInputView: View {
             .padding(.horizontal)
             .background(alignment: .center) {
                 RoundedRectangle(cornerRadius: 9)
-                    .stroke(lineWidth: 2)
-                    .foregroundColor(.mixerPurple)
+                    .stroke(lineWidth: isEnabled ? 2 : 1)
+                    .foregroundColor(.mixerPurple.opacity(isEnabled ? 1 : 0.75))
             }
             .onReceive(Just(text)) { newValue in
                 let filtered = newValue.filter { "0123456789".contains($0) }

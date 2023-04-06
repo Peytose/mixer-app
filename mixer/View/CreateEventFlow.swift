@@ -20,6 +20,7 @@ struct CreateEventFlow: View {
                                title: $viewModel.title,
                                description: $viewModel.description,
                                privacy: $viewModel.privacy,
+                               visibility: $viewModel.visibility,
                                action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.basicInfo)
                 

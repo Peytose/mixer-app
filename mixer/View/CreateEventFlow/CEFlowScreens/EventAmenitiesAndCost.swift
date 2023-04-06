@@ -83,7 +83,7 @@ struct EventAmenitiesAndCost: View {
                                             .padding(.vertical, 10)
                                         }
                                         
-                                        if amenity.rawValue != EventAmenities.allCases.filter { $0.category == category }.last?.rawValue {
+                                        if amenity.rawValue != EventAmenities.allCases.filter({ $0.category == category }).last?.rawValue {
                                             Divider()
                                         }
                                     }

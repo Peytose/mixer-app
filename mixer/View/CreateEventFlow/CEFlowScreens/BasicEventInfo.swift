@@ -14,6 +14,9 @@ struct BasicEventInfo: View {
     @Binding var title: String
     @Binding var description: String
     @Binding var privacy: CreateEventViewModel.PrivacyType
+    @Binding var visibility: CreateEventViewModel.VisibilityType
+    @State private var selectedPrivacy: Selection<CreateEventViewModel.PrivacyType>?
+    @State private var selectedVisibility: Selection<CreateEventViewModel.VisibilityType>?
     let action: () -> Void
     
     var body: some View {
@@ -107,14 +110,36 @@ struct BasicEventInfo: View {
                     }
                 }
                 
-                // Visibility
+                // Privacy
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Privacy")
                         .font(.title)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                     
-                    PrivacyPicker()
+                    SelectionPicker(selections: CreateEventViewModel.PrivacyType.allCases.map { Selection($0) }, selectedSelection: $selectedPrivacy)
+                        .onChange(of: selectedPrivacy) { newValue in
+                            if let value = newValue?.value {
+                                self.privacy = value
+                            }
+                        }
+                }
+                
+                
+                // Visibility
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Visibility")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                    
+                    SelectionPicker(selections: CreateEventViewModel.VisibilityType.allCases.map { Selection($0) }, selectedSelection: $selectedVisibility)
+                        .onChange(of: selectedVisibility) { newValue in
+                            if let value = newValue?.value {
+                                self.visibility = value
+                            }
+                        }
                 }
                 
                 VStack(alignment: .leading) {
@@ -144,49 +169,16 @@ extension BasicEventInfo {
 }
 
 struct BasicEventInfo_Previews: PreviewProvider {
-    @State static var privacy: CreateEventViewModel.PrivacyType = .open
+    @State static var privacy: CreateEventViewModel.PrivacyType       = .open
+    @State static var visibility: CreateEventViewModel.VisibilityType = ._public
     @State static var selectedImage: UIImage?
     
     static var previews: some View {
         BasicEventInfo(selectedImage: $selectedImage,
                        title: .constant(""),
                        description: .constant(""),
-                       privacy: $privacy) {  }
+                       privacy: $privacy,
+                       visibility: $visibility) {  }
         .preferredColorScheme(.dark)
-    }
-}
-
-extension BasicEventInfo {
-    @ViewBuilder func PrivacyPicker() -> some View {
-        HStack(alignment: .center) {
-            ForEach(CreateEventViewModel.PrivacyType.allCases, id: \.self) { selection in
-                VStack(spacing: 8) {
-                    HStack {
-                        Image(systemName: selection.privacyIcon)
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(privacy == selection ? .white : .gray)
-                            .frame(width: 22, height: 22, alignment: .center)
-                        
-                        Text(selection.rawValue)
-                            .font(.title3)
-                            .fontWeight(privacy == selection ? .semibold : .medium)
-                            .foregroundColor(privacy == selection ? .white : .secondary)
-                        
-                    }
-                    
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .fill(privacy == selection ? Color.mixerPurple : Color.clear)
-                        .padding(.horizontal, 8)
-                        .frame(height: 2)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.easeInOut) {
-                        self.privacy = selection
-                    }
-                }
-            }
-        }
     }
 }

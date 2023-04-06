@@ -15,12 +15,13 @@ final class CreateEventViewModel: ObservableObject {
     @Published var guestLimit: String                  = ""
     @Published var guestInviteLimit: String            = ""
     @Published var memberInviteLimit: String           = ""
-    @Published var startDate: Date                     = Date().addingTimeInterval(80600)
-    @Published var endDate: Date                       = Date()
+    @Published var startDate: Date                     = Date()
+    @Published var endDate: Date                       = Date().addingTimeInterval(80600)
     @Published var address: String                     = ""
     @Published var selectedAmenities: Set<EventAmenities> = []
     @Published var type: EventType                     = .kickback
     @Published var privacy: PrivacyType                = .open
+    @Published var visibility: VisibilityType          = ._public
     @Published var isManualApprovalEnabled: Bool       = false
     @Published var isGuestLimitEnabled: Bool           = false
     @Published var isWaitlistEnabled: Bool             = false
@@ -57,11 +58,11 @@ final class CreateEventViewModel: ObservableObject {
         }
     }
     
-    enum PrivacyType: String, Codable, CaseIterable {
+    enum PrivacyType: String, Codable, CaseIterable, IconRepresentable {
         case open       = "Open"
         case inviteOnly = "Invite-only"
         
-        var privacyIcon: String {
+        var icon: String {
             switch self {
             case .open: return "envelope.open"
             case .inviteOnly: return "envelope"
@@ -69,11 +70,24 @@ final class CreateEventViewModel: ObservableObject {
         }
     }
     
-    enum CheckInMethod: String, Codable, CaseIterable {
+    
+    enum VisibilityType: String, Codable, CaseIterable, IconRepresentable {
+        case _public  = "Public"
+        case _private = "Private"
+        
+        var icon: String {
+            switch self {
+            case ._public: return "globe.americas"
+            case ._private: return "lock"
+            }
+        }
+    }
+    
+    enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
         case qrCode = "QR Code"
         case manual = "Manual"
         
-        var checkInIcon: String {
+        var icon: String {
             switch self {
             case .qrCode: return "qrcode"
             case .manual: return "rectangle.and.pencil.and.ellipsis"
