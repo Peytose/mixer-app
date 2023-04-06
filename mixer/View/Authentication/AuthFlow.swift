@@ -68,16 +68,16 @@ struct AuthFlow: View {
                                     viewModel.showAuthFlow.toggle()
                                 }
                             } label: {
-                                XDismissButton()
+                                Image(systemName: "xmark")
+                                    .font(.title.weight(.semibold))
+                                    .foregroundColor(.mainFont)
                             }
                             .frame(width: 50)
                         } else {
                             Button(action: viewModel.previous) {
                                 Image(systemName: "chevron.backward")
-                                    .resizable()
-                                    .scaledToFit()
+                                    .font(.title.weight(.semibold))
                                     .foregroundColor(.mixerIndigo)
-                                    .frame(width: 15)
                             }
                             .frame(width: 50)
                         }

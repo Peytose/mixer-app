@@ -47,15 +47,6 @@ struct ProfileView: View {
 
                     }
                 }
-                .overlay(alignment: .topLeading) {
-                    if viewModel.user.isCurrentUser {
-                        ProfileCornerButton(action: { showQRCode.toggle() },
-                                            icon: "qrcode")
-                        .onTapGesture { showQRCode.toggle() }
-                        .padding(.leading)
-                        .padding(.top, 40)
-                    }
-                }
                 .padding(.top, -40)
             
             profileInfo
@@ -113,7 +104,7 @@ struct ProfileView: View {
         }
         .sheet(isPresented: $showEditProfile) { ProfileSettingsView(user: $viewModel.user) }
         .sheet(isPresented: $showNotifications) { NotificationFeedView() }
-        .fullScreenCover(isPresented: $showQRCode) {  }
+        .fullScreenCover(isPresented: $showQRCode) { ShareProfileView() }
         .padding(.top, 40)
         .background(Color.mixerBackground)
         .coordinateSpace(name: "scroll")
@@ -145,11 +136,13 @@ struct ProfileView: View {
                         
                         Spacer()
                         
-                        Image(systemName: "square.and.arrow.up")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundColor(Color.mainFont)
-                            .frame(width: 25, height: 25)
+                        Button(action: { showQRCode.toggle() }) {
+                            Image(systemName: "square.and.arrow.up")
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundColor(Color.mainFont)
+                                .frame(width: 25, height: 25)
+                        }
                     }
                     
                     HStack {
@@ -215,13 +208,6 @@ struct ProfileView: View {
     }
     
     var details: some View {
-//        VStack(alignment: .leading) {
-//            HostSubheading(text: "About")
-//        }
-//        .frame(maxWidth: .infinity, alignment: .leading)
-//        .padding(.horizontal)
-//        .padding(.top, 16)
-        
         VStack(alignment: .leading, spacing: 12) {
             Text("About")
                 .font(.title).bold()

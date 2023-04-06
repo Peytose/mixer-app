@@ -112,6 +112,7 @@
 		A62BE1A429CA4F250052D34F /* QRCodeRoundedCornerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A329CA4F250052D34F /* QRCodeRoundedCornerView.swift */; };
 		A62BE1A629CA4FCA0052D34F /* UIScreen+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */; };
 		A62BE1A829CA501F0052D34F /* QRCodeAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */; };
+		A62ED41129DE31A0008D6274 /* ShareProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62ED41029DE31A0008D6274 /* ShareProfileView.swift */; };
 		A6430446294FBDBF0058C0F0 /* CreateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430445294FBDBF0058C0F0 /* CreateEventView.swift */; };
 		A6430448294FBEC80058C0F0 /* CreateEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */; };
 		A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */; };
@@ -255,6 +256,7 @@
 		A62BE1A329CA4F250052D34F /* QRCodeRoundedCornerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeRoundedCornerView.swift; sourceTree = "<group>"; };
 		A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScreen+Ext.swift"; sourceTree = "<group>"; };
 		A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeAnimationView.swift; sourceTree = "<group>"; };
+		A62ED41029DE31A0008D6274 /* ShareProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareProfileView.swift; sourceTree = "<group>"; };
 		A6430445294FBDBF0058C0F0 /* CreateEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventView.swift; sourceTree = "<group>"; };
 		A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventViewModel.swift; sourceTree = "<group>"; };
 		A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignCodeExtensions.swift; sourceTree = "<group>"; };
@@ -506,6 +508,7 @@
 				9C58B3C529C96D650024CB7E /* CustomMapView.swift */,
 				A62BE1A129CA4EFC0052D34F /* QRCodeBoxView.swift */,
 				A62BE1A329CA4F250052D34F /* QRCodeRoundedCornerView.swift */,
+				A62ED41029DE31A0008D6274 /* ShareProfileView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -958,6 +961,7 @@
 				A6430451294FC3380058C0F0 /* HexagonBlobView.swift in Sources */,
 				9C58B3A929C8E5250024CB7E /* Event.swift in Sources */,
 				A6430457294FC50C0058C0F0 /* AvatarView.swift in Sources */,
+				A62ED41129DE31A0008D6274 /* ShareProfileView.swift in Sources */,
 				9C2B8968298F53510011FC56 /* MapViewModel.swift in Sources */,
 				A68971CF296E7E8D00289516 /* CustomTabItemView.swift in Sources */,
 				9C58B3A829C8E5250024CB7E /* CachedUser.swift in Sources */,
