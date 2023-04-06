@@ -33,6 +33,25 @@ final class ProfileSettingsViewModel: ObservableObject {
         }
     }
     
+    func saveBio(_ bio: String) {
+        guard let uid = user.id else { return }
+        guard bio != "" else { return }
+        
+        COLLECTION_USERS.document(uid).updateData(["bio": bio]) { _ in
+            self.user.bio = bio
+            self.uploadComplete = true
+        }
+    }
+    
+    func saveInsta(_ username: String) {
+        guard let uid = user.id else { return }
+        guard username != "" else { return }
+        
+        COLLECTION_USERS.document(uid).updateData(["username": username]) { _ in
+            self.user.instaUsername = username
+            self.uploadComplete = true
+        }
+    }
     
     func getVersion() -> String {
         let dictionary = Bundle.main.infoDictionary!

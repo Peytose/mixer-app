@@ -13,6 +13,8 @@ struct ProfileView: View {
     @State var showNotifications = false
     @State var showQRCode        = false
     @State var showUsername      = false
+    @State private var selectedOption: String = "Single"
+
     @Namespace var namespace
     
     init(user: User) {
@@ -143,6 +145,11 @@ struct ProfileView: View {
                                 .foregroundColor(Color.mainFont)
                                 .frame(width: 25, height: 25)
                         }
+                        
+                        Image("Instagram_Glyph_Gradient 1")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 25, height: 25)
                     }
                     
                     HStack {
@@ -198,8 +205,8 @@ struct ProfileView: View {
             
             if let bio = viewModel.user.bio {
                 Text(bio)
-                    .foregroundColor(.white.opacity(0.8))
-                    .font(.callout)
+                    .foregroundColor(.white.opacity(0.9))
+                    .font(.body.weight(.medium))
                     .lineLimit(3)
                     .minimumScaleFactor(0.75)
             }
@@ -213,7 +220,19 @@ struct ProfileView: View {
                 .font(.title).bold()
 
             VStack(alignment: .leading) {
-                DetailRow(image: "figure.2.arms.open", text: "Single")
+                HStack {
+                    DetailRow(image: "figure.2.arms.open", text: selectedOption)
+                    
+                    Spacer()
+                    
+                    Menu("Change") {
+                        Button("Single", action: { selectedOption = "Single" })
+                        Button("Taken", action: { selectedOption = "Taken" })
+                        Button("Complicated", action: { selectedOption = "Complicated" })
+                        Button("N/A", action: { selectedOption = "N/A" })
+                    }
+                    .accentColor(.mixerIndigo)
+                }
 
                 DetailRow(image: "briefcase", text: "Civil Engineering Major")
 

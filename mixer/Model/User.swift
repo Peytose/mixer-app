@@ -39,6 +39,7 @@ struct User: Identifiable, Codable {
     let email: String
     var profileImageUrl: String
     var name: String
+    var instaUsername: String
     var birthday: Timestamp
     let university: String
     let dateJoined: Timestamp
