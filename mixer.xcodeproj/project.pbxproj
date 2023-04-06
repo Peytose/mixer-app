@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9C01918729DE9A8B000F3D1F /* SelectionPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C01918629DE9A8B000F3D1F /* SelectionPicker.swift */; };
 		9C05C1BB2983A14200841100 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C05C1B82983A14200841100 /* ProfileView.swift */; };
 		9C05C1BE2983A1E100841100 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C05C1BC2983A1E100841100 /* LoginView.swift */; };
 		9C05C1BF2983A1E100841100 /* RegistrationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C05C1BD2983A1E100841100 /* RegistrationView.swift */; };
@@ -159,6 +160,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9C01918629DE9A8B000F3D1F /* SelectionPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionPicker.swift; sourceTree = "<group>"; };
 		9C05C1B82983A14200841100 /* ProfileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		9C05C1BC2983A1E100841100 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		9C05C1BD2983A1E100841100 /* RegistrationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationView.swift; sourceTree = "<group>"; };
@@ -509,6 +511,7 @@
 				A62BE1A129CA4EFC0052D34F /* QRCodeBoxView.swift */,
 				A62BE1A329CA4F250052D34F /* QRCodeRoundedCornerView.swift */,
 				A62ED41029DE31A0008D6274 /* ShareProfileView.swift */,
+				9C01918629DE9A8B000F3D1F /* SelectionPicker.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -1026,6 +1029,7 @@
 				A6077A9229C0E5380038E1ED /* UpcomingEventCellView.swift in Sources */,
 				A6B9E6782953B8A3009C936E /* MapSnapshotView.swift in Sources */,
 				A6B9E65929518AB2009C936E /* CustomStickyHeader.swift in Sources */,
+				9C01918729DE9A8B000F3D1F /* SelectionPicker.swift in Sources */,
 				9C3BADD7291F55D1009C8043 /* Constants.swift in Sources */,
 				A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */,
 				A62BE19B29C8221C0052D34F /* LaunchScreenCard.swift in Sources */,
