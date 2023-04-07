@@ -18,6 +18,7 @@ struct ContentView: View {
         Group {
             if viewModel.userSession == nil || viewModel.currentUser == nil {
                 AuthFlow()
+//                CreateEventFlow()
 //                LaunchPageView()
 //                NotificationFeedView()
 //                ProfileView(user: Mockdata.user)

@@ -127,6 +127,9 @@
 		A643045B294FC72F0058C0F0 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = A643045A294FC72F0058C0F0 /* Model.swift */; };
 		A65DE62829DF266D0081A9BD /* SettingsChangeNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65DE62729DF266D0081A9BD /* SettingsChangeNameView.swift */; };
 		A65DE62A29DF2B6C0081A9BD /* SettingsChangeSocialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A65DE62929DF2B6C0081A9BD /* SettingsChangeSocialsView.swift */; };
+		A66E671E29DF70F800AB355E /* CreateEventTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671D29DF70F800AB355E /* CreateEventTextField.swift */; };
+		A66E672029DF7ED500AB355E /* CreateEventNextButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671F29DF7ED500AB355E /* CreateEventNextButton.swift */; };
+		A66E672429DFCE9D00AB355E /* PrototypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E672329DFCE9D00AB355E /* PrototypeView.swift */; };
 		A673527A2979B8FD00AAD32E /* GuestListUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67352792979B8FD00AAD32E /* GuestListUserView.swift */; };
 		A678594A29C647F200A2D884 /* GetPhoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A678594929C647F200A2D884 /* GetPhoneView.swift */; };
 		A682CC562970915B008EA546 /* DetailRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A682CC552970915B008EA546 /* DetailRowView.swift */; };
@@ -275,6 +278,9 @@
 		A643045A294FC72F0058C0F0 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		A65DE62729DF266D0081A9BD /* SettingsChangeNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsChangeNameView.swift; sourceTree = "<group>"; };
 		A65DE62929DF2B6C0081A9BD /* SettingsChangeSocialsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsChangeSocialsView.swift; sourceTree = "<group>"; };
+		A66E671D29DF70F800AB355E /* CreateEventTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventTextField.swift; sourceTree = "<group>"; };
+		A66E671F29DF7ED500AB355E /* CreateEventNextButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventNextButton.swift; sourceTree = "<group>"; };
+		A66E672329DFCE9D00AB355E /* PrototypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrototypeView.swift; sourceTree = "<group>"; };
 		A67352792979B8FD00AAD32E /* GuestListUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestListUserView.swift; sourceTree = "<group>"; };
 		A678594929C647F200A2D884 /* GetPhoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPhoneView.swift; sourceTree = "<group>"; };
 		A682CC552970915B008EA546 /* DetailRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailRowView.swift; sourceTree = "<group>"; };
@@ -499,6 +505,7 @@
 				A682CC592970F60C008EA546 /* EventRow.swift */,
 				9C58B3BB29C8E7860024CB7E /* StretchablePhotoBanner.swift */,
 				9C9331A82925D0D20079E039 /* SignUpTextField.swift */,
+				A66E671D29DF70F800AB355E /* CreateEventTextField.swift */,
 				9C05C1C929847FE500841100 /* UserIconList.swift */,
 				A6B9E6772953B8A3009C936E /* MapSnapshotView.swift */,
 				A6B9E6742953B6CF009C936E /* Small Items */,
@@ -664,6 +671,7 @@
 				9C58B39029C7F8190024CB7E /* EventGuestsAndInvitations.swift */,
 				9C58B3C729CA69C70024CB7E /* EventAmenitiesAndCost.swift */,
 				A6BAEF602955064200410DED /* ReviewCreatedEventView.swift */,
+				A66E672329DFCE9D00AB355E /* PrototypeView.swift */,
 			);
 			path = CEFlowScreens;
 			sourceTree = "<group>";
@@ -713,6 +721,7 @@
 				9C58B3BF29C8EB270024CB7E /* ContinueSignUpButton.swift */,
 				9C58B3BE29C8EB270024CB7E /* NextButton.swift */,
 				9C58B3C029C8EB270024CB7E /* XDismissButton.swift */,
+				A66E671F29DF7ED500AB355E /* CreateEventNextButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -971,6 +980,7 @@
 				A6BAEF612955064200410DED /* ReviewCreatedEventView.swift in Sources */,
 				9C93318B29201CA00079E039 /* MapView.swift in Sources */,
 				9C58B3BC29C8E7870024CB7E /* StretchablePhotoBanner.swift in Sources */,
+				A66E671E29DF70F800AB355E /* CreateEventTextField.swift in Sources */,
 				9C05C1C82983BB2B00841100 /* HostDetailView.swift in Sources */,
 				A6AB6C7C2960E20F007E9BF0 /* PinchZoomImageModifier.swift in Sources */,
 				A678594A29C647F200A2D884 /* GetPhoneView.swift in Sources */,
@@ -979,6 +989,7 @@
 				9C58B3C329C8EB270024CB7E /* ContinueSignUpButton.swift in Sources */,
 				9C93318D29201D010079E039 /* MockData.swift in Sources */,
 				9C58B3AF29C8E5CA0024CB7E /* CharactersRemainView.swift in Sources */,
+				A66E672429DFCE9D00AB355E /* PrototypeView.swift in Sources */,
 				A613C3602978C61B00C4015C /* GuestListView.swift in Sources */,
 				A6C99FC629DA691C0046D61B /* NotificationFeedView.swift in Sources */,
 				9C4B0E512983795600A9D963 /* EventListView.swift in Sources */,
@@ -1059,6 +1070,7 @@
 				A6B9E65929518AB2009C936E /* CustomStickyHeader.swift in Sources */,
 				9C01918729DE9A8B000F3D1F /* SelectionPicker.swift in Sources */,
 				9C3BADD7291F55D1009C8043 /* Constants.swift in Sources */,
+				A66E672029DF7ED500AB355E /* CreateEventNextButton.swift in Sources */,
 				A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */,
 				A62BE19B29C8221C0052D34F /* LaunchScreenCard.swift in Sources */,
 				9C4B0E352982417000A9D963 /* WaitlistViewModel.swift in Sources */,

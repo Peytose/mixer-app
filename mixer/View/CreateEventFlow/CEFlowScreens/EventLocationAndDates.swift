@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import MapItemPicker
 
 struct EventLocationAndDates: View {
     @StateObject private var handler = AddressSearchHandler()
@@ -17,6 +18,9 @@ struct EventLocationAndDates: View {
     @FocusState private var addressSearchIsFocused: Bool
     @State private var useDefaultAddress = false
     @State private var selectedLocation: IdentifiableLocation?
+    @State private var PickerAddress: String = "528 Beacon St"
+    
+    @State var showingPicker = false
     let action: () -> Void
     
     var body: some View {
@@ -33,24 +37,12 @@ struct EventLocationAndDates: View {
                         CustomDateSelection(text: "Start date",
                                             date: $startDate,
                                             range: Date.now...Date.now.addingTimeInterval(7889400))
-                        .padding()
-                        .background(alignment: .center) {
-                            RoundedRectangle(cornerRadius: 9)
-                                .stroke(lineWidth: 2)
-                                .foregroundColor(.mixerPurple)
-                        }
                         
                         VStack(alignment: .leading) {
                             // End Date Selection : 1 hour - 25 hours
                             CustomDateSelection(text: "End date",
                                                 date: $endDate,
                                                 range: startDate.addingTimeInterval(3600)...startDate.addingTimeInterval(86460))
-                            .padding()
-                            .background(alignment: .center) {
-                                RoundedRectangle(cornerRadius: 9)
-                                    .stroke(lineWidth: 2)
-                                    .foregroundColor(.mixerPurple)
-                            }
                             
                             // More info about end date.
                             HStack(alignment: .center) {
@@ -69,37 +61,45 @@ struct EventLocationAndDates: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Where")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
+//                    Text("Where")
+//                        .font(.title)
+//                        .fontWeight(.semibold)
+//                        .foregroundColor(.white)
                     
                     VStack(alignment: .center) {
                         if showSearch {
-                            TextField("Search for an address", text: $handler.searchQuery)
-                                .padding()
-                                .background(alignment: .center) {
-                                    RoundedRectangle(cornerRadius: 9)
-                                        .stroke(lineWidth: 2)
-                                        .foregroundColor(.mixerPurple)
-                                }
-                                .focused($addressSearchIsFocused)
+//                            TextField("Search for an address", text: $handler.searchQuery)
+//                                .padding()
+//                                .background(alignment: .center) {
+//                                    RoundedRectangle(cornerRadius: 9)
+//                                        .stroke(lineWidth: 2)
+//                                        .foregroundColor(.mixerPurple)
+//                                }
+//                                .focused($addressSearchIsFocused)
+//
+//                            CreateEventTextField(input: $handler.searchQuery, title: "Where", placeholder: "Search for an address", keyboard: .default)
+//
+//                            ForEach(handler.searchResults, id: \.placemark) { mapItem in
+//                                Button {
+//                                    if let location = mapItem.placemark.title {
+//                                        self.address = location
+//                                        self.selectedLocation = IdentifiableLocation(mapItem.placemark.coordinate)
+//                                        self.showSearch = false
+//                                        self.addressSearchIsFocused = false
+//                                    }
+//                                } label: {
+//                                    Text(mapItem.placemark.title ?? "No results for \(handler.searchQuery) ...")
+//                                        .font(.body)
+//                                        .foregroundColor(.white)
+//                                        .multilineTextAlignment(.leading)
+//                                }
+//                            }
                             
-                            ForEach(handler.searchResults, id: \.placemark) { mapItem in
-                                Button {
-                                    if let location = mapItem.placemark.title {
-                                        self.address = location
-                                        self.selectedLocation = IdentifiableLocation(mapItem.placemark.coordinate)
-                                        self.showSearch = false
-                                        self.addressSearchIsFocused = false
-                                    }
-                                } label: {
-                                    Text(mapItem.placemark.title ?? "No results for \(handler.searchQuery) ...")
-                                        .font(.body)
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.leading)
-                                }
-                            }
+//                            CustomMapView(selectedLocation: $selectedLocation)
+//                                .frame(height: 300)
+//                                .cornerRadius(9)
+                            
+                            AddressPickerView()
                         } else {
                             Button {
                                 self.useDefaultAddress = false
@@ -114,7 +114,7 @@ struct EventLocationAndDates: View {
                                         .lineLimit(2)
                                         .minimumScaleFactor(0.75)
                                         .multilineTextAlignment(.leading)
-                                
+
                                     Spacer()
                                 }
                                 .padding()
@@ -125,7 +125,7 @@ struct EventLocationAndDates: View {
                                 }
                             }
                         }
-                        
+
                         if let defaultAddress = AuthViewModel.shared.currentUser?.associatedHostAccount?.address {
                             Toggle(isOn: $useDefaultAddress) {
                                 Text("Use default address")
@@ -141,16 +141,17 @@ struct EventLocationAndDates: View {
                         }
                     }
                     
-                    CustomMapView(selectedLocation: $selectedLocation)
-                        .frame(height: 300)
-                        .cornerRadius(9)
+
                 }
-                
-                VStack(alignment: .center) { NextButton(action: action) }
             }
             .padding()
+            .padding(.bottom, 40)
         }
         .background(Color.mixerBackground)
+        .overlay(alignment: .bottom) {
+            CreateEventNextButton(text: "Continue", action: action, isActive: true)
+
+    }
     }
 }
 
@@ -182,5 +183,66 @@ fileprivate struct CustomDateSelection: View {
             .datePickerStyle(CompactDatePickerStyle())
             .labelsHidden()
         }
+        .padding()
+        .background(alignment: .center) {
+            RoundedRectangle(cornerRadius: 9)
+                .stroke(lineWidth: 3)
+                .foregroundColor(.mixerIndigo)
+        }
     }
+}
+
+struct AddressPickerView: View {
+    @State private var selectedMapItem: MKMapItem?
+    @State private var selectedCoordinate = CLLocationCoordinate2D()
+    @State private var showingPicker = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Where")
+                .font(.title)
+                .fontWeight(.semibold)
+                .foregroundColor(.white)
+            
+            Text(selectedMapItem?.name ?? "Tap to choose address")
+                .foregroundColor(Color.mainFont)
+                .font(.title3)
+                .tint(Color.mixerIndigo)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
+                .background {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(lineWidth: 3)
+                        .foregroundColor(Color.mixerIndigo)
+                }
+                .onTapGesture {
+                    showingPicker = true
+                }
+
+            Map(coordinateRegion: $mapRegion,
+                interactionModes: .all,
+                showsUserLocation: true,
+                userTrackingMode: .constant(.none),
+                annotationItems: [AnnotationItem(coordinate: selectedCoordinate)]) { item in
+                MapMarker(coordinate: item.coordinate)
+            }
+                .frame(height: 300)
+                .cornerRadius(9)
+        }
+        .mapItemPicker(isPresented: $showingPicker) { item in
+            if let coordinate = item?.placemark.coordinate {
+                selectedMapItem = item
+                selectedCoordinate = coordinate
+                mapRegion = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004))
+                print("Selected \(selectedMapItem?.name ?? "Unknown")")
+            }
+        }
+    }
+
+    @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 42.3551, longitude: -71.0839), span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04))
+}
+
+struct AnnotationItem: Identifiable {
+    let id = UUID()
+    let coordinate: CLLocationCoordinate2D
 }

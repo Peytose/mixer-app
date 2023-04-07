@@ -62,23 +62,7 @@ struct BasicEventInfo: View {
                 }
                 
                 // Name
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Title")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    TextField("Choose something catchy!", text: $title)
-                        .font(.body)
-                        .fontWeight(.medium)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(alignment: .center) {
-                            RoundedRectangle(cornerRadius: 9)
-                                .stroke(lineWidth: 2)
-                                .foregroundColor(.mixerPurple)
-                        }
-                }
+                CreateEventTextField(input: $title, title: "Title", placeholder: "Choose something catchy!", keyboard: .default)
                 
                 // Description
                 VStack(alignment: .leading, spacing: 10) {
@@ -100,8 +84,8 @@ struct BasicEventInfo: View {
                             .padding()
                             .background(alignment: .center) {
                                 RoundedRectangle(cornerRadius: 9)
-                                    .stroke(lineWidth: 2)
-                                    .foregroundColor(.mixerPurple)
+                                    .stroke(lineWidth: 3)
+                                    .foregroundColor(.mixerIndigo)
                             }
                         
                         CharactersRemainView(valueName: "",
@@ -109,52 +93,62 @@ struct BasicEventInfo: View {
                                              limit: 250)
                     }
                 }
-                
+                                
                 // Privacy
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Privacy")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    SelectionPicker(selections: CreateEventViewModel.PrivacyType.allCases.map { Selection($0) }, selectedSelection: $selectedPrivacy)
-                        .onChange(of: selectedPrivacy) { newValue in
-                            if let value = newValue?.value {
-                                self.privacy = value
-                            }
-                        }
-                }
+//                VStack(alignment: .leading, spacing: 10) {
+//                    Text("Privacy")
+//                        .font(.title)
+//                        .fontWeight(.semibold)
+//                        .foregroundColor(.white)
+//
+//                    SelectionPicker(selections: CreateEventViewModel.PrivacyType.allCases.map { Selection($0) }, selectedSelection: $selectedPrivacy)
+//                        .onChange(of: selectedPrivacy) { newValue in
+//                            if let value = newValue?.value {
+//                                self.privacy = value
+//                            }
+//                        }
+//                }
                 
                 
                 // Visibility
                 
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Visibility")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    SelectionPicker(selections: CreateEventViewModel.VisibilityType.allCases.map { Selection($0) }, selectedSelection: $selectedVisibility)
-                        .onChange(of: selectedVisibility) { newValue in
-                            if let value = newValue?.value {
-                                self.visibility = value
-                            }
-                        }
-                }
+//                VStack(alignment: .leading, spacing: 10) {
+//                    Text("Visibility")
+//                        .font(.title)
+//                        .fontWeight(.semibold)
+//                        .foregroundColor(.white)
+//
+//                    SelectionPicker(selections: CreateEventViewModel.VisibilityType.allCases.map { Selection($0) }, selectedSelection: $selectedVisibility)
+//                        .onChange(of: selectedVisibility) { newValue in
+//                            if let value = newValue?.value {
+//                                self.visibility = value
+//                            }
+//                        }
+//                }
                 
-                VStack(alignment: .leading) {
-                    NextButton(action: action)
-                        .disabled(selectedImage == nil ||
-                                  title.isEmpty ||
-                                  description.isEmpty)
-                        .opacity(selectedImage == nil ||
-                                 title.isEmpty ||
-                                 description.isEmpty ? 0.3 : 1)
-                }
+//                VStack(alignment: .leading) {
+//                    NextButton(action: action)
+//                        .disabled(selectedImage == nil ||
+//                                  title.isEmpty ||
+//                                  description.isEmpty)
+//                        .opacity(selectedImage == nil ||
+//                                 title.isEmpty ||
+//                                 description.isEmpty ? 0.3 : 1)
+//                }
             }
             .padding()
         }
         .background(Color.mixerBackground)
+        .overlay(alignment: .bottom) {
+            if selectedImage == nil ||
+                title.isEmpty ||
+                description.isEmpty {
+                CreateEventNextButton(text: "Continue", action: action, isActive: false)
+                    .disabled(true)
+            } else {
+                CreateEventNextButton(text: "Continue", action: action, isActive: true)
+            }
+    }
         .sheet(isPresented: $imagePickerPresented) {
             ImagePicker(image: $selectedImage)
         }
