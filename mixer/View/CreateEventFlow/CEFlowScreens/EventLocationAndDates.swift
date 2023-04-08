@@ -76,28 +76,28 @@ struct EventLocationAndDates: View {
 //                                        .foregroundColor(.mixerPurple)
 //                                }
 //                                .focused($addressSearchIsFocused)
-//
-//                            CreateEventTextField(input: $handler.searchQuery, title: "Where", placeholder: "Search for an address", keyboard: .default)
-//
-//                            ForEach(handler.searchResults, id: \.placemark) { mapItem in
-//                                Button {
-//                                    if let location = mapItem.placemark.title {
-//                                        self.address = location
-//                                        self.selectedLocation = IdentifiableLocation(mapItem.placemark.coordinate)
-//                                        self.showSearch = false
-//                                        self.addressSearchIsFocused = false
-//                                    }
-//                                } label: {
-//                                    Text(mapItem.placemark.title ?? "No results for \(handler.searchQuery) ...")
-//                                        .font(.body)
-//                                        .foregroundColor(.white)
-//                                        .multilineTextAlignment(.leading)
-//                                }
-//                            }
+
+                            CreateEventTextField(input: $handler.searchQuery, title: "Where", placeholder: "Search for an address", keyboard: .default)
+
+                            ForEach(handler.searchResults, id: \.placemark) { mapItem in
+                                Button {
+                                    if let location = mapItem.placemark.title {
+                                        self.address = location
+                                        self.selectedLocation = IdentifiableLocation(mapItem.placemark.coordinate)
+                                        self.showSearch = false
+                                        self.addressSearchIsFocused = false
+                                    }
+                                } label: {
+                                    Text(mapItem.placemark.title ?? "No results for \(handler.searchQuery) ...")
+                                        .font(.body)
+                                        .foregroundColor(.white)
+                                        .multilineTextAlignment(.leading)
+                                }
+                            }
                             
-//                            CustomMapView(selectedLocation: $selectedLocation)
-//                                .frame(height: 300)
-//                                .cornerRadius(9)
+                            CustomMapView(selectedLocation: $selectedLocation)
+                                .frame(height: 300)
+                                .cornerRadius(9)
                             
                             AddressPickerView()
                         } else {

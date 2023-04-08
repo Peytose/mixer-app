@@ -30,22 +30,39 @@ struct CreateEventFlow: View {
                                       action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.locationAndDates)
                 
-                EventGuestsAndInvitations(startDate: viewModel.startDate,
-                                          privacy: viewModel.privacy,
-                                          guestLimit: $viewModel.guestLimit,
-                                          guestInviteLimit: $viewModel.guestInviteLimit,
-                                          memberInviteLimit: $viewModel.memberInviteLimit,
-                                          registrationDeadlineDate: $viewModel.registrationDeadlineDate,
-                                          checkInMethod: $viewModel.checkInMethod,
-                                          isManualApprovalEnabled: $viewModel.isManualApprovalEnabled,
-                                          isGuestLimitEnabled: $viewModel.isGuestLimitEnabled,
-                                          isWaitlistEnabled: $viewModel.isWaitlistEnabled,
-                                          isMemberInviteLimitEnabled: $viewModel.isMemberInviteLimitEnabled,
-                                          isGuestInviteLimitEnabled: $viewModel.isGuestInviteLimitEnabled,
-                                          isRegistrationDeadlineEnabled: $viewModel.isRegistrationDeadlineEnabled,
-                                          isCheckInOptionsEnabled: $viewModel.isCheckInOptionsEnabled,
-                                          action: viewModel.next)
-                    .tag(CreateEventViewModel.Screen.guestsAndInvitations)
+//                EventGuestsAndInvitations(startDate: viewModel.startDate,
+//                                          privacy: viewModel.privacy,
+//                                          guestLimit: $viewModel.guestLimit,
+//                                          guestInviteLimit: $viewModel.guestInviteLimit,
+//                                          memberInviteLimit: $viewModel.memberInviteLimit,
+//                                          registrationDeadlineDate: $viewModel.registrationDeadlineDate,
+//                                          checkInMethod: $viewModel.checkInMethod,
+//                                          isManualApprovalEnabled: $viewModel.isManualApprovalEnabled,
+//                                          isGuestLimitEnabled: $viewModel.isGuestLimitEnabled,
+//                                          isWaitlistEnabled: $viewModel.isWaitlistEnabled,
+//                                          isMemberInviteLimitEnabled: $viewModel.isMemberInviteLimitEnabled,
+//                                          isGuestInviteLimitEnabled: $viewModel.isGuestInviteLimitEnabled,
+//                                          isRegistrationDeadlineEnabled: $viewModel.isRegistrationDeadlineEnabled,
+//                                          isCheckInOptionsEnabled: $viewModel.isCheckInOptionsEnabled,
+//                                          action: viewModel.next)
+//                    .tag(CreateEventViewModel.Screen.guestsAndInvitations)
+                
+//                PrototypeView(checkInMethod: $viewModel.checkInMethod, useGuestList: $viewModel.isGuestListEnabled, isGuestLimit: $viewModel.isGuestLimitEnabled, isMemberInviteLimit: $viewModel.isMemberInviteLimitEnabled, isGuestInviteLimit: $viewModel.isGuestInviteLimitEnabled, ManuallyApproveGuests: $viewModel.isManualApprovalEnabled, enableWaitlist: $viewModel.isWaitlistEnabled, registrationcutoff: $viewModel.isRegistrationDeadlineEnabled, action: viewModel.next)
+//                    .tag(CreateEventViewModel.Screen.guestsAndInvitations)
+                PrototypeView(checkInMethod: $viewModel.checkInMethod,
+                              guestLimit: $viewModel.guestLimit,
+                              guestInviteLimit: $viewModel.guestInviteLimit,
+                              memberInviteLimit: $viewModel.memberInviteLimit,
+                              useGuestList: $viewModel.isGuestListEnabled,
+                              isGuestLimit: $viewModel.isGuestLimitEnabled,
+                              isMemberInviteLimit: $viewModel.isMemberInviteLimitEnabled,
+                              isGuestInviteLimit: $viewModel.isGuestInviteLimitEnabled,
+                              manuallyApproveGuests: $viewModel.isManualApprovalEnabled,
+                              enableWaitlist: $viewModel.isWaitlistEnabled,
+                              registrationcutoff: $viewModel.isRegistrationDeadlineEnabled, action: viewModel.next)
+                .tag(CreateEventViewModel.Screen.guestsAndInvitations)
+
+                
                 
                 EventAmenitiesAndCost(selectedAmenities: $viewModel.selectedAmenities,
                                       action: viewModel.next)

@@ -22,6 +22,7 @@ final class CreateEventViewModel: ObservableObject {
     @Published var type: EventType                     = .kickback
     @Published var privacy: PrivacyType                = .open
     @Published var visibility: VisibilityType          = ._public
+    @Published var isGuestListEnabled: Bool            = false
     @Published var isManualApprovalEnabled: Bool       = false
     @Published var isGuestLimitEnabled: Bool           = false
     @Published var isWaitlistEnabled: Bool             = false

@@ -17,8 +17,11 @@ struct ContentView: View {
     var body: some View {
         Group {
             if viewModel.userSession == nil || viewModel.currentUser == nil {
-                AuthFlow()
-//                CreateEventFlow()
+//                AuthFlow()
+                
+                CreateEventFlow()
+                
+//                PrototypeView()
 //                LaunchPageView()
 //                NotificationFeedView()
 //                ProfileView(user: Mockdata.user)

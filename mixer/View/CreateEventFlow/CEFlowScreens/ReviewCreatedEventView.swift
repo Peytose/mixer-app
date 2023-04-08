@@ -16,15 +16,28 @@ struct ReviewCreatedEventView: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text(viewModel.title)
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
+                    VStack(alignment: .leading, spacing: 2.5) {
+                        Text(viewModel.title)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        
+                        Text("Private Invite Only Event \(Image(systemName: "lock.fill"))")
+                            .font(.subheadline).fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                    }
                     
-                    Text(viewModel.description)
-                        .font(.headline)
-                        .fontWeight(.regular)
-                        .foregroundColor(.secondary)
+                    VStack(alignment: .leading, spacing: 2.5) {
+                        Text("Description")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        
+                        Text(viewModel.description)
+                            .font(.headline)
+                            .fontWeight(.regular)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 Divider().foregroundColor(.secondary)
@@ -92,6 +105,8 @@ struct ReviewCreatedEventView: View {
                         EventOptionRow(text: "Check-in option: \(method)")
                     }
                 }
+                
+//                Image(viewModel.image)
                 
                 VStack(alignment: .center) {
                     NextButton(text: "Create Event", action: viewModel.createEvent)

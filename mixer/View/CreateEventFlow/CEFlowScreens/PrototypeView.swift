@@ -9,9 +9,14 @@ import SwiftUI
 
 struct PrototypeView: View {
     @State var selectedVisibility : VisibilityEnum = .open
+    @State var selectedInvitePreferrence : InvitePreferrenceEnum = .open
     @State var selectedCheckinMethod : CheckinMethodEnum = .qrcode
+    @Binding var checkInMethod: CreateEventViewModel.CheckInMethod?
 
-    @State var temp = ""
+    //Values
+    @Binding var guestLimit: String
+    @Binding var guestInviteLimit: String
+    @Binding var memberInviteLimit: String
     
     //Alert bools
     @State private var showGuestlistAlert = false
@@ -24,18 +29,17 @@ struct PrototypeView: View {
     @State private var showRegistrationCutoffAlert = false
     
     //Toggle bools
-    @State private var useGuestList = false
-    @State private var guestLimit = false
-    @State private var memberInviteLimit = false
-    @State private var guestInviteLimit = false
+    @Binding  var useGuestList: Bool
+    @Binding  var isGuestLimit: Bool
+    @Binding  var isMemberInviteLimit: Bool
+    @Binding  var isGuestInviteLimit: Bool
 
-    
-    @State private var manuallyApproveGuests = false
-    @State private var enableWaitlist = false
-    @State private var registrationcutoff = false
-    
+    @Binding  var manuallyApproveGuests: Bool
+    @Binding  var enableWaitlist: Bool
+    @Binding  var registrationcutoff: Bool
+    let action: () -> Void
+
     var body: some View {
-        NavigationView {
             VStack {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 10) {
@@ -48,7 +52,10 @@ struct PrototypeView: View {
                             .frame(width: 18, height: 18)
                     }
                     
-                    Text(selectedVisibility == .open ? "Everyone can see this event" : "Only invited users can see this event")
+                    Text(selectedVisibility == .open ? "Everyone can see this event. " : "Only invited users can see this event. ")
+                        .font(.title3).fontWeight(.medium)
+                    
+                    + Text(selectedInvitePreferrence == .open ? "Anyone check in to this event" : "Only users on the guest list can check in to the event")
                         .font(.title3).fontWeight(.medium)
                     
                     + Text(selectedCheckinMethod == .qrcode ? " and check-in will be handled via QR Code." : " and check-in will be handled manually by the host.")
@@ -75,15 +82,20 @@ struct PrototypeView: View {
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             .background(Color.mixerBackground)
+            .preferredColorScheme(.dark)
             .navigationTitle("")
+            .overlay(alignment: .bottom) {
+                CreateEventNextButton(text: "Continue", action: action, isActive: true)
         }
     }
 }
 
 struct PrototypeView_Previews: PreviewProvider {
     static var previews: some View {
-        PrototypeView()
-            .preferredColorScheme(.dark)
+//        PrototypeView(checkInMethod: .constant(nil), useGuestList: .constant(false), isGuestLimit: .constant(false), isMemberInviteLimit: .constant(false), isGuestInviteLimit: .constant(false), ManuallyApproveGuests: .constant(false), enableWaitlist: .constant(false), registrationcutoff: .constant(false)) {}
+//            .preferredColorScheme(.dark)
+        PrototypeView(checkInMethod: .constant(nil), guestLimit: .constant(""), guestInviteLimit: .constant(""), memberInviteLimit: .constant(""), useGuestList: .constant(false), isGuestLimit: .constant(false), isMemberInviteLimit: .constant(false), isGuestInviteLimit: .constant(false), manuallyApproveGuests: .constant(false), enableWaitlist: .constant(false), registrationcutoff: .constant(false)) {}
+        
     }
 }
 
@@ -92,9 +104,16 @@ extension PrototypeView {
     var segmentedToggles: some View {
         VStack {
             Picker("", selection: $selectedVisibility.animation()) {
-                Text("Open").tag(VisibilityEnum.open)
+                Text("Public").tag(VisibilityEnum.open)
                 
                 Text("Private").tag(VisibilityEnum.closed)
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding(.horizontal)
+            
+            Picker("", selection: $selectedInvitePreferrence.animation()) {
+                Text("Open").tag(InvitePreferrenceEnum.open)
+                Text("Invite Only").tag(InvitePreferrenceEnum.inviteOnly)
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal)
@@ -133,12 +152,12 @@ extension PrototypeView {
                         }
                         .alert("Set guest limit", isPresented: $showGuestLimitAlert, actions: {}, message: { Text("N/A")}) // 4
                     
-                    Toggle("Set guest limit", isOn: $guestLimit.animation())
+                    Toggle("Set guest limit", isOn: $isGuestLimit.animation())
                         .font(.body.weight(.semibold))
                 }
                 
-                if guestLimit {
-                    TextField("Maximum guests", text: $temp)
+                if isGuestLimit {
+                    TextField("Maximum guests", text: $guestLimit)
                         .foregroundColor(Color.mainFont)
                         .keyboardType(.numberPad)
                 }
@@ -162,12 +181,12 @@ extension PrototypeView {
                         }
                         .alert("Set member invite limit", isPresented: $showMemberInviteLimitAlert, actions: {}, message: { Text("N/A")}) // 4
                     
-                    Toggle("Set member invite limit", isOn: $memberInviteLimit.animation())
+                    Toggle("Set member invite limit", isOn: $isMemberInviteLimit.animation())
                         .font(.body.weight(.semibold))
                 }
                 
-                if memberInviteLimit {
-                    TextField("Invites per member", text: $temp)
+                if isMemberInviteLimit {
+                    TextField("Invites per member", text: $memberInviteLimit)
                         .foregroundColor(Color.mainFont)
                         .keyboardType(.numberPad)
                 }
@@ -181,12 +200,12 @@ extension PrototypeView {
                         }
                         .alert("Set guest invite limit", isPresented: $showGuestInviteLimitAlert, actions: {}, message: { Text("N/A")}) // 4
                     
-                    Toggle("Set guest invite limit", isOn: $guestInviteLimit.animation())
+                    Toggle("Set guest invite limit", isOn: $isGuestInviteLimit.animation())
                         .font(.body.weight(.semibold))
                 }
                 
-                if guestInviteLimit {
-                    TextField("Invites per guest", text: $temp)
+                if isGuestInviteLimit {
+                    TextField("Invites per guest", text: $guestInviteLimit)
                         .foregroundColor(Color.mainFont)
                         .keyboardType(.numberPad)
                 }
@@ -248,12 +267,23 @@ extension PrototypeView {
 }
 
 enum VisibilityEnum: String {
-    case closed, open
+    case open, closed
     
     var stringVersion: String {
         switch self {
-            case .closed: return "Private"
             case .open: return "Public"
+            case .closed: return "Private"
+        }
+    }
+}
+
+enum InvitePreferrenceEnum: String {
+    case open, inviteOnly
+    
+    var stringVersion: String {
+        switch self {
+            case .open: return "Open"
+            case .inviteOnly: return "Invite Only"
         }
     }
 }
@@ -268,3 +298,4 @@ enum CheckinMethodEnum: String {
         }
     }
 }
+

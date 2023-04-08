@@ -80,26 +80,26 @@ struct EventGuestsAndInvitations: View {
                 }
                 
                 // Registration Deadline Option
-                VStack(alignment: .center) {
-                    OptionView(boolean: $isRegistrationDeadlineEnabled,
-                               text: "Registration deadline",
-                               subtext: "Specify a date by which guests must RSVP or register to attend the event.",
-                               isEnabled: true)
-                    .onChange(of: isRegistrationDeadlineEnabled) { newValue in
-                        if newValue { registrationDeadlineDate = Date() }
-                    }
-                    
-                    OptionalDatePicker(date: $registrationDeadlineDate,
-                                       range: Date()...startDate)
-                    .foregroundColor(isRegistrationDeadlineEnabled ? .white : .secondary)
-                    .padding()
-                    .background(alignment: .center) {
-                        RoundedRectangle(cornerRadius: 9)
-                            .stroke(lineWidth: isRegistrationDeadlineEnabled ? 2 : 1)
-                            .foregroundColor(.mixerPurple.opacity(isRegistrationDeadlineEnabled ? 1 : 0.75))
-                    }
-                    .disabled(!isRegistrationDeadlineEnabled)
-                }
+//                VStack(alignment: .center) {
+//                    OptionView(boolean: $isRegistrationDeadlineEnabled,
+//                               text: "Registration deadline",
+//                               subtext: "Specify a date by which guests must RSVP or register to attend the event.",
+//                               isEnabled: true)
+//                    .onChange(of: isRegistrationDeadlineEnabled) { newValue in
+//                        if newValue { registrationDeadlineDate = Date() }
+//                    }
+//
+//                    OptionalDatePicker(date: $registrationDeadlineDate,
+//                                       range: Date()...startDate)
+//                    .foregroundColor(isRegistrationDeadlineEnabled ? .white : .secondary)
+//                    .padding()
+//                    .background(alignment: .center) {
+//                        RoundedRectangle(cornerRadius: 9)
+//                            .stroke(lineWidth: isRegistrationDeadlineEnabled ? 2 : 1)
+//                            .foregroundColor(.mixerPurple.opacity(isRegistrationDeadlineEnabled ? 1 : 0.75))
+//                    }
+//                    .disabled(!isRegistrationDeadlineEnabled)
+//                }
                 
                 // Check-In Options
                 VStack(alignment: .center) {
