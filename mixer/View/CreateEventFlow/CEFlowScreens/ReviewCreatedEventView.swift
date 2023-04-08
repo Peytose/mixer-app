@@ -106,15 +106,22 @@ struct ReviewCreatedEventView: View {
                     }
                 }
                 
+//                if let image = image {
+//                    Image(viewModel.image)
+//                }
+                
+//                VStack(alignment: .center) {
+//                    NextButton(text: "Create Event", action: viewModel.createEvent)
+//                }
 //                Image(viewModel.image)
                 
-                VStack(alignment: .center) {
-                    NextButton(text: "Create Event", action: viewModel.createEvent)
-                }
             }
             .padding()
         }
         .background(Color.mixerBackground.ignoresSafeArea())
+        .overlay(alignment: .bottom) {
+            CreateEventNextButton(text: "Continue", action: viewModel.createEvent, isActive: true)
+    }
     }
 }
 

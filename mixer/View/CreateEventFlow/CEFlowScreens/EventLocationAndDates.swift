@@ -66,86 +66,88 @@ struct EventLocationAndDates: View {
 //                        .fontWeight(.semibold)
 //                        .foregroundColor(.white)
                     
-                    VStack(alignment: .center) {
-                        if showSearch {
-//                            TextField("Search for an address", text: $handler.searchQuery)
+//                    VStack(alignment: .center) {
+//                        if showSearch {
+////                            TextField("Search for an address", text: $handler.searchQuery)
+////                                .padding()
+////                                .background(alignment: .center) {
+////                                    RoundedRectangle(cornerRadius: 9)
+////                                        .stroke(lineWidth: 2)
+////                                        .foregroundColor(.mixerPurple)
+////                                }
+////                                .focused($addressSearchIsFocused)
+//
+//                            CreateEventTextField(input: $handler.searchQuery, title: "Where", placeholder: "Search for an address", keyboard: .default)
+//
+//                            ForEach(handler.searchResults, id: \.placemark) { mapItem in
+//                                Button {
+//                                    if let location = mapItem.placemark.title {
+//                                        self.address = location
+//                                        self.selectedLocation = IdentifiableLocation(mapItem.placemark.coordinate)
+//                                        self.showSearch = false
+//                                        self.addressSearchIsFocused = false
+//                                    }
+//                                } label: {
+//                                    Text(mapItem.placemark.title ?? "No results for \(handler.searchQuery) ...")
+//                                        .font(.body)
+//                                        .foregroundColor(.white)
+//                                        .multilineTextAlignment(.leading)
+//                                }
+//                            }
+//
+//                            CustomMapView(selectedLocation: $selectedLocation)
+//                                .frame(height: 300)
+//                                .cornerRadius(9)
+//
+////                            AddressPickerView()
+//                        } else {
+//                            Button {
+//                                self.useDefaultAddress = false
+//                                self.showSearch = true
+//                                self.addressSearchIsFocused = true
+//                            } label: {
+//                                HStack(alignment: .center) {
+//                                    Text(address)
+//                                        .font(.callout)
+//                                        .fontWeight(.medium)
+//                                        .foregroundColor(.white)
+//                                        .lineLimit(2)
+//                                        .minimumScaleFactor(0.75)
+//                                        .multilineTextAlignment(.leading)
+//
+//                                    Spacer()
+//                                }
 //                                .padding()
 //                                .background(alignment: .center) {
 //                                    RoundedRectangle(cornerRadius: 9)
 //                                        .stroke(lineWidth: 2)
 //                                        .foregroundColor(.mixerPurple)
 //                                }
-//                                .focused($addressSearchIsFocused)
-
-                            CreateEventTextField(input: $handler.searchQuery, title: "Where", placeholder: "Search for an address", keyboard: .default)
-
-                            ForEach(handler.searchResults, id: \.placemark) { mapItem in
-                                Button {
-                                    if let location = mapItem.placemark.title {
-                                        self.address = location
-                                        self.selectedLocation = IdentifiableLocation(mapItem.placemark.coordinate)
-                                        self.showSearch = false
-                                        self.addressSearchIsFocused = false
-                                    }
-                                } label: {
-                                    Text(mapItem.placemark.title ?? "No results for \(handler.searchQuery) ...")
-                                        .font(.body)
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.leading)
-                                }
-                            }
-                            
-                            CustomMapView(selectedLocation: $selectedLocation)
-                                .frame(height: 300)
-                                .cornerRadius(9)
-                            
-                            AddressPickerView()
-                        } else {
-                            Button {
-                                self.useDefaultAddress = false
-                                self.showSearch = true
-                                self.addressSearchIsFocused = true
-                            } label: {
-                                HStack(alignment: .center) {
-                                    Text(address)
-                                        .font(.callout)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.white)
-                                        .lineLimit(2)
-                                        .minimumScaleFactor(0.75)
-                                        .multilineTextAlignment(.leading)
-
-                                    Spacer()
-                                }
-                                .padding()
-                                .background(alignment: .center) {
-                                    RoundedRectangle(cornerRadius: 9)
-                                        .stroke(lineWidth: 2)
-                                        .foregroundColor(.mixerPurple)
-                                }
-                            }
-                        }
-
-                        if let defaultAddress = AuthViewModel.shared.currentUser?.associatedHostAccount?.address {
-                            Toggle(isOn: $useDefaultAddress) {
-                                Text("Use default address")
-                                    .font(.body)
-                                    .foregroundColor(.secondary)
-                            }
-                            .tint(Color.mixerPurple)
-                            .onChange(of: useDefaultAddress) { _ in
-                                self.address = useDefaultAddress ? defaultAddress : ""
-                                self.showSearch = !useDefaultAddress
-                                self.addressSearchIsFocused = !useDefaultAddress
-                            }
-                        }
-                    }
+//                            }
+//                        }
+//
+//                        if let defaultAddress = AuthViewModel.shared.currentUser?.associatedHostAccount?.address {
+//                            Toggle(isOn: $useDefaultAddress) {
+//                                Text("Use default address")
+//                                    .font(.body)
+//                                    .foregroundColor(.secondary)
+//                            }
+//                            .tint(Color.mixerPurple)
+//                            .onChange(of: useDefaultAddress) { _ in
+//                                self.address = useDefaultAddress ? defaultAddress : ""
+//                                self.showSearch = !useDefaultAddress
+//                                self.addressSearchIsFocused = !useDefaultAddress
+//                            }
+//                        }
+//                    }
                     
+                    AddressPickerView()
+
 
                 }
             }
             .padding()
-            .padding(.bottom, 40)
+            .padding(.bottom, 80)
         }
         .background(Color.mixerBackground)
         .overlay(alignment: .bottom) {

@@ -484,8 +484,8 @@ fileprivate struct EventFlyerHeader: View {
                     .offset(y: 120)
                     .background(
                         ZStack {
-//                            KFImage(URL(string: event.eventImageUrl))
-                            Image("theta-chi-party-poster-2")
+                            KFImage(URL(string: event.eventImageUrl))
+//                            Image("theta-chi-party-poster-2")
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .matchedGeometryEffect(id: "background 2", in: namespace)
@@ -505,8 +505,8 @@ fileprivate struct EventFlyerHeader: View {
                                     RoundedRectangle(cornerRadius: 20)
                                 )
                             
-//                            KFImage(URL(string: event.eventImageUrl))
-                            Image("theta-chi-party-poster-2")
+                            KFImage(URL(string: event.eventImageUrl))
+//                            Image("theta-chi-party-poster-2")
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: proxy.size.width - 60, height: proxy.size.height - 60)

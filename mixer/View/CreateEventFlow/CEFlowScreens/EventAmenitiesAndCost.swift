@@ -11,6 +11,7 @@ import Combine
 struct EventAmenitiesAndCost: View {
     @State private var atTheDoorPrice: String = ""
     @State private var isFree: Bool = true
+    @State private var showAlert = false
     @Binding var selectedAmenities: Set<EventAmenities>
     let action: () -> Void
     
@@ -26,13 +27,13 @@ struct EventAmenitiesAndCost: View {
                     VStack(alignment: .center) {
                         HStack(alignment: .top) {
                             CostOption(text: "Free Access",
-                                       subtext: "All approved guests can enter the event free of charge.",
+                                       subtext: "All guests can enter the event free of charge.",
                                        icon: "hand.thumbsup.fill",
                                        iconColor: Color.green,
                                        isSelected: $isFree) { isFree = true }
                             
                             CostOption(text: "Paid Event",
-                                       subtext: "Set the ticket price for guests to pay at the event entrance.",
+                                       subtext: "Set the ticket price for guests to pay for entry into the event.",
                                        icon: "dollarsign",
                                        iconColor: Color.red,
                                        isSelected: $isFree.not) { isFree = false }
@@ -45,19 +46,30 @@ struct EventAmenitiesAndCost: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Choose amenities")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                    HStack {
+                        Text("Choose Amenities")
+                            .font(.title)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        
+                        Image(systemName: "info.circle")
+                            .font(.body)
+                            .foregroundColor(.mixerIndigo)
+                            .onTapGesture {
+                                showAlert.toggle()
+                            }
+                            .alert("Choose Amenities", isPresented: $showAlert, actions: {}, message: { Text("Let your guests know what to expect before coming to your event. List important amenities like bathrooms, DJ, beer, water, etc...")})
+                    }
+                    
                     
                     VStack(alignment: .leading, spacing: 10) {
                         ForEach(AmenityCategory.allCases, id: \.self) { category in
                             VStack(alignment: .leading, spacing: 5) {
-                                Text(category.rawValue)
-                                    .textCase(.uppercase)
+                                Text(category.rawValue.capitalized)
+//                                    .textCase(.)
                                     .font(.footnote)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.mixerPurple)
+                                    .foregroundColor(.mainFont)
                                 
                                 VStack(alignment: .leading, spacing: 0) {
                                     ForEach(EventAmenities.allCases.filter { $0.category == category }, id: \.self) { amenity in
@@ -69,13 +81,16 @@ struct EventAmenitiesAndCost: View {
                                             }
                                         } label: {
                                             HStack {
+                                                Image(systemName: amenity.icon)
+                                                    .foregroundColor(Color.mixerIndigo)
+                                                
                                                 Text(amenity.rawValue)
                                                     .font(.body)
                                                     .fontWeight(.medium)
                                                     .foregroundColor(.white)
                                                 Spacer()
                                                 if selectedAmenities.contains(amenity) {
-                                                    Image(systemName: amenity.icon)
+                                                    Image(systemName: "checkmark")
                                                         .foregroundColor(Color.mixerPurple)
                                                 }
                                             }

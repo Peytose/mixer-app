@@ -77,13 +77,12 @@ struct PrototypeView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .tint(.mixerIndigo)
-                
-
             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             .background(Color.mixerBackground)
             .preferredColorScheme(.dark)
             .navigationTitle("")
+            .padding(.bottom, 80)
             .overlay(alignment: .bottom) {
                 CreateEventNextButton(text: "Continue", action: action, isActive: true)
         }
