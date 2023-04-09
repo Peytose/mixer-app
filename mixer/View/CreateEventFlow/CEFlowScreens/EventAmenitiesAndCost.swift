@@ -111,10 +111,11 @@ struct EventAmenitiesAndCost: View {
                         }
                     }
                 }
-                
-                VStack(alignment: .center) { NextButton(action: action) }
             }
             .padding()
+            .overlay(alignment: .bottom) {
+                CreateEventNextButton(text: "Continue", action: action, isActive: true)
+        }
         }
         .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
     }
