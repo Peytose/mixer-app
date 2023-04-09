@@ -20,140 +20,144 @@ struct BasicEventInfo: View {
     let action: () -> Void
     
     var body: some View {
-        GeometryReader { proxy in
-            ScrollView(showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 35) {
-                    // Name
-                    CreateEventTextField(input: $title, title: "Title", placeholder: "Choose something catchy!", keyboard: .default)
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 35) {
+                // Name
+                CreateEventTextField(input: $title, title: "Title", placeholder: "Choose something catchy!", keyboard: .default)
+                
+                // Description
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Description")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
                     
-                    // Description
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Description")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.white)
-                        
-                        VStack(alignment: .leading, spacing: 5) {
-                            TextField("Include important details, such as attire or theme!",
-                                      text: $description,
-                                      axis: .vertical)
-                                .lineLimit(7, reservesSpace: true)
-                                .keyboardType(.twitter)
-                                .disableAutocorrection(true)
-                                .foregroundColor(Color.mainFont)
-                                .font(.body)
-                                .fontWeight(.medium)
-                                .padding()
-                                .background(alignment: .center) {
-                                    RoundedRectangle(cornerRadius: 9)
-                                        .stroke(lineWidth: 3)
-                                        .foregroundColor(.mixerIndigo)
-                                }
-                            
-                            CharactersRemainView(valueName: "",
-                                                 currentCount: description.count,
-                                                 limit: 250)
+                    VStack(alignment: .leading, spacing: 5) {
+                        TextField("Include important details, such as attire or theme!",
+                                  text: $description,
+                                  axis: .vertical)
+                        .lineLimit(7, reservesSpace: true)
+                        .keyboardType(.default)
+                        .disableAutocorrection(true)
+                        .foregroundColor(Color.mainFont)
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .padding()
+                        .background(alignment: .center) {
+                            RoundedRectangle(cornerRadius: 9)
+                                .stroke(lineWidth: 3)
+                                .foregroundColor(.mixerIndigo)
                         }
+                        
+                        CharactersRemainView(valueName: "",
+                                             currentCount: description.count,
+                                             limit: 250)
                     }
+                }
+                
+                // Flyer
+                VStack(alignment: .center) {
+                    Button { self.imagePickerPresented.toggle() } label: {
+                        if let image = image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 250, height: 250)
+                                .cornerRadius(20)
+                        } else {
+                            VStack {
+                                Text("Event Flyer")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                
+                                HStack {
+                                    Text("Select image")
+                                        .font(.body)
+                                        .foregroundColor(.secondary)
                                     
-                    // Flyer
-                    VStack(alignment: .center) {
-                        Button { self.imagePickerPresented.toggle() } label: {
-                            if let image = image {
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 250, height: 250)
-                                    .cornerRadius(20)
-                            } else {
-                                VStack {
-                                    Text("Event Flyer")
-                                        .font(.title2)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                    
-                                    HStack {
-                                        Text("Select image")
-                                            .font(.body)
-                                            .foregroundColor(.secondary)
-                                        
-                                        Image(systemName: "hand.point.up")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .foregroundColor(.secondary)
-                                            .frame(width: 22, height: 22, alignment: .center)
-                                    }
+                                    Image(systemName: "hand.point.up")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(.secondary)
+                                        .frame(width: 22, height: 22, alignment: .center)
                                 }
                             }
                         }
-                        .frame(maxWidth: DeviceTypes.ScreenSize.width,
-                               minHeight: DeviceTypes.ScreenSize.height / 5)
-                        .background(alignment: .center) {
-                            RoundedRectangle(cornerRadius: 9)
-                                .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [10]))
-                                .foregroundColor(.secondary)
-                        }
-                        .onChange(of: selectedImage) { _ in loadImage() }
                     }
-                    // Privacy
-    //                VStack(alignment: .leading, spacing: 10) {
-    //                    Text("Privacy")
-    //                        .font(.title)
-    //                        .fontWeight(.semibold)
-    //                        .foregroundColor(.white)
-    //
-    //                    SelectionPicker(selections: CreateEventViewModel.PrivacyType.allCases.map { Selection($0) }, selectedSelection: $selectedPrivacy)
-    //                        .onChange(of: selectedPrivacy) { newValue in
-    //                            if let value = newValue?.value {
-    //                                self.privacy = value
-    //                            }
-    //                        }
-    //                }
-                    
-                    
-                    // Visibility
-                    
-//                    VStack(alignment: .leading, spacing: 10) {
-//                        Text("Visibility")
-//                            .font(.title)
-//                            .fontWeight(.semibold)
-//                            .foregroundColor(.white)
-//
-//                        SelectionPicker(selections: CreateEventViewModel.VisibilityType.allCases.map { Selection($0) }, selectedSelection: $selectedVisibility)
-//                            .onChange(of: selectedVisibility) { newValue in
-//                                if let value = newValue?.value {
-//                                    self.visibility = value
-//                                }
-//                            }
-//                    }
-                    
-    //                VStack(alignment: .leading) {
-    //                    NextButton(action: action)
-    //                        .disabled(selectedImage == nil ||
-    //                                  title.isEmpty ||
-    //                                  description.isEmpty)
-    //                        .opacity(selectedImage == nil ||
-    //                                 title.isEmpty ||
-    //                                 description.isEmpty ? 0.3 : 1)
-    //                }
+                    .frame(maxWidth: DeviceTypes.ScreenSize.width,
+                           minHeight: DeviceTypes.ScreenSize.height / 5)
+                    .background(alignment: .center) {
+                        RoundedRectangle(cornerRadius: 9)
+                            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [10]))
+                            .foregroundColor(.secondary)
+                    }
+                    .onChange(of: selectedImage) { _ in loadImage() }
                 }
-                .padding()
-                .padding(.bottom, 80)
+                // Privacy
+                //                VStack(alignment: .leading, spacing: 10) {
+                //                    Text("Privacy")
+                //                        .font(.title)
+                //                        .fontWeight(.semibold)
+                //                        .foregroundColor(.white)
+                //
+                //                    SelectionPicker(selections: CreateEventViewModel.PrivacyType.allCases.map { Selection($0) }, selectedSelection: $selectedPrivacy)
+                //                        .onChange(of: selectedPrivacy) { newValue in
+                //                            if let value = newValue?.value {
+                //                                self.privacy = value
+                //                            }
+                //                        }
+                //                }
+                
+                
+                // Visibility
+                
+                //                    VStack(alignment: .leading, spacing: 10) {
+                //                        Text("Visibility")
+                //                            .font(.title)
+                //                            .fontWeight(.semibold)
+                //                            .foregroundColor(.white)
+                //
+                //                        SelectionPicker(selections: CreateEventViewModel.VisibilityType.allCases.map { Selection($0) }, selectedSelection: $selectedVisibility)
+                //                            .onChange(of: selectedVisibility) { newValue in
+                //                                if let value = newValue?.value {
+                //                                    self.visibility = value
+                //                                }
+                //                            }
+                //                    }
+                
+                //                VStack(alignment: .leading) {
+                //                    NextButton(action: action)
+                //                        .disabled(selectedImage == nil ||
+                //                                  title.isEmpty ||
+                //                                  description.isEmpty)
+                //                        .opacity(selectedImage == nil ||
+                //                                 title.isEmpty ||
+                //                                 description.isEmpty ? 0.3 : 1)
+                //                }
             }
-            .background(Color.mixerBackground)
-            .overlay(alignment: .bottom) {
-                if selectedImage == nil ||
-                    title.isEmpty ||
-                    description.isEmpty {
-                    CreateEventNextButton(text: "Continue", action: action, isActive: false)
-                        .disabled(true)
-                } else {
-                    CreateEventNextButton(text: "Continue", action: action, isActive: true)
-                }
+            .padding()
+            .padding(.bottom, 80)
         }
-            .sheet(isPresented: $imagePickerPresented) {
-                ImagePicker(image: $selectedImage)
+        .background(Color.mixerBackground)
+        .onTapGesture {
+            self.hideKeyboard()
         }
+        .overlay(alignment: .bottom) {
+            if selectedImage == nil ||
+                title.isEmpty ||
+                description.isEmpty {
+                CreateEventNextButton(text: "Continue", action: action, isActive: false)
+                    .disabled(true)
+            } else {
+                CreateEventNextButton(text: "Continue", action: action, isActive: true)
+                    .onTapGesture {
+                        self.hideKeyboard()
+                    }
+            }
+        }
+        .sheet(isPresented: $imagePickerPresented) {
+            ImagePicker(image: $selectedImage)
         }
     }
 }

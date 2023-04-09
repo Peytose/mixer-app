@@ -21,6 +21,8 @@ extension String {
         return pureNumber
     }
     
+
+    
     func coordinates() async throws -> CLLocationCoordinate2D? {
         let geocoder = CLGeocoder()
         do {

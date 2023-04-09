@@ -76,12 +76,15 @@ struct PrototypeView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .tint(.mixerIndigo)
-            }
+                .padding(.bottom, 80)
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
+             }
             .frame(maxHeight: .infinity, alignment: .topLeading)
             .background(Color.mixerBackground)
             .preferredColorScheme(.dark)
             .navigationTitle("")
-            .padding(.bottom, 80)
             .overlay(alignment: .bottom) {
                 CreateEventNextButton(text: "Continue", action: action, isActive: true)
         }
@@ -109,12 +112,14 @@ extension PrototypeView {
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal)
             
+            
             Picker("", selection: $selectedInvitePreferrence.animation()) {
                 Text("Open").tag(CreateEventViewModel.InvitePreferrenceEnum.open)
                 Text("Invite Only").tag(CreateEventViewModel.InvitePreferrenceEnum.inviteOnly)
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal)
+
             
             Picker("", selection: $selectedCheckinMethod.animation()) {
                 Text("Manual").tag(CreateEventViewModel.CheckinMethodEnum.manual)

@@ -14,6 +14,9 @@ struct CreateEventFlow: View {
     var body: some View {
         ZStack {
             Color.mixerBackground.ignoresSafeArea()
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
             
             TabView(selection: $viewModel.active) {
                 BasicEventInfo(selectedImage: $viewModel.image,

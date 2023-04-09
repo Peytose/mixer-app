@@ -150,6 +150,9 @@ struct EventLocationAndDates: View {
             .padding(.bottom, 80)
         }
         .background(Color.mixerBackground)
+        .onTapGesture {
+            self.hideKeyboard()
+        }
         .overlay(alignment: .bottom) {
             CreateEventNextButton(text: "Continue", action: action, isActive: true)
 
