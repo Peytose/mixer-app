@@ -46,7 +46,6 @@ struct ProfileView: View {
                             .padding(.trailing)
                         }
                         .padding(.top, 40)
-
                     }
                 }
                 .padding(.top, -40)

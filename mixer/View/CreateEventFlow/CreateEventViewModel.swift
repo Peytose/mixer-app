@@ -20,8 +20,9 @@ final class CreateEventViewModel: ObservableObject {
     @Published var address: String                     = ""
     @Published var selectedAmenities: Set<EventAmenities> = []
     @Published var type: EventType                     = .kickback
-    @Published var privacy: PrivacyType                = .open
-    @Published var visibility: VisibilityType          = ._public
+    @Published var privacy: InvitePreferrenceEnum      = .open
+    @Published var visibility: VisibilityEnum          = ._public
+    @Published var checkInMethod2: CheckinMethodEnum       = .manual
     @Published var isGuestListEnabled: Bool            = false
     @Published var isManualApprovalEnabled: Bool       = false
     @Published var isGuestLimitEnabled: Bool           = false
@@ -34,12 +35,48 @@ final class CreateEventViewModel: ObservableObject {
     @Published var active: Screen                      = Screen.allCases.first!
     
     @Published var registrationDeadlineDate: Date?
-    @Published var checkInMethod: CreateEventViewModel.CheckInMethod?
+    @Published var checkInMethod: CreateEventViewModel.CheckinMethodEnum?
     @Published var image: UIImage?
     
     @Published var cost: Float?
     @Published var alcoholPresence: Bool?
     @Published var alertItem: AlertItem?
+    
+    enum VisibilityEnum: String, Codable, CaseIterable, IconRepresentable {
+        case _public  = "Public"
+        case _private = "Private"
+        
+        var icon: String {
+            switch self {
+            case ._public: return "globe"
+            case ._private: return "lock"
+            }
+        }
+    }
+    
+    enum InvitePreferrenceEnum: String, Codable, CaseIterable, IconRepresentable {
+        case open  = "Open"
+        case inviteOnly = "Invite Only"
+        
+        var icon: String {
+            switch self {
+            case .open: return "envelope.open"
+            case .inviteOnly: return "envelope"
+            }
+        }
+    }
+
+    enum CheckinMethodEnum: String, Codable, CaseIterable, IconRepresentable  {
+        case manual  = "Manual"
+        case qrcode = "QR Code"
+        
+        var icon: String {
+            switch self {
+            case .manual: return "rectangle.and.pencil.and.ellipsis"
+            case .qrcode: return "qrcode"
+            }
+        }
+    }
     
     enum Screen: Int, Codable, CaseIterable {
         case basicInfo
@@ -53,7 +90,7 @@ final class CreateEventViewModel: ObservableObject {
             case .basicInfo: return "Basic Info"
             case .locationAndDates: return "Location & Dates"
             case .guestsAndInvitations: return "Guests & Invitations"
-            case .costAndAmenities: return "Cost & Amenities"
+            case .costAndAmenities: return "Amenities"
             case .review: return "Review Event"
             }
         }
@@ -70,12 +107,12 @@ final class CreateEventViewModel: ObservableObject {
             }
         }
     }
-    
-    
+//    
+//    
     enum VisibilityType: String, Codable, CaseIterable, IconRepresentable {
         case _public  = "Public"
         case _private = "Private"
-        
+
         var icon: String {
             switch self {
             case ._public: return "globe.americas"
@@ -91,7 +128,7 @@ final class CreateEventViewModel: ObservableObject {
         var icon: String {
             switch self {
             case .qrCode: return "qrcode"
-            case .manual: return "rectangle.and.pencil.and.ellipsis"
+            case .manual: return "pencil.line"
             }
         }
     }

@@ -19,8 +19,6 @@ struct CreateEventFlow: View {
                 BasicEventInfo(selectedImage: $viewModel.image,
                                title: $viewModel.title,
                                description: $viewModel.description,
-                               privacy: $viewModel.privacy,
-                               visibility: $viewModel.visibility,
                                action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.basicInfo)
                 
@@ -30,26 +28,9 @@ struct CreateEventFlow: View {
                                       action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.locationAndDates)
                 
-//                EventGuestsAndInvitations(startDate: viewModel.startDate,
-//                                          privacy: viewModel.privacy,
-//                                          guestLimit: $viewModel.guestLimit,
-//                                          guestInviteLimit: $viewModel.guestInviteLimit,
-//                                          memberInviteLimit: $viewModel.memberInviteLimit,
-//                                          registrationDeadlineDate: $viewModel.registrationDeadlineDate,
-//                                          checkInMethod: $viewModel.checkInMethod,
-//                                          isManualApprovalEnabled: $viewModel.isManualApprovalEnabled,
-//                                          isGuestLimitEnabled: $viewModel.isGuestLimitEnabled,
-//                                          isWaitlistEnabled: $viewModel.isWaitlistEnabled,
-//                                          isMemberInviteLimitEnabled: $viewModel.isMemberInviteLimitEnabled,
-//                                          isGuestInviteLimitEnabled: $viewModel.isGuestInviteLimitEnabled,
-//                                          isRegistrationDeadlineEnabled: $viewModel.isRegistrationDeadlineEnabled,
-//                                          isCheckInOptionsEnabled: $viewModel.isCheckInOptionsEnabled,
-//                                          action: viewModel.next)
-//                    .tag(CreateEventViewModel.Screen.guestsAndInvitations)
-                
-//                PrototypeView(checkInMethod: $viewModel.checkInMethod, useGuestList: $viewModel.isGuestListEnabled, isGuestLimit: $viewModel.isGuestLimitEnabled, isMemberInviteLimit: $viewModel.isMemberInviteLimitEnabled, isGuestInviteLimit: $viewModel.isGuestInviteLimitEnabled, ManuallyApproveGuests: $viewModel.isManualApprovalEnabled, enableWaitlist: $viewModel.isWaitlistEnabled, registrationcutoff: $viewModel.isRegistrationDeadlineEnabled, action: viewModel.next)
-//                    .tag(CreateEventViewModel.Screen.guestsAndInvitations)
-                PrototypeView(checkInMethod: $viewModel.checkInMethod,
+                PrototypeView(selectedVisibility: $viewModel.visibility,
+                              selectedInvitePreferrence: $viewModel.privacy,
+                              selectedCheckinMethod: $viewModel.checkInMethod2,
                               guestLimit: $viewModel.guestLimit,
                               guestInviteLimit: $viewModel.guestInviteLimit,
                               memberInviteLimit: $viewModel.memberInviteLimit,
@@ -61,7 +42,6 @@ struct CreateEventFlow: View {
                               enableWaitlist: $viewModel.isWaitlistEnabled,
                               registrationcutoff: $viewModel.isRegistrationDeadlineEnabled, action: viewModel.next)
                 .tag(CreateEventViewModel.Screen.guestsAndInvitations)
-
                 
                 
                 EventAmenitiesAndCost(selectedAmenities: $viewModel.selectedAmenities,

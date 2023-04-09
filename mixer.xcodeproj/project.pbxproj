@@ -545,7 +545,6 @@
 			children = (
 				9C05C1B82983A14200841100 /* ProfileView.swift */,
 				A65DE62529DF25EF0081A9BD /* Profile Settings */,
-				A6C99FC529DA691C0046D61B /* NotificationFeedView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -796,6 +795,7 @@
 			children = (
 				A65DE62729DF266D0081A9BD /* SettingsChangeNameView.swift */,
 				A65DE62929DF2B6C0081A9BD /* SettingsChangeSocialsView.swift */,
+				A6C99FC529DA691C0046D61B /* NotificationFeedView.swift */,
 			);
 			path = "Embedded Views";
 			sourceTree = "<group>";

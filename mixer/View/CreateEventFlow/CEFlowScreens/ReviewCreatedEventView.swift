@@ -21,10 +21,15 @@ struct ReviewCreatedEventView: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-                        
-                        Text("Private Invite Only Event \(Image(systemName: "lock.fill"))")
-                            .font(.subheadline).fontWeight(.medium)
-                            .foregroundColor(.secondary)
+                        HStack(spacing: 5) {
+                            Text("\(viewModel.visibility.rawValue) \(viewModel.privacy.rawValue) Event")
+                                .font(.subheadline).fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                            Image(systemName: "\(viewModel.visibility.icon)")
+                                .font(.subheadline)
+                        }
+
+//                        + Text(" \(Image(systemName: "\(viewModel.visibility.icon)").font(.body))")
                     }
                     
                     VStack(alignment: .leading, spacing: 2.5) {
@@ -43,11 +48,30 @@ struct ReviewCreatedEventView: View {
                 Divider().foregroundColor(.secondary)
                     
                 VStack(alignment: .leading, spacing: 10) {
-                    EventDetailRow(title: "Privacy",
-                                   value: viewModel.privacy.rawValue)
+                    HStack {
+                        EventDetailRow(title: "Visibility",
+                                       value: viewModel.visibility.rawValue)
+                        
+                        Image(systemName: viewModel.visibility == ._public ? "globe" : "lock")
+                            .font(.callout)
+                    }
+
+                    HStack {
+                        EventDetailRow(title: "Privacy",
+                                       value: viewModel.privacy.rawValue)
+                        
+                        Image(systemName: viewModel.privacy == .inviteOnly ? "envelope" : "envelope.open")
+                            .font(.callout)
+                    }
+
                     
-                    EventDetailRow(title: "Visibility",
-                                   value: viewModel.visibility.rawValue)
+                    HStack {
+                        EventDetailRow(title: "Check-in Method",
+                                       value: viewModel.checkInMethod2.rawValue)
+                        
+                        Image(systemName: viewModel.checkInMethod2 == .qrcode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
+                            .font(.callout)
+                    }
                 }
                 
                 Divider().foregroundColor(.secondary)
@@ -172,3 +196,4 @@ fileprivate struct EventDetailRow: View {
         }
     }
 }
+

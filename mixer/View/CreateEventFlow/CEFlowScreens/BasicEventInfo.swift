@@ -13,10 +13,10 @@ struct BasicEventInfo: View {
     @State var imagePickerPresented = false
     @Binding var title: String
     @Binding var description: String
-    @Binding var privacy: CreateEventViewModel.PrivacyType
-    @Binding var visibility: CreateEventViewModel.VisibilityType
-    @State private var selectedPrivacy: Selection<CreateEventViewModel.PrivacyType>?
-    @State private var selectedVisibility: Selection<CreateEventViewModel.VisibilityType>?
+//    @Binding var privacy: CreateEventViewModel.PrivacyType
+//    @Binding var visibility: CreateEventViewModel.VisibilityType
+//    @State private var selectedPrivacy: Selection<CreateEventViewModel.PrivacyType>?
+//    @State private var selectedVisibility: Selection<CreateEventViewModel.VisibilityType>?
     let action: () -> Void
     
     var body: some View {
@@ -34,7 +34,7 @@ struct BasicEventInfo: View {
                             .foregroundColor(.white)
                         
                         VStack(alignment: .leading, spacing: 5) {
-                            TextField("Include important details, such attire or theme!",
+                            TextField("Include important details, such as attire or theme!",
                                       text: $description,
                                       axis: .vertical)
                                 .lineLimit(7, reservesSpace: true)
@@ -173,9 +173,7 @@ struct BasicEventInfo_Previews: PreviewProvider {
     static var previews: some View {
         BasicEventInfo(selectedImage: $selectedImage,
                        title: .constant(""),
-                       description: .constant(""),
-                       privacy: $privacy,
-                       visibility: $visibility) {  }
+                       description: .constant("")) {  }
         .preferredColorScheme(.dark)
     }
 }

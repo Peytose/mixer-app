@@ -8,10 +8,9 @@
 import SwiftUI
 
 struct PrototypeView: View {
-    @State var selectedVisibility : VisibilityEnum = .open
-    @State var selectedInvitePreferrence : InvitePreferrenceEnum = .open
-    @State var selectedCheckinMethod : CheckinMethodEnum = .qrcode
-    @Binding var checkInMethod: CreateEventViewModel.CheckInMethod?
+    @Binding var selectedVisibility: CreateEventViewModel.VisibilityEnum
+    @Binding var selectedInvitePreferrence:CreateEventViewModel.InvitePreferrenceEnum
+    @Binding var selectedCheckinMethod:CreateEventViewModel.CheckinMethodEnum
 
     //Values
     @Binding var guestLimit: String
@@ -43,7 +42,7 @@ struct PrototypeView: View {
             VStack {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack(spacing: 10) {
-                        Text(selectedVisibility == .open ? "Open Event" : "Private Event")
+                        Text(selectedVisibility == ._public ? "Open Event" : "Private Event")
                             .font(.title).bold()
                         
                         Image(systemName: selectedCheckinMethod == .qrcode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
@@ -52,7 +51,7 @@ struct PrototypeView: View {
                             .frame(width: 18, height: 18)
                     }
                     
-                    Text(selectedVisibility == .open ? "Everyone can see this event. " : "Only invited users can see this event. ")
+                    Text(selectedVisibility == ._public ? "Everyone can see this event. " : "Only invited users can see this event. ")
                         .font(.title3).fontWeight(.medium)
                     
                     + Text(selectedInvitePreferrence == .open ? "Anyone check in to this event" : "Only users on the guest list can check in to the event")
@@ -93,7 +92,7 @@ struct PrototypeView_Previews: PreviewProvider {
     static var previews: some View {
 //        PrototypeView(checkInMethod: .constant(nil), useGuestList: .constant(false), isGuestLimit: .constant(false), isMemberInviteLimit: .constant(false), isGuestInviteLimit: .constant(false), ManuallyApproveGuests: .constant(false), enableWaitlist: .constant(false), registrationcutoff: .constant(false)) {}
 //            .preferredColorScheme(.dark)
-        PrototypeView(checkInMethod: .constant(nil), guestLimit: .constant(""), guestInviteLimit: .constant(""), memberInviteLimit: .constant(""), useGuestList: .constant(false), isGuestLimit: .constant(false), isMemberInviteLimit: .constant(false), isGuestInviteLimit: .constant(false), manuallyApproveGuests: .constant(false), enableWaitlist: .constant(false), registrationcutoff: .constant(false)) {}
+        PrototypeView(selectedVisibility: .constant(._public), selectedInvitePreferrence: .constant(.inviteOnly), selectedCheckinMethod: .constant(.manual), guestLimit: .constant(""), guestInviteLimit: .constant(""), memberInviteLimit: .constant(""), useGuestList: .constant(false), isGuestLimit: .constant(false), isMemberInviteLimit: .constant(false), isGuestInviteLimit: .constant(false), manuallyApproveGuests: .constant(false), enableWaitlist: .constant(false), registrationcutoff: .constant(false)) {}
         
     }
 }
@@ -103,23 +102,23 @@ extension PrototypeView {
     var segmentedToggles: some View {
         VStack {
             Picker("", selection: $selectedVisibility.animation()) {
-                Text("Public").tag(VisibilityEnum.open)
+                Text("Public").tag(CreateEventViewModel.VisibilityEnum._public)
                 
-                Text("Private").tag(VisibilityEnum.closed)
+                Text("Private").tag(CreateEventViewModel.VisibilityEnum._private)
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal)
             
             Picker("", selection: $selectedInvitePreferrence.animation()) {
-                Text("Open").tag(InvitePreferrenceEnum.open)
-                Text("Invite Only").tag(InvitePreferrenceEnum.inviteOnly)
+                Text("Open").tag(CreateEventViewModel.InvitePreferrenceEnum.open)
+                Text("Invite Only").tag(CreateEventViewModel.InvitePreferrenceEnum.inviteOnly)
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal)
             
             Picker("", selection: $selectedCheckinMethod.animation()) {
-                Text("QR Code").tag(CheckinMethodEnum.qrcode)
-                Text("Manual").tag(CheckinMethodEnum.manual)
+                Text("Manual").tag(CreateEventViewModel.CheckinMethodEnum.manual)
+                Text("QR Code").tag(CreateEventViewModel.CheckinMethodEnum.qrcode)
             }
             .pickerStyle(SegmentedPickerStyle())
             .padding(.horizontal)
@@ -264,37 +263,3 @@ extension PrototypeView {
         .listRowBackground(Color.mixerSecondaryBackground)
     }
 }
-
-enum VisibilityEnum: String {
-    case open, closed
-    
-    var stringVersion: String {
-        switch self {
-            case .open: return "Public"
-            case .closed: return "Private"
-        }
-    }
-}
-
-enum InvitePreferrenceEnum: String {
-    case open, inviteOnly
-    
-    var stringVersion: String {
-        switch self {
-            case .open: return "Open"
-            case .inviteOnly: return "Invite Only"
-        }
-    }
-}
-
-enum CheckinMethodEnum: String {
-    case qrcode, manual
-    
-    var stringVersion: String {
-        switch self {
-            case .qrcode: return "QR Code"
-            case .manual: return "Manual"
-        }
-    }
-}
-

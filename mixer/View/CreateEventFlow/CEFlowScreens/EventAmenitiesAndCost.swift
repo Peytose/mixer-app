@@ -18,32 +18,32 @@ struct EventAmenitiesAndCost: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 40) {
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Attendance cost")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    
-                    VStack(alignment: .center) {
-                        HStack(alignment: .top) {
-                            CostOption(text: "Free Access",
-                                       subtext: "All guests can enter the event free of charge.",
-                                       icon: "hand.thumbsup.fill",
-                                       iconColor: Color.green,
-                                       isSelected: $isFree) { isFree = true }
-                            
-                            CostOption(text: "Paid Event",
-                                       subtext: "Set the ticket price for guests to pay for entry into the event.",
-                                       icon: "dollarsign",
-                                       iconColor: Color.red,
-                                       isSelected: $isFree.not) { isFree = false }
-                        }
-                        
-                        LimitInputView(placeholder: "$0.00",
-                                       amount: $atTheDoorPrice,
-                                       isEnabled: $isFree.not)
-                    }
-                }
+//                VStack(alignment: .leading, spacing: 20) {
+//                    Text("Attendance cost")
+//                        .font(.title)
+//                        .fontWeight(.semibold)
+//                        .foregroundColor(.white)
+//                    
+//                    VStack(alignment: .center) {
+//                        HStack(alignment: .top) {
+//                            CostOption(text: "Free Access",
+//                                       subtext: "All guests can enter the event free of charge.",
+//                                       icon: "hand.thumbsup.fill",
+//                                       iconColor: Color.green,
+//                                       isSelected: $isFree) { isFree = true }
+//                            
+//                            CostOption(text: "Paid Event",
+//                                       subtext: "Set the ticket price for guests to pay for entry into the event.",
+//                                       icon: "dollarsign",
+//                                       iconColor: Color.red,
+//                                       isSelected: $isFree.not) { isFree = false }
+//                        }
+//                        
+//                        LimitInputView(placeholder: "$0.00",
+//                                       amount: $atTheDoorPrice,
+//                                       isEnabled: $isFree.not)
+//                    }
+//                }
                 
                 VStack(alignment: .leading, spacing: 20) {
                     HStack {
@@ -113,6 +113,7 @@ struct EventAmenitiesAndCost: View {
                 }
             }
             .padding()
+            .padding(.bottom, 100)
             .overlay(alignment: .bottom) {
                 CreateEventNextButton(text: "Continue", action: action, isActive: true)
         }
