@@ -122,11 +122,11 @@ struct EventAmenitiesAndCost: View {
             }
             .padding()
             .padding(.bottom, 100)
-            .overlay(alignment: .bottom) {
-                CreateEventNextButton(text: "Continue", action: action, isActive: true)
-        }
         }
         .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
+        .overlay(alignment: .bottom) {
+            CreateEventNextButton(text: "Continue", action: action, isActive: true)
+    }
     }
     
 }

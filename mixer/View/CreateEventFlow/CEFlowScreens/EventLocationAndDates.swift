@@ -155,7 +155,6 @@ struct EventLocationAndDates: View {
         }
         .overlay(alignment: .bottom) {
             CreateEventNextButton(text: "Continue", action: action, isActive: true)
-
     }
     }
 }

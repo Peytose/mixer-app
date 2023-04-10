@@ -38,7 +38,6 @@ struct BasicEventInfo: View {
                                   axis: .vertical)
                         .lineLimit(7, reservesSpace: true)
                         .keyboardType(.default)
-                        .disableAutocorrection(true)
                         .foregroundColor(Color.mainFont)
                         .font(.body)
                         .fontWeight(.medium)

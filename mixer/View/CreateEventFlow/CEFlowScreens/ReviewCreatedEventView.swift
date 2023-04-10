@@ -88,8 +88,6 @@ struct ReviewCreatedEventView: View {
                                        value: "\(Timestamp(date: deadline).getTimestampString(format: "EEEE, MMM d + h:mm a").replacingOccurrences(of: "+", with: "at"))")
                     }
                     
-                    EventDetailRow(title: "Location",
-                                   value: viewModel.address)
                     HStack(alignment: .top) {
                         Text("Location:")
                             .font(.title3)
@@ -145,6 +143,7 @@ struct ReviewCreatedEventView: View {
                     EventOptionRow(text: "Bathrooms: \(viewModel.bathroomCount)")
                     
                 }
+                .padding(.bottom, 40)
                 
 //                if let image = image {
 //                    Image(viewModel.image)
