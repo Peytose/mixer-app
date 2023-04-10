@@ -90,6 +90,19 @@ struct ReviewCreatedEventView: View {
                     
                     EventDetailRow(title: "Location",
                                    value: viewModel.address)
+                    HStack(alignment: .top) {
+                        Text("Location:")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        
+                        Spacer()
+                        
+                        Text(viewModel.address)
+                            .font(.body)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 Divider().foregroundColor(.secondary)
@@ -128,6 +141,9 @@ struct ReviewCreatedEventView: View {
                     if let method = viewModel.checkInMethod?.rawValue, viewModel.isCheckInOptionsEnabled {
                         EventOptionRow(text: "Check-in option: \(method)")
                     }
+                    
+                    EventOptionRow(text: "Bathrooms: \(viewModel.bathroomCount)")
+                    
                 }
                 
 //                if let image = image {

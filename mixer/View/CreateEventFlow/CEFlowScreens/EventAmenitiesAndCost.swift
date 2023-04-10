@@ -13,6 +13,9 @@ struct EventAmenitiesAndCost: View {
     @State private var isFree: Bool = true
     @State private var showAlert = false
     @Binding var selectedAmenities: Set<EventAmenities>
+    @Binding var bathroomCount: Int
+    @ObservedObject var viewModel: CreateEventViewModel
+
     let action: () -> Void
     
     var body: some View {
@@ -66,8 +69,7 @@ struct EventAmenitiesAndCost: View {
                         ForEach(AmenityCategory.allCases, id: \.self) { category in
                             VStack(alignment: .leading, spacing: 5) {
                                 Text(category.rawValue.capitalized)
-//                                    .textCase(.)
-                                    .font(.footnote)
+                                    .font(.title3)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.mainFont)
                                 
@@ -88,9 +90,15 @@ struct EventAmenitiesAndCost: View {
                                                     .font(.body)
                                                     .fontWeight(.medium)
                                                     .foregroundColor(.white)
+                                                
+                                                    
                                                 Spacer()
-                                                if selectedAmenities.contains(amenity) {
+                                                
+                                                if amenity == EventAmenities.bathrooms {
+                                                    AmenityCountView(count: $bathroomCount)
+                                                } else if selectedAmenities.contains(amenity) {
                                                     Image(systemName: "checkmark")
+                                                        .fontWeight(.medium)
                                                         .foregroundColor(Color.mixerPurple)
                                                 }
                                             }
@@ -125,7 +133,7 @@ struct EventAmenitiesAndCost: View {
 
 struct EventAmenitiesAndCost_Previews: PreviewProvider {
     static var previews: some View {
-        EventAmenitiesAndCost(selectedAmenities: .constant([])) {}
+        EventAmenitiesAndCost(selectedAmenities: .constant([]), bathroomCount: .constant(0), viewModel: CreateEventViewModel()) {}
             .preferredColorScheme(.dark)
     }
 }
@@ -203,6 +211,54 @@ fileprivate struct LimitInputView: View {
             Divider()
                 .frame(height: isEnabled ? 2 : 1)
                 .overlay(Color.mixerPurple.opacity(isEnabled ? 1 : 0.75))
+        }
+    }
+}
+
+fileprivate struct AmenityCountView: View {
+    @Binding var count: Int
+    
+    var body: some View {
+        HStack(alignment: .center, spacing: 15) {
+            Button(action: {
+                subtract()
+            }, label: {
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .frame(width: 25, height: 25)
+                    .cornerRadius(6)
+                    .overlay {
+                        Image(systemName: "minus")
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                    }
+            })
+            
+            Text(String(count))
+                .foregroundColor(.white)
+            
+            Button(action: {
+                add()
+            }, label: {
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .frame(width: 25, height: 25)
+                    .cornerRadius(6)
+                    .overlay {
+                        Image(systemName: "plus")
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                    }
+            })
+        }
+    }
+    func add() {
+        count += 1
+    }
+    
+    func subtract() {
+        if count > 0 {
+            count -= 1
         }
     }
 }

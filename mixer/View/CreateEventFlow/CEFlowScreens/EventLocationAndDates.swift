@@ -141,7 +141,7 @@ struct EventLocationAndDates: View {
 //                        }
 //                    }
                     
-                    AddressPickerView()
+                    AddressPickerView(address: $address)
 
 
                 }
@@ -201,7 +201,7 @@ struct AddressPickerView: View {
     @State private var selectedMapItem: MKMapItem?
     @State private var selectedCoordinate = CLLocationCoordinate2D()
     @State private var showingPicker = false
-
+    @Binding var address: String
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Where")
@@ -209,7 +209,7 @@ struct AddressPickerView: View {
                 .fontWeight(.semibold)
                 .foregroundColor(.white)
             
-            Text(selectedMapItem?.name ?? "Tap to choose address")
+            Text(selectedMapItem?.placemark.title ?? "Tap to choose address")
                 .foregroundColor(Color.mainFont)
                 .font(.title3)
                 .tint(Color.mixerIndigo)
@@ -238,6 +238,7 @@ struct AddressPickerView: View {
             if let coordinate = item?.placemark.coordinate {
                 selectedMapItem = item
                 selectedCoordinate = coordinate
+                address = item?.placemark.title ?? "Unknown"
                 mapRegion = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004))
                 print("Selected \(selectedMapItem?.name ?? "Unknown")")
             }

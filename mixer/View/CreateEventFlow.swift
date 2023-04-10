@@ -47,7 +47,7 @@ struct CreateEventFlow: View {
                 .tag(CreateEventViewModel.Screen.guestsAndInvitations)
                 
                 
-                EventAmenitiesAndCost(selectedAmenities: $viewModel.selectedAmenities,
+                EventAmenitiesAndCost(selectedAmenities: $viewModel.selectedAmenities, bathroomCount: $viewModel.bathroomCount, viewModel: viewModel,
                                       action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.costAndAmenities)
                 

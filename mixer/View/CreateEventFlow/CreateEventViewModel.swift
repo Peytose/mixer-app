@@ -40,6 +40,7 @@ final class CreateEventViewModel: ObservableObject {
     
     @Published var cost: Float?
     @Published var alcoholPresence: Bool?
+    @Published var bathroomCount: Int                   = 0
     @Published var alertItem: AlertItem?
     
     enum VisibilityEnum: String, Codable, CaseIterable, IconRepresentable {
