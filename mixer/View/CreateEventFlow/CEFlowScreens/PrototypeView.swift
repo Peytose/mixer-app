@@ -18,6 +18,10 @@ struct PrototypeView: View {
     @Binding var memberInviteLimit: String
     
     //Alert bools
+    @State private var showVisibilityInfoAlert = false
+    @State private var showInvitePreferrenceInfoAlert = false
+    @State private var showCheckInMethodInfoAlert = false
+    
     @State private var showGuestlistAlert = false
     @State private var showGuestLimitAlert = false
     @State private var showMemberInviteLimitAlert = false
@@ -41,107 +45,142 @@ struct PrototypeView: View {
     var body: some View {
         ScrollView {
             VStack {
-                    VStack(alignment: .leading, spacing: 10) {
-                        HStack(spacing: 10) {
-                            Text(selectedVisibility == ._public ? "Open Event" : "Private Event")
-                                .font(.title).bold()
-                            
-                            Image(systemName: selectedCheckinMethod == .qrcode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 18, height: 18)
-                            
-                            Spacer()
-                            
-//                            Menu("Change") {
-//                                Button("Single", action: {  })
-//                                Button("Taken", action: {  })
-//                                Button("Complicated", action: {  })
-//                                Button("N/A", action: {  })
-//                            }
-//                            .accentColor(.mixerIndigo)
-//                            .fontWeight(.medium)
-                        }
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack(spacing: 10) {
+                        Text(selectedVisibility == ._public ? "Open Event" : "Private Event")
+                            .font(.title).bold()
                         
-                        Text(selectedVisibility == ._public ? "Everyone can see this event. " : "Only invited users can see this event. ")
-                            .font(.title3).fontWeight(.medium)
-
-                        + Text(selectedInvitePreferrence == .open ? "Anyone check in to this event" : "Only users on the guest list can check in to the event")
-                            .font(.title3).fontWeight(.medium)
-
-                        + Text(selectedCheckinMethod == .qrcode ? " and check-in will be handled via QR Code." : " and check-in will be handled manually by the host.")
-                            .font(.title3).fontWeight(.medium)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal)
-                    
-                    segmentedToggles
-                                    
-                    List {
-                        guestListSettingsSection
-
-                        if useGuestList {
-                            inviteLimitsSection
-
-                            advancedSettingsSection
+                        Image(systemName: selectedCheckinMethod == .qrcode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 18, height: 18)
+                        
+                        Spacer()
+                        
+                        Menu("Choose preset") {
+                            Button("Just post it", action: { justPostIt() })
+                            Button("Public Open Party", action: { setPublicOpenParty() })
+                            Button("Public Invite Only Party", action: { setPublicInviteOnlyParty() })
+                            Button("Private Open Party", action: { setPrivateOpenParty() })
+                            Button("Private Invite Only Party", action: { setPrivateInviteOnlyParty() })
                         }
+                        .accentColor(.mixerIndigo)
+                        .fontWeight(.medium)
                     }
-                    .scrollContentBackground(.hidden)
-                    .tint(.mixerIndigo)
-                    .onTapGesture {
-                        self.hideKeyboard()
+                    
+                    Text(selectedVisibility == ._public ? "Everyone can see this event. " : "Only invited users can see this event. ")
+                        .font(.title3).fontWeight(.medium)
+                    
+                    + Text(selectedInvitePreferrence == .open ? "Anyone can check in to this event and see its details" : "Only users on the guest list can check in to the event and see its details")
+                        .font(.title3).fontWeight(.medium)
+                    
+                    + Text(selectedCheckinMethod == .qrcode ? " and check-in will be handled via QR Code." : " and check-in will be handled manually by the host.")
+                        .font(.title3).fontWeight(.medium)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                
+                segmentedToggles
+                
+                List {
+                    guestListSettingsSection
+                    
+                    if useGuestList {
+                        inviteLimitsSection
+                        
+                        advancedSettingsSection
                     }
+                }
+                .scrollContentBackground(.hidden)
+                .tint(.mixerIndigo)
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
                 
                 CreateEventNextButton(text: "Continue", action: action, isActive: true)
-                 }
-                .frame(maxHeight: .infinity, alignment: .topLeading)
-                .frame(height: DeviceTypes.ScreenSize.height)
-                .background(Color.mixerBackground.onTapGesture {self.hideKeyboard()})
-                .preferredColorScheme(.dark)
-                .navigationTitle("")
+            }
+            .frame(maxHeight: .infinity, alignment: .topLeading)
+            .frame(height: DeviceTypes.ScreenSize.height)
+            .background(Color.mixerBackground.onTapGesture {self.hideKeyboard()})
+            .preferredColorScheme(.dark)
+            .navigationTitle("")
         }
     }
 }
 
 struct PrototypeView_Previews: PreviewProvider {
     static var previews: some View {
-//        PrototypeView(checkInMethod: .constant(nil), useGuestList: .constant(false), isGuestLimit: .constant(false), isMemberInviteLimit: .constant(false), isGuestInviteLimit: .constant(false), ManuallyApproveGuests: .constant(false), enableWaitlist: .constant(false), registrationcutoff: .constant(false)) {}
-//            .preferredColorScheme(.dark)
-        PrototypeView(selectedVisibility: .constant(._public), selectedInvitePreferrence: .constant(.inviteOnly), selectedCheckinMethod: .constant(.manual), guestLimit: .constant(""), guestInviteLimit: .constant(""), memberInviteLimit: .constant(""), useGuestList: .constant(false), isGuestLimit: .constant(false), isMemberInviteLimit: .constant(false), isGuestInviteLimit: .constant(false), manuallyApproveGuests: .constant(false), enableWaitlist: .constant(false), registrationcutoff: .constant(false)) {}
-        
+        PrototypeView(selectedVisibility: .constant(._public), selectedInvitePreferrence: .constant(.open), selectedCheckinMethod: .constant(.manual), guestLimit: .constant(""), guestInviteLimit: .constant(""), memberInviteLimit: .constant(""), useGuestList: .constant(false), isGuestLimit: .constant(false), isMemberInviteLimit: .constant(false), isGuestInviteLimit: .constant(false), manuallyApproveGuests: .constant(false), enableWaitlist: .constant(false), registrationcutoff: .constant(false)) {}
     }
 }
 
 extension PrototypeView {
-    
     var segmentedToggles: some View {
         VStack {
-            Picker("", selection: $selectedVisibility.animation()) {
-                Text("Public").tag(CreateEventViewModel.VisibilityEnum._public)
+            HStack(spacing: 0) {
+                Image(systemName: "info.circle")
+                    .font(.body)
+                    .foregroundColor(.mixerIndigo)
+                    .onTapGesture {
+                        showVisibilityInfoAlert.toggle()
+                    }
+                    .alert("Event Visibility", isPresented: $showVisibilityInfoAlert, actions: {}, message: { Text("Public events are visible to all users. Private events are only visible to invited users and users on the guest list.")})
+                    .padding(.horizontal, 5)
                 
-                Text("Private").tag(CreateEventViewModel.VisibilityEnum._private)
+                Picker("", selection: $selectedVisibility.animation()) {
+                    Text("Public").tag(CreateEventViewModel.VisibilityEnum._public)
+                    
+                    Text("Private").tag(CreateEventViewModel.VisibilityEnum._private)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.trailing)
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding(.horizontal)
             
-            
-            Picker("", selection: $selectedInvitePreferrence.animation()) {
-                Text("Open").tag(CreateEventViewModel.InvitePreferrenceEnum.open)
-                Text("Invite Only").tag(CreateEventViewModel.InvitePreferrenceEnum.inviteOnly)
+            HStack(spacing: 0) {
+                Image(systemName: "info.circle")
+                    .font(.body)
+                    .foregroundColor(.mixerIndigo)
+                    .onTapGesture {
+                        showInvitePreferrenceInfoAlert.toggle()
+                    }
+                    .alert("Event Exclusivity", isPresented: $showInvitePreferrenceInfoAlert, actions: {}, message: { Text("Anyone can be checked into and see an open event's details. Only invited individuals can be checked into and see an invite only event's details.")})
+                    .padding(.horizontal, 5)
+                
+                Picker("", selection: $selectedInvitePreferrence.animation()) {
+                    Text("Open").tag(CreateEventViewModel.InvitePreferrenceEnum.open)
+                    Text("Invite Only").tag(CreateEventViewModel.InvitePreferrenceEnum.inviteOnly)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.trailing)
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding(.horizontal)
-
             
-            Picker("", selection: $selectedCheckinMethod.animation()) {
-                Text("Manual").tag(CreateEventViewModel.CheckinMethodEnum.manual)
-                Text("QR Code").tag(CreateEventViewModel.CheckinMethodEnum.qrcode)
+            HStack(spacing: 0) {
+                Image(systemName: "info.circle")
+                    .font(.body)
+                    .foregroundColor(.mixerIndigo)
+                    .onTapGesture {
+                        showCheckInMethodInfoAlert.toggle()
+                    }
+                    .alert("Check-in Method", isPresented: $showCheckInMethodInfoAlert, actions: {}, message: { Text("Manual check-in allows you to handle check-in however you want. QR Code check-in allows you to quickly scan guests in and check if they are on the guest list.")})
+                    .padding(.horizontal, 5)
+                
+                Picker("", selection: $selectedCheckinMethod.animation()) {
+                    Text("Manual").tag(CreateEventViewModel.CheckinMethodEnum.manual)
+                    Text("QR Code").tag(CreateEventViewModel.CheckinMethodEnum.qrcode)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.trailing)
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding(.horizontal)
+            .onChange(of: selectedCheckinMethod) { newValue in
+                if selectedCheckinMethod == CreateEventViewModel.CheckinMethodEnum.qrcode {
+                    useGuestList = true
+                } else {
+                    useGuestList = false
+                }
+            }
         }
     }
-    
+
     var guestListSettingsSection: some View {
         Section {
             HStack {
@@ -151,7 +190,7 @@ extension PrototypeView {
                     .onTapGesture {
                         showGuestlistAlert.toggle()
                     }
-                    .alert("Use guestlist?", isPresented: $showGuestlistAlert, actions: {}, message: { Text("N/A")}) // 4
+                    .alert("Use guestlist?", isPresented: $showGuestlistAlert, actions: {}, message: { Text("The guest list features allows you to quickly")}) // 4
                 
                 Toggle("Use guestlist", isOn: $useGuestList.animation())
                     .font(.body.weight(.semibold))
@@ -278,5 +317,40 @@ extension PrototypeView {
             Text("Advanced Settings")
         }
         .listRowBackground(Color.mixerSecondaryBackground)
+    }
+    
+    func justPostIt() {
+        selectedVisibility = CreateEventViewModel.VisibilityEnum._public
+        selectedInvitePreferrence = CreateEventViewModel.InvitePreferrenceEnum.open
+        selectedCheckinMethod = CreateEventViewModel.CheckinMethodEnum.manual
+        useGuestList = false
+    }
+    
+    func setPublicOpenParty() {
+        selectedVisibility = CreateEventViewModel.VisibilityEnum._public
+        selectedInvitePreferrence = CreateEventViewModel.InvitePreferrenceEnum.open
+        selectedCheckinMethod = CreateEventViewModel.CheckinMethodEnum.qrcode
+        useGuestList = true
+    }
+    
+    func setPublicInviteOnlyParty() {
+        selectedVisibility = CreateEventViewModel.VisibilityEnum._public
+        selectedInvitePreferrence = CreateEventViewModel.InvitePreferrenceEnum.inviteOnly
+        selectedCheckinMethod = CreateEventViewModel.CheckinMethodEnum.qrcode
+        useGuestList = true
+    }
+    
+    func setPrivateOpenParty() {
+        selectedVisibility = CreateEventViewModel.VisibilityEnum._private
+        selectedInvitePreferrence = CreateEventViewModel.InvitePreferrenceEnum.open
+        selectedCheckinMethod = CreateEventViewModel.CheckinMethodEnum.qrcode
+        useGuestList = true
+    }
+    
+    func setPrivateInviteOnlyParty() {
+        selectedVisibility = CreateEventViewModel.VisibilityEnum._private
+        selectedInvitePreferrence = CreateEventViewModel.InvitePreferrenceEnum.inviteOnly
+        selectedCheckinMethod = CreateEventViewModel.CheckinMethodEnum.qrcode
+        useGuestList = true
     }
 }

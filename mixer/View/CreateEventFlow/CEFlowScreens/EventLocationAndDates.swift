@@ -28,7 +28,7 @@ struct EventLocationAndDates: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 40) {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 10) {
                     Text("When")
                         .font(.title)
                         .fontWeight(.semibold)
@@ -152,9 +152,10 @@ struct AddressPickerView: View {
             Toggle("Set public address", isOn: $usePublicAddress.animation())
                 .font(.body.weight(.semibold))
                 .tint(Color.mixerIndigo)
+                .padding(.bottom, 4)
             
             if usePublicAddress {
-                CreateEventTextField(input: $publicAddress, placeholder: "Back Bay, ", footnote: "Loosely describe the area. Shown to all users", keyboard: .default)
+                CreateEventTextField(input: $publicAddress, placeholder: "Back Bay, Boston", footnote: "Loosely describe the area. Shown to all users", keyboard: .default)
             }
             
             Map(coordinateRegion: $mapRegion,
