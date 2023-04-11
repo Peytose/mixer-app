@@ -28,6 +28,8 @@ struct CreateEventFlow: View {
                 EventLocationAndDates(startDate: $viewModel.startDate,
                                       endDate: $viewModel.endDate,
                                       address: $viewModel.address,
+                                      publicAddress: $viewModel.publicAddress,
+                                      usePublicAddress: $viewModel.usePublicAddress,
                                       action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.locationAndDates)
                 

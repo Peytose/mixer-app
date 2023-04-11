@@ -39,54 +39,66 @@ struct PrototypeView: View {
     let action: () -> Void
 
     var body: some View {
+        ScrollView {
             VStack {
-                VStack(alignment: .leading, spacing: 10) {
-                    HStack(spacing: 10) {
-                        Text(selectedVisibility == ._public ? "Open Event" : "Private Event")
-                            .font(.title).bold()
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 10) {
+                            Text(selectedVisibility == ._public ? "Open Event" : "Private Event")
+                                .font(.title).bold()
+                            
+                            Image(systemName: selectedCheckinMethod == .qrcode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(width: 18, height: 18)
+                            
+                            Spacer()
+                            
+//                            Menu("Change") {
+//                                Button("Single", action: {  })
+//                                Button("Taken", action: {  })
+//                                Button("Complicated", action: {  })
+//                                Button("N/A", action: {  })
+//                            }
+//                            .accentColor(.mixerIndigo)
+//                            .fontWeight(.medium)
+                        }
                         
-                        Image(systemName: selectedCheckinMethod == .qrcode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 18, height: 18)
-                    }
-                    
-                    Text(selectedVisibility == ._public ? "Everyone can see this event. " : "Only invited users can see this event. ")
-                        .font(.title3).fontWeight(.medium)
-                    
-                    + Text(selectedInvitePreferrence == .open ? "Anyone check in to this event" : "Only users on the guest list can check in to the event")
-                        .font(.title3).fontWeight(.medium)
-                    
-                    + Text(selectedCheckinMethod == .qrcode ? " and check-in will be handled via QR Code." : " and check-in will be handled manually by the host.")
-                        .font(.title3).fontWeight(.medium)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-                
-                segmentedToggles
-                                
-                List {
-                    guestListSettingsSection
+                        Text(selectedVisibility == ._public ? "Everyone can see this event. " : "Only invited users can see this event. ")
+                            .font(.title3).fontWeight(.medium)
 
-                    if useGuestList {
-                        inviteLimitsSection
-                        
-                        advancedSettingsSection
+                        + Text(selectedInvitePreferrence == .open ? "Anyone check in to this event" : "Only users on the guest list can check in to the event")
+                            .font(.title3).fontWeight(.medium)
+
+                        + Text(selectedCheckinMethod == .qrcode ? " and check-in will be handled via QR Code." : " and check-in will be handled manually by the host.")
+                            .font(.title3).fontWeight(.medium)
                     }
-                }
-                .scrollContentBackground(.hidden)
-                .tint(.mixerIndigo)
-                .padding(.bottom, 80)
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
-             }
-            .frame(maxHeight: .infinity, alignment: .topLeading)
-            .background(Color.mixerBackground)
-            .preferredColorScheme(.dark)
-            .navigationTitle("")
-            .overlay(alignment: .bottom) {
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
+                    
+                    segmentedToggles
+                                    
+                    List {
+                        guestListSettingsSection
+
+                        if useGuestList {
+                            inviteLimitsSection
+
+                            advancedSettingsSection
+                        }
+                    }
+                    .scrollContentBackground(.hidden)
+                    .tint(.mixerIndigo)
+                    .onTapGesture {
+                        self.hideKeyboard()
+                    }
+                
                 CreateEventNextButton(text: "Continue", action: action, isActive: true)
+                 }
+                .frame(maxHeight: .infinity, alignment: .topLeading)
+                .frame(height: DeviceTypes.ScreenSize.height)
+                .background(Color.mixerBackground.onTapGesture {self.hideKeyboard()})
+                .preferredColorScheme(.dark)
+                .navigationTitle("")
         }
     }
 }

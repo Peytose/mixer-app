@@ -88,6 +88,22 @@ struct ReviewCreatedEventView: View {
                                        value: "\(Timestamp(date: deadline).getTimestampString(format: "EEEE, MMM d + h:mm a").replacingOccurrences(of: "+", with: "at"))")
                     }
                     
+                    if viewModel.usePublicAddress {
+                        HStack(alignment: .top) {
+                            Text("Public Location:")
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                            
+                            Spacer()
+                            
+                            Text(viewModel.publicAddress)
+                                .font(.body)
+                                .fontWeight(.medium)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
                     HStack(alignment: .top) {
                         Text("Location:")
                             .font(.title3)
@@ -143,19 +159,41 @@ struct ReviewCreatedEventView: View {
                     EventOptionRow(text: "Bathrooms: \(viewModel.bathroomCount)")
                     
                 }
-                .padding(.bottom, 40)
                 
-//                if let image = image {
-//                    Image(viewModel.image)
-//                }
-                
-//                VStack(alignment: .center) {
-//                    NextButton(text: "Create Event", action: viewModel.createEvent)
-//                }
-//                Image(viewModel.image)
-                
+                if let image = viewModel.image {
+//                    image
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .cornerRadius(12)
+                        .frame(width: 200, height: 200)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else {
+                    VStack {
+                        Text("Event Flyer")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                    }
+                    
+                    VStack {
+                        Text("Event Flyer")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+
+                    }
+                    .frame(maxWidth: DeviceTypes.ScreenSize.width,
+                           minHeight: DeviceTypes.ScreenSize.height / 5)
+                    .background(alignment: .center) {
+                        RoundedRectangle(cornerRadius: 9)
+                            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [10]))
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
             .padding()
+            .padding(.bottom, 80)
         }
         .background(Color.mixerBackground.ignoresSafeArea())
         .overlay(alignment: .bottom) {

@@ -20,9 +20,12 @@ struct ImagePicker: UIViewControllerRepresentable {
         
         
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-            guard let image = info[.originalImage] as? UIImage else { return }
-            self.parent.image = image
-            self.parent.mode.wrappedValue.dismiss()
+            if let editedImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+                parent.image = editedImage
+            } else if let originalImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+                parent.image = originalImage
+            }
+            parent.mode.wrappedValue.dismiss()
         }
     }
     
@@ -30,6 +33,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> some UIViewController {
         let picker = UIImagePickerController()
         picker.delegate = context.coordinator
+        picker.allowsEditing = false // Allow editing to crop the image
         return picker
     }
     

@@ -13,17 +13,19 @@ struct BasicEventInfo: View {
     @State var imagePickerPresented = false
     @Binding var title: String
     @Binding var description: String
-//    @Binding var privacy: CreateEventViewModel.PrivacyType
-//    @Binding var visibility: CreateEventViewModel.VisibilityType
-//    @State private var selectedPrivacy: Selection<CreateEventViewModel.PrivacyType>?
-//    @State private var selectedVisibility: Selection<CreateEventViewModel.VisibilityType>?
     let action: () -> Void
+    
+    enum FocusedField {
+        case title, description
+    }
+    @FocusState private var focusedField: FocusedField?
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 35) {
-                // Name
+                // Title
                 CreateEventTextField(input: $title, title: "Title", placeholder: "Choose something catchy!", keyboard: .default)
+                    .focused($focusedField, equals: .title)
                 
                 // Description
                 VStack(alignment: .leading, spacing: 10) {
@@ -41,6 +43,7 @@ struct BasicEventInfo: View {
                         .foregroundColor(Color.mainFont)
                         .font(.body)
                         .fontWeight(.medium)
+                        .focused($focusedField, equals: .description)
                         .padding()
                         .background(alignment: .center) {
                             RoundedRectangle(cornerRadius: 9)
@@ -60,9 +63,10 @@ struct BasicEventInfo: View {
                         if let image = image {
                             image
                                 .resizable()
-                                .scaledToFill()
-                                .frame(width: 250, height: 250)
-                                .cornerRadius(20)
+                                .scaledToFit()
+                                .cornerRadius(12)
+                                .frame(width: 200, height: 200)
+                                .frame(maxWidth: .infinity, alignment: .center)
                         } else {
                             VStack {
                                 Text("Event Flyer")
@@ -82,61 +86,27 @@ struct BasicEventInfo: View {
                                         .frame(width: 22, height: 22, alignment: .center)
                                 }
                             }
+                            .frame(maxWidth: DeviceTypes.ScreenSize.width,
+                                   minHeight: DeviceTypes.ScreenSize.height / 5)
+                            .background(alignment: .center) {
+                                RoundedRectangle(cornerRadius: 9)
+                                    .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [10]))
+                                    .foregroundColor(.secondary)
+                            }
                         }
-                    }
-                    .frame(maxWidth: DeviceTypes.ScreenSize.width,
-                           minHeight: DeviceTypes.ScreenSize.height / 5)
-                    .background(alignment: .center) {
-                        RoundedRectangle(cornerRadius: 9)
-                            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [10]))
-                            .foregroundColor(.secondary)
                     }
                     .onChange(of: selectedImage) { _ in loadImage() }
                 }
-                // Privacy
-                //                VStack(alignment: .leading, spacing: 10) {
-                //                    Text("Privacy")
-                //                        .font(.title)
-                //                        .fontWeight(.semibold)
-                //                        .foregroundColor(.white)
-                //
-                //                    SelectionPicker(selections: CreateEventViewModel.PrivacyType.allCases.map { Selection($0) }, selectedSelection: $selectedPrivacy)
-                //                        .onChange(of: selectedPrivacy) { newValue in
-                //                            if let value = newValue?.value {
-                //                                self.privacy = value
-                //                            }
-                //                        }
-                //                }
-                
-                
-                // Visibility
-                
-                //                    VStack(alignment: .leading, spacing: 10) {
-                //                        Text("Visibility")
-                //                            .font(.title)
-                //                            .fontWeight(.semibold)
-                //                            .foregroundColor(.white)
-                //
-                //                        SelectionPicker(selections: CreateEventViewModel.VisibilityType.allCases.map { Selection($0) }, selectedSelection: $selectedVisibility)
-                //                            .onChange(of: selectedVisibility) { newValue in
-                //                                if let value = newValue?.value {
-                //                                    self.visibility = value
-                //                                }
-                //                            }
-                //                    }
-                
-                //                VStack(alignment: .leading) {
-                //                    NextButton(action: action)
-                //                        .disabled(selectedImage == nil ||
-                //                                  title.isEmpty ||
-                //                                  description.isEmpty)
-                //                        .opacity(selectedImage == nil ||
-                //                                 title.isEmpty ||
-                //                                 description.isEmpty ? 0.3 : 1)
-                //                }
             }
             .padding()
             .padding(.bottom, 80)
+            .onSubmit {
+                if focusedField == .title {
+                    focusedField = .description
+                } else {
+                    focusedField = nil
+                }
+            }
         }
         .background(Color.mixerBackground)
         .onTapGesture {

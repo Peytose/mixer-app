@@ -14,6 +14,8 @@ struct EventLocationAndDates: View {
     @Binding var startDate: Date
     @Binding var endDate: Date
     @Binding var address: String
+    @Binding var publicAddress: String
+    @Binding var usePublicAddress: Bool
     @State private var showSearch = true
     @FocusState private var addressSearchIsFocused: Bool
     @State private var useDefaultAddress = false
@@ -61,89 +63,7 @@ struct EventLocationAndDates: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 20) {
-//                    Text("Where")
-//                        .font(.title)
-//                        .fontWeight(.semibold)
-//                        .foregroundColor(.white)
-                    
-//                    VStack(alignment: .center) {
-//                        if showSearch {
-////                            TextField("Search for an address", text: $handler.searchQuery)
-////                                .padding()
-////                                .background(alignment: .center) {
-////                                    RoundedRectangle(cornerRadius: 9)
-////                                        .stroke(lineWidth: 2)
-////                                        .foregroundColor(.mixerPurple)
-////                                }
-////                                .focused($addressSearchIsFocused)
-//
-//                            CreateEventTextField(input: $handler.searchQuery, title: "Where", placeholder: "Search for an address", keyboard: .default)
-//
-//                            ForEach(handler.searchResults, id: \.placemark) { mapItem in
-//                                Button {
-//                                    if let location = mapItem.placemark.title {
-//                                        self.address = location
-//                                        self.selectedLocation = IdentifiableLocation(mapItem.placemark.coordinate)
-//                                        self.showSearch = false
-//                                        self.addressSearchIsFocused = false
-//                                    }
-//                                } label: {
-//                                    Text(mapItem.placemark.title ?? "No results for \(handler.searchQuery) ...")
-//                                        .font(.body)
-//                                        .foregroundColor(.white)
-//                                        .multilineTextAlignment(.leading)
-//                                }
-//                            }
-//
-//                            CustomMapView(selectedLocation: $selectedLocation)
-//                                .frame(height: 300)
-//                                .cornerRadius(9)
-//
-////                            AddressPickerView()
-//                        } else {
-//                            Button {
-//                                self.useDefaultAddress = false
-//                                self.showSearch = true
-//                                self.addressSearchIsFocused = true
-//                            } label: {
-//                                HStack(alignment: .center) {
-//                                    Text(address)
-//                                        .font(.callout)
-//                                        .fontWeight(.medium)
-//                                        .foregroundColor(.white)
-//                                        .lineLimit(2)
-//                                        .minimumScaleFactor(0.75)
-//                                        .multilineTextAlignment(.leading)
-//
-//                                    Spacer()
-//                                }
-//                                .padding()
-//                                .background(alignment: .center) {
-//                                    RoundedRectangle(cornerRadius: 9)
-//                                        .stroke(lineWidth: 2)
-//                                        .foregroundColor(.mixerPurple)
-//                                }
-//                            }
-//                        }
-//
-//                        if let defaultAddress = AuthViewModel.shared.currentUser?.associatedHostAccount?.address {
-//                            Toggle(isOn: $useDefaultAddress) {
-//                                Text("Use default address")
-//                                    .font(.body)
-//                                    .foregroundColor(.secondary)
-//                            }
-//                            .tint(Color.mixerPurple)
-//                            .onChange(of: useDefaultAddress) { _ in
-//                                self.address = useDefaultAddress ? defaultAddress : ""
-//                                self.showSearch = !useDefaultAddress
-//                                self.addressSearchIsFocused = !useDefaultAddress
-//                            }
-//                        }
-//                    }
-                    
-                    AddressPickerView(address: $address)
-
-
+                    AddressPickerView(usePublicAddress: $usePublicAddress, publicAddress: $publicAddress, address: $address)
                 }
             }
             .padding()
@@ -161,7 +81,7 @@ struct EventLocationAndDates: View {
 
 struct EventLocationAndDates_Previews: PreviewProvider {
     static var previews: some View {
-        EventLocationAndDates(startDate: .constant(Date.now), endDate: .constant(Date().addingTimeInterval(3700)), address: .constant("")) {}
+        EventLocationAndDates(startDate: .constant(Date.now), endDate: .constant(Date().addingTimeInterval(3700)), address: .constant(""), publicAddress: .constant(""), usePublicAddress: .constant(false)) {}
             .preferredColorScheme(.dark)
     }
 }
@@ -172,12 +92,12 @@ fileprivate struct CustomDateSelection: View {
     let range: ClosedRange<Date>
     
     var body: some View {
-        HStack(alignment: .center, spacing: 10) {
+        HStack(alignment: .center, spacing: 0) {
             Text(text)
                 .font(.title3)
                 .fontWeight(.medium)
                 .lineLimit(1)
-                .minimumScaleFactor(0.75)
+                .minimumScaleFactor(0.95)
             
             Spacer()
             
@@ -200,6 +120,8 @@ struct AddressPickerView: View {
     @State private var selectedMapItem: MKMapItem?
     @State private var selectedCoordinate = CLLocationCoordinate2D()
     @State private var showingPicker = false
+    @Binding var usePublicAddress: Bool
+    @Binding var publicAddress: String
     @Binding var address: String
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -222,7 +144,19 @@ struct AddressPickerView: View {
                 .onTapGesture {
                     showingPicker = true
                 }
-
+            
+            Text("Shown only to approved guests")
+                .font(.footnote)
+                .foregroundColor(.secondary)
+            
+            Toggle("Set public address", isOn: $usePublicAddress.animation())
+                .font(.body.weight(.semibold))
+                .tint(Color.mixerIndigo)
+            
+            if usePublicAddress {
+                CreateEventTextField(input: $publicAddress, placeholder: "Back Bay, ", footnote: "Loosely describe the area. Shown to all users", keyboard: .default)
+            }
+            
             Map(coordinateRegion: $mapRegion,
                 interactionModes: .all,
                 showsUserLocation: true,
@@ -239,7 +173,6 @@ struct AddressPickerView: View {
                 selectedCoordinate = coordinate
                 address = item?.placemark.title ?? "Unknown"
                 mapRegion = MKCoordinateRegion(center: coordinate, span: MKCoordinateSpan(latitudeDelta: 0.004, longitudeDelta: 0.004))
-                print("Selected \(selectedMapItem?.name ?? "Unknown")")
             }
         }
     }

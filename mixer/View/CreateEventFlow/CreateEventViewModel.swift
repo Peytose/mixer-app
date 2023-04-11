@@ -18,6 +18,8 @@ final class CreateEventViewModel: ObservableObject {
     @Published var startDate: Date                     = Date()
     @Published var endDate: Date                       = Date().addingTimeInterval(80600)
     @Published var address: String                     = ""
+    @Published var publicAddress: String               = ""
+    @Published var usePublicAddress: Bool              = false
     @Published var selectedAmenities: Set<EventAmenities> = []
     @Published var type: EventType                     = .kickback
     @Published var privacy: InvitePreferrenceEnum      = .open
