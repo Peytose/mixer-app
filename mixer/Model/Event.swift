@@ -108,39 +108,51 @@ enum EventAmenities: String, Codable, CaseIterable {
     }
 }
 
+enum EventOption: String, Codable {
+    case containsAlcohol               = "containsAlcohol"
+    case isInviteOnly                  = "isInviteOnly"
+    case isManualApprovalEnabled       = "isManualApprovalEnabled"
+    case isGuestLimitEnabled           = "isGuestLimitEnabled"
+    case isWaitlistEnabled             = "isWaitlistEnabled"
+    case isMemberInviteLimitEnabled    = "isMemberInviteLimitEnabled"
+    case isGuestInviteLimitEnabled     = "isGuestInviteLimitEnabled"
+    case isRegistrationDeadlineEnabled = "isRegistrationDeadlineEnabled"
+    case isCheckInOptionsEnabled       = "isCheckInOptionsEnabled"
+}
+
+
 struct Event: Identifiable, Codable {
+    // Metadata
     @DocumentID var id: String?
     let hostUuid: String
     let hostUsername: String
+    let timePosted: Timestamp
+    
+    // Basic Information
     let title: String
     let description: String
     let eventImageUrl: String
+    let type: EventType
+    let address: String
+    var amenities: [EventAmenities]
+    var checkInMethods: [CheckInMethod]?
+    
+    // Time and Dates
     let startDate: Timestamp
     var endDate: Timestamp
-    var registrationDeadlineDate: Timestamp
-    let address: String
-    let type: EventType
-    let isInviteOnly: Bool
+    var registrationDeadlineDate: Timestamp?
+    
+    // Attendance and Capacity
+    var attendance: Int?
+    var capacity: Int?
     let guestLimit: String
     let guestInviteLimit: String
     let memberInviteLimit: String
-    let privacy: CreateEventViewModel.PrivacyType
-    let selectedAmenities: [EventAmenities]
-    let alcoholPresence: Bool
-    var isManualApprovalEnabled: Bool
-    var isGuestLimitEnabled: Bool
-    var isWaitlistEnabled: Bool
-    var isMemberInviteLimitEnabled: Bool
-    var isGuestInviteLimitEnabled: Bool
-    var isRegistrationDeadlineEnabled: Bool
-    var isCheckInOptionsEnabled: Bool
-    var capacity: Int?
-    var attendance: Int?
-    var isFull: Bool?
-    var amenities: [EventAmenities]
-
-    let timePosted: Timestamp
-    var checkInMethod: CreateEventViewModel.CheckInMethod?
+    
+    // Event Options
+    var eventOptions: [String: Bool]
+    
+    // Payment and Reviews
     var cost: Float?
     var averageRating: Float?
     

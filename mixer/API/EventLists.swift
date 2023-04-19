@@ -8,28 +8,26 @@
 import Firebase
 import SwiftUI
 
-enum ListType {
-    case invite
-    case attend
-    
-    var fieldValue: String {
-        switch self {
-            case .invite: return "isInvited"
-            case .attend: return "isCheckedIn"
-        }
-    }
+enum GuestStatus: String, Codable, CaseIterable {
+    case invited   = "isInvited"
+    case attending = "isCheckedIn"
 }
 
 struct EventLists {
-    static func loadUsers(eventUid: String, type: ListType) -> [User] {
-        var users = [User]()
+    static func loadUsers(eventUid: String, completion: @escaping ([EventGuest]) -> Void) {
+        var users = [EventGuest]()
         
-        COLLECTION_EVENTS.document(eventUid).collection("attendance-list")
-            .whereField("status", isEqualTo: type.fieldValue).getDocuments() { snapshot, _ in
-                guard let snapshot = snapshot else { return }
-                users = snapshot.documents.compactMap({ try? $0.data(as: User.self) })
+        COLLECTION_EVENTS.document(eventUid).collection("attendance-list").getDocuments() { snapshot, error in
+            if let error = error {
+                print("DEBUG: Error getting users from event list: \(error.localizedDescription)")
+                completion(users)
+                return
             }
-        
-        return users
+            
+            guard let snapshot = snapshot else { completion(users); return }
+            users = snapshot.documents.compactMap({ try? $0.data(as: EventGuest.self) })
+            print("DEBUG: Users from event list: \(users)")
+            completion(users)
+        }
     }
 }

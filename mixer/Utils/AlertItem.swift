@@ -18,8 +18,19 @@ struct AlertItem: Identifiable {
     }
 }
 
-struct AlertContext {
+struct AlertItemTwo: Identifiable {
+    let id = UUID()
+    let title: Text
+    let message: Text
+    let primaryButton: Alert.Button
+    let secondaryButton: Alert.Button
     
+    var alert: Alert {
+        Alert(title: title, message: message, primaryButton: primaryButton, secondaryButton: secondaryButton)
+    }
+}
+
+struct AlertContext {
     //MARK: - Authentication Errors/Messages
     static let sentEmailLink                      = AlertItem(title: Text("Email Verification Link Sent"),
                                                               message: Text("Good news .. your email link was sent!\nFollow the instructions to confirm your email."),
@@ -61,6 +72,60 @@ struct AlertContext {
                                                               message: Text("You have encountered an error that is not defined natively.\nIf this persists, contact us. Otherwise, please try again."),
                                                               dismissButton: .default(Text("Hm ok")))
     
+    static let reCAPTCHAChallenge                 = AlertItem(title: Text("Verification Required"),
+                                                              message: Text("Please complete the reCAPTCHA challenge to verify your phone number."),
+                                                              dismissButton: .default(Text("OK")))
+
+    
+    //MARK: - MapView Errors
+    static let locationManagerFailed              = AlertItem(title: Text("Location Manager Error"),
+                                                              message: Text("The location manager did fail with error.\nPlease try again later."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let unableToGetMapItems                = AlertItem(title: Text("Map Error"),
+                                                              message: Text("Unable to get map items.\nPlease try again later."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    //MARK: - CreateEvent Errors/Messages
+    static let eventVisiblityInfo                 = AlertItem(title: Text("Event Visibility"),
+                                                              message: Text("Public events are visible to all users. Private events are only visible to invited users and users on the guest list."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let invitePreferrenceInfo              = AlertItem(title: Text("Event Exclusivity"),
+                                                              message: Text("Anyone can be checked into and see an open event's details. Only invited individuals can be checked into and see an invite only event's details."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let checkInMethodInfo                  = AlertItem(title: Text("Check-in Method"),
+                                                              message: Text("Manual check-in allows you to handle check-in however you want. QR Code check-in allows you to quickly scan guests in and check if they are on the guest list."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let guestlistInfo                      = AlertItem(title: Text("Use guestlist?"),
+                                                              message: Text("The guest list features allows you to quickly."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let guestLimitInfo                     = AlertItem(title: Text("Set guest limit"),
+                                                              message: Text("N/A"),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let memberInviteLimitInfo              = AlertItem(title: Text("Set member invite limit"),
+                                                              message: Text("N/A"),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let guestInviteLimitInfo               = AlertItem(title: Text("Set guest invite limit"),
+                                                              message: Text("N/A"),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let manuallyApproveInfo                = AlertItem(title: Text("Manually approve guests"),
+                                                              message: Text("N/A"),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let preEnableWaitlistInfo              = AlertItem(title: Text("Pre-enable waitlist"),
+                                                              message: Text("N/A"),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let registrationCutoffInfo             = AlertItem(title: Text("Registration cutoff"),
+                                                              message: Text("N/A"),
+                                                              dismissButton: .default(Text("Ok")))
     
     //MARK: - LocationListView Errors
     static let unableToGetAllCheckedInProfiles    = AlertItem(title: Text("Server"),
@@ -113,5 +178,12 @@ struct AlertContext {
                                                               message: Text("We are unable get users checked into this location at this time.\nPlease try again."),
                                                               dismissButton: .default(Text("Ok")))
     
+    //MARK: - GuestList Errors/Messages
+    static func guestAlreadyCheckedIn(confirmAction: @escaping () -> Void) -> AlertItemTwo {
+        AlertItemTwo(title: Text("Remove guest?"),
+                     message: Text("The guest you are trying to remove has already checked in to the event. Are you sure you meant to remove them?"),
+                     primaryButton: .default(Text("Remove").bold(),
+                                             action: confirmAction),
+                     secondaryButton: .default(Text("Oops nvm")))
+    }
 }
-

@@ -21,11 +21,13 @@ struct AuthFlow: View {
                 GetNameView(name: $viewModel.name) { viewModel.next() }
                     .tag(AuthViewModel.Screen.name)
 
-                GetPhoneView(phoneNumber: $viewModel.phoneNumber, countryCode: $viewModel.countryCode, action: viewModel.sendPhoneVerification)
+                GetPhoneView(phoneNumber: $viewModel.phoneNumber,
+                             countryCode: $viewModel.countryCode,
+                             action: viewModel.sendPhoneVerification)
                     .tag(AuthViewModel.Screen.phone)
-//
-                GetCode(phoneNumber: viewModel.phoneNumber,
-                        code: $viewModel.code) { viewModel.verifyPhoneNumber() }
+
+                GetCode(code: $viewModel.code,
+                        phoneNumber: viewModel.phoneNumber) { viewModel.verifyPhoneNumber() }
                     .tag(AuthViewModel.Screen.code)
 
                 GetEmail(name: viewModel.name,
@@ -91,9 +93,9 @@ struct AuthFlow: View {
         .animation(.easeInOut, value: showArrow)
         .onAppear { UIScrollView.appearance().isScrollEnabled = false }
         .onDisappear { UIScrollView.appearance().isScrollEnabled = true }
-//        .onChange(of: viewModel.active) { newValue in
-//            showArrow = newValue == AuthViewModel.Screen.allCases.first ? true : true
-//        }
+        .onChange(of: viewModel.active) { newValue in
+            showArrow = newValue != AuthViewModel.Screen.allCases.first
+        }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .onOpenURL { url in viewModel.handleEmailLink(url) }
     }

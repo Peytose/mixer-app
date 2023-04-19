@@ -11,7 +11,8 @@ import CoreLocationUI
 
 struct MapTemp: View {
     @ObservedObject var viewModel = MapViewModel()
-    @State var isShowingDetailView = false
+    @State var isShowingDetailView: Bool    = false
+    @State var isShowingGuestListView: Bool = false
     @State private var selectedEvent: CachedEvent?
     @State private var selectedHost: CachedHost?
     @State private var progress: CGFloat = 0
@@ -24,25 +25,20 @@ struct MapTemp: View {
             Map(coordinateRegion: $viewModel.region,
                 showsUserLocation: true,
                 annotationItems: viewModel.mapItems.keys.compactMap { $0 }) { host in
-                MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: host.latitude!,
-                                                                 longitude: host.longitude!),
+                MapAnnotation(coordinate: host.location?.locationCoordinate ?? CLLocationCoordinate2D(latitude: 42.3598, longitude: 71.0921),
                               anchorPoint: CGPoint(x: 0.75, y: 0.75)) {
                     HostMapAnnotation(host: host)
                         .onTapGesture {
                             self.selectedHost = host
-                            print("DEBUG: selectedHost \(host)")
-                            print("DEBUG: event associated \(String(describing: viewModel.mapItems[host]))")
-                            
                             if let event = viewModel.mapItems[host] as? CachedEvent {
                                 self.selectedEvent = event
-                                print("DEBUG: selectedEvent :     \(String(describing: self.selectedEvent))")
                             }
                             
                             isShowingDetailView = true
                         }
                 }
             }
-                .ignoresSafeArea()
+            .ignoresSafeArea()
             
             Spacer()
             
@@ -85,9 +81,14 @@ struct MapTemp: View {
             }
             .onAppear { viewModel.isLoading = true }
         }
+        .sheet(isPresented: $isShowingGuestListView) {
+            if let eventId = viewModel.hostEvents.first?.value.id {
+                GuestlistView(viewModel: GuestlistViewModel(eventUid: eventId))
+            }
+        }
         .overlay(alignment: .bottomLeading, content: {
             LocationButton(.currentLocation) {
-                viewModel.requestAllowOnceLocationPermission()
+                viewModel.requestAlwaysOnLocationPermission()
             }
             .foregroundColor(.white)
             .symbolVariant(.fill)
@@ -96,8 +97,16 @@ struct MapTemp: View {
             .clipShape(Circle())
             .padding(EdgeInsets(top: 0, leading: 20, bottom: 100, trailing: 0))
         })
+        .overlay(alignment: .topTrailing) {
+            if !viewModel.hostEvents.isEmpty {
+                    EventUsersListButton(action: $isShowingGuestListView)
+            }
+        }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
-        .task { viewModel.getMapItems() }
+        .task {
+            viewModel.getMapItems()
+            viewModel.getEventForGuestlist()
+        }
     }
 }
 
@@ -106,5 +115,24 @@ struct MapTemp_Previews: PreviewProvider {
     
     static var previews: some View {
         MapTemp(namespace: namespace)
+    }
+}
+
+fileprivate struct EventUsersListButton: View {
+    @Binding var action: Bool
+    var body: some View {
+        Image(systemName: "list.clipboard")
+            .font(.title2.weight(.medium))
+            .foregroundColor(Color.mainFont)
+            .padding(10)
+            .background(Color.mixerSecondaryBackground)
+            .clipShape(Circle())
+            .shadow(radius: 5, y: 8)
+            .onTapGesture {
+                let impact = UIImpactFeedbackGenerator(style: .light)
+                impact.impactOccurred()
+                
+                action.toggle()
+            }
     }
 }

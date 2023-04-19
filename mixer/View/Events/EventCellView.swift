@@ -76,13 +76,13 @@ struct EventCellView: View {
                     Spacer()
                     
                     VStack(alignment: .center) {
-                        Image(systemName: event.isInviteOnly ? "lock.fill" : "globe")
+                        Image(systemName: event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "lock.fill" : "globe")
                             .resizable()
                             .scaledToFill()
                             .foregroundColor(.secondary)
                             .frame(width: 25, height: 25)
                         
-                        Text(event.isInviteOnly ? "Invite Only" : "Public")
+                        Text(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Invite Only" : "Public")
                             .font(.footnote)
                             .foregroundColor(.secondary)
                     }

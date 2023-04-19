@@ -7,21 +7,31 @@
 
 import SwiftUI
 
-struct EventListView: View {
+struct EventListView<CellView: View>: View {
     var events: [CachedEvent] = []
     let hasStarted: Bool
     var namespace: Namespace.ID
     @Binding var selectedEvent: CachedEvent?
     @Binding var showEventView: Bool
+    let cellView: (CachedEvent, Bool, Namespace.ID) -> CellView
+    
+    init(events: [CachedEvent], hasStarted: Bool, namespace: Namespace.ID, selectedEvent: Binding<CachedEvent?>, showEventView: Binding<Bool>, cellView: @escaping (CachedEvent, Bool, Namespace.ID) -> CellView) {
+        self.events = events
+        self.hasStarted = hasStarted
+        self.namespace = namespace
+        self._selectedEvent = selectedEvent
+        self._showEventView = showEventView
+        self.cellView = cellView
+    }
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             if !events.isEmpty {
                 ForEach(events) { event in
-                    CustomStickyHeaderView(headerView: {
+                    CustomStickyHeader(headerView: {
                         CellDateView(event: event, hasStarted: hasStarted)
                     }, contentView: {
-                        EventCellView(event: event, hasStarted: hasStarted, namespace: namespace)
+                        cellView(event, hasStarted, namespace)
                     })
                     .frame(height: 380)
                     .onTapGesture {

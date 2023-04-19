@@ -9,7 +9,7 @@ import SwiftUI
 import TabBar
 
 struct MainTabView: View {
-    let user: User
+    let user: CachedUser
     
     enum Item: Int, Tabbable {
         case first = 0
@@ -55,7 +55,7 @@ struct MainTabView: View {
                 .tabItem(for: Item.third)
 
             NavigationView {
-                ProfileView(user: user)
+                ProfileView(viewModel: ProfileViewModel(user: user))
             }
             .tabItem(for: Item.fourth)
         }
@@ -67,7 +67,7 @@ struct MainTabView: View {
 
 struct MainTabView_Previews: PreviewProvider {
     static var previews: some View {
-        MainTabView(user: Mockdata.user)
+        MainTabView(user: CachedUser(from: Mockdata.user))
     }
 }
 

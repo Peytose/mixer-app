@@ -10,120 +10,119 @@ import FirebaseFirestore
 import DataCache
 import CryptoKit
 import MapKit
+import Geohash
 
 class HostCache {
     static let shared = HostCache()
     private init() { configureCache() }
     private let cache = DataCache(name: "HostCache")
     
+    enum HostFilterOption {
+        case byLocation(location: CLLocationCoordinate2D)
+        case all
+        // add more cases as needed
+        
+        func query() -> Query {
+            switch self {
+            case .byLocation(location: let location):
+                let geohash = location.geohash(length: 7)
+                return COLLECTION_HOSTS.whereField("geohash", isGreaterThanOrEqualTo: location)
+            case .all:
+                return COLLECTION_HOSTS
+            }
+        }
+    }
+    
     private func configureCache() {
-        cache.maxDiskCacheSize = 100 * 1024 * 1024    // 100 MB
-        cache.maxCachePeriodInSecond = 30 * 60        // 30 mins
+        cache.maxDiskCacheSize = 100 * 1024 * 1024 // 100 MB
+        cache.maxCachePeriodInSecond = 30 * 60     // 30 mins
         print("DEBUG: Configured host cache.")
     }
     
-    
-    func fetchHosts() async throws -> [CachedHost] {
-        print("DEBUG: Started fetching hosts!")
-        let query = COLLECTION_HOSTS
-        
-        // Check cache for hosts
-        if let hosts: [CachedHost] = try cache.readCodable(forKey: "hosts") {
-            if !hosts.isEmpty {
-                print("DEBUG: Found hosts in cache! Fetching ... \(hosts)")
-                return hosts
-            }
-        }
-        
-        print("DEBUG: Could not find in cache. Checking Firebase...")
-        // If hosts not found in cache, fetch and cache from Firebase
-        return try await fetchAndCache(for: query)
+    // Cache Key Generation
+    private func getKey(for query: Query) -> String {
+        let path = query.hash
+        return "events-\(path)"
     }
     
+    // Fetching hosts
+    func fetchHosts(filter: HostFilterOption) async throws -> [CachedHost] {
+        let query = filter.query()
+        let key = getKey(for: query)
+        return try await fetchHosts(for: query, key: key)
+    }
     
-    func fetchAndCache(for query: Query) async throws -> [CachedHost] {
-        let snapshot = try await query.getDocuments()
-        let documents = snapshot.documents
-        print("DEBUG: Found documents (hosts) in firebase! \(documents)")
-        let hosts = documents.compactMap({ try? $0.data(as: Host.self) })
-        print("DEBUG: Found hosts on Firebase! \(hosts)")
-        // Store in cache
-        var cachedHosts = hosts.compactMap { CachedHost(from: $0.self) }
-        print("DEBUG: Hosts from firebase for cache: \(cachedHosts)")
-        
-        for var host in cachedHosts {
-            if let address = host.address {
-                if let coordinates = try await address.coordinates() {
-                    host.latitude = coordinates.latitude
-                    host.longitude = coordinates.longitude
-                    
-                    print("DEBUG: Host coords input!")
-                    print("DEBUG: lat  : \(String(describing: host.latitude))")
-                    print("DEBUG: long : \(String(describing: host.longitude))")
-                    
-                    if let existingHostIndex = cachedHosts.firstIndex(where: { $0.id == host.id }) {
-                        cachedHosts.remove(at: existingHostIndex)
-                        cachedHosts.append(host)
+    private func fetchHosts(for query: Query, key: String) async throws -> [CachedHost] {
+        // Check if the cached host ids exist and are not empty
+        if let cachedHostIds: [String] = try cache.readCodable(forKey: key), !cachedHostIds.isEmpty {
+            return try await getHosts(from: cachedHostIds)
+        } else {
+            // Fetch documents from Firestore
+            let snapshot = try await query.getDocuments()
+            let documents = snapshot.documents
+
+            // If documents exist, cache and return the hosts
+            if !documents.isEmpty {
+                let hosts = documents.compactMap { document -> CachedHost? in
+                    do {
+                        let host = try document.data(as: Host.self)
+                        return CachedHost(from: host)
+                    } catch let error {
+                        print("Error decoding host: \(error)")
+                        return nil
                     }
                 }
+                
+                let hostIds = hosts.map({ $0.id })
+                try cache.write(codable: hostIds, forKey: key)
+                try await cacheHosts(hosts)
+                return hosts
+            } else {
+                // If no documents exist, return an empty array
+                return []
             }
         }
-        
-        try cache.write(codable: cachedHosts, forKey: "hosts")
-        try await cacheHosts(cachedHosts)
-        
+    }
+
+    // Getting hosts
+    func getHosts(from hostIds: [String]) async throws -> [CachedHost] {
+        var cachedHosts = [CachedHost]()
+        for id in hostIds {
+            let host = try await getHost(from: id)
+            cachedHosts.append(host)
+        }
         return cachedHosts
     }
-    
-    
-    func getHost(withId id: String) async throws -> CachedHost {
+
+    func getHost(from id: String) async throws -> CachedHost {
         // Check cache for host
         if let host: CachedHost = try cache.readCodable(forKey: id) {
             return host
         }
-        
+
         // If host not found in cache, fetch from Firebase
         let snapshot = try await COLLECTION_HOSTS.document(id).getDocument()
-        let host = try snapshot.data(as: Host.self)
-        print("DEBUG: getHost() executed. host: \(host)")
+        let event = try snapshot.data(as: Host.self)
+
         // Store in cache
-        let cachedHost = CachedHost(from: host)
-        try await cacheHost(cachedHost)
-        
+        let cachedHost = CachedHost(from: event)
+        try cacheHost(cachedHost)
+
         return cachedHost
     }
     
-    
-    func clearCache() {
-        cache.cleanAll()
-    }
-    
-    
+    // Caching Hosts
     private func cacheHosts(_ hosts: [CachedHost]) async throws {
-        for host in hosts {
-            try await cacheHost(host)
-        }
+        for host in hosts { try cacheHost(host) }
+    }
+
+    func cacheHost(_ host: CachedHost) throws {
+        guard let id = host.id else { return }
+        try cache.write(codable: host, forKey: id)
     }
     
-    
-    func cacheHost(_ host: CachedHost) async throws {
-        print("DEBUG: Caching ...")
-        guard let id = host.id else { return }
-        cache.clean(byKey: id)
-        try cache.write(codable: host, forKey: id)
-        if let hosts: [CachedHost] = try cache.readCodable(forKey: "hosts") {
-            var cachedHosts = hosts.compactMap({ $0.self })
-            print("DEBUG: Cached hosts in cacheHost() : \(cachedHosts)")
-            if !cachedHosts.isEmpty {
-                if let existingHostIndex = cachedHosts.firstIndex(where: { $0.id == host.id }) {
-                    cachedHosts.remove(at: existingHostIndex)
-                    cachedHosts.append(host)
-                    cache.clean(byKey: "hosts")
-                    try cache.write(codable: cachedHosts, forKey: "hosts")
-                    print("DEBUG: Replaced host in host cache!")
-                }
-            }
-        }
-        print("DEBUG: Host Cached! id: \(id)")
+    // Clearing Cache
+    func clearCache() {
+        cache.cleanDiskCache()
     }
 }

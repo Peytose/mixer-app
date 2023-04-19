@@ -18,7 +18,7 @@ struct SearchView: View {
                 List {
                     ForEach(viewModel.users) { user in
                         NavigationLink {
-                            ProfileView(user: user)
+                            ProfileView(viewModel: ProfileViewModel(user: user))
                         } label: {
                             UserSearchCell(username: user.username,
                                            name: user.name,

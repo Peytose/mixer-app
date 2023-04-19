@@ -28,8 +28,6 @@ struct ReviewCreatedEventView: View {
                             Image(systemName: "\(viewModel.visibility.icon)")
                                 .font(.subheadline)
                         }
-
-//                        + Text(" \(Image(systemName: "\(viewModel.visibility.icon)").font(.body))")
                     }
                     
                     VStack(alignment: .leading, spacing: 2.5) {
@@ -69,7 +67,7 @@ struct ReviewCreatedEventView: View {
                         EventDetailRow(title: "Check-in Method",
                                        value: viewModel.checkInMethod2.rawValue)
                         
-                        Image(systemName: viewModel.checkInMethod2 == .qrcode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
+                        Image(systemName: viewModel.checkInMethod2 == .qrCode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
                             .font(.callout)
                     }
                 }
@@ -161,7 +159,6 @@ struct ReviewCreatedEventView: View {
                 }
                 
                 if let image = viewModel.image {
-//                    image
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
@@ -197,7 +194,9 @@ struct ReviewCreatedEventView: View {
         }
         .background(Color.mixerBackground.ignoresSafeArea())
         .overlay(alignment: .bottom) {
-            CreateEventNextButton(text: "Continue", action: viewModel.createEvent, isActive: true)
+            CreateEventNextButton(text: "Continue",
+                                  action: viewModel.createEvent,
+                                  isActive: true)
     }
     }
 }

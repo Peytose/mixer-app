@@ -12,7 +12,7 @@ import FirebaseFirestoreSwift
 
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
-    @Published var currentUser: User?
+    @Published var currentUser: CachedUser?
     @Published var emailIsVerified           = false
     @Published var showAuthFlow              = false
     @Published var name                      = ""
@@ -32,7 +32,6 @@ class AuthViewModel: ObservableObject {
     @Published var isValidBirthday           = false
     @Published var didSendResentPasswordLink = false
     @Published var active                    = Screen.allCases.first!
-    //    @Published var hasError                  = false
     @Published var alertItem: AlertItem?
     var hosts = [Host]()
     
@@ -67,20 +66,6 @@ class AuthViewModel: ObservableObject {
     }
     
     
-    //    func login(withEmail email: String, password: String) {
-    //        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-    //            if let error = error {
-    //                print("DEBUG: Login failed \(error.localizedDescription)")
-    //                return
-    //            }
-    //
-    //            guard let user = result?.user else { return }
-    //            self.userSession = user
-    //            self.fetchUser()
-    //        }
-    //    }
-    
-    
     func signOut() {
         DispatchQueue.main.async {
             self.active      = Screen.allCases.first!
@@ -113,25 +98,29 @@ class AuthViewModel: ObservableObject {
             return
         }
         
-        print("DEBUG: \(uid)")
-        
-        COLLECTION_USERS.document(uid).getDocument { snapshot, _ in
+        COLLECTION_USERS.document(uid).getDocument(source: .default) { snapshot, _ in
             guard let user = try? snapshot?.data(as: User.self) else {
-                print("DEBUG: Error getting user")
+                print("DEBUG: Error getting user.")
                 print(String(describing: snapshot?.data()))
                 return
             }
             
-            self.currentUser = user
+            let cachedUser = CachedUser(from: user)
+            self.currentUser = cachedUser
+            print("DEBUG: Current user: \(String(describing: self.currentUser))")
             
-            guard let isHost = user.isHost else { return }
-            if isHost { self.fetchHost(uid: uid) } else { return }
+            if let hostPrivileges = cachedUser.hostPrivileges {
+                for key in hostPrivileges.keys {
+                    print("DEBUG: key for host privileges: \(key)")
+                    self.fetchHost(uid: key)
+                }
+            }
         }
     }
     
     
     private func fetchHost(uid: String) {
-        COLLECTION_HOSTS.whereField("ownerUuid", isEqualTo: uid).getDocuments { snapshot, error in
+        COLLECTION_HOSTS.whereField("members", arrayContains: uid).getDocuments { snapshot, error in
             if let error = error {
                 print("DEBUG: Error fetching host. \(error.localizedDescription)")
                 return
@@ -231,18 +220,30 @@ class AuthViewModel: ObservableObject {
     func verifyPhoneNumber() {
         guard let verificationID = UserDefaults.standard.string(forKey: "authVerificationID") else { return }
         let credential = PhoneAuthProvider.provider().credential(withVerificationID: verificationID, verificationCode: code)
-        
+
         Auth.auth().signIn(with: credential) { result, error in
-            if let error = error as? NSError {
-                self.handleAuthError(error)
-                return
+            if let error = error as NSError? {
+                if error.code == AuthErrorCode.captchaCheckFailed.rawValue {
+                    // If reCAPTCHA verification is required, present the reCAPTCHA challenge to the user
+                    PhoneAuthProvider.provider().verifyPhoneNumber(self.phoneNumber, uiDelegate: nil) { verificationID, error in
+                        if let error = error as NSError? {
+                            self.handleAuthError(error)
+                        } else {
+                            // Store the new verification ID and present the reCAPTCHA challenge
+                            UserDefaults.standard.set(verificationID, forKey: "authVerificationID")
+                            self.alertItem = AlertContext.reCAPTCHAChallenge
+                        }
+                    }
+                } else {
+                    self.handleAuthError(error)
+                }
+            } else {
+                guard let user = result?.user else { return }
+                self.userSession = user
+                print("Successfully verified phone number!")
+                self.fetchUser()
+                self.next()
             }
-            
-            guard let user = result?.user else { return }
-            self.userSession = user
-            print("Successfully verified phone number!")
-            self.fetchUser()
-            self.next()
         }
     }
     
@@ -272,7 +273,7 @@ class AuthViewModel: ObservableObject {
                         "gender": self.gender,
                         "university": self.university,
                         "uid": uid,
-                        "dateJoined": Timestamp()]
+                        "dateJoined": Timestamp()] as [String : Any]
             
             COLLECTION_USERS.document(uid).setData(data) { _ in
                 print("DEBUG: ✅ Succesfully uploaded user data ...")

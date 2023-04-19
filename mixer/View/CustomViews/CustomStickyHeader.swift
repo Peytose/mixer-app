@@ -5,16 +5,9 @@
 //  Created by Jose Martinez on 12/20/22.
 //
 
-//
-//  CustomStickyStackView.swift
-//  mixer
-//
-//  Created by Jose Martinez on 11/13/22.
-//
-
 import SwiftUI
 
-struct CustomStickyHeaderView<Header: View, Content: View>: View {
+struct CustomStickyHeader<Header: View, Content: View>: View {
     var headerView: Header
     var contentView: Content
     

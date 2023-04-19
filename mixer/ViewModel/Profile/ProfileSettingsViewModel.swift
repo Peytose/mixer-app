@@ -9,7 +9,7 @@ import SwiftUI
 import Firebase
 
 final class ProfileSettingsViewModel: ObservableObject {
-    var user: User
+    var user: CachedUser
     @Published var uploadComplete = false
     var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
     let supportLink = "https://docs.google.com/forms/d/e/1FAIpQLSch7XiTBu2dq3WzrklYHAZ_NpkuiH-TUtZOhE-H-4QEVWexPA/viewform?usp=pp_url"
@@ -18,7 +18,7 @@ final class ProfileSettingsViewModel: ObservableObject {
         case saveName
     }
     
-    init(user: User) {
+    init(user: CachedUser) {
         self.user = user
     }
     
@@ -48,7 +48,7 @@ final class ProfileSettingsViewModel: ObservableObject {
         guard username != "" else { return }
         
         COLLECTION_USERS.document(uid).updateData(["username": username]) { _ in
-            self.user.instaUsername = username
+            self.user.instagramHandle = username
             self.uploadComplete = true
         }
     }

@@ -17,9 +17,6 @@ struct GetPhoneView: View {
     var body: some View {
         ZStack {
             Color.mixerBackground.ignoresSafeArea()
-//                .onTapGesture {
-//                    self.hideKeyboard()
-//                }
             
             VStack {
                 PhoneNumberTextField(title: "My number is",
@@ -35,29 +32,20 @@ struct GetPhoneView: View {
             .padding(.top)
             .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
             .overlay(alignment: .bottom) {
-                if phoneNumber.isEmpty {
-                    ContinueSignUpButton(text: "Continue", action: action, isActive: false)
-                        .onTapGesture {
-                            disableButton = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                        }
-                        .disabled(true)
-                } else {
-                    ContinueSignUpButton(text: "Continue", action: action, isActive: true)
-                        .onTapGesture {
-                            disableButton = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
-                        }
-                }
-        }
+                ContinueSignUpButton(text: "Continue", action: action, isActive: !phoneNumber.isEmpty)
+                    .onTapGesture {
+                        disableButton = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) { disableButton = false }
+                    }
+                    .disabled(phoneNumber.isEmpty)
+            }
         }
     }
 }
 struct GetPhoneView_Previews: PreviewProvider {
     static var previews: some View {
         GetPhoneView(phoneNumber: .constant(""),
-                     countryCode: .constant(""),
-                     action: {  })
+                     countryCode: .constant("")) {  }
         .preferredColorScheme(.dark)
     }
 }
@@ -99,28 +87,23 @@ fileprivate struct PhoneNumberTextField: View {
                         countryCode = "+\(code)"
                     }
                 }
-                if isEditing {
-                    withAnimation(.easeIn(duration: 0.02)) {
-                        isEditing = true
-                    }
-                } else {
-                    withAnimation(.easeIn(duration: 0.02)) {
-                        isEditing = false
-                    }
-                }            }
-                .flagHidden(false)
-                .flagSelectable(true)
-                .prefixHidden(false)
-                .formatted()
-                .foregroundColor(Color.mainFont)
-                .font(.title3)
-                .tint(Color.mixerIndigo)
-                .padding(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
-                .background {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(lineWidth: isEditing ? 3 : 1)
-                        .foregroundColor(Color.mixerIndigo)
+                withAnimation(.easeIn(duration: 0.02)) {
+                    isEditing.toggle()
                 }
+            }
+            .flagHidden(false)
+            .flagSelectable(true)
+            .prefixHidden(false)
+            .formatted()
+            .foregroundColor(Color.mainFont)
+            .font(.title3)
+            .tint(Color.mixerIndigo)
+            .padding(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(lineWidth: isEditing ? 3 : 1)
+                    .foregroundColor(Color.mixerIndigo)
+            }
             
             Text(footnote)
                 .foregroundColor(.secondary)

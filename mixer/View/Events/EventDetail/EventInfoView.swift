@@ -16,7 +16,6 @@ struct EventInfoView: View {
     @State private var currentAmount = 0.0
     @State private var finalAmount = 1.0
     @State private var showHost = false
-    //    @Binding var showAllAmenities: Bool
     @State private var showAllAmenities = false
 
     let event: CachedEvent
@@ -32,7 +31,86 @@ struct EventInfoView: View {
             ScrollView(showsIndicators: false) {
                 EventFlyerHeader(event: event, unsave: unsave, save: save, namespace: namespace, showFullFlyer: $showFullFlyer)
                 
-                content
+                VStack(alignment: .leading, spacing: 20) {
+                    HostedBySection(type: event.type,
+                                    host: host,
+                                    cost: event.cost,
+                                    hasAlcohol: event.amenities?.contains(EventAmenities.alcohol),
+                                    namespace: namespace)
+                    .onTapGesture {
+                        showHost.toggle()
+                    }
+                    
+                    aboutSection
+                    
+                    eventDetails
+                    
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("What this event offers")
+                                .font(.title)
+                                .fontWeight(.bold)
+                            
+                            ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(2)), id: \.self) { category in
+                                let amenitiesInCategory = event.amenities?.filter({ $0.category == category }) ?? []
+                                if !amenitiesInCategory.isEmpty {
+                                    Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
+                                        ForEach(amenitiesInCategory, id: \.self) { amenity in
+                                            HStack {
+                                                Image(systemName: amenity.icon)
+                                                    .resizable()
+                                                    .scaledToFill()
+                                                    .frame(width: 15, height: 15)
+                                                
+                                                Text(amenity.rawValue)
+                                                    .font(.body)
+                                                
+                                                Spacer()
+                                            }
+                                            .foregroundColor(.white.opacity(0.7))
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            HStack {
+                                Spacer()
+                                Button {
+                                    withAnimation(.spring(dampingFraction: 0.8)) {
+                                        showAllAmenities.toggle()
+                                    }
+                                } label: {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .foregroundColor(.DesignCodeWhite)
+                                            .frame(width: 350, height: 45)
+                                            .overlay {
+                                                Text(showAllAmenities ? "Show less" : "Show all \(EventAmenities.allCases.count) amenities")
+                                                    .font(.body)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.black)
+                                            }
+                                    }
+                                }
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                    }
+                    
+                    Text("Where you'll be")
+                        .font(.title).bold()
+                    
+                    if let coords = coordinates {
+                        MapSnapshotView(location: coords)
+                    }
+                    
+                    Text("Friends Attending")
+                        .font(.title).bold()
+                        .padding(.bottom, 10)
+                }
+                .padding()
+                .padding(EdgeInsets(top: 100, leading: 0, bottom: 120, trailing: 0))
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
@@ -47,74 +125,12 @@ struct EventInfoView: View {
         }
         .preferredColorScheme(.dark)
         .ignoresSafeArea()
-        .overlay {
-            closeButton
-        }
+        .overlay { closeButton }
         .sheet(isPresented: $showHost) {
             HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
         }
     }
-
-    var content: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            HostedBySection(type: event.type,
-                            host: host,
-                            cost: event.cost,
-                            hasAlcohol: event.amenities.contains(EventAmenities.alcohol),
-                            namespace: namespace)
-            .onTapGesture {
-                showHost.toggle()
-            }
-
-            aboutSection
-
-            eventDetails
-
-            eventAmenities
-
-            Text("Where you'll be")
-                .font(.title).bold()
-
-            if let coords = coordinates {
-                MapSnapshotView(location: coordinates!)
-                //                    .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coordinates) }
-            }
-
-            Text("Friends Attending")
-                .font(.title).bold()
-                .padding(.bottom, 10)
-
-//            ForEach(Array(results.enumerated().prefix(9)), id: \.offset) { index, user in
-//                if index != 0 { Divider() }
-//                NavigationLink(destination: UserProfileView(viewModel: ExplorePageViewModel(), user: user)) {
-//                    HStack(spacing: 15) {
-//                        Image(user.image)
-//                            .resizable()
-//                            .aspectRatio(contentMode: .fill)
-//                            .clipShape(Circle())
-//                            .frame(width: 40, height: 40)
-//
-//                        VStack(alignment: .leading) {
-//                            HStack {
-//                                Text(user.name)
-//                                    .font(.system(size: 18, weight: .semibold, design: .default))
-//                                    .lineLimit(1)
-//                                    .foregroundColor(.white)
-//
-//                                Text(user.school)
-//                                    .font(.system(size: 18, weight: .semibold, design: .default))
-//                                    .foregroundColor(.secondary)
-//                            }
-//                        }
-//                    }
-//                    .padding(.vertical, -16)
-//                }
-//            }
-        }
-        .padding()
-        .padding(EdgeInsets(top: 100, leading: 0, bottom: 120, trailing: 0))
-    }
-
+    
     var aboutSection: some View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 6) {
@@ -126,7 +142,7 @@ struct EventInfoView: View {
                     .foregroundColor(.secondary)
                     .lineLimit(4)
             }
-
+            
             VStack(alignment: .leading, spacing: 6) {
                 Text("Notes for guest")
                     .font(.title).bold()
@@ -138,100 +154,23 @@ struct EventInfoView: View {
             }
         }
     }
-
+    
     var eventDetails: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Event details")
                 .font(.title).bold()
-
+            
             VStack(alignment: .leading) {
                 DetailRow(image: "sparkles", text: "Neon/black light")
-
+                
                 DetailRow(image: "tshirt.fill", text: "N/A")
-
+                
                 DetailRow(image: "drop.fill", text: "Wet Event")
             }
             .fontWeight(.medium)
         }
     }
-
-    var eventAmenities: some View {
-        VStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("What this event offers")
-                        .font(.title).bold()
-
-//                    ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
-//                        if let amenitiesInCategory = event.amenities.filter({ $0.category == category }), !amenitiesInCategory.isEmpty {
-//                            Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
-//                                ForEach(amenitiesInCategory, id: \.self) { amenity in
-//                                    HStack {
-//                                        Image(systemName: amenity.icon)
-//                                            .resizable()
-//                                            .scaledToFill()
-//                                            .frame(width: 15, height: 15)
-//
-//                                        Text(amenity.rawValue)
-//                                            .font(.body)
-//
-//                                        Spacer()
-//                                    }
-//                                    .foregroundColor(.white.opacity(0.7))
-//                                }
-//                            }
-//                        }
-//                    }
-                    
-                    ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
-                        let amenitiesInCategory = event.amenities.filter({ $0.category == category })
-                        if !amenitiesInCategory.isEmpty {
-                            Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
-                                ForEach(amenitiesInCategory, id: \.self) { amenity in
-                                    HStack {
-                                        Image(systemName: amenity.icon)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 15, height: 15)
-
-                                        Text(amenity.rawValue)
-                                            .font(.body)
-
-                                        Spacer()
-                                    }
-                                    .foregroundColor(.white.opacity(0.7))
-                                }
-                            }
-                        }
-                    }
-
-                    HStack {
-                        Spacer()
-                        Button {
-                            withAnimation(.spring(dampingFraction: 0.8)) {
-                                showAllAmenities.toggle()
-                            }
-                        } label: {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .foregroundColor(.DesignCodeWhite)
-                                    .frame(width: 350, height: 45)
-                                    .overlay {
-                                        Text(showAllAmenities ? "Show less" : "Show all \(event.amenities.count) amenities")
-                                            .font(.body)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.black)
-                                    }
-                            }
-                        }
-                        Spacer()
-                    }
-                    Spacer()
-                }
-            }
-        }
-    }
-
+    
     var closeButton: some View {
         Button {
             if showFullFlyer {
@@ -454,7 +393,7 @@ fileprivate struct EventFlyerHeader: View {
                             Spacer()
                             
                             VStack(alignment: .center, spacing: 4) {
-                                Image(systemName: event.isInviteOnly ? "lock.fill" : "globe")
+                                Image(systemName: event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "lock.fill" : "globe")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 20, height: 20)
@@ -462,7 +401,7 @@ fileprivate struct EventFlyerHeader: View {
                                     .backgroundStyle(cornerRadius: 10, opacity: 0.6)
                                     .cornerRadius(10)
                                 
-                                Text(event.isInviteOnly ? "Invite Only" : "Public")
+                                Text(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Invite Only" : "Public")
                                     .foregroundColor(.secondary)
                                 
                             }

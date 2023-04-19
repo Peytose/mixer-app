@@ -37,7 +37,7 @@ final class EventDetailViewModel: ObservableObject {
             self.event.didSave = true
             Task {
                 do {
-                    try await EventCache.shared.updateSavedCache(event: self.event, isSaving: true, key: "savedEvents-\(uid)")
+                    try EventCache.shared.cacheEvent(self.event)
                 } catch {
                     print("DEBUG: didSave (save) cache event error! \(error.localizedDescription)")
                 }
@@ -61,7 +61,7 @@ final class EventDetailViewModel: ObservableObject {
             
             Task {
                 do {
-                    try await EventCache.shared.updateSavedCache(event: self.event, isSaving: false, key: "savedEvents-\(uid)")
+                    try EventCache.shared.cacheEvent(self.event)
                 } catch {
                     print("DEBUG: didSave (unsave) cache event error! \(error.localizedDescription)")
                 }
@@ -84,7 +84,7 @@ final class EventDetailViewModel: ObservableObject {
     private func fetchEventHost() {
         Task {
             do {
-                let eventHost = try await HostCache.shared.getHost(withId: event.hostUuid)
+                let eventHost = try await HostCache.shared.getHost(from: event.hostUuid)
                 DispatchQueue.main.async {
                     self.host = eventHost
                 }
@@ -96,7 +96,7 @@ final class EventDetailViewModel: ObservableObject {
     
     
     private func getEventCoordinates() {
-        if event.isInviteOnly { return }
+        if event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false { return }
         
         if let longitude = event.longitude, let latitude = event.latitude {
             self.coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)

@@ -24,7 +24,7 @@ struct GetBirthdayView: View {
                 }
             
             VStack {
-                SignUpTextField2(input: $birthday,
+                SignUpTextField(input: $birthday,
                                  title: "When's your birthday?",
                                  placeholder: "MM / DD / YYYY",
                                  footnote: "Mixer uses your birthday for research and verification purposes. Your age will be public",

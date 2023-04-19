@@ -33,21 +33,29 @@ enum UserRelationship: Int, Codable {
     }
 }
 
+enum HostPrivileges: String, Codable {
+    case basic   = "Basic"
+    case premium = "Premium"
+}
+
+
 struct User: Identifiable, Codable {
+    // Metadata
     @DocumentID var id: String?
+    let dateJoined: Timestamp
+    
+    // Basic Information
     let username: String
     let email: String
     var profileImageUrl: String
     var name: String
-    var instaUsername: String
     var birthday: Timestamp
     let university: String
-    let dateJoined: Timestamp
     
+    // Additional Information
+    var instagramHandle: String?
     var bio: String?
-    var relationshiptoUser: UserRelationship?
-    var isHost: Bool? = false
-    var isSignedUp: Bool? = false
-    var isCurrentUser: Bool { return AuthViewModel.shared.userSession?.uid == id }
-    var associatedHostAccount: CachedHost?
+    
+    // Host privileges
+    var hostPrivileges: [String: HostPrivileges]?
 }

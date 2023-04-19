@@ -22,7 +22,7 @@ struct GetEmail: View {
                 }
             
             VStack {
-                SignUpTextField2(input: $email,
+                SignUpTextField(input: $email,
                                  title: "What's your email?",
                                  note: "Don't lose access to your account, verify your email",
                                  placeholder: "you@school.edu",

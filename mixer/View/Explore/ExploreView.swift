@@ -58,22 +58,14 @@ struct ExploreView: View {
                     
                     // Segmented Event Header
                     LazyVStack(pinnedViews: [.sectionHeaders]) {
-                        Section {
-                            if viewModel.eventSection == .today {
-                                EventListView(events: viewModel.todayEvents,
-                                              hasStarted: true,
-                                              namespace: namespace,
-                                              selectedEvent: $selectedEvent,
-                                              showEventView: $showEventView)
-                            } else if viewModel.eventSection == .future {
-                                EventListView(events: viewModel.futureEvents,
-                                              hasStarted: false,
-                                              namespace: namespace,
-                                              selectedEvent: $selectedEvent,
-                                              showEventView: $showEventView)
+                        Section(header: viewModel.stickyHeader()) {
+                            EventListView(events: viewModel.eventSection == .today ? viewModel.todayEvents : viewModel.futureEvents,
+                                          hasStarted: viewModel.eventSection == .today,
+                                          namespace: namespace,
+                                          selectedEvent: $selectedEvent,
+                                          showEventView: $showEventView) { event, hasStarted, namespace in
+                                EventCellView(event: event, hasStarted: hasStarted, namespace: namespace)
                             }
-                        } header: {
-                            viewModel.stickyHeader()
                         }
                     }
                 }

@@ -90,7 +90,6 @@ struct EventAmenitiesAndCost: View {
                                                     .font(.body)
                                                     .fontWeight(.medium)
                                                     .foregroundColor(.white)
-                                                
                                                     
                                                 Spacer()
                                                 

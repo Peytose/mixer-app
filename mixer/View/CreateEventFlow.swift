@@ -33,19 +33,21 @@ struct CreateEventFlow: View {
                                       action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.locationAndDates)
                 
-                PrototypeView(selectedVisibility: $viewModel.visibility,
-                              selectedInvitePreferrence: $viewModel.privacy,
-                              selectedCheckinMethod: $viewModel.checkInMethod2,
-                              guestLimit: $viewModel.guestLimit,
-                              guestInviteLimit: $viewModel.guestInviteLimit,
-                              memberInviteLimit: $viewModel.memberInviteLimit,
-                              useGuestList: $viewModel.isGuestListEnabled,
-                              isGuestLimit: $viewModel.isGuestLimitEnabled,
-                              isMemberInviteLimit: $viewModel.isMemberInviteLimitEnabled,
-                              isGuestInviteLimit: $viewModel.isGuestInviteLimitEnabled,
-                              manuallyApproveGuests: $viewModel.isManualApprovalEnabled,
-                              enableWaitlist: $viewModel.isWaitlistEnabled,
-                              registrationcutoff: $viewModel.isRegistrationDeadlineEnabled, action: viewModel.next)
+                EventGuestsAndInvitations(selectedVisibility: $viewModel.visibility,
+                                          selectedInvitePreferrence: $viewModel.privacy,
+                                          selectedCheckInMethod: $viewModel.checkInMethod2,
+                                          guestLimit: $viewModel.guestLimit,
+                                          guestInviteLimit: $viewModel.guestInviteLimit,
+                                          memberInviteLimit: $viewModel.memberInviteLimit,
+                                          alertItem: $viewModel.alertItem,
+                                          useGuestList: $viewModel.isGuestListEnabled,
+                                          isGuestLimit: $viewModel.isGuestLimitEnabled,
+                                          isMemberInviteLimit: $viewModel.isMemberInviteLimitEnabled,
+                                          isGuestInviteLimit: $viewModel.isGuestInviteLimitEnabled,
+                                          manuallyApproveGuests: $viewModel.isManualApprovalEnabled,
+                                          enableWaitlist: $viewModel.isWaitlistEnabled,
+                                          registrationcutoff: $viewModel.isRegistrationDeadlineEnabled,
+                                          action: viewModel.next)
                 .tag(CreateEventViewModel.Screen.guestsAndInvitations)
                 
                 
@@ -94,6 +96,7 @@ struct CreateEventFlow: View {
             guard let firstScreen = AuthViewModel.Screen.allCases.first else { return }
             showArrow = newValue.rawValue != firstScreen.rawValue
         }
+        .alert(item: $viewModel.alertItem, content: { $0.alert })
     }
 }
 

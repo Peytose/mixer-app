@@ -36,7 +36,7 @@ final class HostDetailViewModel: ObservableObject {
     
     private func getHostCoordinates() {
         guard let _ = host.address else { return }
-        if let longitude = host.longitude, let latitude = host.latitude {
+        if let longitude = host.location?.longitude, let latitude = host.location?.latitude {
             self.coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         }
     }
@@ -47,7 +47,10 @@ final class HostDetailViewModel: ObservableObject {
         
         Task {
             do {
-                let events = try await EventCache.shared.fetchPastEvents(for: .host, id: hostId)
+                let events = try await EventCache.shared.fetchEvents(filter: .hostEvents(uid: hostId)).filter({
+                    $0.endDate.dateValue() >= Calendar.current.date(byAdding: .day, value: -30, to: Date())! &&
+                    $0.endDate.dateValue() < Date()
+                })
                 
                 DispatchQueue.main.async { self.recentEvents = events }
             } catch {
@@ -62,10 +65,9 @@ final class HostDetailViewModel: ObservableObject {
         
         Task {
             do {
-                let futureEvents = try await EventCache.shared.fetchFutureEvents()
-                let hostEvents = futureEvents.filter({ $0.hostUuid == hostId })
+                let futureEvents = try await EventCache.shared.fetchEvents(filter: .future)
                 
-                DispatchQueue.main.async { self.upcomingEvents = hostEvents }
+                DispatchQueue.main.async { self.upcomingEvents = futureEvents.filter({ $0.hostUuid == hostId }) }
             } catch {
                 print("DEBUG: Error getting host's upcoming events. \(error.localizedDescription)")
             }

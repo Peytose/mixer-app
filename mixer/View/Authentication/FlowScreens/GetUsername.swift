@@ -20,7 +20,7 @@ struct GetUsername: View {
                 }
             
             VStack {
-                SignUpTextField2(input: $username, title: "Last thing \(name)! Choose a username", placeholder: "ex. \(name.lowercased())_loves_mixer3", footnote: "This will not be changeable in the near future, so choose wisely. Username must be unique.", textfieldHeader: "Your username", keyboard: .default)
+                SignUpTextField(input: $username, title: "Last thing \(name)! Choose a username", placeholder: "ex. \(name.lowercased())_loves_mixer3", footnote: "This will not be changeable in the near future, so choose wisely. Username must be unique.", textfieldHeader: "Your username", keyboard: .default)
                 
                 Spacer()
             }

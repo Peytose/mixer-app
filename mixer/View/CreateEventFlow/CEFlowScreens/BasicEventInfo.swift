@@ -139,8 +139,6 @@ extension BasicEventInfo {
 }
 
 struct BasicEventInfo_Previews: PreviewProvider {
-    @State static var privacy: CreateEventViewModel.PrivacyType       = .open
-    @State static var visibility: CreateEventViewModel.VisibilityType = ._public
     @State static var selectedImage: UIImage?
     
     static var previews: some View {

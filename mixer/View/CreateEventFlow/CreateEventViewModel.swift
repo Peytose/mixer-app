@@ -9,6 +9,18 @@ import SwiftUI
 import FirebaseFirestoreSwift
 import Firebase
 
+enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
+    case qrCode = "QR Code"
+    case manual = "Manual"
+    
+    var icon: String {
+        switch self {
+        case .qrCode: return "qrcode"
+        case .manual: return "pencil.line"
+        }
+    }
+}
+
 final class CreateEventViewModel: ObservableObject {
     @Published var title: String                       = ""
     @Published var description: String                 = ""
@@ -22,9 +34,9 @@ final class CreateEventViewModel: ObservableObject {
     @Published var usePublicAddress: Bool              = false
     @Published var selectedAmenities: Set<EventAmenities> = []
     @Published var type: EventType                     = .kickback
-    @Published var privacy: InvitePreferrenceEnum      = .open
-    @Published var visibility: VisibilityEnum          = ._public
-    @Published var checkInMethod2: CheckinMethodEnum       = .manual
+    @Published var privacy: InvitePreferrence          = .open
+    @Published var visibility: VisibilityType          = ._public
+    @Published var checkInMethod2: CheckInMethod       = .manual
     @Published var isGuestListEnabled: Bool            = false
     @Published var isManualApprovalEnabled: Bool       = false
     @Published var isGuestLimitEnabled: Bool           = false
@@ -37,7 +49,7 @@ final class CreateEventViewModel: ObservableObject {
     @Published var active: Screen                      = Screen.allCases.first!
     
     @Published var registrationDeadlineDate: Date?
-    @Published var checkInMethod: CreateEventViewModel.CheckinMethodEnum?
+    @Published var checkInMethod: CheckInMethod?
     @Published var image: UIImage?
     
     @Published var cost: Float?
@@ -45,21 +57,9 @@ final class CreateEventViewModel: ObservableObject {
     @Published var bathroomCount: Int                   = 0
     @Published var alertItem: AlertItem?
     
-    enum VisibilityEnum: String, Codable, CaseIterable, IconRepresentable {
-        case _public  = "Public"
-        case _private = "Private"
-        
-        var icon: String {
-            switch self {
-            case ._public: return "globe"
-            case ._private: return "lock"
-            }
-        }
-    }
-    
-    enum InvitePreferrenceEnum: String, Codable, CaseIterable, IconRepresentable {
-        case open  = "Open"
-        case inviteOnly = "Invite Only"
+    enum InvitePreferrence: String, Codable, CaseIterable, IconRepresentable {
+        case open       = "Open"
+        case inviteOnly = "Invite-only"
         
         var icon: String {
             switch self {
@@ -68,15 +68,15 @@ final class CreateEventViewModel: ObservableObject {
             }
         }
     }
+    
+    enum VisibilityType: String, Codable, CaseIterable, IconRepresentable {
+        case _public  = "Public"
+        case _private = "Private"
 
-    enum CheckinMethodEnum: String, Codable, CaseIterable, IconRepresentable  {
-        case manual  = "Manual"
-        case qrcode = "QR Code"
-        
         var icon: String {
             switch self {
-            case .manual: return "rectangle.and.pencil.and.ellipsis"
-            case .qrcode: return "qrcode"
+            case ._public: return "globe.americas"
+            case ._private: return "lock"
             }
         }
     }
@@ -95,43 +95,6 @@ final class CreateEventViewModel: ObservableObject {
             case .guestsAndInvitations: return "Guests & Invitations"
             case .costAndAmenities: return "Amenities"
             case .review: return "Review Event"
-            }
-        }
-    }
-    
-    enum PrivacyType: String, Codable, CaseIterable, IconRepresentable {
-        case open       = "Open"
-        case inviteOnly = "Invite-only"
-        
-        var icon: String {
-            switch self {
-            case .open: return "envelope.open"
-            case .inviteOnly: return "envelope"
-            }
-        }
-    }
-//    
-//    
-    enum VisibilityType: String, Codable, CaseIterable, IconRepresentable {
-        case _public  = "Public"
-        case _private = "Private"
-
-        var icon: String {
-            switch self {
-            case ._public: return "globe.americas"
-            case ._private: return "lock"
-            }
-        }
-    }
-    
-    enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
-        case qrCode = "QR Code"
-        case manual = "Manual"
-        
-        var icon: String {
-            switch self {
-            case .qrCode: return "qrcode"
-            case .manual: return "pencil.line"
             }
         }
     }

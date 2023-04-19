@@ -12,7 +12,7 @@ import Combine
 
 final class SearchViewModel: ObservableObject {
     @Published var text: String = ""
-    private (set) var users     = [User]()
+    private (set) var users     = [CachedUser]()
     @Published var isLoading    = false
     
     
@@ -35,7 +35,7 @@ final class SearchViewModel: ObservableObject {
                     
                     if !documents.isEmpty {
                         print("DEBUG: Found \(documents.count) documents. Returning ...")
-                        let results = documents.compactMap({ try? $0.data(as: User.self) })
+                        let results = documents.compactMap({ try? $0.data(as: User.self) }).compactMap { CachedUser(from: $0) }
                         DispatchQueue.main.async {
                             self.users = results
                         }
@@ -45,7 +45,6 @@ final class SearchViewModel: ObservableObject {
                 }
         }
     }
-    
     
     private func showLoadingView() { isLoading = true }
     private func hideLoadingView() { isLoading = false }

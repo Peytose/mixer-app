@@ -76,7 +76,7 @@ final class ExploreViewModel: ObservableObject {
     @MainActor func getHosts() {
         Task {
             do {
-                self.hosts = try await HostCache.shared.fetchHosts()
+                self.hosts = try await HostCache.shared.fetchHosts(filter: .all)
             } catch {
                 print("DEBUG: Error getting hosts for explore. \(error.localizedDescription)")
             }
@@ -87,7 +87,7 @@ final class ExploreViewModel: ObservableObject {
     @MainActor func getTodayEvents() {
         Task {
             do {
-                self.todayEvents = try await EventCache.shared.fetchTodayEvents()
+                self.todayEvents = try await EventCache.shared.fetchEvents(filter: .today)
             } catch {
                 print("DEBUG: Error getting today events for explore. \(error)")
             }
@@ -98,7 +98,7 @@ final class ExploreViewModel: ObservableObject {
     @MainActor func getFutureEvents() {
         Task {
             do {
-                self.futureEvents = try await EventCache.shared.fetchFutureEvents()
+                self.futureEvents = try await EventCache.shared.fetchEvents(filter: .future)
             } catch {
                 print("DEBUG: Error getting future events for explore. \(error)")
             }

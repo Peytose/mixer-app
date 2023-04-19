@@ -63,7 +63,7 @@ struct EventDetailView: View {
         }
         .ignoresSafeArea()
         .sheet(isPresented: $showAllAmenities) {
-            AmenityListView(amenities: viewModel.event.amenities)
+            AmenityListView(amenities: viewModel.event.amenities ?? [])
                 .presentationDetents([.medium, .large])
         }
     }

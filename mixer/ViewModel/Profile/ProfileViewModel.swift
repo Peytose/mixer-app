@@ -9,13 +9,15 @@ import SwiftUI
 import Firebase
 
 class ProfileViewModel: ObservableObject {
-    @Published var user: User
+    @Published var user: CachedUser
     @Published var showSettingsView     = false
     @Published var showUnfriendAlert    = false
     @Published var continueUnfriendFunc = false
     @Published var eventSection         = EventSection.interests
     @Published var savedEvents          = [CachedEvent]()
     @Published var pastEvents           = [CachedEvent]()
+    @Published var mutuals              = [CachedUser]()
+    @Published var notifications        = [Notification]()
     
     enum EventSection: String, CaseIterable {
         case interests
@@ -30,7 +32,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     
-    init(user: User) {
+    init(user: CachedUser) {
         self.user = user
         getUserRelationship()
         print("DEBUG: profile init ran")
@@ -125,7 +127,7 @@ class ProfileViewModel: ObservableObject {
         
         Task {
             do {
-                self.savedEvents = try await EventCache.shared.fetchSavedEvents(for: uid)
+                self.savedEvents = try await EventCache.shared.fetchEvents(filter: .userSaves(uid: uid))
             } catch {
                 print("DEBUG: Error getting profile events. \(error.localizedDescription)")
             }

@@ -11,7 +11,7 @@ import Firebase
 
 struct HostService {
     static func inviteUser(eventUid: String, uid: String, currentUid: String, completion: FirestoreCompletion) {
-        let data = ["status": ListType.invite,
+        let data = ["status": GuestStatus.invited.rawValue,
                     "invitedBy": currentUid,
                     "timestamp": Timestamp(date: Date())] as [String: Any]
         
@@ -19,14 +19,17 @@ struct HostService {
             .updateData(data, completion: completion)
     }
     
-    static func checkInUser(eventUid: String, uid: String, currentUid: String, completion: FirestoreCompletion) {
-        let data = ["status": ListType.attend,
-                    "checkedInBy": currentUid,
+    static func checkInUser(eventUid: String, uid: String, currentUserName: String, completion: FirestoreCompletion) {
+        let data = ["status": GuestStatus.attending.rawValue,
+                    "checkedInBy": currentUserName,
                     "timestamp": Timestamp(date: Date())] as [String: Any]
         
-        COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(uid).updateData(data) { _ in
-            COLLECTION_USERS.document(uid).collection("events-attended").document(eventUid)
-                .setData([:], completion: completion)
-        }
+        COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(uid).updateData(data, completion: completion)
+        
+        // Below is commented out to account for future implementation for actual mixer uses
+//        { _ in
+//            COLLECTION_USERS.document(uid).collection("events-attended").document(eventUid)
+//                .setData([:], completion: completion)
+//        }
     }
 }

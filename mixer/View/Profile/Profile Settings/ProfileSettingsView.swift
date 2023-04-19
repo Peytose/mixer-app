@@ -11,7 +11,7 @@ import FirebaseAuth
 struct ProfileSettingsView: View {
     @State private var name: String
     @State private var bio: String
-    @State private var insta: String
+    @State private var insta: String?
     @State var isPublic = false
     @State var showAlert = false
     @State private var isShowingMailView = false
@@ -19,13 +19,13 @@ struct ProfileSettingsView: View {
 
     @Environment(\.presentationMode) var mode
     @ObservedObject private var viewModel: ProfileSettingsViewModel
-    @Binding var user: User
+    @Binding var user: CachedUser
     
-    init(user: Binding<User>) {
+    init(user: Binding<CachedUser>) {
         self._user = user
         self.viewModel = ProfileSettingsViewModel(user: self._user.wrappedValue)
         self._name = State(initialValue: _user.wrappedValue.name)
-        self._insta = State(initialValue: _user.wrappedValue.instaUsername)
+        self._insta = State(initialValue: _user.wrappedValue.instagramHandle)
         self._bio = State(initialValue: _user.wrappedValue.bio!)
     }
     
@@ -100,7 +100,7 @@ struct ProfileSettingsView: View {
                             .listRowBackground(Color.mixerSecondaryBackground)
 
                         NavigationLink {
-                            SettingsChangeSocialsView(viewModel: viewModel, name: insta)
+                            SettingsChangeSocialsView(viewModel: viewModel, name: insta ?? "")
                         } label: {
                             HStack {
                                 Image("Instagram_Glyph_Gradient 1")
@@ -259,7 +259,7 @@ struct ProfileSettingsView: View {
 
 struct ProfileSettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileSettingsView(user: .constant(Mockdata.user))
+        ProfileSettingsView(user: .constant(CachedUser(from: Mockdata.user)))
             .preferredColorScheme(.dark)
     }
 }

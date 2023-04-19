@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct GetCode: View {
-    let phoneNumber: String
-    @Binding var code: String
-    let action: () -> Void
     @State var countdown = 5
+    @Binding var code: String
+    
+    let phoneNumber: String
+    let action: () -> Void
     
     var body: some View {
         ZStack {
@@ -21,7 +22,7 @@ struct GetCode: View {
                 }
             
             VStack {
-                SignUpTextField2(input: $code,
+                SignUpTextField(input: $code,
                                  title: "Verify your number with a code",
                                  note: "Enter the security code we sent to \n\(phoneNumber)",
                                  placeholder: "My code is", textfieldHeader: "Your code",
@@ -106,7 +107,7 @@ fileprivate struct ResendVerificationTextButton: View {
 
 struct GetCode_Previews: PreviewProvider {
     static var previews: some View {
-        GetCode(phoneNumber: "2285965553", code: .constant("")) {}
+        GetCode(code: .constant(""), phoneNumber: "2285965553") {}
             .preferredColorScheme(.dark)
     }
 }
