@@ -27,6 +27,7 @@ final class GuestlistViewModel: ObservableObject {
         }
     }
     
+    
     private func getSectionedDictionary() -> Dictionary<String, [EventGuest]> {
         let sectionDictionary: Dictionary<String, [EventGuest]> = {
             return Dictionary(grouping: guests, by: {
@@ -47,21 +48,25 @@ final class GuestlistViewModel: ObservableObject {
         if guest.status == .attending {
             alertItemTwo = AlertContext.guestAlreadyCheckedIn {
                 COLLECTION_EVENTS.document(self.eventUid).collection("attendance-list").document(guestId).delete { _ in
-                    COLLECTION_USERS.document(guestId).collection("events-attended").document(self.eventUid).delete()
+//                    COLLECTION_USERS.document(guestId).collection("events-attended").document(self.eventUid).delete {
+                    self.guests.removeAll(where: { $0.id == guestId })
+                    self.sectionDictionary = self.getSectionedDictionary()
+//                    }
                 }
             }
-        } else {
-            COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(guestId).delete()
+        } else if guest.status == .invited {
+            COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(guestId).delete { _ in
+                self.guests.removeAll(where: { $0.id == guestId })
+                self.sectionDictionary = self.getSectionedDictionary()
+            }
         }
-        
-        self.guests.removeAll(where: { $0.id == guestId })
-        self.sectionDictionary = self.getSectionedDictionary()
     }
     
-    @MainActor func createGuest(name: String, university: String, status: GuestStatus, age: Int, gender: String) {
+    @MainActor func createGuest(name: String, email: String, university: String, status: GuestStatus, age: Int, gender: String) {
         guard let currentUserName = AuthViewModel.shared.currentUser?.name else { return }
         
         let data = ["name": name,
+                    "email": email,
                     "university": university,
                     "age": age,
                     "gender": gender,
@@ -79,6 +84,7 @@ final class GuestlistViewModel: ObservableObject {
             
             // Create a new guest from the data and add it to the guests array
             let newGuest = EventGuest(name: name,
+                                      email: email,
                                       university: university,
                                       age: age,
                                       gender: gender,

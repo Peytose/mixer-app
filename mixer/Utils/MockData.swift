@@ -11,7 +11,8 @@ import FirebaseFirestore
 
 struct Mockdata {
     static var user: User {
-        return User(dateJoined: Timestamp(date: Date()),
+        return User(uid: "",
+                    dateJoined: Timestamp(date: Date()),
                     username: "test_user",
                     email: "test@email.edu",
                     profileImageUrl: "https://images.squarespace-cdn.com/content/v1/53ed0e3ce4b0c296acaeae80/1584577511464-8FDZYWQVXUI1OBS4VTZP/Bonneville14082-Edit-DHWEB%2BNick%2BFerguson%2BDenver%2BBroncos%2BHeadshot%2BPhotography%2Bby%2BAaron%2BLucy%2BDenver%2BColorado%2BHeadshots%2BPhotographer.jpg?format=2500w",
@@ -29,7 +30,7 @@ struct Mockdata {
                      title: "Neon Party",
                      description: "Neon party at Theta Chi, need we say more?",
                      eventImageUrl: "https://www.instagram.com/p/CqBwaJ3gcyU/media?size=l",
-                     type: .kickback,
+                     type: EventType.kickback,
                      address: "528 Beacon St, Boston, MA 02215",
                      amenities: [],
                      startDate: Timestamp(),
