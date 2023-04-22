@@ -13,6 +13,7 @@ final class GuestlistViewModel: ObservableObject {
     @Published var sectionDictionary: [String: [EventGuest]] = [:]
     @Published var alertItem: AlertItem?
     @Published var alertItemTwo: AlertItemTwo?
+    var selectedGuest: EventGuest?
     private let eventUid: String
     
     init(eventUid: String) {
@@ -25,7 +26,6 @@ final class GuestlistViewModel: ObservableObject {
             print("DEBUG: section dictionary for guestlist: \(self.sectionDictionary)")
         }
     }
-    
     
     private func getSectionedDictionary() -> Dictionary<String, [EventGuest]> {
         let sectionDictionary: Dictionary<String, [EventGuest]> = {
@@ -58,11 +58,10 @@ final class GuestlistViewModel: ObservableObject {
         self.sectionDictionary = self.getSectionedDictionary()
     }
     
-    @MainActor func createGuest(name: String, email: String, university: String, status: GuestStatus, age: Int, gender: String) {
+    @MainActor func createGuest(name: String, university: String, status: GuestStatus, age: Int, gender: String) {
         guard let currentUserName = AuthViewModel.shared.currentUser?.name else { return }
         
         let data = ["name": name,
-                    "email": email,
                     "university": university,
                     "age": age,
                     "gender": gender,
@@ -80,7 +79,6 @@ final class GuestlistViewModel: ObservableObject {
             
             // Create a new guest from the data and add it to the guests array
             let newGuest = EventGuest(name: name,
-                                      email: email,
                                       university: university,
                                       age: age,
                                       gender: gender,

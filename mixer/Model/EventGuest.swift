@@ -12,7 +12,6 @@ import Firebase
 struct EventGuest: Identifiable, Codable {
     @DocumentID var id: String?
     let name: String
-    let email: String
     let university: String
     
     var age: Int?

@@ -98,6 +98,8 @@ class AuthViewModel: ObservableObject {
             return
         }
         
+        print("DEBUG: successfully fetched uid. \(uid)")
+        
         COLLECTION_USERS.document(uid).getDocument(source: .default) { snapshot, _ in
             guard let user = try? snapshot?.data(as: User.self) else {
                 print("DEBUG: Error getting user.")

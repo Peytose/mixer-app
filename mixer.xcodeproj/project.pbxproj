@@ -582,7 +582,6 @@
 			children = (
 				9C2B8967298F53510011FC56 /* MapViewModel.swift */,
 				9C4B0E342982417000A9D963 /* WaitlistViewModel.swift */,
-				9C4B0E41298241AE00A9D963 /* GuestlistViewModel.swift */,
 				9C4B0E43298241AE00A9D963 /* CheckInViewModel.swift */,
 				A6B9E66B2953B3F9009C936E /* Mock View Models */,
 			);
@@ -816,6 +815,7 @@
 			isa = PBXGroup;
 			children = (
 				A613C35F2978C61B00C4015C /* GuestlistView.swift */,
+				9C4B0E41298241AE00A9D963 /* GuestlistViewModel.swift */,
 				A67352792979B8FD00AAD32E /* GuestlistUserView.swift */,
 				9C3E2CA629EE767E00A74D05 /* AddToGuestlistView.swift */,
 			);

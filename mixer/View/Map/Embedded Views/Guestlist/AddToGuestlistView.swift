@@ -11,13 +11,14 @@ struct AddToGuestlistView: View {
     @ObservedObject var viewModel: GuestlistViewModel
     @Binding var showAddGuestView: Bool
     @State var name: String = ""
-    @State var email: String = ""
     @State var university: UniversityExamples = .mit
     @State var universityName: String = "" // New state variable to hold the user's input for the university name
     @State var status: GuestStatus = .invited
     @State var gender: Gender      = .preferNot
-    @State var age: Int            = 19
-    
+    @State var age: Int            = 17
+    @Environment(\.presentationMode) var mode
+
+
     enum UniversityExamples: String, CaseIterable {
         case mit = "MIT"
         case neu = "NEU"
@@ -39,89 +40,109 @@ struct AddToGuestlistView: View {
     }
     
     var body: some View {
-        ZStack {
-            List {
-                Section {
-                    TextField("Guest name", text: $name)
-                        .foregroundColor(Color.mainFont)
-                    
-                    TextField("Guest email", text: $email)
-                        .foregroundColor(Color.mainFont)
-                } header: {
-                    Text("Guest Details")
-                        .fontWeight(.semibold)
-                }
-                .listRowBackground(Color.mixerSecondaryBackground)
-                
-                Section {
-                    Picker("University", selection: $university) {
-                        ForEach(UniversityExamples.allCases, id: \.self) { university in
-                            Text(university.rawValue)
-                                .tag(university)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    
-                    if university == .other {
-                        TextField("School Name", text: $universityName, axis: .vertical) // Bind to the new variable
+        NavigationView {
+            ZStack {
+                List {
+                    Section {
+                        TextField("Name", text: $name)
                             .foregroundColor(Color.mainFont)
-                    }
-                } header: {
-                    Text("Extra Details")
-                        .fontWeight(.semibold)
-                }
-                .listRowBackground(Color.mixerSecondaryBackground)
-                
-                Section {
-                    Stepper("Age: \(age)", value: $age, in: 16...100)
-                    
-                    Picker("Gender", selection: $gender) {
-                        ForEach(Gender.allCases, id: \.self) { gender in
+                        
+                        HStack {
+                            Text(university == UniversityExamples.other ? universityName : university.rawValue)
+
+                            Spacer()
+
+                            Menu("Select School") {
+                                ForEach(UniversityExamples.allCases, id: \.self) { university in
+                                    Button(university.rawValue) {
+                                        self.university = university
+                                    }
+                                }
+                            }
+                            .accentColor(.mixerIndigo)
+                        }
+                        .listRowBackground(Color.mixerSecondaryBackground)
+                        
+                        if university == .other {
+                            TextField("School Name", text: $universityName, axis: .vertical)
+                                .foregroundColor(Color.mainFont)
+                        }
+                        
+                        HStack {
                             Text(gender.rawValue)
-                                .tag(gender)
+                            
+                            Spacer()
+                            
+                            Menu("Select Gender") {
+                                ForEach(Gender.allCases, id: \.self) { gender in
+                                    Button(gender.rawValue) {
+                                        self.gender = gender
+                                    }
+                                }
+                            }
+                            .accentColor(.mixerIndigo)
                         }
+                    } header: {
+                        Text("Guest Details")
+                            .fontWeight(.semibold)
                     }
-                    .pickerStyle(SegmentedPickerStyle())
-                } header: {
-                    Text("Optional Details")
-                        .fontWeight(.semibold)
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    Section {
+                        Stepper("Age: \(age == 17 ? "N/A" : String(age))", value: $age, in: 17...100)
+                        
+//                        Picker("Are you adding the guest to the guestlist or checking them in?", selection: $status) {
+//                            ForEach(GuestStatus.allCases, id: \.self) { option in
+//                                Text(option == GuestStatus.invited ? "Guestlist" : "Check-in")
+//                                    .tag(option)
+//                            }
+//                        }
+//                        .pickerStyle(SegmentedPickerStyle())
+                    } header: {
+                        Text("Optional Details")
+                            .fontWeight(.semibold)
+                    }
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    Section {
+                        // Section to separate button
+                        Section{}.listRowBackground(Color.clear)
+                    }
                 }
-                .listRowBackground(Color.mixerSecondaryBackground)
+                .scrollContentBackground(.hidden)
+            }
+            .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
+            .navigationTitle("Add Guest")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(action: {
+                        viewModel.createGuest(name: name,
+                                              university: university == .other ? universityName : university.rawValue, // Update university based on user input
+                                              status: status,
+                                              age: age,
+                                              gender: gender.rawValue)
+                        
+                        showAddGuestView.toggle()
+                    }, label: {
+                        Text("Submit")
+                            .foregroundColor(.blue)
+                            .bold()
+                    })
+                }
                 
-                Section {
-                    Picker("Are you adding the guest to the guestlist or checking them in?", selection: $status) {
-                        ForEach(GuestStatus.allCases, id: \.self) { option in
-                            Text(option == GuestStatus.invited ? "Guestlist" : "Check-in")
-                                .tag(option)
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(role: .cancel, action: {
+                        withAnimation() {
+                            mode.wrappedValue.dismiss()
                         }
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                } header: {
-                    Text("Optional Details")
-                        .fontWeight(.semibold)
-                }
-                .listRowBackground(Color.mixerSecondaryBackground)
-                
-                Section {
-                    // Section to separate button
-                    Section{}.listRowBackground(Color.clear)
+                    }, label: {
+                        Text("Cancel")
+                            .foregroundColor(.secondary)
+                    })
                 }
             }
-            .scrollContentBackground(.hidden)
+            .preferredColorScheme(.dark)
         }
-        .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
-        .overlay(alignment: .bottom) {
-            CreateEventNextButton(text: "Add", action: {
-                viewModel.createGuest(name: name,
-                                      email: email,
-                                      university: university == .other ? universityName : university.rawValue, // Update university based on user input
-                                      status: status,
-                                      age: age,
-                                      gender: gender.rawValue)
-                
-                showAddGuestView.toggle()
-            }, isActive: true)
-        }
-        .preferredColorScheme(.dark)
     }
 }
