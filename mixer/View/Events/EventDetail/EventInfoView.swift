@@ -313,7 +313,7 @@ fileprivate struct EventFlyerHeader: View {
                             
                             Spacer()
                             
-                            if event.hasStarted == false {
+                            if !(event.eventOptions["hasStarted"] ?? true) {
                                 if let didSave = event.didSave {
                                     Button {
                                         let impact = UIImpactFeedbackGenerator(style: .light)

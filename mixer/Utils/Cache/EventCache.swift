@@ -21,6 +21,24 @@ class EventCache {
         case today
         case future
         case userSaves(uid: String)
+        case all
+        
+        var filterKey: String {
+            switch self {
+            case .pastUser(uid: let uid, fromDate: _):
+                return "past-\(uid)"
+            case .hostEvents(uid: let uid):
+                return "events-\(uid)"
+            case .today:
+                return "today-events"
+            case .future:
+                return "future-events"
+            case .userSaves(uid: let uid):
+                return "saves-\(uid)"
+            case .all:
+                return "events"
+            }
+        }
         
         func query() -> Query {
             let today = Date()
@@ -38,13 +56,14 @@ class EventCache {
                     .whereField("hostUuid", isEqualTo: uid)
             case .today:
                 return COLLECTION_EVENTS
-                    .whereField("startDate", isGreaterThanOrEqualTo: Timestamp(date: startOfToday))
-                    .whereField("startDate", isLessThan: Timestamp(date: endOfToday))
+                    .whereField("hasStarted", isEqualTo: true)
             case .future:
                 return COLLECTION_EVENTS
                     .whereField("startDate", isGreaterThan: Timestamp(date: endOfToday))
             case .userSaves(uid: let uid):
                 return COLLECTION_EVENTS.document(uid).collection("user-saves")
+            case .all:
+                return COLLECTION_EVENTS
             }
         }
     }
@@ -56,15 +75,14 @@ class EventCache {
     }
     
     // Cache Key Generation
-    private func getKey(for query: Query) -> String {
-        let path = query.hash
-        return "events-\(path)"
+    private func getKey(for filter: EventFilterOption) -> String {
+        return filter.filterKey
     }
 
     // Fetching Events
     func fetchEvents(filter: EventFilterOption) async throws -> [CachedEvent] {
         let query = filter.query()
-        let key = getKey(for: query)
+        let key = getKey(for: filter)
         print("DEBUG: Filter option: \(filter)")
         return try await fetchEvents(for: query, key: key)
     }
@@ -72,7 +90,7 @@ class EventCache {
     private func fetchEvents(for query: Query, key: String) async throws -> [CachedEvent] {
         // Check if the cached event ids exist and are not empty
         if let cachedEventIds: [String] = try cache.readCodable(forKey: key), !cachedEventIds.isEmpty {
-            print("DEBUG: Cached event ids. \(cachedEventIds)")
+            print("DEBUG: Cached event ids for \(key). \(cachedEventIds)")
             return try await getEvents(from: cachedEventIds)
         } else {
             // Fetch documents from Firestore

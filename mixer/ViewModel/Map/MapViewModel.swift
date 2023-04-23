@@ -64,10 +64,8 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                 for var host in hosts {
                     guard let hostId = host.id else { return }
                     
-                    if var currentEvent = todayEvents.first(where: { $0.hostUuid == hostId && $0.endDate.dateValue() > Date() && $0.startDate.dateValue() < Date() }) {
-                        currentEvent.hasStarted = true
-                        try EventCache.shared.cacheEvent(currentEvent)
-
+                    if var currentEvent = todayEvents.first(where: { $0.hostUuid == hostId }) {
+                        
                         host.hasCurrentEvent = true
                         try HostCache.shared.cacheHost(host)
 
@@ -119,20 +117,6 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                 print("DEBUG: Error getting event. \(error)")
                 EventCache.shared.remove(byKey: "7uJM0wfC29lNtqjeVktM")
             }
-        }
-    }
-
-    // Process events that are currently happening
-    private func processCurrentEvents(events: [CachedEvent]) async throws {
-        for var event in events {
-            event.hasStarted = true
-            try EventCache.shared.cacheEvent(event)
-            
-            var host = try await HostCache.shared.getHost(from: event.hostUuid)
-            host.hasCurrentEvent = true
-            await updateMapItem(for: host, with: event)
-
-            try await updateHostCoordinates(for: &host, with: event)
         }
     }
     

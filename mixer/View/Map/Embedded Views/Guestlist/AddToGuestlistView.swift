@@ -37,6 +37,14 @@ struct AddToGuestlistView: View {
         case female    = "Female"
         case other     = "Other"
         case preferNot = "Prefer not to say"
+        
+        var icon: String {
+            switch(self) {
+                case .male: return "human-male"
+                case .female: return "human-female"
+                default: return ""
+            }
+        }
     }
     
     var body: some View {

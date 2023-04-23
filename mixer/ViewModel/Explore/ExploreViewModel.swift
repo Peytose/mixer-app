@@ -88,6 +88,7 @@ final class ExploreViewModel: ObservableObject {
         Task {
             do {
                 self.todayEvents = try await EventCache.shared.fetchEvents(filter: .today)
+                print("DEBUG: ✅today events: \(todayEvents)")
             } catch {
                 print("DEBUG: Error getting today events for explore. \(error)")
             }
