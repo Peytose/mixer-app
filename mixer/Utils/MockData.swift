@@ -11,7 +11,7 @@ import FirebaseFirestore
 
 struct Mockdata {
     static var user: User {
-        return User(uid: "",
+        return User(id: "5aAWqFni8iMhj8MyZ4lGQgapfxo1",
                     dateJoined: Timestamp(date: Date()),
                     username: "test_user",
                     email: "test@email.edu",
@@ -24,7 +24,7 @@ struct Mockdata {
     }
     
     static var event: Event {
-        return Event(hostUuid: "",
+        return Event(hostUuid: "7uJM0wfC29lNtqjeVktM",
                      hostUsername: "mitthetachi",
                      timePosted: Timestamp(),
                      title: "Neon Party",
@@ -52,7 +52,8 @@ struct Mockdata {
     }
     
     static var host: Host {
-        return Host(dateJoined: Timestamp(),
+        return Host(id: "7uJM0wfC29lNtqjeVktM",
+                    dateJoined: Timestamp(),
                     name: "MIT Theta Chi",
                     username: "mitthetachi",
                     hostImageUrl: "https://www.instagram.com/p/CleaBwQOeKV/media?size=l",
@@ -62,7 +63,7 @@ struct Mockdata {
                     website: "http://ox.mit.edu/main/",
                     address: "528 Beacon St, Boston, MA 02215",
                     bio: "The best frat in the greater Boston area",
-                    memberUUIDs: [],
+                    memberUUIDs: ["5aAWqFni8iMhj8MyZ4lGQgapfxo1"],
                     hostType: .fraternity)
     }
 }

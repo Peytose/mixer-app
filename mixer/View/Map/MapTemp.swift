@@ -100,6 +100,7 @@ struct MapTemp: View {
         .overlay(alignment: .topTrailing) {
             if !viewModel.hostEvents.isEmpty {
                     EventUsersListButton(action: $isShowingGuestListView)
+                    .padding(.trailing)
             }
         }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
@@ -120,19 +121,22 @@ struct MapTemp_Previews: PreviewProvider {
 
 fileprivate struct EventUsersListButton: View {
     @Binding var action: Bool
+    
     var body: some View {
-        Image(systemName: "list.clipboard")
-            .font(.title2.weight(.medium))
-            .foregroundColor(Color.mainFont)
-            .padding(10)
-            .background(Color.mixerSecondaryBackground)
-            .clipShape(Circle())
-            .shadow(radius: 5, y: 8)
-            .onTapGesture {
-                let impact = UIImpactFeedbackGenerator(style: .light)
-                impact.impactOccurred()
-                
-                action.toggle()
-            }
+        Button {
+            let impact = UIImpactFeedbackGenerator(style: .light)
+            impact.impactOccurred()
+            
+            action.toggle()
+        } label: {
+            Image(systemName: "list.clipboard")
+                .font(.title)
+                .fontWeight(.medium)
+                .foregroundColor(Color.mainFont)
+                .padding(15)
+                .background(Color.mixerSecondaryBackground)
+                .clipShape(Circle())
+                .shadow(radius: 5, y: 8)
+        }
     }
 }

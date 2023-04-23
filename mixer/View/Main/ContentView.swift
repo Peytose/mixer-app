@@ -13,13 +13,19 @@ struct ContentView: View {
     @Namespace var namespace
     
     var body: some View {
-        Group {
-            if viewModel.userSession == nil || viewModel.currentUser == nil {
-                AuthFlow()
-            } else {
-                if let user = viewModel.currentUser {
-                    MainTabView(user: user)
+        ZStack(alignment: .center) {
+            Group {
+                if viewModel.userSession == nil || viewModel.currentUser == nil {
+                    AuthFlow()
+                } else {
+                    if let user = viewModel.currentUser {
+                        MainTabView(user: user)
+                    }
                 }
+            }
+            
+            if viewModel.isLoading {
+                LoadingView()
             }
         }
     }

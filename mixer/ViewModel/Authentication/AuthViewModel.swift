@@ -33,6 +33,7 @@ class AuthViewModel: ObservableObject {
     @Published var didSendResentPasswordLink = false
     @Published var active                    = Screen.allCases.first!
     @Published var alertItem: AlertItem?
+    @Published var isLoading: Bool = false
     var hosts = [Host]()
     
     static let shared = AuthViewModel()
@@ -49,6 +50,7 @@ class AuthViewModel: ObservableObject {
     }
     
     init() {
+        self.isLoading = true
         userSession = Auth.auth().currentUser
         fetchUser()
     }
@@ -93,17 +95,20 @@ class AuthViewModel: ObservableObject {
     
     
     func fetchUser() {
+        self.isLoading = true
+        
         guard let uid = userSession?.uid else {
             print("DEBUG: couldn't get uid")
+            self.isLoading = false
             return
         }
         
         print("DEBUG: successfully fetched uid. \(uid)")
         
-        COLLECTION_USERS.document(uid).getDocument(source: .default) { snapshot, _ in
+        COLLECTION_USERS.document(uid).getDocument { snapshot, _ in
             guard let user = try? snapshot?.data(as: User.self) else {
                 print("DEBUG: Error getting user.")
-                print(String(describing: snapshot?.data()))
+                self.isLoading = false
                 return
             }
             
@@ -118,6 +123,8 @@ class AuthViewModel: ObservableObject {
                 }
             }
         }
+        
+        self.isLoading = false
     }
     
     

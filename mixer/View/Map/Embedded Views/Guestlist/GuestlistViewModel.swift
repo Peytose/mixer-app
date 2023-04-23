@@ -62,11 +62,10 @@ final class GuestlistViewModel: ObservableObject {
         }
     }
     
-    @MainActor func createGuest(name: String, email: String, university: String, status: GuestStatus, age: Int, gender: String) {
+    @MainActor func createGuest(name: String, university: String, status: GuestStatus, age: Int, gender: String) {
         guard let currentUserName = AuthViewModel.shared.currentUser?.name else { return }
         
         let data = ["name": name,
-                    "email": email,
                     "university": university,
                     "age": age,
                     "gender": gender,
@@ -84,7 +83,6 @@ final class GuestlistViewModel: ObservableObject {
             
             // Create a new guest from the data and add it to the guests array
             let newGuest = EventGuest(name: name,
-                                      email: email,
                                       university: university,
                                       age: age,
                                       gender: gender,

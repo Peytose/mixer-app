@@ -555,6 +555,7 @@
 		9C3BADCE291F556C009C8043 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				9C93318E29203CE60079E039 /* ProfileViewModel.swift */,
 				9C05C1B82983A14200841100 /* ProfileView.swift */,
 				A65DE62529DF25EF0081A9BD /* Profile Settings */,
 			);
@@ -592,8 +593,6 @@
 			isa = PBXGroup;
 			children = (
 				A6B9E66A2953B3E5009C936E /* Mock View Models */,
-				9C93318E29203CE60079E039 /* ProfileViewModel.swift */,
-				9C2B8963298E0B660011FC56 /* ProfileSettingsViewModel.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -795,6 +794,7 @@
 		A65DE62529DF25EF0081A9BD /* Profile Settings */ = {
 			isa = PBXGroup;
 			children = (
+				9C2B8963298E0B660011FC56 /* ProfileSettingsViewModel.swift */,
 				A643044B294FC2960058C0F0 /* ProfileSettingsView.swift */,
 				A65DE62629DF26000081A9BD /* Embedded Views */,
 			);
