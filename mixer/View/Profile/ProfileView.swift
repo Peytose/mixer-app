@@ -167,24 +167,6 @@
 //
 //                Spacer()
 //
-//                if let relationship = viewModel.user.relationshiptoUser {
-//                    ProfileRelationButton(action: {
-//                        switch relationship {
-//                        case .notFriends:
-//                            viewModel.sendFriendRequest()
-//                        case .receivedRequest:
-//                            viewModel.acceptFriendRequest()
-//                        default:
-//                            viewModel.cancelFriendRequest()
-//                        }
-//                    }, icon: relationship.buttonSystemImage, color: .blue)
-//                    .overlay(alignment: .center) {
-//                        if relationship == UserRelationship.receivedRequest {
-//                            ProfileRelationButton(action: viewModel.cancelFriendRequest, icon: "person.fill.xmark", color: .pink)
-//                                .padding(.bottom, 100)
-//                        }
-//                    }
-//                }
 //            }
 //
 //            if let bio = viewModel.user.bio {
@@ -312,19 +294,24 @@ struct ProfileView: View {
                                                     icon: "gearshape")
                                 .padding(.trailing)
                             } else {
-                                Text(isFriends ? "\(Image(systemName: "person.fill.checkmark"))" : "Add Friend")
-                                    .font(.footnote)
-                                    .fontWeight(.semibold)
-                                    .padding(EdgeInsets(top: 7, leading: 10, bottom: 7, trailing: 10))
-                                    .background {
-                                        Capsule()
-                                            .stroke(lineWidth: 1.3)
+                                if let relationship = viewModel.user.relationshiptoUser {
+                                    ProfileRelationButton(action: {
+                                        switch relationship {
+                                        case .notFriends:
+                                            viewModel.sendFriendRequest()
+                                        case .receivedRequest:
+                                            viewModel.acceptFriendRequest()
+                                        default:
+                                            viewModel.cancelFriendRequest()
+                                        }
+                                    }, icon: relationship.buttonSystemImage, color: .blue)
+                                    .overlay(alignment: .center) {
+                                        if relationship == UserRelationship.receivedRequest {
+                                            ProfileRelationButton(action: viewModel.cancelFriendRequest, icon: "person.fill.xmark", color: .pink)
+                                                .padding(.bottom, 100)
+                                        }
                                     }
-                                    .onTapGesture {
-                                        let impact = UIImpactFeedbackGenerator(style: .light)
-                                        impact.impactOccurred()
-                                        
-                                    }
+                                }
                                 
                                 ProfileCornerButton(isOn: $showOptions,
                                                     icon: "ellipsis")
@@ -386,6 +373,34 @@ struct ProfileView: View {
 //
 //    }
 //}
+
+fileprivate struct ProfileRelationButton: View {
+    let action: () -> Void
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        Button {
+            action()
+        } label: {
+            Image(systemName: icon)
+                .foregroundColor(color)
+                .font(.footnote)
+                .fontWeight(.semibold)
+                .padding(EdgeInsets(top: 7, leading: 10, bottom: 7, trailing: 10))
+                .background {
+                    Capsule()
+                        .stroke(lineWidth: 1.3)
+                }
+                .onTapGesture {
+                    let impact = UIImpactFeedbackGenerator(style: .light)
+                    impact.impactOccurred()
+
+                }
+        }
+
+    }
+}
 
 fileprivate struct ProfileCornerButton: View {
     @Binding var isOn: Bool

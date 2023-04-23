@@ -33,7 +33,36 @@ struct ProfileSettingsView: View {
         NavigationView {
             VStack(alignment: .leading) {
                 List {
-                    imageSection
+                    VStack(alignment: .center) {
+                        Image("mock-user-1")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                            .padding(2)
+                            .background(Color.mainFont, in: Circle())
+                            .overlay {
+                                Button {
+                                    
+                                } label: {
+                                    Image(systemName: "pencil")
+                                        .imageScale(.medium)
+                                        .foregroundColor(.white)
+                                        .padding(5)
+                                        .background(Color.mixerSecondaryBackground, in: Circle())
+                                        .background(Color.mainFont, in: Circle().stroke(lineWidth: 2))
+                                }
+                                .offset(x: 32, y: 32)
+                            }
+                        
+                        Text("Jose Martinez")
+                            .font(.title2.weight(.medium))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .listRowBackground(Color.clear)
+                    .padding(.bottom, -50)
 
                     Section(header: Text("Profile").fontWeight(.semibold),
                             footer: Text("Right now, you can only edit your name and bio.")) {
@@ -219,40 +248,6 @@ struct ProfileSettingsView: View {
             }
             .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
         }
-    }
-    
-    var imageSection: some View {
-        VStack(alignment: .center) {
-            Image("mock-user-1")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 100, height: 100)
-                .clipShape(Circle())
-                .padding(2)
-                .background(Color.mainFont, in: Circle())
-                .overlay {
-                    Button {
-                        
-                    } label: {
-                        Image(systemName: "pencil")
-                            .imageScale(.medium)
-                            .foregroundColor(.white)
-                            .padding(5)
-                            .background(Color.mixerSecondaryBackground, in: Circle())
-                            .background(Color.mainFont, in: Circle().stroke(lineWidth: 2))
-                    }
-                    .offset(x: 32, y: 32)
-                }
-            
-            Text("Jose Martinez")
-                .font(.title2.weight(.medium))
-                .lineLimit(1)
-                .minimumScaleFactor(0.5)
-        }
-        .frame(maxWidth: .infinity)
-        .listRowBackground(Color.clear)
-        .padding(.bottom, -50)
-        
     }
 }
 
