@@ -107,7 +107,7 @@ class AuthViewModel: ObservableObject {
         
         COLLECTION_USERS.document(uid).getDocument { snapshot, _ in
             guard let user = try? snapshot?.data(as: User.self) else {
-                print("DEBUG: Error getting user.")
+                print("DEBUG: Error getting user. \(String(describing: snapshot))")
                 self.isLoading = false
                 return
             }

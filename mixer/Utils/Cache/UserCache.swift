@@ -79,31 +79,14 @@ class UserCache {
     }
     
     
+    // Caching users
     private func cacheUsers(_ users: [CachedUser]) async throws {
-        for user in users {
-            try await cacheUser(user)
-        }
+        for user in users { try cacheUser(user) }
     }
+
     
-    
-    func cacheUser(_ user: CachedUser) async throws {
-        print("DEBUG: Caching ...")
+    func cacheUser(_ user: CachedUser) throws {
         guard let id = user.id else { return }
-        cache.clean(byKey: id)
         try cache.write(codable: user, forKey: id)
-        if let users: [CachedUser] = try cache.readCodable(forKey: "users") {
-            var cachedUsers = users.compactMap({ $0.self })
-            print("DEBUG: Cached users in cacheUser() : \(cachedUsers)")
-            if !cachedUsers.isEmpty {
-                if let existingUserIndex = cachedUsers.firstIndex(where: { $0.id == user.id }) {
-                    cachedUsers.remove(at: existingUserIndex)
-                    cachedUsers.append(user)
-                    cache.clean(byKey: "users")
-                    try cache.write(codable: cachedUsers, forKey: "hosts")
-                    print("DEBUG: Replaced user in user cache!")
-                }
-            }
-        }
-        print("DEBUG: User Cached! id: \(id)")
     }
 }

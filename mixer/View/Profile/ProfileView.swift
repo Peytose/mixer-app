@@ -321,7 +321,7 @@ struct ProfileView: View {
                         .padding(.top, 56)
                 }
                 
-                ProfileInfo(user: viewModel.user, mutuals: viewModel.mutuals)
+                ProfileInfo(user: $viewModel.user, mutuals: viewModel.mutuals)
                 
                 details
                 
@@ -341,7 +341,7 @@ struct ProfileView: View {
             .ignoresSafeArea(.all)
             .navigationBarHidden(true)
             .statusBar(hidden: true)
-            .sheet(isPresented: $showEditProfile) { ProfileSettingsView(user: $viewModel.user) }
+            .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel) }
             .sheet(isPresented: $showNotifications) { NotificationFeedView() }
 //            .fullScreenCover(isPresented: $viewModel.showEventView) {
 //                EventInfoView(parentViewModel: ExplorePageViewModel(), tabBarVisibility: $tabBarVisibility, event: eventManager.selectedEvent!, coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50), namespace: namespace)
@@ -423,7 +423,7 @@ fileprivate struct ProfileCornerButton: View {
 
 fileprivate struct ProfileInfo: View {
     @State private var showUsername: Bool = false
-    let user: CachedUser
+    @Binding var user: CachedUser
     let mutuals: [CachedUser]
     
     var body: some View {

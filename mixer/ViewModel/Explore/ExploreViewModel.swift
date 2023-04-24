@@ -66,10 +66,18 @@ final class ExploreViewModel: ObservableObject {
         self.isRefreshing = true
         EventCache.shared.clearCache()
         HostCache.shared.clearCache()
-        getHosts()
-        getTodayEvents()
-        getFutureEvents()
-        self.isRefreshing = false
+
+        Task {
+            do {
+                self.hosts = try await HostCache.shared.fetchHosts(filter: .all)
+                self.todayEvents = try await EventCache.shared.fetchEvents(filter: .today)
+                self.futureEvents = try await EventCache.shared.fetchEvents(filter: .future)
+            } catch {
+                print("DEBUG: Error fetching data for explore. \(error)")
+            }
+
+            self.isRefreshing = false
+        }
     }
     
     

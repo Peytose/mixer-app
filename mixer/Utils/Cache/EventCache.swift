@@ -43,7 +43,6 @@ class EventCache {
         func query() -> Query {
             let today = Date()
             let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-            let startOfToday = Calendar.current.startOfDay(for: today)
             let endOfToday = Calendar.current.startOfDay(for: tomorrow)
             
             switch self {
@@ -97,7 +96,7 @@ class EventCache {
             let snapshot = try await query.getDocuments()
             let documents = snapshot.documents
             print("DEBUG: document from fetching event: \(String(describing: documents.first?.data()))")
-            
+
             // If documents exist, cache and return the events
             if !documents.isEmpty {
                 let events = documents.compactMap { document -> CachedEvent? in
@@ -113,7 +112,20 @@ class EventCache {
                 let eventIds = events.map({ $0.id })
                 print("DEBUG: Got events from firebase. \(events)")
                 try cache.write(codable: eventIds, forKey: key)
-                try await cacheEvents(events)
+
+                await withTaskGroup(of: Void.self) { group in
+                    for event in events {
+                        group.addTask {
+                            do {
+                                try self.cacheEvent(event)
+                            } catch {
+                                print("Error getting event: \(error)")
+                                return
+                            }
+                        }
+                    }
+                }
+
                 return events
             } else {
                 // If no documents exist, return an empty array
@@ -124,13 +136,30 @@ class EventCache {
         }
     }
 
+
     // Getting Events
     func getEvents(from eventIds: [String]) async throws -> [CachedEvent] {
         var cachedEvents = [CachedEvent]()
-        for eventId in eventIds {
-            let event = try await getEvent(from: eventId)
-            cachedEvents.append(event)
+        await withTaskGroup(of: CachedEvent?.self) { group in
+            for eventId in eventIds {
+                group.addTask {
+                    do {
+                        return try await self.getEvent(from: eventId)
+                    } catch {
+                        print("Error getting event: \(error)")
+                        return nil
+                    }
+                }
+            }
+
+            for await event in group {
+                if let event = event {
+                    cachedEvents.append(event)
+                }
+            }
         }
+
+        print("DEBUG: Cached events = \(cachedEvents)")
         return cachedEvents
     }
 
@@ -141,6 +170,7 @@ class EventCache {
             return event
         }
 
+        print("DEBUG: Checking firebase for event ...")
         // If event not found in cache, fetch from Firebase
         let snapshot = try await COLLECTION_EVENTS.document(id).getDocument()
         let event = try snapshot.data(as: Event.self)
@@ -165,7 +195,8 @@ class EventCache {
     
     // Clearing Cache
     func clearCache() {
-        cache.cleanDiskCache()
+//        cache.cleanDiskCache()
+        cache.cleanAll()
     }
     
     func remove(byKey key: String) {

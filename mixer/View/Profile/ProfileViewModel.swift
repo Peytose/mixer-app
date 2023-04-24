@@ -148,4 +148,87 @@ class ProfileViewModel: ObservableObject {
     //            }
     //        }
     //    }
+    
+    @Published var name: String             = ""
+    @Published var bio: String              = ""
+    @Published var instagramHandle: String  = ""
+    @Published var selectedImage: UIImage?
+    var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
+    let supportLink = "https://docs.google.com/forms/d/e/1FAIpQLSch7XiTBu2dq3WzrklYHAZ_NpkuiH-TUtZOhE-H-4QEVWexPA/viewform?usp=pp_url"
+    
+    enum ProfileSaveType {
+        case name
+        case image
+        case bio
+        case instagram
+    }
+    
+    func save(for type: ProfileSaveType) {
+        guard let uid = user.id else { return }
+        
+        switch type {
+        case .name:
+            guard self.name != "" else { return }
+            
+            COLLECTION_USERS.document(uid).updateData(["name": self.name]) { _ in
+                self.user.name = self.name
+            }
+        case .image:
+            guard let image = self.selectedImage else {
+                print("DEBUG: image not found.")
+                return
+            }
+            
+            ImageUploader.uploadImage(image: image, type: .profile) { imageUrl in
+                COLLECTION_USERS.document(uid).updateData(["profileImageUrl": imageUrl]) { _ in
+                    print("DEBUG: ✅ Succesfully updated profile image ...")
+                    self.user.profileImageUrl = imageUrl
+                }
+            }
+        case .bio:
+            guard self.bio != "" else { return }
+            
+            COLLECTION_USERS.document(uid).updateData(["bio": self.bio]) { _ in
+                self.user.bio = self.bio
+            }
+        case .instagram:
+            guard self.instagramHandle != "" else { return }
+            
+            COLLECTION_USERS.document(uid).updateData(["instagramHandle": self.instagramHandle]) { _ in
+                self.user.instagramHandle = self.instagramHandle
+            }
+        }
+        
+        cacheUser()
+    }
+    
+    private func cacheUser() {
+        Task {
+            do {
+                try UserCache.shared.cacheUser(self.user)
+                print("DEBUG: Cached user after profile update.")
+            } catch {
+                print("DEBUG: Error caching user on profile.")
+            }
+        }
+    }
+    
+    func getVersion() -> String {
+        let dictionary = Bundle.main.infoDictionary!
+        let version = dictionary["CFBundleShortVersionString"] as! String
+        let build = dictionary["CFBundleVersion"] as! String
+        return "\(version) build \(build)"
+    }
+    
+    
+    func getDateJoined() -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.second, .minute, .hour, .day]
+        formatter.maximumUnitCount = 1
+        formatter.unitsStyle = .full
+        let days = formatter.string(from: user.dateJoined.dateValue(), to: Date()) ?? ""
+        let date = user.dateJoined.getTimestampString(format: "MMMM d, yyyy")
+        
+        return "You joined mixer \(days) ago on \(date)."
+    }
 }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestoreSwift
 
 final class GuestlistViewModel: ObservableObject {
     @Published var guests = [EventGuest]()

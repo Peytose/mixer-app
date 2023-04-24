@@ -178,11 +178,20 @@ struct AlertContext {
                                                               message: Text("We are unable get users checked into this location at this time.\nPlease try again."),
                                                               dismissButton: .default(Text("Ok")))
     
-    //MARK: - GuestList Errors/Messages
+    //MARK: - Guestlist Errors/Messages
     static func guestAlreadyCheckedIn(confirmAction: @escaping () -> Void) -> AlertItemTwo {
         AlertItemTwo(title: Text("Remove guest?"),
                      message: Text("The guest you are trying to remove has already checked in to the event. Are you sure you meant to remove them?"),
                      primaryButton: .default(Text("Remove").bold(),
+                                             action: confirmAction),
+                     secondaryButton: .default(Text("Oops nvm")))
+    }
+    
+    //MARK: - ProfileSettings Errors/Messages
+    static func confirmChangesToProfile(confirmAction: @escaping () -> Void) -> AlertItemTwo {
+        AlertItemTwo(title: Text("Comfirm changes"),
+                     message: Text("It seems that you've changed details about your profile. Apply these changes?"),
+                     primaryButton: .default(Text("Yes!").bold(),
                                              action: confirmAction),
                      secondaryButton: .default(Text("Oops nvm")))
     }
