@@ -118,9 +118,9 @@ struct GuestListUserView: View {
      }
 }
 
-struct GuestListUserView_Previews: PreviewProvider {
-    static var previews: some View {
-        GuestListUserView(user: EventGuest(name: "Jose", university: "MIT"))
-    }
-}
+//struct GuestListUserView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        GuestListUserView(user: EventGuest(name: "Jose", university: "MIT"))
+//    }
+//}
 

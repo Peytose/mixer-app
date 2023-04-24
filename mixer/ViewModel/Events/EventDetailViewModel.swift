@@ -66,6 +66,33 @@ final class EventDetailViewModel: ObservableObject {
         }
     }
     
+    @MainActor func joinGuestlist() {
+        guard let eventId = event.id else { return }
+        guard let currentUser = AuthViewModel.shared.currentUser else { return }
+        
+        UserService.joinGuestlist(eventUid: eventId, user: currentUser) { _ in
+            self.event.didGuestlist = true
+            
+            Task {
+                do {
+                    try EventCache.shared.cacheEvent(self.event)
+                } catch {
+                    print("DEBUG: Error caching event after joining guestlist. \(error.localizedDescription)")
+                }
+            }
+            
+//            NotificationsViewModel.uploadNotifications(toUid: uid, type: .follow)
+        }
+    }
+    
+    @MainActor func followHost() {
+        guard let hostId = host?.id else { return }
+        
+        UserService.follow(hostUid: hostId) { _ in
+            self.host?.isFollowed = true
+//            NotificationsViewModel.uploadNotifications(toUid: uid, type: .follow)
+        }
+    }
     
     @MainActor func checkIfUserSavedEvent() {
         guard let uid = AuthViewModel.shared.userSession?.uid else { return }
@@ -81,10 +108,7 @@ final class EventDetailViewModel: ObservableObject {
     @MainActor func fetchEventHost() {
         Task {
             do {
-                let eventHost = try await HostCache.shared.getHost(from: event.hostUuid)
-                DispatchQueue.main.async {
-                    self.host = eventHost
-                }
+                self.host = try await HostCache.shared.getHost(from: event.hostUuid)
             } catch {
                 print("DEBUG: Error fetching event host. \(error.localizedDescription)")
             }

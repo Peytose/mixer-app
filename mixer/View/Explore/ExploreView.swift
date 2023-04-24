@@ -23,10 +23,10 @@ struct ExploreView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Featured Hosts Section
                     Text("Featured Hosts")
-                        .font(.largeTitle.weight(.bold))
+                        .font(.largeTitle)
+                        .bold()
                         .padding()
                         .padding(.top, 70)
-
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
@@ -90,10 +90,12 @@ struct ExploreView: View {
             }
             
             if let event = selectedEvent, showEventView {
-                EventInfoView(viewModel: EventDetailViewModel(event: event),
+                EventDetailView(viewModel: EventDetailViewModel(event: event),
                               namespace: namespace)
                 .overlay(alignment: .topTrailing) {
                     XDismissButton()
+                        .padding(.top, 50)
+                        .padding(.trailing, 30)
                         .onTapGesture {
                             withAnimation(.closeCard) {
                                 self.showEventView = false

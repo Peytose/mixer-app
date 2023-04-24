@@ -66,7 +66,15 @@ class HostCache {
                 let hosts = documents.compactMap { document -> CachedHost? in
                     do {
                         let host = try document.data(as: Host.self)
-                        return CachedHost(from: host)
+                        var cachedHost = CachedHost(from: host)
+                        
+                        if let hostId = host.id {
+                            UserService.checkIfUserFollowsHost(hostUid: hostId) { isFollowed in
+                                cachedHost.isFollowed = isFollowed
+                            }
+                        }
+                        
+                        return cachedHost
                     } catch let error {
                         print("Error decoding host: \(error)")
                         return nil

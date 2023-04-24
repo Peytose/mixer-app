@@ -10,13 +10,35 @@ import Firebase
 typealias FirestoreCompletion = ((Error?) -> Void)?
 
 struct UserService {
-    static func joinWaitlist(eventUid: String, completion: FirestoreCompletion) {
+    static func joinGuestlist(eventUid: String, user: CachedUser, completion: FirestoreCompletion) {
         guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
         
-        COLLECTION_WAITLISTS.document(eventUid).collection("users").document(currentUid)
-            .setData(["timestamp": Timestamp(date: Date())], completion: completion)
+        let guest = EventGuest(from: user).toDictionary()
+        
+        COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(currentUid)
+            .setData(guest, completion: completion)
     }
     
+    static func follow(hostUid: String, completion: FirestoreCompletion) {
+        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        
+        COLLECTION_FOLLOWING.document(currentUid)
+            .collection("user-following").document(hostUid).setData([:]) { _ in
+                COLLECTION_FOLLOWERS.document(hostUid).collection("host-followers")
+                    .document(currentUid).setData([:], completion: completion)
+            }
+    }
+    
+    
+    static func unfollow(hostUid: String, completion: FirestoreCompletion) {
+        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        
+        COLLECTION_FOLLOWING.document(currentUid).collection("user-following")
+            .document(hostUid).delete { _ in
+                COLLECTION_FOLLOWERS.document(hostUid).collection("host-followers")
+                    .document(currentUid).delete(completion: completion)
+            }
+    }
     
     static func leaveWaitlist(eventUid: String, completion: FirestoreCompletion) {
         guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
@@ -33,6 +55,15 @@ struct UserService {
             guard let documents = snapshot?.documents else { return }
             let queueNumber = documents.firstIndex(where: { $0.documentID == currentUid }) ?? -1
             completion(queueNumber)
+        }
+    }
+    
+    
+    static func checkIfUserFollowsHost(hostUid: String, completion: @escaping (Bool) -> Void) {
+        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        
+        COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(hostUid).getDocument { snapshot, _ in
+            completion(snapshot?.exists ?? false)
         }
     }
     
@@ -67,7 +98,7 @@ struct UserService {
     }
 
 
-    static func getUserRelationship(uid: String, completion: @escaping(UserRelationship) -> Void) {
+    static func getUserRelationship(uid: String, completion: @escaping (UserRelationship) -> Void) {
         guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
 
