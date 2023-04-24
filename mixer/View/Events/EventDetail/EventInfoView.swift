@@ -17,33 +17,30 @@ struct EventInfoView: View {
     @State private var finalAmount = 1.0
     @State private var showHost = false
     @State private var showAllAmenities = false
-
-    let event: CachedEvent
-    let host: CachedHost
-    let unsave: () -> Void
-    let save: () -> Void
-    let coordinates: CLLocationCoordinate2D?
-
     var namespace: Namespace.ID
 
     var body: some View {
         ZStack {
             ScrollView(showsIndicators: false) {
-                EventFlyerHeader(event: event, unsave: unsave, save: save, namespace: namespace, showFullFlyer: $showFullFlyer)
+                EventFlyerHeader(event: viewModel.event,
+                                 unsave: viewModel.unsave,
+                                 save: viewModel.save,
+                                 namespace: namespace,
+                                 showFullFlyer: $showFullFlyer)
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    HostedBySection(type: event.type,
-                                    host: host,
-                                    cost: event.cost,
-                                    hasAlcohol: event.amenities?.contains(EventAmenities.alcohol),
-                                    namespace: namespace)
-                    .onTapGesture {
-                        showHost.toggle()
+                    if let host = viewModel.host {
+                        HostedBySection(type: viewModel.event.type,
+                                        host: host,
+                                        cost: viewModel.event.cost,
+                                        hasAlcohol: viewModel.event.amenities?.contains(EventAmenities.alcohol),
+                                        namespace: namespace)
+                        .onTapGesture {
+                            showHost.toggle()
+                        }
                     }
                     
                     aboutSection
-                    
-                    eventDetails
                     
                     ScrollView {
                         VStack(alignment: .leading, spacing: 8) {
@@ -52,7 +49,7 @@ struct EventInfoView: View {
                                 .fontWeight(.bold)
                             
                             ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(2)), id: \.self) { category in
-                                let amenitiesInCategory = event.amenities?.filter({ $0.category == category }) ?? []
+                                let amenitiesInCategory = viewModel.event.amenities?.filter({ $0.category == category }) ?? []
                                 if !amenitiesInCategory.isEmpty {
                                     Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
                                         ForEach(amenitiesInCategory, id: \.self) { amenity in
@@ -101,13 +98,9 @@ struct EventInfoView: View {
                     Text("Where you'll be")
                         .font(.title).bold()
                     
-                    if let coords = coordinates {
+                    if let coords = viewModel.coordinates {
                         MapSnapshotView(location: coords)
                     }
-                    
-                    Text("Friends Attending")
-                        .font(.title).bold()
-                        .padding(.bottom, 10)
                 }
                 .padding()
                 .padding(EdgeInsets(top: 100, leading: 0, bottom: 120, trailing: 0))
@@ -118,7 +111,7 @@ struct EventInfoView: View {
             joinButton
             
             if showFullFlyer {
-                FlyerPopUp(event: event)
+                FlyerPopUp(event: viewModel.event)
                     .transition(.opacity)
                     .zIndex(1)
             }
@@ -127,7 +120,14 @@ struct EventInfoView: View {
         .ignoresSafeArea()
         .overlay { closeButton }
         .sheet(isPresented: $showHost) {
-            HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
+            if let host = viewModel.host {
+                HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
+            }
+        }
+        .task {
+            viewModel.checkIfUserSavedEvent()
+            viewModel.fetchEventHost()
+            viewModel.getEventCoordinates()
         }
     }
     
@@ -137,7 +137,7 @@ struct EventInfoView: View {
                 Text("About this event")
                     .font(.title).bold()
                 
-                Text(event.description)
+                Text(viewModel.event.description)
                     .font(.body)
                     .foregroundColor(.secondary)
                     .lineLimit(4)
@@ -152,22 +152,6 @@ struct EventInfoView: View {
                     .foregroundColor(.secondary)
                     .lineLimit(4)
             }
-        }
-    }
-    
-    var eventDetails: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Event details")
-                .font(.title).bold()
-            
-            VStack(alignment: .leading) {
-                DetailRow(image: "sparkles", text: "Neon/black light")
-                
-                DetailRow(image: "tshirt.fill", text: "N/A")
-                
-                DetailRow(image: "drop.fill", text: "Wet Event")
-            }
-            .fontWeight(.medium)
         }
     }
     
@@ -215,12 +199,8 @@ struct EventInfoView: View {
 struct EventView_Previews: PreviewProvider {
     @Namespace static var namespace
     static var previews: some View {
-        EventInfoView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)), event: CachedEvent(from: Mockdata.event),
-                  host: CachedHost(from: Mockdata.host),
-                  unsave: {},
-                  save: {},
-                  coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50),
-                  namespace: namespace)
+        EventInfoView(viewModel: EventDetailViewModel(event: CachedEvent(from: Mockdata.event)),
+                      namespace: namespace)
             .preferredColorScheme(.dark)
     }
 }
@@ -424,7 +404,6 @@ fileprivate struct EventFlyerHeader: View {
                     .background(
                         ZStack {
                             KFImage(URL(string: event.eventImageUrl))
-//                            Image("theta-chi-party-poster-2")
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .matchedGeometryEffect(id: "background 2", in: namespace)
@@ -445,7 +424,6 @@ fileprivate struct EventFlyerHeader: View {
                                 )
                             
                             KFImage(URL(string: event.eventImageUrl))
-//                            Image("theta-chi-party-poster-2")
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: proxy.size.width - 60, height: proxy.size.height - 60)

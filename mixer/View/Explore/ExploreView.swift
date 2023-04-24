@@ -90,9 +90,9 @@ struct ExploreView: View {
             }
             
             if let event = selectedEvent, showEventView {
-                EventDetailView(viewModel: EventDetailViewModel(event: event),
-                                namespace: namespace)
-                .toolbar {
+                EventInfoView(viewModel: EventDetailViewModel(event: event),
+                              namespace: namespace)
+                .overlay(alignment: .topTrailing) {
                     XDismissButton()
                         .onTapGesture {
                             withAnimation(.closeCard) {

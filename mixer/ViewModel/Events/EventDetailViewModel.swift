@@ -17,9 +17,6 @@ final class EventDetailViewModel: ObservableObject {
 
     init(event: CachedEvent) {
         self.event = event
-//        checkIfUserSavedEvent()
-//        fetchEventHost()
-//        getEventCoordinates()
     }
 
     
@@ -70,7 +67,7 @@ final class EventDetailViewModel: ObservableObject {
     }
     
     
-    private func checkIfUserSavedEvent() {
+    @MainActor func checkIfUserSavedEvent() {
         guard let uid = AuthViewModel.shared.userSession?.uid else { return }
         guard let eventId = event.id else { return }
         
@@ -81,7 +78,7 @@ final class EventDetailViewModel: ObservableObject {
     }
     
     
-    private func fetchEventHost() {
+    @MainActor func fetchEventHost() {
         Task {
             do {
                 let eventHost = try await HostCache.shared.getHost(from: event.hostUuid)
@@ -95,7 +92,7 @@ final class EventDetailViewModel: ObservableObject {
     }
     
     
-    private func getEventCoordinates() {
+    @MainActor func getEventCoordinates() {
         if event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false { return }
         
         if let longitude = event.longitude, let latitude = event.latitude {
