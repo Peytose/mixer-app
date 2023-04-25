@@ -23,15 +23,19 @@ struct ExploreView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Featured Hosts Section
                     Text("Featured Hosts")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding()
+                        .font(.largeTitle.weight(.bold))
+                        .padding(.leading)
                         .padding(.top, 70)
+                        .opacity(showHostView ? 0 : 1)
+                        .animation(.none)
+                        .zIndex(0)
+                
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
-                            if !showHostView {
-                                ForEach(viewModel.hosts) { host in
+                            ForEach(viewModel.hosts) { host in
+                                
+                                if !showHostView {
                                     FeaturedHostCell(host: host, namespace: namespace)
                                         .onTapGesture {
                                             withAnimation(.openCard) {
@@ -39,21 +43,13 @@ struct ExploreView: View {
                                                 self.showHostView = true
                                             }
                                         }
-                                }
-                            } else {
-                                ForEach(viewModel.hosts) { host in
-                                    Rectangle()
-                                        .fill(.white)
-                                        .frame(height: 300)
-                                        .cornerRadius(30)
-                                        .shadow(color: Color("Shadow"), radius: 20, x: 0, y: 10)
-                                        .opacity(0.3)
-                                        .padding(.horizontal, 30)
+                                        .zIndex(2)
+                                } else {
+                                    PlaceholderHostCard(host: host, namespace: namespace)
+                                        .opacity(0)
                                 }
                             }
-                            
                         }
-                        .offset(x: 20)
                     }
                     
                     // Segmented Event Header
@@ -76,6 +72,10 @@ struct ExploreView: View {
             if let host = selectedHost, showHostView {
                 HostDetailView(viewModel: HostDetailViewModel(host: host),
                                namespace: namespace)
+                .zIndex(2)
+                .transition(.asymmetric(
+                    insertion: .opacity.animation(.easeInOut(duration: 0.1)),
+                    removal: .opacity.animation(.easeInOut(duration: 0.3).delay(0.2))))
                 .overlay(alignment: .topTrailing) {
                     XDismissButton()
                         .onTapGesture {

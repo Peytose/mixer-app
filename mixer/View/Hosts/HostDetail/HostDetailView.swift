@@ -24,8 +24,7 @@ struct HostDetailView: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
-                StretchablePhotoBanner(imageUrl: viewModel.host.hostImageUrl,
-                                       namespace: namespace)
+                HostBannerView(host: viewModel.host, namespace: namespace)
                 
                 HostInfoView(host: viewModel.host,
                              coordinates: viewModel.coordinates,

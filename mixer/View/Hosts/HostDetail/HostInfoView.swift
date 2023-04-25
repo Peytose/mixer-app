@@ -11,36 +11,38 @@ import CoreLocation
 struct HostInfoView: View {
     let host: CachedHost
     let coordinates: CLLocationCoordinate2D?
+    
     var namespace: Namespace.ID
     @Binding var isFollowing: Bool
     @ObservedObject var viewModel: HostDetailViewModel
     @State var showMore = false
+    @State var appear = [false, false, false]
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             
             VStack(alignment: .leading, spacing: 10) {
                 NameAndLinksRow(host: host,
-                                handle: host.instagramHandle,
-                                website: host.website,
                                 isFollowing: $isFollowing,
                                 namespace: namespace)
                 
                 if let bio = host.bio {
                     Text(bio)
-                        .font(.subheadline)
+                        .font(.subheadline.weight(.medium))
                         .foregroundColor(.white.opacity(0.8))
                         .lineLimit(2)
                         .minimumScaleFactor(0.7)
-                        .matchedGeometryEffect(id: "\(host.name)-bio", in: namespace)
+                        .matchedGeometryEffect(id: "bio-\(host.username)", in: namespace)
                 }
                 
                 FriendsWhoFollowView()
+                    .opacity(appear[0] ? 1 : 0)
             }
             
             
             if !viewModel.upcomingEvents.isEmpty {
                 HostSubheading(text: "Upcoming Events")
+                    .opacity(appear[1] ? 1 : 0)
                 
                 ForEach(viewModel.upcomingEvents) { event in
                     NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
@@ -72,6 +74,8 @@ struct HostInfoView: View {
                     .padding(.top, -8)
 
             }
+            .opacity(appear[1] ? 1 : 0)
+
             
             if let coordinates = coordinates {
                 HostSubheading(text: "Located At")
@@ -93,13 +97,32 @@ struct HostInfoView: View {
             }
         }
         .padding(.horizontal)
+        .onAppear {
+            fadeIn()
+        }
+    }
+    
+    func fadeIn() {
+        withAnimation(.easeOut.delay(0.2)) {
+            appear[0] = true
+        }
+        withAnimation(.easeOut.delay(0.3)) {
+            appear[1] = true
+        }
+        withAnimation(.easeOut.delay(0.4)) {
+            appear[2] = true
+        }
+    }
+    
+    func fadeOut() {
+        appear[0] = false
+        appear[1] = false
+        appear[2] = false
     }
 }
 
 fileprivate struct NameAndLinksRow: View {
     let host: CachedHost
-    var handle: String?
-    var website: String?
     @Binding var isFollowing: Bool
     @State var showUsername = false
     var namespace: Namespace.ID
@@ -112,7 +135,7 @@ fileprivate struct NameAndLinksRow: View {
                 .bold()
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
-                .matchedGeometryEffect(id: host.name, in: namespace)
+                .matchedGeometryEffect(id: "name-\(host.username)", in: namespace)
                 .onTapGesture {
                     withAnimation(.easeInOut) {
                         showUsername.toggle()
@@ -125,17 +148,19 @@ fileprivate struct NameAndLinksRow: View {
                     .foregroundColor(.secondary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
-                    .matchedGeometryEffect(id: host.username, in: namespace)
+                    .matchedGeometryEffect(id: "username-\(host.username)", in: namespace)
                 
                 
                 Spacer()
                 
-                if let handle = handle {
+                if let handle = host.instagramHandle {
                     HostLinkIcon(url: "https://instagram.com/\(handle)", icon: "Instagram_Glyph_Gradient 1", isAsset: true)
+                        .matchedGeometryEffect(id: "insta-\(host.username)", in: namespace)
                 }
-                
-                if let website = website {
+
+                if let website = host.website {
                     HostLinkIcon(url: website, icon: "globe")
+                        .matchedGeometryEffect(id: "website-\(host.username)", in: namespace)
                 }
                 
                 Text(isFollowing ? "Following" : "Follow")
@@ -146,12 +171,10 @@ fileprivate struct NameAndLinksRow: View {
                         if isFollowing {
                             Capsule()
                                 .stroke()
-                                .matchedGeometryEffect(id: "\(host.id)hostFollowButton", in: namespace)
-
+                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
                         } else {
                             Capsule()
-                                .matchedGeometryEffect(id: "\(host.id)hostFollowButton", in: namespace)
-
+                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
                         }
                         
                     }
@@ -162,13 +185,13 @@ fileprivate struct NameAndLinksRow: View {
                             isFollowing.toggle()
                         }
                     }
-                    .matchedGeometryEffect(id: "follow\(host.id)", in: namespace)
+                    .matchedGeometryEffect(id: "follow-button-\(host.username)", in: namespace)
             }
         }
     }
 }
 
-fileprivate struct HostLinkIcon: View {
+struct HostLinkIcon: View {
     let url: String
     let icon: String
     var isAsset = false
