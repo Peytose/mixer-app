@@ -1238,7 +1238,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = mixer/Info.plist;
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Mixer uses your location to show your proximity to hosts and events.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1274,7 +1275,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = mixer/Info.plist;
-				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Mixer uses your location to show your proximity to hosts and events.";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

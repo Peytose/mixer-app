@@ -215,7 +215,7 @@ fileprivate struct EditableRow: View {
         }
         .alert(alertTitle, isPresented: $showAlert) {
             TextField(alertPlaceholder, text: $value)
-                .foregroundColor(.black)
+                .foregroundColor(.primary)
             
             if #available(iOS 16.0, *) {
                 Button("Save") { viewModel.save(for: saveType) }

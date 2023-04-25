@@ -121,6 +121,14 @@ class AuthViewModel: ObservableObject {
                     print("DEBUG: key for host privileges: \(key)")
                     self.fetchHost(uid: key)
                 }
+                
+                self.currentUser?.isHost = true
+                
+                do {
+                    try UserCache.shared.cacheUser(cachedUser)
+                } catch {
+                    print("DEBUG: Error caching user after verifying host privileges. \(error.localizedDescription)")
+                }
             }
         }
         

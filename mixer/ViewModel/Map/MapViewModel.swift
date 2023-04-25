@@ -64,11 +64,10 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                 for var host in hosts {
                     guard let hostId = host.id else { return }
                     
-                    if var currentEvent = todayEvents.first(where: { $0.hostUuid == hostId }) {
-                        
+                    if let currentEvent = todayEvents.first(where: { $0.hostUuid == hostId }) {
                         host.hasCurrentEvent = true
+                        
                         try HostCache.shared.cacheHost(host)
-
                         try await updateHostCoordinates(for: &host, with: currentEvent)
 
                         mapItems.updateValue(currentEvent, forKey: host)

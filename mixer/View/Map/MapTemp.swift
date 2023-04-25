@@ -29,9 +29,10 @@ struct MapTemp: View {
                               anchorPoint: CGPoint(x: 0.75, y: 0.75)) {
                     HostMapAnnotation(host: host)
                         .onTapGesture {
-                            self.selectedHost = host
                             if let event = viewModel.mapItems[host] as? CachedEvent {
                                 self.selectedEvent = event
+                            } else {
+                                self.selectedHost = host
                             }
                             
                             isShowingDetailView = true
@@ -57,51 +58,43 @@ struct MapTemp: View {
                 }
         }
         .sheet(isPresented: $isShowingDetailView) {
-            ZStack {
-                if let event = selectedEvent {
-                    NavigationView {
-                        EventDetailView(viewModel: EventDetailViewModel(event: event),
-                                        namespace: namespace)
-                            .toolbar {
-                                Button("Dismiss", action: { isShowingDetailView = false })
-                            }
-                            .onAppear { viewModel.isLoading = false }
-                    }
-                } else if let host = selectedHost {
-                    NavigationView {
-                        HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
-                            .toolbar {
-                                Button("Dismiss", action: { isShowingDetailView = false })
-                            }
-                            .onAppear { viewModel.isLoading = false }
+            if let event = selectedEvent {
+                NavigationView {
+                    EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                    namespace: namespace)
+                    .toolbar {
+                        ToolbarItem(placement: .destructiveAction) {
+                            Button { isShowingDetailView = false  } label: { XDismissButton() }
+                        }
                     }
                 }
-                
-                if viewModel.isLoading { LoadingView() }
+            } else if let host = selectedHost {
+                NavigationView {
+                    HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
+                        .toolbar {
+                            ToolbarItem(placement: .destructiveAction) {
+                                Button { isShowingDetailView = false  } label: { XDismissButton() }
+                            }
+                        }
+                }
             }
-            .onAppear { viewModel.isLoading = true }
         }
         .sheet(isPresented: $isShowingGuestListView) {
-            if let eventId = viewModel.hostEvents.first?.value.id {
+            if let eventId = viewModel.hostEvents.first?.value.id, !viewModel.hostEvents.isEmpty {
                 GuestlistView(viewModel: GuestlistViewModel(eventUid: eventId))
             }
         }
-        .overlay(alignment: .bottomLeading, content: {
-            LocationButton(.currentLocation) {
-                viewModel.requestAlwaysOnLocationPermission()
-            }
-            .foregroundColor(.white)
-            .symbolVariant(.fill)
-            .tint(.mixerIndigo)
-            .labelStyle(.iconOnly)
-            .clipShape(Circle())
-            .padding(EdgeInsets(top: 0, leading: 20, bottom: 100, trailing: 0))
-        })
         .overlay(alignment: .topTrailing) {
-            if !viewModel.hostEvents.isEmpty {
-                    EventUsersListButton(action: $isShowingGuestListView)
-                    .padding(.trailing)
+            if let isHost = AuthViewModel.shared.currentUser?.isHost {
+                MapIconButton(icon: "list.clipboard", hasLargerSize: isHost) { isShowingGuestListView.toggle() }
+                .padding(.trailing)
+                .padding(.top)
             }
+        }
+        .overlay(alignment: .bottomLeading) {
+            MapIconButton(icon: "location.fill", hasLargerSize: false) { viewModel.requestAlwaysOnLocationPermission() }
+                .padding(.bottom, 100)
+                .padding(.leading)
         }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .task {
@@ -119,21 +112,23 @@ struct MapTemp_Previews: PreviewProvider {
     }
 }
 
-fileprivate struct EventUsersListButton: View {
-    @Binding var action: Bool
+fileprivate struct MapIconButton: View {
+    let icon: String
+    let hasLargerSize: Bool
+    let action: () -> Void
     
     var body: some View {
         Button {
             let impact = UIImpactFeedbackGenerator(style: .light)
             impact.impactOccurred()
             
-            action.toggle()
+            action()
         } label: {
-            Image(systemName: "list.clipboard")
-                .font(.title)
+            Image(systemName: icon)
+                .font(hasLargerSize ? .title : .title3)
                 .fontWeight(.medium)
                 .foregroundColor(Color.mainFont)
-                .padding(15)
+                .padding(hasLargerSize ? 20 : 10)
                 .background(Color.mixerSecondaryBackground)
                 .clipShape(Circle())
                 .shadow(radius: 5, y: 8)

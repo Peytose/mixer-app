@@ -59,12 +59,15 @@ struct UserService {
     }
     
     
-    static func checkIfUserFollowsHost(hostUid: String, completion: @escaping (Bool) -> Void) {
+    static func checkIfHostIsFollowed(hostUid: String, completion: @escaping (Bool) -> Void) {
         guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
-        
-        COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(hostUid).getDocument { snapshot, _ in
-            completion(snapshot?.exists ?? false)
-        }
+
+        COLLECTION_FOLLOWING.document(currentUid).collection("user-following")
+            .document(hostUid).getDocument { snapshot, _ in
+                guard let isFollowed = snapshot?.exists else { return }
+                print("1️⃣\(isFollowed)")
+                completion(isFollowed)
+            }
     }
     
     

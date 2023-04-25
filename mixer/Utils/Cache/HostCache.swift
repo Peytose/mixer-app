@@ -69,7 +69,7 @@ class HostCache {
                         var cachedHost = CachedHost(from: host)
                         
                         if let hostId = host.id {
-                            UserService.checkIfUserFollowsHost(hostUid: hostId) { isFollowed in
+                            UserService.checkIfHostIsFollowed(hostUid: hostId) { isFollowed in
                                 cachedHost.isFollowed = isFollowed
                             }
                         }
