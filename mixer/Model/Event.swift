@@ -127,7 +127,7 @@ struct Event: Identifiable, Codable {
     // Metadata
     @DocumentID var id: String?
     let hostUuid: String
-    let hostUsername: String
+    let hostName: String
     let timePosted: Timestamp
     
     // Basic Information

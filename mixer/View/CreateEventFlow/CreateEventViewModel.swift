@@ -145,7 +145,7 @@ final class CreateEventViewModel: ObservableObject {
             var data: [String: Any] = ["title": self.title,
                                        "description": self.description,
                                        "hostUuid": host.id as String? ?? "",
-                                       "hostUsername": host.username,
+                                       "hostName": host.name,
                                        "guestLimit": self.guestLimit,
                                        "guestInviteLimit": self.guestInviteLimit,
                                        "memberInviteLimit": self.memberInviteLimit,

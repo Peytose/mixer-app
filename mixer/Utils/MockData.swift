@@ -27,7 +27,7 @@ struct Mockdata {
     
     static var event: Event {
         return Event(hostUuid: "7uJM0wfC29lNtqjeVktM",
-                     hostUsername: "mitthetachi",
+                     hostName: "MIT Theta Chi",
                      timePosted: Timestamp(),
                      title: "Neon Party",
                      description: "Neon party at Theta Chi, need we say more?",

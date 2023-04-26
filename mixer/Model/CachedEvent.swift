@@ -13,7 +13,7 @@ struct CachedEvent: Hashable, Identifiable, Codable {
     // Metadata
     var id: String?
     var hostUuid: String
-    var hostUsername: String
+    var hostName: String
     let timePosted: Timestamp
     
     // Basic Information
@@ -59,7 +59,7 @@ struct CachedEvent: Hashable, Identifiable, Codable {
     init(from event: Event) {
         self.id                            = event.id
         self.hostUuid                      = event.hostUuid
-        self.hostUsername                  = event.hostUsername
+        self.hostName                      = event.hostName
         self.timePosted                    = event.timePosted
         self.title                         = event.title
         self.description                   = event.description

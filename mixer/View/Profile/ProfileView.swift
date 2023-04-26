@@ -256,8 +256,6 @@ import TabBar
 
 struct ProfileView: View {
     @Environment(\.presentationMode) var presentationMode
-    @State var addFriend = false
-    @State var shareUsername = false
     @State var showOptions = false
     @State private var selection = "None"
     @State var showAlert = false
@@ -317,7 +315,6 @@ struct ProfileView: View {
                                 
                                 ProfileCornerButton(isOn: $showOptions,
                                                     icon: "ellipsis")
-                                
                             }
                         }
                         .padding(.horizontal)
@@ -340,7 +337,7 @@ struct ProfileView: View {
             .ignoresSafeArea(.all)
             .navigationBarHidden(true)
             .statusBar(hidden: true)
-            .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel) }
+            .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel, showAge: $viewModel.user.userOptions.binding(for: UserOption.showAgeOnProfile.rawValue)) }
             .sheet(isPresented: $showNotifications) { NotificationFeedView() }
 //            .fullScreenCover(isPresented: $viewModel.showEventView) {
 //                EventInfoView(parentViewModel: ExplorePageViewModel(), tabBarVisibility: $tabBarVisibility, event: eventManager.selectedEvent!, coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50), namespace: namespace)

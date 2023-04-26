@@ -33,9 +33,8 @@ class ProfileViewModel: ObservableObject {
     
     init(user: CachedUser) {
         self.user = user
-//        getUserRelationship()
+        getUserRelationship()
         print("DEBUG: profile init ran")
-        //        fetchUsersStats()
     }
     
     
@@ -160,17 +159,18 @@ class ProfileViewModel: ObservableObject {
         case image
         case bio
         case instagram
+        case ageToggle
     }
     
     
-    func save(for type: ProfileSaveType) {
-        self.save(for: type) {
+    func save(for type: ProfileSaveType, toggleValue: Bool = false) {
+        self.save(for: type, toggleValue: toggleValue) {
             self.cacheUser()
             AuthViewModel.shared.updateCurrentUser(user: self.user)
         }
     }
     
-    private func save(for type: ProfileSaveType, completion: @escaping () -> Void) {
+    private func save(for type: ProfileSaveType, toggleValue: Bool, completion: @escaping () -> Void) {
         guard let uid = AuthViewModel.shared.currentUser?.id else { return }
         
         switch type {
@@ -208,12 +208,13 @@ class ProfileViewModel: ObservableObject {
                 self.user.instagramHandle = self.instagramHandle
                 completion()
             }
+            
+        case .ageToggle:
+            COLLECTION_USERS.document(uid).updateData(["userOptions.showAgeOnProfile": toggleValue]) { _ in
+                self.user.userOptions[UserOption.showAgeOnProfile.rawValue] = toggleValue
+                completion()
+            }
         }
-        
-        cacheUser()
-        
-        // Update currentUser in AuthViewModel
-        AuthViewModel.shared.updateCurrentUser(user: self.user)
     }
     
     private func cacheUser() {

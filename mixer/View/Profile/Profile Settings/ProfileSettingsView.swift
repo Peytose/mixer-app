@@ -15,6 +15,7 @@ struct ProfileSettingsView: View {
     @State var isShowingMailView: Bool     = false
     @State var showAlert: Bool             = false
     @State var imagePickerPresented: Bool  = false
+    @Binding var showAge: Bool
     
     var body: some View {
         NavigationView {
@@ -95,11 +96,14 @@ struct ProfileSettingsView: View {
                     }
                     
                     Section {
-                        Toggle("Show age on profile?", isOn: $viewModel.user.userOptions.binding(for: UserOption.showAgeOnProfile.rawValue).animation())
+                        Toggle("Show age on profile?", isOn: $showAge.animation())
                             .font(.body)
                             .fontWeight(.medium)
                             .foregroundColor(.white)
                             .listRowBackground(Color.mixerSecondaryBackground)
+                            .onChange(of: showAge) { newValue in
+                                viewModel.save(for: .ageToggle, toggleValue: newValue)
+                            }
                     } header: {
                         Text("Privacy")
                             .fontWeight(.semibold)
@@ -173,12 +177,12 @@ struct ProfileSettingsView: View {
 }
 
 
-struct ProfileSettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileSettingsView(viewModel: ProfileViewModel(user: CachedUser(from: Mockdata.user)))
-            .preferredColorScheme(.dark)
-    }
-}
+//struct ProfileSettingsView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ProfileSettingsView(viewModel: ProfileViewModel(user: CachedUser(from: Mockdata.user)))
+//            .preferredColorScheme(.dark)
+//    }
+//}
 
 fileprivate struct EditableRow: View {
     @ObservedObject var viewModel: ProfileViewModel
