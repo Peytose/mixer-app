@@ -60,20 +60,26 @@ fileprivate struct CellDateView: View {
             .fill(Color.mixerBackground)
             .ignoresSafeArea()
             .overlay {
-                VStack(alignment: .center) {
-                    Text(hasStarted ? event.startDate.getTimestampString(format: "h:mm") : event.startDate.getTimestampString(format: "MMM"))
-                        .font(.headline)
-                        .fontWeight(.regular)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
+                VStack(alignment: .center, spacing: 12) {
+                    VStack {
+                        Text(hasStarted ? event.startDate.getTimestampString(format: "h:mm") : event.startDate.getTimestampString(format: "MMM"))
+                            .font(.headline)
+                            .fontWeight(.regular)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                        
+                        Text(hasStarted ? event.startDate.getTimestampString(format: "a") : event.startDate.getTimestampString(format: "d"))
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                    }
                     
-                    Text(hasStarted ? event.startDate.getTimestampString(format: "a") : event.startDate.getTimestampString(format: "d"))
-                        .font(.title)
-                        .fontWeight(.bold)
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
+                    Image(systemName: event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "lock.fill" : "globe")
+                        .imageScale(.large)
+                        .padding(.top, -7)
                 }
                 .padding(.top, 10)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

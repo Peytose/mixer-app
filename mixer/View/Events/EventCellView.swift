@@ -25,7 +25,7 @@ struct EventCellView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                     
-                    Text(event.hostName)
+                    Text("Hosted by \(event.hostName)")
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(.secondary)
                 }
@@ -72,15 +72,38 @@ struct EventCellView: View {
                     
                     Spacer()
                     
-                    VStack(alignment: .center) {
-                        Image(systemName: event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "lock.fill" : "globe")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 18, height: 18)
-                        
-                        Text(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Invite Only" : "Public")
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
+                    VStack(spacing: 6) {
+                        if let amenities = event.amenities {
+                            if amenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
+                                Image(systemName: "drop.fill")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 18, height: 18)
+                                
+                                Text("Wet Event")
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                                    .offset(y: 2)
+                            } else {
+                                ZStack {
+                                    Image(systemName: "drop.fill")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 18, height: 18)
+                                    
+                                    Text("/")
+                                        .font(.title)
+//                                        .fontWeight(.semibold)
+                                        .foregroundColor(.red)
+                                        .rotationEffect(Angle(degrees: 30))
+                                }
+                                
+                                Text("Dry Event")
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                                    .offset(y: 2)
+                            }
+                        }
                     }
                 }
                 
