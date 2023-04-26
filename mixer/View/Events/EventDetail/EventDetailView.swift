@@ -17,6 +17,7 @@ struct EventDetailView: View {
     @State private var finalAmount = 1.0
     @State private var showHost = false
     @State private var showAllAmenities = false
+    @State var showInfoAlert = false
     var namespace: Namespace.ID
 
     var body: some View {
@@ -29,19 +30,13 @@ struct EventDetailView: View {
                                  isShowingModal: $isShowingModal)
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    Text(viewModel.event.description)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.DesignCodeWhite)
-                        .lineLimit(4)
-                    
                     HostedBySection(viewModel: viewModel,
                                     namespace: namespace)
                     .onTapGesture {
                         showHost.toggle()
                     }
                     
-                    aboutSection
+                    content
                     
                     ScrollView {
                         VStack(alignment: .leading, spacing: 8) {
@@ -129,9 +124,17 @@ struct EventDetailView: View {
         }
     }
     
-    var aboutSection: some View {
+    var content: some View {
         VStack(alignment: .leading, spacing: 20) {
-            
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Description")
+                    .font(.title).bold()
+                
+                Text(viewModel.event.description)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                    .lineLimit(4)
+            }
             
             VStack(alignment: .leading, spacing: 6) {
                 Text("Notes for guest")
@@ -141,6 +144,26 @@ struct EventDetailView: View {
                     .font(.body)
                     .foregroundColor(.secondary)
                     .lineLimit(4)
+            }
+            
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Event details")
+                    .font(.title).bold()
+                HStack {
+                    if let amenities = viewModel.event.amenities {
+                        if amenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
+                            DetailRow(image: "drop.fill", text: "Wet Event")
+                                .fontWeight(.medium)
+                        } else {
+                            DetailRow(image: "drop.fill", text: "Dry Event")
+                                .fontWeight(.medium)
+                        }
+                    }
+                    
+                    InfoButton(action: { showInfoAlert.toggle() })
+                        .alert("Wet and Dry Events", isPresented: $showInfoAlert, actions: {}, message: {Text("Wet events offer beer/alcohol. Dry events do not offer alcohol.")})
+                    
+                }
             }
         }
     }
@@ -172,9 +195,6 @@ fileprivate struct EventImageModalView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: UIScreen.main.bounds.size.width / 1.2)
-                .overlay(alignment: .topTrailing) {
-                    Button { withAnimation { isShowingModal = false } } label: { XDismissButton() }
-                }
         }
     }
 }
@@ -192,18 +212,18 @@ fileprivate struct HostedBySection: View {
                     .clipShape(Circle())
                     .frame(width: 45, height: 45)
                 
-                VStack(alignment: .leading, spacing: 0) {
                     HStack {
                         VStack(alignment: .leading) {
                             Text("\(viewModel.event.type.rawValue) hosted by ")
-                                .font(.title3)
-                                .fontWeight(.medium)
+                                .font(.subheadline.weight(.medium))
                                 .foregroundColor(.secondary)
                             
                             Text("\(host.name)")
                                 .font(.title3)
                                 .bold()
                                 .foregroundColor(Color.mixerIndigo)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                         }
                         
                         Spacer()
@@ -215,22 +235,25 @@ fileprivate struct HostedBySection: View {
                         } label: {
                             if let isFollowed = host.isFollowed {
                                 Text(isFollowed ? "Following" : "Follow")
-                                    .font(.body)
+                                    .font(.footnote)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(isFollowed ? .black : .white)
-                                    .padding(.vertical, 10)
-                                    .padding(.horizontal, 20)
+                                    .foregroundColor(isFollowed ? .white : .black)
+                                    .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
                                     .background {
-                                        Capsule()
-                                            .stroke(lineWidth: isFollowed ? 2 : 1)
-                                            .background(isFollowed ? .white : .black)
-                                            .clipShape(Capsule())
-                                            .matchedGeometryEffect(id: "\(host.username)-event-follow", in: namespace)
+                                        if isFollowed {
+                                            Capsule()
+                                                .stroke()
+                                                .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id)", in: namespace)
+                                        } else {
+                                            Capsule()
+                                                .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id)", in: namespace)
+                                        }
                                     }
                             }
                         }
+                        .buttonStyle(.plain)
                     }
-                }
+                
             }
         }
     }
@@ -259,7 +282,6 @@ fileprivate struct EventFlyerHeader: View {
                                 .foregroundColor(.primary)
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.65)
-                                .matchedGeometryEffect(id: event.title, in: namespace)
                             
                             Spacer()
                             
@@ -293,7 +315,6 @@ fileprivate struct EventFlyerHeader: View {
                             if let saves = event.saves {
                                 Text("\(saves) interested")
                                     .font(.callout.weight(.semibold))
-                                
                             }
                             
                             Spacer()
@@ -338,7 +359,6 @@ fileprivate struct EventFlyerHeader: View {
                             }
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
-                            .matchedGeometryEffect(id: "\(event.title)-time", in: namespace)
                             
                             Spacer()
                             
@@ -357,7 +377,6 @@ fileprivate struct EventFlyerHeader: View {
                             }
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
-                            .matchedGeometryEffect(id: "\(event.title)-isInviteOnly", in: namespace)
                         }
                         .font(.callout.weight(.semibold))
                     }
@@ -376,7 +395,6 @@ fileprivate struct EventFlyerHeader: View {
                             KFImage(URL(string: event.eventImageUrl))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .matchedGeometryEffect(id: "background 2", in: namespace)
                                 .offset(y: scrollY > 0 ? -scrollY : 0)
                                 .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
                                 .blur(radius: scrollY > 0 ? scrollY / 20 : 0)
@@ -397,7 +415,6 @@ fileprivate struct EventFlyerHeader: View {
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(width: proxy.size.width - 60, height: proxy.size.height - 60)
-                                .matchedGeometryEffect(id: "background 1", in: namespace)
                                 .offset(y: scrollY > 0 ? -scrollY : 0)
                                 .mask(
                                     RoundedRectangle(cornerRadius: 20)
@@ -426,34 +443,9 @@ fileprivate struct EventFlyerHeader: View {
     }
 }
 
-fileprivate struct FlyerPopUp: View {
-    let event: CachedEvent
-
-    var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                Rectangle()
-                    .fill(Color.clear)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .backgroundBlur(radius: 10, opaque: true)
-                    .ignoresSafeArea()
-
-                KFImage(URL(string: event.eventImageUrl))
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 370, height: 435)
-                    .frame(width: proxy.size.width, height: proxy.size.height)
-                    .aspectRatio(contentMode: .fit)
-                    .modifier(ImageModifier(contentSize: CGSize(width: proxy.size.width, height: proxy.size.height)))
-            }
-        }
-    }
-}
-
 
 fileprivate struct JoinGuestlistButton: View {
     let action: () -> Void
-    
     var body: some View {
         Button {
             let impact = UIImpactFeedbackGenerator(style: .light)

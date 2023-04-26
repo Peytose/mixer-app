@@ -27,7 +27,6 @@ struct ExploreView: View {
                         .padding(.leading)
                         .padding(.top, 70)
                         .opacity(showHostView ? 0 : 1)
-                        .animation(.none)
                         .zIndex(0)
                 
                     
@@ -92,6 +91,8 @@ struct ExploreView: View {
             if let event = selectedEvent, showEventView {
                 EventDetailView(viewModel: EventDetailViewModel(event: event),
                               namespace: namespace)
+                .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
+                .zIndex(3)
                 .overlay(alignment: .topTrailing) {
                     XDismissButton()
                         .padding(.top, 50)

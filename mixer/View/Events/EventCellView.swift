@@ -79,8 +79,7 @@ struct EventCellView: View {
                         Image(systemName: event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "lock.fill" : "globe")
                             .resizable()
                             .scaledToFill()
-                            .foregroundColor(.secondary)
-                            .frame(width: 25, height: 25)
+                            .frame(width: 18, height: 18)
                         
                         Text(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Invite Only" : "Public")
                             .font(.footnote)
