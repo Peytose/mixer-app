@@ -90,15 +90,17 @@ struct MapTemp: View {
         }
         .overlay(alignment: .topTrailing) {
             if let isHost = AuthViewModel.shared.currentUser?.isHost {
-                VStack(alignment: .trailing, spacing: 10) {
-                    MapIconButton(icon: "list.clipboard", hasLargerSize: isHost) { isShowingGuestlistView.toggle() }
-                    
-                    MapIconButton(icon: "plus", hasLargerSize: isHost) { isShowingCreateEventView.toggle() }
-                }
-                .padding(.trailing)
-                .padding(.top)
+                MapIconButton(icon: "plus", hasLargerSize: isHost) { isShowingCreateEventView.toggle() }
+                    .padding(.trailing)
+                    .padding(.top)
             }
         }
+        .overlay(alignment: .bottom, content: {
+            if let isHost = AuthViewModel.shared.currentUser?.isHost {
+                MapWideButton(action: { isShowingGuestlistView.toggle() })
+                    .padding(.bottom, 90)
+            }
+        })
         .overlay(alignment: .bottomLeading) {
             MapIconButton(icon: "location.fill", hasLargerSize: false) { viewModel.requestAlwaysOnLocationPermission() }
                 .padding(.bottom, 100)
@@ -133,13 +135,40 @@ fileprivate struct MapIconButton: View {
             action()
         } label: {
             Image(systemName: icon)
-                .font(hasLargerSize ? .title : .title3)
+                .font(hasLargerSize ? .title2 : .title3)
                 .fontWeight(.medium)
                 .foregroundColor(Color.mainFont)
-                .padding(hasLargerSize ? 20 : 10)
+                .padding(hasLargerSize ? 15 : 10)
                 .background(Color.mixerSecondaryBackground)
                 .clipShape(Circle())
                 .shadow(radius: 5, y: 8)
+        }
+    }
+}
+
+fileprivate struct MapWideButton: View {
+    let action: () -> Void
+    var body: some View {
+        Button {
+            let impact = UIImpactFeedbackGenerator(style: .light)
+            impact.impactOccurred()
+            action()
+        } label: {
+            HStack {
+                Image(systemName: "list.clipboard")
+                    .imageScale(.large)
+
+                Text("Guestlist")
+                    .font(.title3)
+                    .fontWeight(.semibold)
+            }
+            .foregroundColor(.white)
+            .padding()
+            .background {
+                Capsule()
+                    .fill(Color.mixerSecondaryBackground)
+            }
+            .shadow(radius: 5, y: 10)
         }
     }
 }

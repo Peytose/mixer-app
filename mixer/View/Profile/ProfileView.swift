@@ -333,7 +333,7 @@ struct ProfileView: View {
                             }
                         }
                         .padding(.top, 40)
-                }
+                    }
                 
                 ProfileInfo(user: $viewModel.user, mutuals: viewModel.mutuals)
                 
@@ -353,9 +353,9 @@ struct ProfileView: View {
             .statusBar(hidden: true)
             .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel, showAge: $viewModel.user.userOptions.binding(for: UserOption.showAgeOnProfile.rawValue)) }
             .sheet(isPresented: $showNotifications) { NotificationFeedView() }
-//            .fullScreenCover(isPresented: $viewModel.showEventView) {
-//                EventInfoView(parentViewModel: ExplorePageViewModel(), tabBarVisibility: $tabBarVisibility, event: eventManager.selectedEvent!, coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50), namespace: namespace)
-//            }
+            //            .fullScreenCover(isPresented: $viewModel.showEventView) {
+            //                EventInfoView(parentViewModel: ExplorePageViewModel(), tabBarVisibility: $tabBarVisibility, event: eventManager.selectedEvent!, coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50), namespace: namespace)
+            //            }
             
             Color.mixerSecondaryBackground.opacity(0.6)
                 .backgroundBlur(radius: 5, opaque: true)
@@ -568,50 +568,64 @@ extension ProfileView {
             Text("About")
                 .font(.title).bold()
             
-            VStack(alignment: .leading) {
-                HStack {
+            if viewModel.user.isCurrentUser {
+                VStack(alignment: .leading) {
+                    HStack {
+                        DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                        
+                        Spacer()
+                        
+                        Menu("Change") {
+                            Button("Single", action: { viewModel.relationshipStatus = "Single" })
+                            Button("Taken", action: { viewModel.relationshipStatus = "Taken" })
+                            Button("Complicated", action: { viewModel.relationshipStatus = "Complicated" })
+                            Button("N/A", action: { viewModel.relationshipStatus = "N/A" })
+                        }
+                        .accentColor(.mixerIndigo)
+                    }
+                    
+                    HStack {
+                        DetailRow(image: "briefcase", text: viewModel.major)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                        
+                        Spacer()
+                        
+                        Button { showChangeMajor.toggle() } label: {
+                            Text("Change")
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color.mixerIndigo)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.9)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .alert("Change Major", isPresented: $showChangeMajor) {
+                        TextField("New Major", text: $viewModel.major)
+                            .foregroundColor(.white)
+                        
+                        if #available(iOS 16.0, *) {
+                            Button("Save") {  }
+                            Button("Cancel", role: .cancel, action: {})
+                        }
+                    }
+                }
+                .fontWeight(.medium)
+            } else {
+                VStack(alignment: .leading) {
                     DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     
-                    Spacer()
-                    
-                    Menu("Change") {
-                        Button("Single", action: { viewModel.relationshipStatus = "Single" })
-                        Button("Taken", action: { viewModel.relationshipStatus = "Taken" })
-                        Button("Complicated", action: { viewModel.relationshipStatus = "Complicated" })
-                        Button("N/A", action: { viewModel.relationshipStatus = "N/A" })
-                    }
-                    .accentColor(.mixerIndigo)
-                }
-                
-                HStack {
                     DetailRow(image: "briefcase", text: viewModel.major)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
-
-                    Spacer()
-
-                    Button { showChangeMajor.toggle() } label: {
-                        Text("Change")
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color.mixerIndigo)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.9)
-                    }
-                    .buttonStyle(.plain)
+                    
                 }
-                .alert("Change Major", isPresented: $showChangeMajor) {
-                    TextField("New Major", text: $viewModel.major)
-                        .foregroundColor(.white)
-
-                    if #available(iOS 16.0, *) {
-                        Button("Save") {  }
-                        Button("Cancel", role: .cancel, action: {})
-                    }
-                }
+                .fontWeight(.medium)
             }
-            .fontWeight(.medium)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)

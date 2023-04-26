@@ -20,7 +20,7 @@ struct MainTabView: View {
         
         var icon: String {
             switch self {
-                case .first: return "music.note.house"
+                case .first: return "person.3"
                 case .second: return "map"
                 case .third: return "magnifyingglass"
                 case .fourth: return "person"
