@@ -29,24 +29,24 @@ struct CreateEventFlow: View {
                                       endDate: $viewModel.endDate,
                                       address: $viewModel.address,
                                       publicAddress: $viewModel.publicAddress,
-                                      usePublicAddress: $viewModel.usePublicAddress,
+                                      hasPublicAddress: $viewModel.eventOptions.binding(for: EventOption.hasPublicAddress.rawValue),
                                       action: viewModel.next)
                     .tag(CreateEventViewModel.Screen.locationAndDates)
                 
                 EventGuestsAndInvitations(selectedVisibility: $viewModel.visibility,
                                           selectedInvitePreferrence: $viewModel.privacy,
-                                          selectedCheckInMethod: $viewModel.checkInMethod2,
+                                          checkInMethod: $viewModel.checkInMethod,
                                           guestLimit: $viewModel.guestLimit,
                                           guestInviteLimit: $viewModel.guestInviteLimit,
                                           memberInviteLimit: $viewModel.memberInviteLimit,
+                                          isGuestlistEnabled: $viewModel.eventOptions.binding(for: EventOption.isGuestlistEnabled.rawValue),
+                                          isGuestLimitEnabled: $viewModel.eventOptions.binding(for: EventOption.isGuestLimitEnabled.rawValue),
+                                          isMemberInviteLimitEnabled: $viewModel.eventOptions.binding(for: EventOption.isMemberInviteLimitEnabled.rawValue),
+                                          isGuestInviteLimitEnabled: $viewModel.eventOptions.binding(for: EventOption.isGuestInviteLimitEnabled.rawValue),
+                                          isManualApprovalEnabled: $viewModel.eventOptions.binding(for: EventOption.isManualApprovalEnabled.rawValue),
+                                          isWaitlistEnabled: $viewModel.eventOptions.binding(for: EventOption.isWaitlistEnabled.rawValue),
+                                          isRegistrationDeadlineEnabled: $viewModel.eventOptions.binding(for: EventOption.isRegistrationDeadlineEnabled.rawValue),
                                           alertItem: $viewModel.alertItem,
-                                          useGuestList: $viewModel.isGuestListEnabled,
-                                          isGuestLimit: $viewModel.isGuestLimitEnabled,
-                                          isMemberInviteLimit: $viewModel.isMemberInviteLimitEnabled,
-                                          isGuestInviteLimit: $viewModel.isGuestInviteLimitEnabled,
-                                          manuallyApproveGuests: $viewModel.isManualApprovalEnabled,
-                                          enableWaitlist: $viewModel.isWaitlistEnabled,
-                                          registrationcutoff: $viewModel.isRegistrationDeadlineEnabled,
                                           action: viewModel.next)
                 .tag(CreateEventViewModel.Screen.guestsAndInvitations)
                 

@@ -29,7 +29,7 @@ struct EventGuest: Identifiable, Codable {
             self.age         = age
         }
         
-        self.university      = user.university
+        self.university      = user.universityData["name"] ?? ""
     }
     
     init(name: String, university: String, age: Int?, gender: String?, status: GuestStatus?, invitedBy: String?, timestamp: Timestamp?) {

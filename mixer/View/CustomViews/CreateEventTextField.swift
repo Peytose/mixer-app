@@ -35,8 +35,6 @@ struct CreateEventTextField: View {
                     .minimumScaleFactor(0.75)
                     .padding(.bottom)
                     .padding(.top, -6)
-
-
             }
             
             if let textfieldHeader = textfieldHeader {

@@ -10,24 +10,23 @@ import SwiftUI
 struct EventGuestsAndInvitations: View {
     @Binding var selectedVisibility: CreateEventViewModel.VisibilityType
     @Binding var selectedInvitePreferrence: CreateEventViewModel.InvitePreferrence
-    @Binding var selectedCheckInMethod: CheckInMethod
+    @Binding var checkInMethod: CheckInMethod?
     
-    //Values
     @Binding var guestLimit: String
     @Binding var guestInviteLimit: String
     @Binding var memberInviteLimit: String
     
-    //Alert bools
+    @Binding var isGuestlistEnabled: Bool
+    @Binding var isGuestLimitEnabled: Bool
+    @Binding var isMemberInviteLimitEnabled: Bool
+    @Binding var isGuestInviteLimitEnabled: Bool
+    @Binding var isManualApprovalEnabled: Bool
+    @Binding var isWaitlistEnabled: Bool
+    @Binding var isRegistrationDeadlineEnabled: Bool
+    
     @Binding var alertItem: AlertItem?
     
-    //Toggle bools
-    @Binding var useGuestList: Bool
-    @Binding var isGuestLimit: Bool
-    @Binding var isMemberInviteLimit: Bool
-    @Binding var isGuestInviteLimit: Bool
-    @Binding var manuallyApproveGuests: Bool
-    @Binding var enableWaitlist: Bool
-    @Binding var registrationcutoff: Bool
+    @State private var selectedCheckInMethod: CheckInMethod = .manual
     let action: () -> Void
     
     var body: some View {
@@ -38,7 +37,7 @@ struct EventGuestsAndInvitations: View {
                         Text(selectedVisibility == ._public ? "Open Event" : "Private Event")
                             .font(.title).bold()
                         
-                        Image(systemName: selectedCheckInMethod == .qrCode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
+                        Image(systemName: selectedCheckInMethod.icon)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 18, height: 18)
@@ -47,32 +46,32 @@ struct EventGuestsAndInvitations: View {
                         
                         Menu("Choose preset") {
                             Button("Just post it") {
-                                setDefaultOptions(visibility: ._public, invitePreference: .open, checkInMethod: .manual, useGuestList: false)
+                                setDefaultOptions(visibility: ._public, invitePreference: .open, checkInMethod: .outOfApp)
                             }
                             
                             Button("Public Open Party") {
-                                setDefaultOptions(visibility: ._public, invitePreference: .open, checkInMethod: .qrCode, useGuestList: true)
+                                setDefaultOptions(visibility: ._public, invitePreference: .open, checkInMethod: .qrCode)
                             }
                             
                             Button("Public Invite Only Party") {
-                                setDefaultOptions(visibility: ._public, invitePreference: .inviteOnly, checkInMethod: .qrCode, useGuestList: true)
+                                setDefaultOptions(visibility: ._public, invitePreference: .inviteOnly, checkInMethod: .qrCode)
                             }
                             
                             Button("Private Open Party") {
-                                setDefaultOptions(visibility: ._private, invitePreference: .open, checkInMethod: .qrCode, useGuestList: true)
+                                setDefaultOptions(visibility: ._private, invitePreference: .open, checkInMethod: .qrCode)
                             }
                             
                             Button("Private Invite Only Party") {
-                                setDefaultOptions(visibility: ._private, invitePreference: .inviteOnly, checkInMethod: .qrCode, useGuestList: true)
+                                setDefaultOptions(visibility: ._private, invitePreference: .inviteOnly, checkInMethod: .qrCode)
                             }
                         }
                         .accentColor(.mixerIndigo)
                         .fontWeight(.medium)
                     }
                     
-                    Text("\(selectedVisibility == ._public ? "Everyone" : "Only invited users") can see this event. " +
-                         "\(selectedInvitePreferrence == .open ? "Anyone" : "Only users on the guest list") can check in to this event and see its details" +
-                         "\(selectedCheckInMethod == .qrCode ? " and check-in will be handled via QR Code." : " and check-in will be handled manually by the host.")")
+                    Text("\(selectedVisibility == ._public ? "Everyone" : "Only invited users") can see this event, and " +
+                         "\(selectedInvitePreferrence == .open ? "anyone" : "only users on the guest list") can check in to this event and see its details." +
+                         "\(selectedCheckInMethod == .qrCode ? "Check-in will be handled via QR Code." : (selectedCheckInMethod == .manual ? "Check-in will be handled manually by the host." : "You will handle check-in outside the app."))")
                     .font(.title3)
                     .fontWeight(.medium)
                 }
@@ -108,12 +107,16 @@ struct EventGuestsAndInvitations: View {
                         Picker("", selection: $selectedCheckInMethod.animation()) {
                             Text("Manual").tag(CheckInMethod.manual)
                             Text("QR Code").tag(CheckInMethod.qrCode)
+                            Text("Out-of-app").tag(CheckInMethod.outOfApp)
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .padding(.trailing)
                     }
                     .onChange(of: selectedCheckInMethod) { newValue in
-                        useGuestList = newValue == .qrCode
+                        checkInMethod = selectedCheckInMethod
+                        if newValue == .outOfApp {
+                            isGuestlistEnabled = false
+                        }
                     }
                 }
                 
@@ -122,19 +125,21 @@ struct EventGuestsAndInvitations: View {
                         HStack {
                             InfoButton(action: { alertItem = AlertContext.guestlistInfo})
                             
-                            Toggle("Use guestlist", isOn: $useGuestList.animation())
-                                .font(.body.weight(.semibold))
+                            Toggle("Use guestlist", isOn: $isGuestlistEnabled.animation())
+                                .font(.body)
+                                .fontWeight(.semibold)
+                                .disabled(selectedCheckInMethod == .outOfApp)
                         }
                         
-                        if useGuestList {
+                        if isGuestlistEnabled {
                             HStack {
                                 InfoButton(action: { alertItem = AlertContext.guestLimitInfo })
                                 
-                                Toggle("Set guest limit", isOn: $isGuestLimit.animation())
+                                Toggle("Set guest limit", isOn: $isGuestLimitEnabled.animation())
                                     .font(.body.weight(.semibold))
                             }
                             
-                            if isGuestLimit {
+                            if isGuestLimitEnabled {
                                 TextField("Maximum guests", text: $guestLimit)
                                     .foregroundColor(Color.mainFont)
                                     .keyboardType(.numberPad)
@@ -143,7 +148,7 @@ struct EventGuestsAndInvitations: View {
                     } header: { Text("Guestlist Settings") }
                         .listRowBackground(Color.mixerSecondaryBackground)
                     
-                    if useGuestList {
+                    if isGuestLimitEnabled {
                         inviteLimitsSection
                         
                         advancedSettingsSection
@@ -165,39 +170,42 @@ struct EventGuestsAndInvitations: View {
     }
 }
 
-struct EventGuestsAndInvitations_Previews: PreviewProvider {
-    static var previews: some View {
-        EventGuestsAndInvitations(selectedVisibility: .constant(._public),
-                                  selectedInvitePreferrence: .constant(.open),
-                                  selectedCheckInMethod: .constant(.manual),
-                                  guestLimit: .constant(""),
-                                  guestInviteLimit: .constant(""),
-                                  memberInviteLimit: .constant(""),
-                                  alertItem: .constant(.init(title: Text(""),
-                                                             message: Text(""),
-                                                             dismissButton: .cancel(Text("")))),
-                                  useGuestList: .constant(false),
-                                  isGuestLimit: .constant(false),
-                                  isMemberInviteLimit: .constant(false),
-                                  isGuestInviteLimit: .constant(false),
-                                  manuallyApproveGuests: .constant(false),
-                                  enableWaitlist: .constant(false),
-                                  registrationcutoff: .constant(false)) {}
-    }
-}
+//struct EventGuestsAndInvitations_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EventGuestsAndInvitations(selectedVisibility: .constant(._public),
+//                                  selectedInvitePreferrence: .constant(.open),
+//                                  eventOptions: .constant(["containsAlcohol": false,
+//                                                           "isInviteOnly": false,
+//                                                           "hasPublicAddress": false,
+//                                                           "isManualApprovalEnabled": false,
+//                                                           "isGuestLimitEnabled": false,
+//                                                           "isWaitlistEnabled": false,
+//                                                           "isMemberInviteLimitEnabled": false,
+//                                                           "isGuestInviteLimitEnabled": false,
+//                                                           "isRegistrationDeadlineEnabled": false,
+//                                                           "isCheckInEnabled": false]),
+//                                  checkInMethod: .constant(.manual),
+//                                  guestLimit: .constant(""),
+//                                  guestInviteLimit: .constant(""),
+//                                  memberInviteLimit: .constant(""),
+//                                  alertItem: .constant(.init(title: Text(""),
+//                                                             message: Text(""),
+//                                                             dismissButton: .cancel(Text(""))))) {}
+//    }
+//}
 
 extension EventGuestsAndInvitations {
     var inviteLimitsSection: some View {
         Section {
-            if useGuestList {
+            if isGuestLimitEnabled {
                 HStack {
                     InfoButton(action: { alertItem = AlertContext.memberInviteLimitInfo })
                     
-                    Toggle("Set member invite limit", isOn: $isMemberInviteLimit.animation())
+                    Toggle("Set member invite limit", isOn: $isMemberInviteLimitEnabled.animation())
                         .font(.body.weight(.semibold))
                 }
                 
-                if isMemberInviteLimit {
+                if isMemberInviteLimitEnabled {
                     TextField("Invites per member", text: $memberInviteLimit)
                         .foregroundColor(Color.mainFont)
                         .keyboardType(.numberPad)
@@ -206,11 +214,11 @@ extension EventGuestsAndInvitations {
                 HStack {
                     InfoButton(action: { alertItem = AlertContext.guestInviteLimitInfo })
                     
-                    Toggle("Set guest invite limit", isOn: $isGuestInviteLimit.animation())
+                    Toggle("Set guest invite limit", isOn: $isGuestInviteLimitEnabled.animation())
                         .font(.body.weight(.semibold))
                 }
                 
-                if isGuestInviteLimit {
+                if isGuestInviteLimitEnabled {
                     TextField("Invites per guest", text: $guestInviteLimit)
                         .foregroundColor(Color.mainFont)
                         .keyboardType(.numberPad)
@@ -230,32 +238,31 @@ extension EventGuestsAndInvitations {
             HStack {
                 InfoButton(action: { alertItem = AlertContext.manuallyApproveInfo })
                 
-                Toggle("Manually approve guests", isOn: $manuallyApproveGuests.animation())
+                Toggle("Manually approve guests", isOn: $isManualApprovalEnabled.animation())
                     .font(.body.weight(.semibold))
             }
             
             HStack {
                 InfoButton(action: { alertItem = AlertContext.preEnableWaitlistInfo })
                 
-                Toggle("Pre-enable waitlist", isOn: $enableWaitlist.animation())
+                Toggle("Pre-enable waitlist", isOn: $isWaitlistEnabled.animation())
                     .font(.body.weight(.semibold))
             }
             
             HStack {
                 InfoButton(action: { alertItem = AlertContext.registrationCutoffInfo })
                 
-                Toggle("Registration cutoff", isOn: $registrationcutoff.animation())
+                Toggle("Registration cutoff", isOn: $isRegistrationDeadlineEnabled.animation())
                     .font(.body.weight(.semibold))
             }
         }
         .listRowBackground(Color.mixerSecondaryBackground)
     }
     
-    func setDefaultOptions(visibility: CreateEventViewModel.VisibilityType, invitePreference: CreateEventViewModel.InvitePreferrence, checkInMethod: CheckInMethod, useGuestList: Bool) {
+    func setDefaultOptions(visibility: CreateEventViewModel.VisibilityType, invitePreference: CreateEventViewModel.InvitePreferrence, checkInMethod: CheckInMethod) {
         selectedVisibility = visibility
         selectedInvitePreferrence = invitePreference
         selectedCheckInMethod = checkInMethod
-        self.useGuestList = useGuestList
     }
 }
 

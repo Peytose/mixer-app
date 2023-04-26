@@ -11,14 +11,16 @@ import FirebaseFirestore
 
 struct Mockdata {
     static var user: User {
-        return User(id: "5aAWqFni8iMhj8MyZ4lGQgapfxo1",
+        return User(id: "",
                     dateJoined: Timestamp(date: Date()),
                     username: "test_user",
                     email: "test@email.edu",
                     profileImageUrl: "https://images.squarespace-cdn.com/content/v1/53ed0e3ce4b0c296acaeae80/1584577511464-8FDZYWQVXUI1OBS4VTZP/Bonneville14082-Edit-DHWEB%2BNick%2BFerguson%2BDenver%2BBroncos%2BHeadshot%2BPhotography%2Bby%2BAaron%2BLucy%2BDenver%2BColorado%2BHeadshots%2BPhotographer.jpg?format=2500w",
                     name: "William",
                     birthday: Timestamp(date: Date(timeIntervalSince1970: 1028578547)),
-                    university: "Mississippi State University",
+                    universityData: ["name": "Mississippi State University",
+                                     "uid": ""],
+                    userOptions: [UserOption.showAgeOnProfile.rawValue: true],
                     instagramHandle: "mixerpartyapp",
                     bio: "This is an example bio. Here it is. I'm making it purposely long, so I can see how it looks on a profile.")
     }
@@ -43,12 +45,13 @@ struct Mockdata {
                      eventOptions: [EventOption.containsAlcohol.rawValue: false,
                                     EventOption.isInviteOnly.rawValue: true,
                                     EventOption.isManualApprovalEnabled.rawValue: false,
+                                    EventOption.isGuestlistEnabled.rawValue: true,
                                     EventOption.isGuestLimitEnabled.rawValue: false,
                                     EventOption.isWaitlistEnabled.rawValue: false,
                                     EventOption.isMemberInviteLimitEnabled.rawValue: true,
                                     EventOption.isGuestInviteLimitEnabled.rawValue: true,
                                     EventOption.isRegistrationDeadlineEnabled.rawValue: false,
-                                    EventOption.isCheckInOptionsEnabled.rawValue: true])
+                                    EventOption.isCheckInEnabled.rawValue: true])
     }
     
     static var host: Host {

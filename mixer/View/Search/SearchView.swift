@@ -85,13 +85,15 @@ fileprivate struct UserSearchCell: View {
                     
                     Spacer()
                     
-                    Image(systemName: "graduationcap.fill")
-                        .imageScale(.small)
-                        .foregroundColor(.secondary)
-                    
-                    Text("\(user.university)")
-                        .font(.subheadline.weight(.medium))
-                        .foregroundColor(.secondary)
+                    if let university = user.universityData["name"] {
+                        Image(systemName: "graduationcap.fill")
+                            .imageScale(.small)
+                            .foregroundColor(.secondary)
+                        
+                        Text("\(university)")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 HStack {

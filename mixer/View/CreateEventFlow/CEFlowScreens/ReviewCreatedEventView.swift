@@ -62,13 +62,14 @@ struct ReviewCreatedEventView: View {
                             .font(.callout)
                     }
 
-                    
-                    HStack {
-                        EventDetailRow(title: "Check-in Method",
-                                       value: viewModel.checkInMethod2.rawValue)
-                        
-                        Image(systemName: viewModel.checkInMethod2 == .qrCode ? "qrcode" : "rectangle.and.pencil.and.ellipsis")
-                            .font(.callout)
+                    if let checkInMethod = viewModel.checkInMethod {
+                        HStack {
+                            EventDetailRow(title: "Check-in Method",
+                                           value: checkInMethod.rawValue)
+                            
+                            Image(systemName: checkInMethod.icon)
+                                .font(.callout)
+                        }
                     }
                 }
                 
@@ -81,14 +82,14 @@ struct ReviewCreatedEventView: View {
                     EventDetailRow(title: "Ends",
                                    value: "\(Timestamp(date: viewModel.endDate).getTimestampString(format: "EEEE, MMM d + h:mm a").replacingOccurrences(of: "+", with: "at"))")
                     
-                    if let deadline = viewModel.registrationDeadlineDate, viewModel.isRegistrationDeadlineEnabled {
+                    if let deadline = viewModel.registrationDeadlineDate, viewModel.eventOptions[EventOption.isRegistrationDeadlineEnabled.rawValue] ?? false {
                         EventDetailRow(title: "Deadline",
                                        value: "\(Timestamp(date: deadline).getTimestampString(format: "EEEE, MMM d + h:mm a").replacingOccurrences(of: "+", with: "at"))")
                     }
                     
-                    if viewModel.usePublicAddress {
+                    if viewModel.eventOptions[EventOption.hasPublicAddress.rawValue] ?? false {
                         HStack(alignment: .top) {
-                            Text("Public Location:")
+                            Text("Public Address:")
                                 .font(.title3)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.white)
@@ -130,27 +131,27 @@ struct ReviewCreatedEventView: View {
                                        text: "Free")
                     }
                     
-                    if viewModel.isManualApprovalEnabled {
+                    if viewModel.eventOptions[EventOption.isManualApprovalEnabled.rawValue] ?? false {
                         EventOptionRow(text: "Manual approval enabled")
                     }
                     
-                    if viewModel.isWaitlistEnabled {
+                    if viewModel.eventOptions[EventOption.isWaitlistEnabled.rawValue] ?? false {
                         EventOptionRow(text: "Waitlist pre-enabled")
                     }
                     
-                    if viewModel.isGuestLimitEnabled {
+                    if viewModel.eventOptions[EventOption.isGuestLimitEnabled.rawValue] ?? false {
                         EventOptionRow(text: "Guest limit: \(viewModel.guestLimit)")
                     }
                     
-                    if viewModel.isMemberInviteLimitEnabled {
+                    if viewModel.eventOptions[EventOption.isMemberInviteLimitEnabled.rawValue] ?? false {
                         EventOptionRow(text: "Member invite limit: \(viewModel.memberInviteLimit)")
                     }
                     
-                    if viewModel.isGuestInviteLimitEnabled {
+                    if viewModel.eventOptions[EventOption.isGuestInviteLimitEnabled.rawValue] ?? false {
                         EventOptionRow(text: "Guest invite limit: \(viewModel.guestInviteLimit)")
                     }
                     
-                    if let method = viewModel.checkInMethod?.rawValue, viewModel.isCheckInOptionsEnabled {
+                    if let method = viewModel.checkInMethod?.rawValue, viewModel.eventOptions[EventOption.isCheckInEnabled.rawValue] ?? false {
                         EventOptionRow(text: "Check-in option: \(method)")
                     }
                     

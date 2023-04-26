@@ -21,9 +21,10 @@ struct CachedUser: Hashable, Identifiable, Codable {
     let email: String
     var profileImageUrl: String
     var birthday: Timestamp
-    var university: String
+    var universityData: [String: String]
     
     // Additional Information
+    var userOptions: [String: Bool]
     var instagramHandle: String?
     var bio: String?
     var age: Int?
@@ -46,7 +47,8 @@ struct CachedUser: Hashable, Identifiable, Codable {
         self.email           = user.email
         self.profileImageUrl = user.profileImageUrl
         self.birthday        = user.birthday
-        self.university      = user.university
+        self.universityData  = user.universityData
+        self.userOptions     = user.userOptions
         self.instagramHandle = user.instagramHandle
         self.bio             = user.bio
         

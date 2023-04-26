@@ -13,7 +13,6 @@ struct ProfileSettingsView: View {
     @Environment(\.presentationMode) var mode
     @ObservedObject var viewModel: ProfileViewModel
     @State var isShowingMailView: Bool     = false
-    @State var isPublic: Bool              = false
     @State var showAlert: Bool             = false
     @State var imagePickerPresented: Bool  = false
     
@@ -95,43 +94,40 @@ struct ProfileSettingsView: View {
                         
                     }
                     
-                    Section(header: Text("Privacy").fontWeight(.semibold)) {
-                        Toggle("Show age on profile?", isOn: $isPublic.animation())
-                            .font(.body.weight(.medium))
-                            .foregroundColor(isPublic ? .white : .secondary)
+                    Section {
+                        Toggle("Show age on profile?", isOn: $viewModel.user.userOptions.binding(for: UserOption.showAgeOnProfile.rawValue).animation())
+                            .font(.body)
+                            .fontWeight(.medium)
+                            .foregroundColor(.white)
                             .listRowBackground(Color.mixerSecondaryBackground)
+                    } header: {
+                        Text("Privacy")
+                            .fontWeight(.semibold)
                     }
-                    .listRowBackground(Color.mixerSecondaryBackground)
                     
-                    Section(header: Text("Feedback & Support").fontWeight(.semibold),
-                            footer: Text("Yes, these are the same link. We're lazy ...")) {
+                    Section {
                         LinkRow(linkUrl: viewModel.supportLink,
                                 title: "Feature Request",
                                 icon: "wand.and.stars")
                         .listRowBackground(Color.mixerSecondaryBackground)
-                        .sheet(isPresented: $isShowingMailView) {
-                            MailView(isShowing: self.$isShowingMailView, subject: "Feature Request")
-                        }
                         
                         LinkRow(linkUrl: viewModel.supportLink,
                                 title: "Report a Bug",
                                 icon: "ant")
                         .listRowBackground(Color.mixerSecondaryBackground)
-                        .sheet(isPresented: $isShowingMailView) {
-                            MailView(isShowing: self.$isShowingMailView, subject: "Bug Report")
-                        }
                         
                         LinkRow(linkUrl: viewModel.supportLink,
                                 title: "Questions",
                                 icon: "questionmark.circle")
                         .listRowBackground(Color.mixerSecondaryBackground)
-                        .sheet(isPresented: $isShowingMailView) {
-                            MailView(isShowing: self.$isShowingMailView, subject: "Question")
-                        }
+                    } header: {
+                        Text("Feedback & Support")
+                            .fontWeight(.semibold)
+                    } footer: {
+                        Text("Yes, these are the same link. We're lazy ...")
                     }
 
-                    Section(header: Text("Legal & Policies").fontWeight(.semibold),
-                            footer: Text("")) {
+                    Section {
                         LinkRow(linkUrl: viewModel.supportLink,
                                 title: "Privacy Policy",
                                 icon: "lock.doc")
@@ -142,14 +138,17 @@ struct ProfileSettingsView: View {
                                 title: "Terms of Service",
                                 icon: "doc.plaintext")
                         .listRowBackground(Color.mixerSecondaryBackground)
+                    } header: {
+                        Text("Legal & Policies")
+                            .fontWeight(.semibold)
                     }
                     
                     Section {
                         SettingRow(title: "Version",
                                    content: viewModel.getVersion(),
                                    icon: "info.circle")
+                        .listRowBackground(Color.mixerSecondaryBackground)
                     }
-                    .listRowBackground(Color.mixerSecondaryBackground)
                     
                     Section {
                         Button { AuthViewModel.shared.signOut() } label: {
@@ -157,7 +156,6 @@ struct ProfileSettingsView: View {
                         }
                         .listRowBackground(Color.mixerSecondaryBackground)
                     }
-
                     
                     Section(footer: EasterEggView(text: viewModel.getDateJoined())) { }
                 }

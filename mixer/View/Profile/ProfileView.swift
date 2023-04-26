@@ -212,12 +212,12 @@
 //    }
 //}
 //
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileView(viewModel: ProfileViewModel(user: CachedUser(from: Mockdata.user)))
-            .preferredColorScheme(.dark)
-    }
-}
+//struct ProfileView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ProfileView(viewModel: ProfileViewModel(user: CachedUser(from: Mockdata.user)))
+//            .preferredColorScheme(.dark)
+//    }
+//}
 //
 //fileprivate struct ProfileCornerButton: View {
 //    let action: () -> Void
@@ -283,7 +283,7 @@ struct ProfileView: View {
             ScrollView(showsIndicators: false) {
                 StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl, namespace: namespace)
                     .overlay(alignment: .topTrailing) {
-                        HStack(spacing: viewModel.user.isCurrentUser ? 15 : 2) {
+                        HStack(spacing: viewModel.user.isCurrentUser ? 15 : 15) {
                             if viewModel.user.isCurrentUser {
                                 ProfileCornerButton(isOn: $showNotifications, icon: "bell")
                                     .overlay(alignment: .topTrailing) {
@@ -295,26 +295,29 @@ struct ProfileView: View {
                                 .padding(.trailing)
                             } else {
                                 if let relationship = viewModel.user.relationshiptoUser {
-                                    ProfileRelationButton(action: {
-                                        switch relationship {
-                                        case .notFriends:
-                                            viewModel.sendFriendRequest()
-                                        case .receivedRequest:
-                                            viewModel.acceptFriendRequest()
-                                        default:
-                                            viewModel.cancelFriendRequest()
+                                    HStack(alignment: .center, spacing: 5) {
+                                        ProfileRelationButton(icon: relationship.buttonSystemImage, color: .primary) {
+                                            switch relationship {
+                                            case .friends, .sentRequest:
+                                                viewModel.cancelFriendRequest()
+                                            case .receivedRequest:
+                                                viewModel.acceptFriendRequest()
+                                            case .notFriends:
+                                                viewModel.sendFriendRequest()
+                                            }
                                         }
-                                    }, icon: relationship.buttonSystemImage, color: .blue)
-                                    .overlay(alignment: .center) {
-                                        if relationship == UserRelationship.receivedRequest {
-                                            ProfileRelationButton(action: viewModel.cancelFriendRequest, icon: "person.fill.xmark", color: .pink)
-                                                .padding(.bottom, 100)
+                                        
+                                        if relationship == .receivedRequest {
+                                            ProfileRelationButton(icon: "xmark", color: .red) {
+                                                viewModel.cancelFriendRequest()
+                                            }
                                         }
                                     }
                                 }
                                 
                                 ProfileCornerButton(isOn: $showOptions,
                                                     icon: "ellipsis")
+                                
                             }
                         }
                         .padding(.horizontal)
@@ -330,10 +333,6 @@ struct ProfileView: View {
                               isFriends: $isFriends,
                               namespace: namespace,
                               selectedEvent: $selectedEvent)
-                
-                
-                    .buttonStyle(.plain)
-                    .padding(.top, -10)
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
@@ -367,17 +366,16 @@ struct ProfileView: View {
     }
 }
 
-//struct UserProfileView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        UserProfileView(tabBarVisibility: .constant(.visible), viewModel: OtherUserProfileViewModel(), user: users[3])
-//
-//    }
-//}
+struct UserProfileView_Previews: PreviewProvider {
+    static var previews: some View {
+        ProfileView(viewModel: ProfileViewModel(user: CachedUser(from: Mockdata.user)))
+    }
+}
 
 fileprivate struct ProfileRelationButton: View {
-    let action: () -> Void
     let icon: String
     let color: Color
+    let action: () -> Void
     
     var body: some View {
         Button {
@@ -413,10 +411,10 @@ fileprivate struct ProfileCornerButton: View {
             withAnimation(.spring()) { isOn.toggle() }
         } label: {
             Image(systemName: icon)
-                .resizable()
-                .scaledToFit()
+                .font(.title2)
+                .fontWeight(.medium)
                 .foregroundColor(Color.mainFont)
-                .frame(width: 20)
+                .shadow(radius: 5, y: 8)
         }
     }
 }
@@ -444,7 +442,7 @@ fileprivate struct ProfileInfo: View {
                                     }
                                 }
                             
-                            if let age = user.age {
+                            if let age = user.age, user.userOptions[UserOption.showAgeOnProfile.rawValue] ?? false {
                                 Text("\(age)")
                                     .font(.title)
                                     .fontWeight(.light)
@@ -463,18 +461,20 @@ fileprivate struct ProfileInfo: View {
                         }
                     }
                     
-                    HStack {
-                        Image(systemName: "graduationcap.fill")
-                            .resizable()
-                            .scaledToFill()
-                            .foregroundColor(.white)
-                            .frame(width: 15, height: 15)
-                        
-                        Text(user.university)
-                            .foregroundColor(.secondary)
-                            .font(.body)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
+                    if let university = user.universityData["name"] {
+                        HStack {
+                            Image(systemName: "graduationcap.fill")
+                                .resizable()
+                                .scaledToFill()
+                                .foregroundColor(.white)
+                                .frame(width: 15, height: 15)
+                            
+                            Text(university)
+                                .foregroundColor(.secondary)
+                                .font(.body)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.75)
+                        }
                     }
                     
                     if let memberHosts = user.memberHosts {

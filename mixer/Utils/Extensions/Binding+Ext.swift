@@ -15,3 +15,12 @@ extension Binding where Value == Bool {
         )
     }
 }
+
+extension Binding where Value == [String: Bool] {
+    func binding(for key: String) -> Binding<Bool> {
+        return Binding<Bool>(
+            get: { self.wrappedValue[key] ?? false },
+            set: { newValue in self.wrappedValue[key] = newValue }
+        )
+    }
+}

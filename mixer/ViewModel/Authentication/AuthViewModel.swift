@@ -18,7 +18,7 @@ class AuthViewModel: ObservableObject {
     @Published var name                      = ""
     @Published var email                     = ""
     @Published var emailCode                 = ""
-    @Published var university                = ""
+    @Published var universityData            = [String: String]()
     @Published var phoneNumber               = ""
     @Published var countryCode               = ""
     @Published var code                      = ""
@@ -34,7 +34,7 @@ class AuthViewModel: ObservableObject {
     @Published var active                    = Screen.allCases.first!
     @Published var alertItem: AlertItem?
     @Published var isLoading: Bool = false
-    var hosts = [Host]()
+    var hosts = [CachedHost]()
     
     static let shared = AuthViewModel()
     
@@ -137,14 +137,15 @@ class AuthViewModel: ObservableObject {
     
     
     private func fetchHost(uid: String) {
-        COLLECTION_HOSTS.whereField("members", arrayContains: uid).getDocuments { snapshot, error in
+        COLLECTION_HOSTS.document(uid).getDocument { snapshot, error in
             if let error = error {
                 print("DEBUG: Error fetching host. \(error.localizedDescription)")
                 return
             }
             
-            guard let documents = snapshot?.documents else { return }
-            self.hosts = documents.compactMap({ try? $0.data(as: Host.self) })
+            guard let host = try? snapshot?.data(as: Host.self) else { return }
+            self.hosts.append(CachedHost(from: host))
+            print("DEBUG: Host fetched from user: \(self.hosts)")
         }
     }
     
@@ -206,10 +207,7 @@ class AuthViewModel: ObservableObject {
                             
                             guard let user = authResult?.user else { return }
                             self.userSession = user
-                            print("DEBUG: Sucessfully linked email! Moving to next screen ...")
-                            if self.fetchUniversity() {
-                                self.next()
-                            }
+                            self.next()
                         }
                     }
                 }
@@ -288,7 +286,8 @@ class AuthViewModel: ObservableObject {
                         "username": self.username.lowercased(),
                         "birthday": Timestamp(date: self.birthday),
                         "gender": self.gender,
-                        "university": self.university,
+                        "universityData": self.universityData,
+                        "userOptions": [UserOption.showAgeOnProfile.rawValue: true],
                         "uid": uid,
                         "dateJoined": Timestamp()] as [String : Any]
             
@@ -300,31 +299,49 @@ class AuthViewModel: ObservableObject {
     }
     
     
-    private func fetchUniversity() -> Bool {
-        var isFinishedLoading = false
-        if email.isValidEmail { return isFinishedLoading }
+    func updateCurrentUser(user: CachedUser) {
+        self.currentUser = user
+        print("DEBUG: Current user updated.")
+    }
+    
+    
+    private func fetchUniversity(completion: @escaping (Bool) -> Void) {
+        if email.isValidEmail {
+            completion(false)
+            return
+        }
+
         let emailComponents = email.split(separator: "@")
-        
-        if emailComponents.count != 2 { return isFinishedLoading }
+        if emailComponents.count != 2 {
+            completion(false)
+            return
+        }
+
         let domain = String(emailComponents[1])
-        
+        print("DEBUG: Domain from email: \(domain)")
+
         COLLECTION_UNIVERSITIES.whereField("domain", isEqualTo: domain).getDocuments { snapshot, error in
             if let error = error {
                 print("DEBUG: Error getting domain from email. \(error.localizedDescription)")
+                completion(false)
                 return
             }
-            
-            guard let documents = snapshot?.documents else { return }
-            
-            if let university = documents.first?["name"] as? String {
-                self.university = university
+
+            guard let documents = snapshot?.documents, let document = documents.first else {
+                completion(false)
                 return
             }
-            
-            isFinishedLoading = true
+
+            if let universityName = document["name"] as? String, let universityUID = document.documentID as String? {
+                self.universityData = ["name": universityName,
+                                       "uid": universityUID]
+                // Save the universityData dictionary to the user document
+                completion(true)
+                return
+            }
+
+            completion(false)
         }
-        
-        return isFinishedLoading
     }
     
     

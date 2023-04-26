@@ -46,7 +46,7 @@ class UserCache {
         let users = documents.compactMap({ try? $0.data(as: User.self) })
         print("DEBUG: Found user(s) on Firebase! \(users)")
         // Store in cache
-        var cachedUsers = users.compactMap { CachedUser(from: $0.self) }
+        let cachedUsers = users.compactMap { CachedUser(from: $0.self) }
         print("DEBUG: Users from firebase for cache: \(cachedUsers)")
         
         try cache.write(codable: cachedUsers, forKey: "users")
@@ -68,7 +68,7 @@ class UserCache {
         print("DEBUG: getUser() executed. host: \(user)")
         // Store in cache
         let cachedUser = CachedUser(from: user)
-        try await cacheUser(cachedUser)
+        try cacheUser(cachedUser)
         
         return cachedUser
     }

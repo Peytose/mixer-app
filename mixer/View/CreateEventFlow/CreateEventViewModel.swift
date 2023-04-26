@@ -10,16 +10,30 @@ import FirebaseFirestoreSwift
 import Firebase
 
 enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
-    case qrCode = "QR Code"
-    case manual = "Manual"
+    case qrCode   = "QR Code"
+    case manual   = "Manual"
+    case outOfApp = "Out-of-app"
     
     var icon: String {
         switch self {
         case .qrCode: return "qrcode"
         case .manual: return "pencil.line"
+        case .outOfApp: return "square.and.arrow.up"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .qrCode:
+            return "Guests can use the app to scan a QR code at the event to check in quickly and easily."
+        case .manual:
+            return "Hosts can manually check in guests by entering their information into a form within the app. This option is useful for guests who don't have the app or can't scan a QR code."
+        case .outOfApp:
+            return "Hosts can handle check-in outside the app. This option is useful if hosts are using a third-party check-in system or if they prefer to handle check-in manually outside the app."
         }
     }
 }
+
 
 final class CreateEventViewModel: ObservableObject {
     @Published var title: String                       = ""
@@ -31,25 +45,25 @@ final class CreateEventViewModel: ObservableObject {
     @Published var endDate: Date                       = Date().addingTimeInterval(80600)
     @Published var address: String                     = ""
     @Published var publicAddress: String               = ""
-    @Published var usePublicAddress: Bool              = false
     @Published var selectedAmenities: Set<EventAmenities> = []
     @Published var type: EventType                     = .kickback
     @Published var privacy: InvitePreferrence          = .open
     @Published var visibility: VisibilityType          = ._public
-    @Published var checkInMethod2: CheckInMethod       = .manual
-    @Published var isGuestListEnabled: Bool            = false
-    @Published var isManualApprovalEnabled: Bool       = false
-    @Published var isGuestLimitEnabled: Bool           = false
-    @Published var isWaitlistEnabled: Bool             = false
-    @Published var isMemberInviteLimitEnabled: Bool    = false
-    @Published var isGuestInviteLimitEnabled: Bool     = false
-    @Published var isRegistrationDeadlineEnabled: Bool = false
-    @Published var isCheckInOptionsEnabled: Bool       = false
+    @Published var eventOptions: [String: Bool]        = ["containsAlcohol": false,
+                                                          "isInviteOnly": false,
+                                                          "hasPublicAddress": false,
+                                                          "isManualApprovalEnabled": false,
+                                                          "isGuestLimitEnabled": false,
+                                                          "isWaitlistEnabled": false,
+                                                          "isMemberInviteLimitEnabled": false,
+                                                          "isGuestInviteLimitEnabled": false,
+                                                          "isRegistrationDeadlineEnabled": false,
+                                                          "isCheckInEnabled": false]
     @Published var isLoading: Bool                     = false
     @Published var active: Screen                      = Screen.allCases.first!
     
     @Published var registrationDeadlineDate: Date?
-    @Published var checkInMethod: CheckInMethod?
+    @Published var checkInMethod: CheckInMethod?       = .manual
     @Published var image: UIImage?
     
     @Published var cost: Float?
@@ -128,9 +142,9 @@ final class CreateEventViewModel: ObservableObject {
                 return
             }
             
-            let data: [String: Any] = ["title": self.title,
+            var data: [String: Any] = ["title": self.title,
                                        "description": self.description,
-                                       "hostUuid": host.id as Any,
+                                       "hostUuid": host.id as String? ?? "",
                                        "hostUsername": host.username,
                                        "guestLimit": self.guestLimit,
                                        "guestInviteLimit": self.guestInviteLimit,
@@ -138,22 +152,17 @@ final class CreateEventViewModel: ObservableObject {
                                        "startDate": Timestamp(date: self.startDate),
                                        "endDate": Timestamp(date: self.endDate),
                                        "address": self.address,
-                                       "selectedAmenities": Array(self.selectedAmenities.map { $0.rawValue }),
-                                       "privacy": self.privacy.rawValue,
-                                       "isManualApprovalEnabled": self.isManualApprovalEnabled,
-                                       "isGuestLimitEnabled": self.isGuestLimitEnabled,
-                                       "isWaitlistEnabled": self.isWaitlistEnabled,
-                                       "isMemberInviteLimitEnabled": self.isMemberInviteLimitEnabled,
-                                       "isGuestInviteLimitEnabled": self.isGuestInviteLimitEnabled,
-                                       "isRegistrationDeadlineEnabled": self.isRegistrationDeadlineEnabled,
-                                       "isCheckInOptionsEnabled": self.isCheckInOptionsEnabled,
+                                       "amenities": Array(self.selectedAmenities.map { $0.rawValue }),
+                                       "eventOptions": self.eventOptions,
                                        "registrationDeadlineDate": Timestamp(date: self.registrationDeadlineDate ?? self.endDate),
-                                       "checkInMethod": self.checkInMethod?.rawValue as Any,
                                        "eventImageUrl": imageUrl,
                                        "type": self.type.rawValue,
-                                       "cost": self.cost as Any,
-                                       "alcoholPresence": self.alcoholPresence as Any,
+                                       "cost": self.cost as Float? ?? 0,
                                        "timePosted": Timestamp()]
+            
+            if let checkInMethod = self.checkInMethod?.rawValue {
+                data["checkInMethod"] = checkInMethod
+            }
             
             let newDocRef = COLLECTION_EVENTS.addDocument(data: data) { error in
                 if let error = error {

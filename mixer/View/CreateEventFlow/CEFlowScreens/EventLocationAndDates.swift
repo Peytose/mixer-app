@@ -15,13 +15,13 @@ struct EventLocationAndDates: View {
     @Binding var endDate: Date
     @Binding var address: String
     @Binding var publicAddress: String
-    @Binding var usePublicAddress: Bool
+    @Binding var hasPublicAddress: Bool
+    
     @State private var showSearch = true
     @FocusState private var addressSearchIsFocused: Bool
     @State private var useDefaultAddress = false
     @State private var selectedLocation: IdentifiableLocation?
     @State private var PickerAddress: String = "528 Beacon St"
-    
     @State var showingPicker = false
     let action: () -> Void
     
@@ -63,7 +63,7 @@ struct EventLocationAndDates: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    AddressPickerView(usePublicAddress: $usePublicAddress, publicAddress: $publicAddress, address: $address)
+                    AddressPickerView(hasPublicAddress: $hasPublicAddress, publicAddress: $publicAddress, address: $address)
                 }
             }
             .padding()
@@ -79,12 +79,12 @@ struct EventLocationAndDates: View {
     }
 }
 
-struct EventLocationAndDates_Previews: PreviewProvider {
-    static var previews: some View {
-        EventLocationAndDates(startDate: .constant(Date.now), endDate: .constant(Date().addingTimeInterval(3700)), address: .constant(""), publicAddress: .constant(""), usePublicAddress: .constant(false)) {}
-            .preferredColorScheme(.dark)
-    }
-}
+//struct EventLocationAndDates_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EventLocationAndDates(startDate: .constant(Date.now), endDate: .constant(Date().addingTimeInterval(3700)), address: .constant(""), publicAddress: .constant(""), usePublicAddress: .constant(false)) {}
+//            .preferredColorScheme(.dark)
+//    }
+//}
 
 fileprivate struct CustomDateSelection: View {
     let text: String
@@ -120,7 +120,7 @@ struct AddressPickerView: View {
     @State private var selectedMapItem: MKMapItem?
     @State private var selectedCoordinate = CLLocationCoordinate2D()
     @State private var showingPicker = false
-    @Binding var usePublicAddress: Bool
+    @Binding var hasPublicAddress: Bool
     @Binding var publicAddress: String
     @Binding var address: String
     var body: some View {
@@ -149,12 +149,13 @@ struct AddressPickerView: View {
                 .font(.footnote)
                 .foregroundColor(.secondary)
             
-            Toggle("Set public address", isOn: $usePublicAddress.animation())
-                .font(.body.weight(.semibold))
+            Toggle("Set public address", isOn: $hasPublicAddress.animation())
+                .font(.body)
+                .fontWeight(.semibold)
                 .tint(Color.mixerIndigo)
                 .padding(.bottom, 4)
             
-            if usePublicAddress {
+            if hasPublicAddress {
                 CreateEventTextField(input: $publicAddress, placeholder: "Back Bay, Boston", footnote: "Loosely describe the area. Shown to all users", keyboard: .default)
             }
             

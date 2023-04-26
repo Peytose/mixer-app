@@ -114,7 +114,6 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
             } catch {
 //                alertItem = AlertContext.unableToGetMapItems
                 print("DEBUG: Error getting event. \(error)")
-                EventCache.shared.remove(byKey: "7uJM0wfC29lNtqjeVktM")
             }
         }
     }

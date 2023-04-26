@@ -31,10 +31,9 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    
     init(user: CachedUser) {
         self.user = user
-        getUserRelationship()
+//        getUserRelationship()
         print("DEBUG: profile init ran")
         //        fetchUsersStats()
     }
@@ -163,8 +162,16 @@ class ProfileViewModel: ObservableObject {
         case instagram
     }
     
+    
     func save(for type: ProfileSaveType) {
-        guard let uid = user.id else { return }
+        self.save(for: type) {
+            self.cacheUser()
+            AuthViewModel.shared.updateCurrentUser(user: self.user)
+        }
+    }
+    
+    private func save(for type: ProfileSaveType, completion: @escaping () -> Void) {
+        guard let uid = AuthViewModel.shared.currentUser?.id else { return }
         
         switch type {
         case .name:
@@ -172,6 +179,7 @@ class ProfileViewModel: ObservableObject {
             
             COLLECTION_USERS.document(uid).updateData(["name": self.name]) { _ in
                 self.user.name = self.name
+                completion()
             }
         case .image:
             guard let image = self.selectedImage else {
@@ -183,6 +191,7 @@ class ProfileViewModel: ObservableObject {
                 COLLECTION_USERS.document(uid).updateData(["profileImageUrl": imageUrl]) { _ in
                     print("DEBUG: ✅ Succesfully updated profile image ...")
                     self.user.profileImageUrl = imageUrl
+                    completion()
                 }
             }
         case .bio:
@@ -190,16 +199,21 @@ class ProfileViewModel: ObservableObject {
             
             COLLECTION_USERS.document(uid).updateData(["bio": self.bio]) { _ in
                 self.user.bio = self.bio
+                completion()
             }
         case .instagram:
             guard self.instagramHandle != "" else { return }
             
             COLLECTION_USERS.document(uid).updateData(["instagramHandle": self.instagramHandle]) { _ in
                 self.user.instagramHandle = self.instagramHandle
+                completion()
             }
         }
         
         cacheUser()
+        
+        // Update currentUser in AuthViewModel
+        AuthViewModel.shared.updateCurrentUser(user: self.user)
     }
     
     private func cacheUser() {

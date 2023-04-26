@@ -38,6 +38,10 @@ enum HostPrivileges: String, Codable {
     case premium = "Premium"
 }
 
+enum UserOption: String, Codable {
+    case showAgeOnProfile = "showAgeOnProfile"
+}
+
 
 struct User: Identifiable, Codable {
     // Metadata
@@ -50,9 +54,10 @@ struct User: Identifiable, Codable {
     var profileImageUrl: String
     var name: String
     var birthday: Timestamp
-    let university: String
+    let universityData: [String: String]
     
     // Additional Information
+    var userOptions: [String: Bool]
     var instagramHandle: String?
     var bio: String?
     

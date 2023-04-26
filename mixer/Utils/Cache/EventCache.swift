@@ -130,7 +130,7 @@ class EventCache {
             } else {
                 // If no documents exist, return an empty array
                 // Also remove the cached event ids to avoid returning an empty result next time
-                cache.clean(byKey: key)
+//                cache.clean(byKey: key)
                 return []
             }
         }

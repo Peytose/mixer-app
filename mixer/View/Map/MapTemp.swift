@@ -11,8 +11,9 @@ import CoreLocationUI
 
 struct MapTemp: View {
     @ObservedObject var viewModel = MapViewModel()
-    @State var isShowingDetailView: Bool    = false
-    @State var isShowingGuestListView: Bool = false
+    @State var isShowingDetailView: Bool      = false
+    @State var isShowingGuestlistView: Bool   = false
+    @State var isShowingCreateEventView: Bool = false
     @State private var selectedEvent: CachedEvent?
     @State private var selectedHost: CachedHost?
     @State private var progress: CGFloat = 0
@@ -79,14 +80,21 @@ struct MapTemp: View {
                 }
             }
         }
-        .sheet(isPresented: $isShowingGuestListView) {
+        .sheet(isPresented: $isShowingGuestlistView) {
             if let eventId = viewModel.hostEvents.first?.value.id, !viewModel.hostEvents.isEmpty {
                 GuestlistView(viewModel: GuestlistViewModel(eventUid: eventId))
             }
         }
+        .sheet(isPresented: $isShowingCreateEventView) {
+            CreateEventFlow()
+        }
         .overlay(alignment: .topTrailing) {
             if let isHost = AuthViewModel.shared.currentUser?.isHost {
-                MapIconButton(icon: "list.clipboard", hasLargerSize: isHost) { isShowingGuestListView.toggle() }
+                VStack(alignment: .trailing, spacing: 10) {
+                    MapIconButton(icon: "list.clipboard", hasLargerSize: isHost) { isShowingGuestlistView.toggle() }
+                    
+                    MapIconButton(icon: "plus", hasLargerSize: isHost) { isShowingCreateEventView.toggle() }
+                }
                 .padding(.trailing)
                 .padding(.top)
             }
