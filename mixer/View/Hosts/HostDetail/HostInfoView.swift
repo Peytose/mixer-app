@@ -13,7 +13,7 @@ struct HostInfoView: View {
     let coordinates: CLLocationCoordinate2D?
     
     var namespace: Namespace.ID
-    @Binding var isFollowing: Bool
+//    @Binding var isFollowing: Bool
     @ObservedObject var viewModel: HostDetailViewModel
     @State var showMore = false
     @State var appear = [false, false, false]
@@ -23,7 +23,6 @@ struct HostInfoView: View {
             
             VStack(alignment: .leading, spacing: 10) {
                 NameAndLinksRow(host: host,
-                                isFollowing: $isFollowing,
                                 namespace: namespace)
                 
                 if let bio = host.bio {
@@ -123,7 +122,7 @@ struct HostInfoView: View {
 
 fileprivate struct NameAndLinksRow: View {
     let host: CachedHost
-    @Binding var isFollowing: Bool
+//    @Binding var isFollowing: Bool
     @State var showUsername = false
     var namespace: Namespace.ID
     
@@ -163,29 +162,30 @@ fileprivate struct NameAndLinksRow: View {
                         .matchedGeometryEffect(id: "website-\(host.username)", in: namespace)
                 }
                 
-                Text(isFollowing ? "Following" : "Follow")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundColor(isFollowing ? .white : .black)
-                    .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
-                    .background {
-                        if isFollowing {
-                            Capsule()
-                                .stroke()
-                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
-                        } else {
-                            Capsule()
-                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
-                        }
-                        
-                    }
-                    .onTapGesture {
-                        let impact = UIImpactFeedbackGenerator(style: .light)
-                        impact.impactOccurred()
-                        withAnimation(.follow) {
-                            isFollowing.toggle()
-                        }
-                    }
-                    .matchedGeometryEffect(id: "follow-button-\(host.username)", in: namespace)
+                //MARK: Follow button (debug report: This file is irrelevant, needs to merge with other NameAndLinksRow)
+//                Text(isFollowing ? "Following" : "Follow")
+//                    .font(.footnote.weight(.semibold))
+//                    .foregroundColor(isFollowing ? .white : .black)
+//                    .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
+//                    .background {
+//                        if isFollowing {
+//                            Capsule()
+//                                .stroke()
+//                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
+//                        } else {
+//                            Capsule()
+//                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
+//                        }
+//
+//                    }
+//                    .onTapGesture {
+//                        let impact = UIImpactFeedbackGenerator(style: .light)
+//                        impact.impactOccurred()
+//                        withAnimation(.follow) {
+//                            isFollowing.toggle()
+//                        }
+//                    }
+//                    .matchedGeometryEffect(id: "follow-button-\(host.username)", in: namespace)
             }
         }
     }
@@ -215,7 +215,6 @@ struct HostLinkIcon: View {
 }
 
 fileprivate struct FriendsWhoFollowView: View {
-    
     var body: some View {
         HStack {
             HStack(spacing: -8) {

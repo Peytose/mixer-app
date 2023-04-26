@@ -13,7 +13,7 @@ import FirebaseFirestore
 struct HostDetailView: View {
     @ObservedObject var viewModel: HostDetailViewModel
     var namespace: Namespace.ID
-    @State var isFollowing  = false
+//    @State var isFollowing  = false
     @State var showUsername = false
     
     init(viewModel: HostDetailViewModel, namespace: Namespace.ID) {
@@ -29,7 +29,6 @@ struct HostDetailView: View {
                 HostInfoView(host: viewModel.host,
                              coordinates: viewModel.coordinates,
                              namespace: namespace,
-                             isFollowing: $isFollowing,
                              viewModel: viewModel)
             }
             .padding(.bottom, 180)

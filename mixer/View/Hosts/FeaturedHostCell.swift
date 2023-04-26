@@ -19,7 +19,7 @@ struct FeaturedHostCell: View {
             Spacer()
             
             VStack(alignment: .leading, spacing: 10) {
-                NameAndLinksRow(host: host, isFollowing: $isFollowing, namespace: namespace)
+                NameAndLinksRow(host: host, namespace: namespace)
                 
                 if let bio = host.bio {
                     Text(bio)
@@ -111,7 +111,7 @@ struct PlaceholderHostCard: View {
 
 fileprivate struct NameAndLinksRow: View {
     let host: CachedHost
-    @Binding var isFollowing: Bool
+//    @Binding var isFollowing: Bool
     @State var showUsername = false
     var namespace: Namespace.ID
     
@@ -151,29 +151,30 @@ fileprivate struct NameAndLinksRow: View {
                         .matchedGeometryEffect(id: "website-\(host.username)", in: namespace)
                 }
                 
-                Text(isFollowing ? "Following" : "Follow")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundColor(isFollowing ? .white : .black)
-                    .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
-                    .background {
-                        if isFollowing {
-                            Capsule()
-                                .stroke()
-                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
-                        } else {
-                            Capsule()
-                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
-                        }
-                        
-                    }
-                    .onTapGesture {
-                        let impact = UIImpactFeedbackGenerator(style: .light)
-                        impact.impactOccurred()
-                        withAnimation(.follow) {
-                            isFollowing.toggle()
-                        }
-                    }
-                    .matchedGeometryEffect(id: "follow-button-\(host.username)", in: namespace)
+                //MARK: Follow button (bug report: doesn't update after pressing and redirecting)
+//                Text(isFollowing ? "Following" : "Follow")
+//                    .font(.footnote.weight(.semibold))
+//                    .foregroundColor(isFollowing ? .white : .black)
+//                    .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
+//                    .background {
+//                        if isFollowing {
+//                            Capsule()
+//                                .stroke()
+//                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
+//                        } else {
+//                            Capsule()
+//                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
+//                        }
+//
+//                    }
+//                    .onTapGesture {
+//                        let impact = UIImpactFeedbackGenerator(style: .light)
+//                        impact.impactOccurred()
+//                        withAnimation(.follow) {
+//                            isFollowing.toggle()
+//                        }
+//                    }
+//                    .matchedGeometryEffect(id: "follow-button-\(host.username)", in: namespace)
             }
         }
     }
