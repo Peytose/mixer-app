@@ -265,6 +265,7 @@ struct ProfileView: View {
     @State var showEditProfile = false
     @State var showNotifications = false
     @State var selectedEvent: CachedEvent?
+    @State var showChangeMajor   = false
 
     @Namespace var animation
     @Namespace var namespace: Namespace.ID
@@ -281,7 +282,7 @@ struct ProfileView: View {
             ScrollView(showsIndicators: false) {
                 StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl, namespace: namespace)
                     .overlay(alignment: .topTrailing) {
-                        HStack(spacing: viewModel.user.isCurrentUser ? 15 : 15) {
+                        HStack(spacing: viewModel.user.isCurrentUser ? 5 : 5) {
                             if viewModel.user.isCurrentUser {
                                 ProfileCornerButton(isOn: $showNotifications, icon: "bell")
                                     .overlay(alignment: .topTrailing) {
@@ -291,6 +292,7 @@ struct ProfileView: View {
                                 ProfileCornerButton(isOn: $showEditProfile,
                                                     icon: "gearshape")
                                 .padding(.trailing)
+                                
                             } else {
                                 if let relationship = viewModel.user.relationshiptoUser {
                                     HStack(alignment: .center, spacing: 5) {
@@ -313,12 +315,24 @@ struct ProfileView: View {
                                     }
                                 }
                                 
-                                ProfileCornerButton(isOn: $showOptions,
-                                                    icon: "ellipsis")
+                                Image(systemName: "ellipsis")
+                                    .font(.callout)
+                                    .padding(12)
+                                    .background {
+                                        Circle()
+                                            .stroke(lineWidth: 1.3)
+                                            .foregroundColor(.white)
+                                    }
+                                    .onTapGesture {
+                                        withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                                            showOptions.toggle()
+                                        }
+                                    }
+                                    .padding(.horizontal)
+                                
                             }
                         }
-                        .padding(.horizontal)
-                        .padding(.top, 56)
+                        .padding(.top, 40)
                 }
                 
                 ProfileInfo(user: $viewModel.user, mutuals: viewModel.mutuals)
@@ -408,10 +422,12 @@ fileprivate struct ProfileCornerButton: View {
             withAnimation(.spring()) { isOn.toggle() }
         } label: {
             Image(systemName: icon)
-                .font(.title2)
-                .fontWeight(.medium)
+                .resizable()
+                .scaledToFit()
                 .foregroundColor(Color.mainFont)
-                .shadow(radius: 5, y: 8)
+                .frame(width: 25, height: 25)
+                .padding(.vertical)
+                .padding(.horizontal, 5)
         }
     }
 }
@@ -553,9 +569,47 @@ extension ProfileView {
                 .font(.title).bold()
             
             VStack(alignment: .leading) {
-//                DetailRow(image: "figure.2.arms.open", text: viewModel.user.status)
-//
-//                DetailRow(image: "briefcase", text: viewModel.user.major)
+                HStack {
+                    DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    
+                    Spacer()
+                    
+                    Menu("Change") {
+                        Button("Single", action: { viewModel.relationshipStatus = "Single" })
+                        Button("Taken", action: { viewModel.relationshipStatus = "Taken" })
+                        Button("Complicated", action: { viewModel.relationshipStatus = "Complicated" })
+                        Button("N/A", action: { viewModel.relationshipStatus = "N/A" })
+                    }
+                    .accentColor(.mixerIndigo)
+                }
+                
+                HStack {
+                    DetailRow(image: "briefcase", text: viewModel.major)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+
+                    Spacer()
+
+                    Button { showChangeMajor.toggle() } label: {
+                        Text("Change")
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color.mixerIndigo)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.9)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .alert("Change Major", isPresented: $showChangeMajor) {
+                    TextField("New Major", text: $viewModel.major)
+                        .foregroundColor(.white)
+
+                    if #available(iOS 16.0, *) {
+                        Button("Save") {  }
+                        Button("Cancel", role: .cancel, action: {})
+                    }
+                }
             }
             .fontWeight(.medium)
         }

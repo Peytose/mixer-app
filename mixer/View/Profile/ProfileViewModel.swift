@@ -18,6 +18,8 @@ class ProfileViewModel: ObservableObject {
     @Published var pastEvents           = [CachedEvent]()
     @Published var mutuals              = [CachedUser]()
     @Published var notifications        = [Notification]()
+    @Published var relationshipStatus   = "Single"
+    @Published var major                = "N/A"
     
     enum EventSection: String, CaseIterable {
         case interests
