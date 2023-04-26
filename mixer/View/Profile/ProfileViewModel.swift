@@ -154,8 +154,8 @@ class ProfileViewModel: ObservableObject {
     @Published var instagramHandle: String  = ""
     @Published var selectedImage: UIImage?
     var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
-    let supportLink = "https://docs.google.com/forms/d/e/1FAIpQLSch7XiTBu2dq3WzrklYHAZ_NpkuiH-TUtZOhE-H-4QEVWexPA/viewform?usp=pp_url"
-    
+    let privacyLink = "https://mixer.llc/privacy-policy/"
+
     enum ProfileSaveType {
         case name
         case image
