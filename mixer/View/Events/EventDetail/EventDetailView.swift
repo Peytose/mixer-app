@@ -228,30 +228,31 @@ fileprivate struct HostedBySection: View {
                         
                         Spacer()
                         
-                        Button {
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            withAnimation(.follow) { viewModel.followHost() }
-                        } label: {
-                            if let isFollowed = host.isFollowed {
-                                Text(isFollowed ? "Following" : "Follow")
-                                    .font(.footnote)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(isFollowed ? .white : .black)
-                                    .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
-                                    .background {
-                                        if isFollowed {
-                                            Capsule()
-                                                .stroke()
-                                                .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id)", in: namespace)
-                                        } else {
-                                            Capsule()
-                                                .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id)", in: namespace)
-                                        }
-                                    }
-                            }
-                        }
-                        .buttonStyle(.plain)
+                        //MARK: Follow host button on event (debug report: same as other follow button(s))
+//                        Button {
+//                            let impact = UIImpactFeedbackGenerator(style: .light)
+//                            impact.impactOccurred()
+//                            withAnimation(.follow) { viewModel.followHost() }
+//                        } label: {
+//                            if let isFollowed = host.isFollowed {
+//                                Text(isFollowed ? "Following" : "Follow")
+//                                    .font(.footnote)
+//                                    .fontWeight(.semibold)
+//                                    .foregroundColor(isFollowed ? .white : .black)
+//                                    .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
+//                                    .background {
+//                                        if isFollowed {
+//                                            Capsule()
+//                                                .stroke()
+//                                                .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id)", in: namespace)
+//                                        } else {
+//                                            Capsule()
+//                                                .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id)", in: namespace)
+//                                        }
+//                                    }
+//                            }
+//                        }
+//                        .buttonStyle(.plain)
                     }
                 
             }
@@ -274,7 +275,7 @@ fileprivate struct EventFlyerHeader: View {
             let scrollY = proxy.frame(in: .named("scroll")).minY
             VStack {
                 ZStack {
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .center, spacing: 2) {
                         HStack {
                             Text(event.title)
                                 .font(.title)
@@ -285,7 +286,7 @@ fileprivate struct EventFlyerHeader: View {
                             
                             Spacer()
                             
-                            if !(event.hasStarted ?? true) {
+                            if !(event.hasStarted ?? false) {
                                 if let didSave = event.didSave {
                                     Button {
                                         let impact = UIImpactFeedbackGenerator(style: .light)
@@ -367,9 +368,6 @@ fileprivate struct EventFlyerHeader: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 20, height: 20)
-                                    .background(.ultraThinMaterial)
-                                    .backgroundStyle(cornerRadius: 10, opacity: 0.6)
-                                    .cornerRadius(10)
                                 
                                 Text(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Invite Only" : "Public")
                                     .foregroundColor(.secondary)

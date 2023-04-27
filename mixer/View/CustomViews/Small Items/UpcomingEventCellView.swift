@@ -16,8 +16,6 @@ struct UpcomingEventCellView: View {
     var dateDay: String
     
     var body: some View {
-        
-        
         HStack(spacing: 20) {
             dateCell
             
@@ -25,8 +23,8 @@ struct UpcomingEventCellView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .preferredColorScheme(.dark)
-        
     }
+    
     var dateCell: some View {
         VStack {
             RoundedRectangle(cornerRadius: 12)
@@ -43,13 +41,11 @@ struct UpcomingEventCellView: View {
                         }
                 }
                 .overlay {
-
-                        Text(dateNumber)
-                            .font(.title3.weight(.bold))
+                    Text(dateNumber)
+                        .font(.title3.weight(.bold))
                 }
                 .overlay(alignment: .top) {
-
-                        Text(dateMonth)
+                    Text(dateMonth)
                         .font(.subheadline)
                         .fontWeight(.bold)
                         .foregroundColor(.secondary)
@@ -60,7 +56,9 @@ struct UpcomingEventCellView: View {
     var cellInfo: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.title3.weight(.regular))
+                .font(.title3)
+                .fontWeight(.regular)
+                .foregroundColor(.DesignCodeWhite)
             
             Text(duration)
                 .font(.subheadline)
@@ -69,7 +67,7 @@ struct UpcomingEventCellView: View {
             Text("\(Image(systemName: "globe")) \(visibility)")
                 .font(.subheadline)
                 .foregroundColor(Color.mixerIndigo)
-
+            
         }
     }
 }

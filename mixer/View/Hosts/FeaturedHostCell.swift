@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Kingfisher
+import Combine
 
 struct FeaturedHostCell: View {
     let host: CachedHost
@@ -109,14 +110,15 @@ struct PlaceholderHostCard: View {
 }
 
 
-fileprivate struct NameAndLinksRow: View {
+struct NameAndLinksRow: View {
     let host: CachedHost
 //    @Binding var isFollowing: Bool
     @State var showUsername = false
+    @State private var timer: AnyCancellable?
     var namespace: Namespace.ID
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        HStack(alignment: .center, spacing: 10) {
             Text(showUsername ? "@\(host.username)" : "\(host.name)")
                 .textSelection(.enabled)
                 .font(.largeTitle)
@@ -124,58 +126,60 @@ fileprivate struct NameAndLinksRow: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
                 .matchedGeometryEffect(id: "name-\(host.username)", in: namespace)
+                .onAppear {
+                    timer = Timer.publish(every: Double.random(in: 1...5), on: .main, in: .common)
+                        .autoconnect()
+                        .sink { _ in
+                            withAnimation(.easeInOut) {
+                                self.showUsername.toggle()
+                            }
+                        }
+                }
+                .onDisappear {
+                    timer?.cancel()
+                }
                 .onTapGesture {
                     withAnimation(.easeInOut) {
                         showUsername.toggle()
                     }
                 }
             
-            HStack(alignment: .center, spacing: 10) {
-                Text("@\(host.username)")
-                    .font(.subheadline.weight(.medium))
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
-                    .matchedGeometryEffect(id: "username-\(host.username)", in: namespace)
-                
-                
-                Spacer()
-                
-                if let handle = host.instagramHandle {
-                    HostLinkIcon(url: "https://instagram.com/\(handle)", icon: "Instagram_Glyph_Gradient 1", isAsset: true)
-                        .matchedGeometryEffect(id: "insta-\(host.username)", in: namespace)
-                }
-
-                if let website = host.website {
-                    HostLinkIcon(url: website, icon: "globe")
-                        .matchedGeometryEffect(id: "website-\(host.username)", in: namespace)
-                }
-                
-                //MARK: Follow button (bug report: doesn't update after pressing and redirecting)
-//                Text(isFollowing ? "Following" : "Follow")
-//                    .font(.footnote.weight(.semibold))
-//                    .foregroundColor(isFollowing ? .white : .black)
-//                    .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
-//                    .background {
-//                        if isFollowing {
-//                            Capsule()
-//                                .stroke()
-//                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
-//                        } else {
-//                            Capsule()
-//                                .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
-//                        }
-//
-//                    }
-//                    .onTapGesture {
-//                        let impact = UIImpactFeedbackGenerator(style: .light)
-//                        impact.impactOccurred()
-//                        withAnimation(.follow) {
-//                            isFollowing.toggle()
-//                        }
-//                    }
-//                    .matchedGeometryEffect(id: "follow-button-\(host.username)", in: namespace)
+            Spacer()
+            
+            if let handle = host.instagramHandle {
+                HostLinkIcon(url: "https://instagram.com/\(handle)", icon: "Instagram_Glyph_Gradient 1", isAsset: true)
+                    .matchedGeometryEffect(id: "insta-\(host.username)", in: namespace)
             }
+            
+            if let website = host.website {
+                HostLinkIcon(url: website, icon: "globe")
+                    .matchedGeometryEffect(id: "website-\(host.username)", in: namespace)
+            }
+            
+            //MARK: Follow button (bug report: doesn't update after pressing and redirecting)
+//            Text(isFollowing ? "Following" : "Follow")
+//                .font(.footnote.weight(.semibold))
+//                .foregroundColor(isFollowing ? .white : .black)
+//                .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
+//                .background {
+//                    if isFollowing {
+//                        Capsule()
+//                            .stroke()
+//                            .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
+//                    } else {
+//                        Capsule()
+//                            .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
+//                    }
+//
+//                }
+//                .onTapGesture {
+//                    let impact = UIImpactFeedbackGenerator(style: .light)
+//                    impact.impactOccurred()
+//                    withAnimation(.follow) {
+//                        isFollowing.toggle()
+//                    }
+//                }
+//                .matchedGeometryEffect(id: "follow-button-\(host.username)", in: namespace)
         }
     }
 }
