@@ -62,13 +62,13 @@ enum EventAmenities: String, Codable, CaseIterable {
     
     var category: AmenityCategory {
         switch self {
-            case .bathrooms, .beer, .dj, .danceFloor, .rooftop, .coatCheck: return .keyAmenities
-            case .alcohol, .nonAlcohol, .water, .beer, .snacks, .food: return .refreshments
-            case .dj, .liveMusic, .danceFloor, .karaoke, .videoGames,
+            case .bathrooms, .beer, .dj, .danceFloor: return .keyAmenities
+            case .alcohol, .nonAlcohol, .water, .snacks, .food: return .refreshments
+            case .liveMusic, .karaoke, .videoGames,
                  .indoorGames, .outdoorGames, .drinkingGames: return .entertainment
             case .seating, .soundSystem, .projector, .lighting: return .furnitureEquipment
             case .outdoorSpace, .pool, .hotTub, .firePit, .grillBBQ, .rooftop, .garden: return .outdoorAreas
-            case .security, .freeParking, .paidParking, .coatCheck, .bathrooms, .smokingArea: return .convenientFeatures
+            case .security, .freeParking, .paidParking, .coatCheck, .smokingArea: return .convenientFeatures
         }
     }
     

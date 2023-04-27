@@ -55,7 +55,7 @@ struct GuestListUserView: View {
                 
                 
                 VStack(alignment: .center, spacing: 0) {
-                    Text("Male")
+                    Text(user.gender!)
                         .font(.title2.weight(.bold))
                     
                     Text("Gender")
@@ -67,10 +67,10 @@ struct GuestListUserView: View {
             .font(.title3.weight(.semibold))
             .padding(2)
             
-            Text("Invited by Brian Robinson")
-                .font(.headline)
-                .foregroundColor(.secondary)
-                .padding(.bottom, 10)
+//            Text("Invited by \(user.a)")
+//                .font(.headline)
+//                .foregroundColor(.secondary)
+//                .padding(.bottom, 10)
             
             HStack {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)

@@ -50,10 +50,33 @@ struct EventDetailView: View {
                                     Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
                                         ForEach(amenitiesInCategory, id: \.self) { amenity in
                                             HStack {
-                                                Image(systemName: amenity.icon)
-                                                    .resizable()
-                                                    .scaledToFill()
-                                                    .frame(width: 15, height: 15)
+                                                if amenity == .beer {
+                                                    Text("🍺")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else if amenity == .water {
+                                                    Text("💦")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else if amenity == .smokingArea {
+                                                    Text("🚬")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else if amenity == .dj {
+                                                    Text("🎧")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else if amenity == .coatCheck {
+                                                    Text("🧥")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else {
+                                                    Image(systemName: amenity.icon)
+                                                        .resizable()
+                                                        .scaledToFill()
+                                                        .frame(width: 15, height: 15)
+                                                        .padding(.trailing, 5)
+                                                }
                                                 
                                                 Text(amenity.rawValue)
                                                     .font(.body)
@@ -78,7 +101,7 @@ struct EventDetailView: View {
                                             .foregroundColor(.DesignCodeWhite)
                                             .frame(width: 350, height: 45)
                                             .overlay {
-                                                Text(showAllAmenities ? "Show less" : "Show all \(EventAmenities.allCases.count) amenities")
+                                                Text(showAllAmenities ? "Show less" : "Show all \(viewModel.event.amenities?.count ?? 0) amenities")
                                                     .font(.body)
                                                     .fontWeight(.medium)
                                                     .foregroundColor(.black)
@@ -136,15 +159,15 @@ struct EventDetailView: View {
                     .lineLimit(4)
             }
             
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Notes for guest")
-                    .font(.title).bold()
-                
-                Text("This is where the notes for the event would be")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .lineLimit(4)
-            }
+//            VStack(alignment: .leading, spacing: 6) {
+//                Text("Notes for guest")
+//                    .font(.title).bold()
+//
+//                Text("This is where the notes for the event would be")
+//                    .font(.body)
+//                    .foregroundColor(.secondary)
+//                    .lineLimit(4)
+//            }
             
             VStack(alignment: .leading, spacing: 12) {
                 Text("Event details")
@@ -286,27 +309,27 @@ fileprivate struct EventFlyerHeader: View {
                             
                             Spacer()
                             
-                            if !(event.hasStarted ?? false) {
-                                if let didSave = event.didSave {
-                                    Button {
-                                        let impact = UIImpactFeedbackGenerator(style: .light)
-                                        impact.impactOccurred()
-                                        withAnimation() {
-                                            didSave ? unsave() : save()
-                                        }
-                                    } label: {
-                                        Image(systemName: didSave ? "bookmark.fill" : "bookmark")
-                                            .resizable()
-                                            .aspectRatio(contentMode: .fit)
-                                            .foregroundColor(didSave ? Color.yellow : Color.white)
-                                            .frame(width: 19, height: 19)
-                                            .offset(y: 1)
-                                            .padding(5)
-                                            .background(.ultraThinMaterial)
-                                            .backgroundStyle(cornerRadius: 18, opacity: 0.4)
-                                    }
-                                }
-                            }
+//                            if !(event.hasStarted ?? false) {
+//                                if let didSave = event.didSave {
+//                                    Button {
+//                                        let impact = UIImpactFeedbackGenerator(style: .light)
+//                                        impact.impactOccurred()
+//                                        withAnimation() {
+//                                            didSave ? unsave() : save()
+//                                        }
+//                                    } label: {
+//                                        Image(systemName: didSave ? "bookmark.fill" : "bookmark")
+//                                            .resizable()
+//                                            .aspectRatio(contentMode: .fit)
+//                                            .foregroundColor(didSave ? Color.yellow : Color.white)
+//                                            .frame(width: 19, height: 19)
+//                                            .offset(y: 1)
+//                                            .padding(5)
+//                                            .background(.ultraThinMaterial)
+//                                            .backgroundStyle(cornerRadius: 18, opacity: 0.4)
+//                                    }
+//                                }
+//                            }
                         }
                         
                         HStack(spacing: 5) {
