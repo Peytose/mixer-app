@@ -24,6 +24,8 @@ struct CachedUser: Hashable, Identifiable, Codable {
     var universityData: [String: String]
     
     // Additional Information
+    var relationshipStatus: RelationshipStatus?
+    var major: StudentMajor?
     var userOptions: [String: Bool]
     var instagramHandle: String?
     var bio: String?
@@ -40,22 +42,31 @@ struct CachedUser: Hashable, Identifiable, Codable {
     var memberHosts: [CachedHost]?
     
     init(from user: User) {
-        self.id              = user.id
-        self.dateJoined      = user.dateJoined
-        self.name            = user.name
-        self.username        = user.username
-        self.email           = user.email
-        self.profileImageUrl = user.profileImageUrl
-        self.birthday        = user.birthday
-        self.universityData  = user.universityData
-        self.userOptions     = user.userOptions
-        self.instagramHandle = user.instagramHandle
-        self.bio             = user.bio
+        self.id                 = user.id
+        self.dateJoined         = user.dateJoined
+        self.name               = user.name
+        self.username           = user.username
+        self.email              = user.email
+        self.profileImageUrl    = user.profileImageUrl
+        self.birthday           = user.birthday
+        self.universityData     = user.universityData
         
-        if let age = Calendar.current.dateComponents([.year], from: user.birthday.dateValue(), to: Date()).year {
-            self.age         = age
+        if let relationshipStatus = user.relationshipStatus {
+            self.relationshipStatus = relationshipStatus
         }
         
-        self.hostPrivileges  = user.hostPrivileges
+        if let major = user.major {
+            self.major = major
+        }
+        
+        self.userOptions        = user.userOptions
+        self.instagramHandle    = user.instagramHandle
+        self.bio                = user.bio
+        
+        if let age = Calendar.current.dateComponents([.year], from: user.birthday.dateValue(), to: Date()).year {
+            self.age            = age
+        }
+        
+        self.hostPrivileges     = user.hostPrivileges
     }
 }

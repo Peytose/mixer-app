@@ -18,8 +18,25 @@ class ProfileViewModel: ObservableObject {
     @Published var pastEvents           = [CachedEvent]()
     @Published var mutuals              = [CachedUser]()
     @Published var notifications        = [Notification]()
-    @Published var relationshipStatus   = "Single"
-    @Published var major                = "N/A"
+    @Published var name: String             = ""
+    @Published var bio: String              = ""
+    @Published var instagramHandle: String  = ""
+    @Published var showAgeOnProfile: Bool
+    @Published var relationshipStatus: RelationshipStatus
+    @Published var major: StudentMajor
+    @Published var selectedImage: UIImage?
+    var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
+    let privacyLink = "https://mixer.llc/privacy-policy/"
+
+    enum ProfileSaveType {
+        case name
+        case image
+        case bio
+        case instagram
+        case ageToggle
+        case relationship
+        case major
+    }
     
     enum EventSection: String, CaseIterable {
         case interests
@@ -35,8 +52,12 @@ class ProfileViewModel: ObservableObject {
     
     init(user: CachedUser) {
         self.user = user
-        getUserRelationship()
-        print("DEBUG: profile init ran")
+        
+        relationshipStatus = user.relationshipStatus ?? .focusingOnTheirPassion
+        major = user.major ?? .notSpecified
+        showAgeOnProfile = user.userOptions[UserOption.showAgeOnProfile.rawValue] ?? false
+        
+//        self.getUserRelationship()
     }
     
     
@@ -135,44 +156,14 @@ class ProfileViewModel: ObservableObject {
     }
     
     
-    //    func fetchUsersStats() {
-    //        guard let uid = user.id else { return }
-    //
-    //        COLLECTION_FOLLOWING.document(uid).collection("user-following").getDocuments { snapshot, _ in
-    //            guard let following = snapshot?.documents.count else { return }
-    //
-    //            COLLECTION_FRIENDS.document(uid).collection("user-friends").getDocuments { snapshot, _ in
-    //                guard let followers = snapshot?.documents.count else { return }
-    //
-    //                self.user.stats = UserStats(following: following, followers: followers)
-    //            }
-    //        }
-    //    }
-    
-    @Published var name: String             = ""
-    @Published var bio: String              = ""
-    @Published var instagramHandle: String  = ""
-    @Published var selectedImage: UIImage?
-    var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
-    let privacyLink = "https://mixer.llc/privacy-policy/"
-
-    enum ProfileSaveType {
-        case name
-        case image
-        case bio
-        case instagram
-        case ageToggle
-    }
-    
-    
-    func save(for type: ProfileSaveType, toggleValue: Bool = false) {
-        self.save(for: type, toggleValue: toggleValue) {
+    func save(for type: ProfileSaveType) {
+        self.save(for: type) {
             self.cacheUser()
             AuthViewModel.shared.updateCurrentUser(user: self.user)
         }
     }
     
-    private func save(for type: ProfileSaveType, toggleValue: Bool, completion: @escaping () -> Void) {
+    private func save(for type: ProfileSaveType, completion: @escaping () -> Void) {
         guard let uid = AuthViewModel.shared.currentUser?.id else { return }
         
         switch type {
@@ -212,8 +203,20 @@ class ProfileViewModel: ObservableObject {
             }
             
         case .ageToggle:
-            COLLECTION_USERS.document(uid).updateData(["userOptions.showAgeOnProfile": toggleValue]) { _ in
-                self.user.userOptions[UserOption.showAgeOnProfile.rawValue] = toggleValue
+            COLLECTION_USERS.document(uid).updateData(["userOptions.showAgeOnProfile": showAgeOnProfile]) { _ in
+                self.user.userOptions[UserOption.showAgeOnProfile.rawValue] = self.showAgeOnProfile
+                completion()
+            }
+            
+        case .relationship:
+            COLLECTION_USERS.document(uid).updateData(["relationshipStatus": relationshipStatus.rawValue]) { _ in
+                self.user.relationshipStatus = self.relationshipStatus
+                completion()
+            }
+            
+        case .major:
+            COLLECTION_USERS.document(uid).updateData(["major": major.rawValue]) { _ in
+                self.user.major = self.major
                 completion()
             }
         }

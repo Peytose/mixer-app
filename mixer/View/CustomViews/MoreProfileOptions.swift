@@ -74,9 +74,10 @@ struct MoreProfileOptions: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 180)
             
-            Text("Close")
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-                .padding(.bottom)
+            XDismissButton()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                .padding(.top)
+                .padding(.trailing)
                 .onTapGesture {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
                         action()

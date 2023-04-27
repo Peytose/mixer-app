@@ -15,10 +15,6 @@ struct ProfileSettingsView: View {
     @State var isShowingMailView: Bool     = false
     @State var showAlert: Bool             = false
     @State var imagePickerPresented: Bool  = false
-    @State var isShowingMailView1 = false
-    @State var isShowingMailView2 = false
-    @State var isShowingMailView3 = false
-    @Binding var showAge: Bool
     
     var body: some View {
         NavigationView {
@@ -99,13 +95,14 @@ struct ProfileSettingsView: View {
                     }
                     
                     Section {
-                        Toggle("Show age on profile?", isOn: $showAge.animation())
+                        Toggle("Show age on profile?", isOn: $viewModel.showAgeOnProfile.animation())
                             .font(.body)
                             .fontWeight(.medium)
                             .foregroundColor(.white)
                             .listRowBackground(Color.mixerSecondaryBackground)
-                            .onChange(of: showAge) { newValue in
-                                viewModel.save(for: .ageToggle, toggleValue: newValue)
+                            .onChange(of: viewModel.showAgeOnProfile) { newValue in
+                                viewModel.showAgeOnProfile = newValue
+                                viewModel.save(for: .ageToggle)
                             }
                     } header: {
                         Text("Privacy")
@@ -113,48 +110,34 @@ struct ProfileSettingsView: View {
                     }
                     
                     Section {
-//                        LinkRow(linkUrl: viewModel.supportLink,
-//                                title: "Feature Request",
-//                                icon: "wand.and.stars")
-//                        .listRowBackground(Color.mixerSecondaryBackground)
-//
-//                        LinkRow(linkUrl: viewModel.supportLink,
-//                                title: "Report a Bug",
-//                                icon: "ant")
-//                        .listRowBackground(Color.mixerSecondaryBackground)
-//
-//                        LinkRow(linkUrl: viewModel.supportLink,
-//                                title: "Questions",
-//                                icon: "questionmark.circle")
-//                        .listRowBackground(Color.mixerSecondaryBackground)
                         MailRow(title: "Request a feature", icon: "wand.and.stars", rightIcon: "chevron.right")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            isShowingMailView1.toggle()
+                            isShowingMailView.toggle()
                         }
-                        .sheet(isPresented: $isShowingMailView1) {
-                            MailView(isShowing: self.$isShowingMailView1, subject: "Feature Request")
+                        .sheet(isPresented: $isShowingMailView) {
+                            MailView(isShowing: self.$isShowingMailView, subject: "Feature Request")
                         }
                         
                         MailRow(title: "Report a Bug", icon: "ant", rightIcon: "chevron.right")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            isShowingMailView2.toggle()
+                            isShowingMailView.toggle()
                         }
-                        .sheet(isPresented: $isShowingMailView2) {
-                            MailView(isShowing: self.$isShowingMailView2, subject: "Bug Report")
+                        .sheet(isPresented: $isShowingMailView) {
+                            MailView(isShowing: self.$isShowingMailView, subject: "Bug Report")
                         }
 
                         MailRow(title: "Questions", icon: "questionmark.circle", rightIcon: "chevron.right")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            isShowingMailView3.toggle()
+                            isShowingMailView.toggle()
                         }
-                        .sheet(isPresented: $isShowingMailView3) {
-                            MailView(isShowing: self.$isShowingMailView3, subject: "Question")
+                        .sheet(isPresented: $isShowingMailView) {
+                            MailView(isShowing: self.$isShowingMailView, subject: "Question")
                         }
                     } header: {
                         Text("Feedback & Support")

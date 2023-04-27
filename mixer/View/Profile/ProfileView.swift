@@ -294,26 +294,27 @@ struct ProfileView: View {
                                 .padding(.trailing)
                                 
                             } else {
-                                if let relationship = viewModel.user.relationshiptoUser {
-                                    HStack(alignment: .center, spacing: 5) {
-                                        ProfileRelationButton(icon: relationship.buttonSystemImage, color: .primary) {
-                                            switch relationship {
-                                            case .friends, .sentRequest:
-                                                viewModel.cancelFriendRequest()
-                                            case .receivedRequest:
-                                                viewModel.acceptFriendRequest()
-                                            case .notFriends:
-                                                viewModel.sendFriendRequest()
-                                            }
-                                        }
-                                        
-                                        if relationship == .receivedRequest {
-                                            ProfileRelationButton(icon: "xmark", color: .red) {
-                                                viewModel.cancelFriendRequest()
-                                            }
-                                        }
-                                    }
-                                }
+                                //MARK: Friend button (debug report: looks jank as fuck and i dont believe it works)
+//                                if let relationship = viewModel.user.relationshiptoUser {
+//                                    HStack(alignment: .center, spacing: 5) {
+//                                        ProfileRelationButton(icon: relationship.buttonSystemImage, color: .primary) {
+//                                            switch relationship {
+//                                            case .friends, .sentRequest:
+//                                                viewModel.cancelFriendRequest()
+//                                            case .receivedRequest:
+//                                                viewModel.acceptFriendRequest()
+//                                            case .notFriends:
+//                                                viewModel.sendFriendRequest()
+//                                            }
+//                                        }
+//
+//                                        if relationship == .receivedRequest {
+//                                            ProfileRelationButton(icon: "xmark", color: .red) {
+//                                                viewModel.cancelFriendRequest()
+//                                            }
+//                                        }
+//                                    }
+//                                }
                                 
                                 Image(systemName: "ellipsis")
                                     .font(.callout)
@@ -339,11 +340,12 @@ struct ProfileView: View {
                 
                 details
                 
-                EventsSection(viewModel: viewModel,
-                              showEventView: $showEventView,
-                              isFriends: $isFriends,
-                              namespace: namespace,
-                              selectedEvent: $selectedEvent)
+                //MARK: Profile event list (debug report: 
+//                EventsSection(viewModel: viewModel,
+//                              showEventView: $showEventView,
+//                              isFriends: $isFriends,
+//                              namespace: namespace,
+//                              selectedEvent: $selectedEvent)
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
@@ -351,7 +353,7 @@ struct ProfileView: View {
             .ignoresSafeArea(.all)
             .navigationBarHidden(true)
             .statusBar(hidden: true)
-            .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel, showAge: $viewModel.user.userOptions.binding(for: UserOption.showAgeOnProfile.rawValue)) }
+            .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel) }
             .sheet(isPresented: $showNotifications) { NotificationFeedView() }
             //            .fullScreenCover(isPresented: $viewModel.showEventView) {
             //                EventInfoView(parentViewModel: ExplorePageViewModel(), tabBarVisibility: $tabBarVisibility, event: eventManager.selectedEvent!, coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50), namespace: namespace)
@@ -566,66 +568,51 @@ extension ProfileView {
     var details: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("About")
-                .font(.title).bold()
+                .font(.title)
+                .bold()
             
-            if viewModel.user.isCurrentUser {
-                VStack(alignment: .leading) {
-                    HStack {
-                        DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                        
-                        Spacer()
-                        
+            VStack(alignment: .leading) {
+                HStack {
+                    DetailRow(image: viewModel.relationshipStatus.icon, text: viewModel.relationshipStatus.rawValue)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    
+                    Spacer()
+                    
+                    if viewModel.user.isCurrentUser {
                         Menu("Change") {
-                            Button("Single", action: { viewModel.relationshipStatus = "Single" })
-                            Button("Taken", action: { viewModel.relationshipStatus = "Taken" })
-                            Button("Complicated", action: { viewModel.relationshipStatus = "Complicated" })
-                            Button("N/A", action: { viewModel.relationshipStatus = "N/A" })
+                            ForEach(RelationshipStatus.allCases, id: \.self) { status in
+                                Button(status.rawValue) {
+                                    viewModel.relationshipStatus = status
+                                    viewModel.save(for: .relationship)
+                                }
+                            }
                         }
                         .accentColor(.mixerIndigo)
                     }
-                    
-                    HStack {
-                        DetailRow(image: "briefcase", text: viewModel.major)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                        
-                        Spacer()
-                        
-                        Button { showChangeMajor.toggle() } label: {
-                            Text("Change")
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color.mixerIndigo)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.9)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                    .alert("Change Major", isPresented: $showChangeMajor) {
-                        TextField("New Major", text: $viewModel.major)
-                            .foregroundColor(.white)
-                        
-                        if #available(iOS 16.0, *) {
-                            Button("Save") {  }
-                            Button("Cancel", role: .cancel, action: {})
-                        }
-                    }
                 }
-                .fontWeight(.medium)
-            } else {
-                VStack(alignment: .leading) {
-                    DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus)
+                
+                HStack {
+                    DetailRow(image: viewModel.major.icon, text: viewModel.major.rawValue)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     
-                    DetailRow(image: "briefcase", text: viewModel.major)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
+                    Spacer()
                     
+                    if viewModel.user.isCurrentUser {
+                        Menu("Change") {
+                            ForEach(StudentMajor.allCases, id: \.self) { major in
+                                Button(major.rawValue) {
+                                    viewModel.major = major
+                                    viewModel.save(for: .major)
+                                }
+                            }
+                        }
+                        .accentColor(.mixerIndigo)
+                    }
                 }
-                .fontWeight(.medium)
             }
+            .fontWeight(.medium)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
@@ -646,8 +633,6 @@ private struct PaddedImage: View {
                 .background(.ultraThinMaterial)
                 .backgroundStyle(cornerRadius: 10, opacity: 0.5)
                 .cornerRadius(10)
-            
         }
     }
 }
-
