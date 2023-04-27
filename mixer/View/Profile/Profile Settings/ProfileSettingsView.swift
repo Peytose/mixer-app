@@ -12,7 +12,9 @@ import Kingfisher
 struct ProfileSettingsView: View {
     @Environment(\.presentationMode) var mode
     @ObservedObject var viewModel: ProfileViewModel
-    @State var isShowingMailView: Bool     = false
+    @State var isShowingMailView1: Bool     = false
+    @State var isShowingMailView2: Bool     = false
+    @State var isShowingMailView3: Bool     = false
     @State var showAlert: Bool             = false
     @State var imagePickerPresented: Bool  = false
     
@@ -114,30 +116,30 @@ struct ProfileSettingsView: View {
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            isShowingMailView.toggle()
+                            isShowingMailView1.toggle()
                         }
-                        .sheet(isPresented: $isShowingMailView) {
-                            MailView(isShowing: self.$isShowingMailView, subject: "Feature Request")
+                        .sheet(isPresented: $isShowingMailView1) {
+                            MailView(isShowing: self.$isShowingMailView1, subject: "Feature Request")
                         }
                         
                         MailRow(title: "Report a Bug", icon: "ant", rightIcon: "chevron.right")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            isShowingMailView.toggle()
+                            isShowingMailView2.toggle()
                         }
-                        .sheet(isPresented: $isShowingMailView) {
-                            MailView(isShowing: self.$isShowingMailView, subject: "Bug Report")
+                        .sheet(isPresented: $isShowingMailView2) {
+                            MailView(isShowing: self.$isShowingMailView2, subject: "Bug Report")
                         }
 
                         MailRow(title: "Questions", icon: "questionmark.circle", rightIcon: "chevron.right")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            isShowingMailView.toggle()
+                            isShowingMailView3.toggle()
                         }
-                        .sheet(isPresented: $isShowingMailView) {
-                            MailView(isShowing: self.$isShowingMailView, subject: "Question")
+                        .sheet(isPresented: $isShowingMailView3) {
+                            MailView(isShowing: self.$isShowingMailView3, subject: "Question")
                         }
                     } header: {
                         Text("Feedback & Support")

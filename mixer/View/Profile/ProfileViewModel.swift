@@ -53,10 +53,9 @@ class ProfileViewModel: ObservableObject {
     init(user: CachedUser) {
         self.user = user
         
-        relationshipStatus = user.relationshipStatus ?? .focusingOnTheirPassion
-        major = user.major ?? .notSpecified
+        relationshipStatus = user.relationshipStatus ?? .preferNotToSay
+        major = user.major ?? .preferNotToSay
         showAgeOnProfile = user.userOptions[UserOption.showAgeOnProfile.rawValue] ?? false
-        
 //        self.getUserRelationship()
     }
     

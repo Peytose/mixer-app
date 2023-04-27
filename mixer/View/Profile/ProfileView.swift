@@ -573,7 +573,7 @@ extension ProfileView {
             
             VStack(alignment: .leading) {
                 HStack {
-                    DetailRow(image: viewModel.relationshipStatus.icon, text: viewModel.relationshipStatus.rawValue)
+                    DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus.rawValue)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     
@@ -593,7 +593,7 @@ extension ProfileView {
                 }
                 
                 HStack {
-                    DetailRow(image: viewModel.major.icon, text: viewModel.major.rawValue)
+                    DetailRow(image: "briefcase", text: viewModel.major.rawValue)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     
