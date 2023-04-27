@@ -19,9 +19,9 @@ struct MoreProfileOptions: View {
             VStack(spacing: 20) {
                 KFImage(URL(string: user.profileImageUrl))
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: .fill)
                     .clipShape(Circle())
-                    .frame(width: DeviceTypes.ScreenSize.width * 0.75)
+                    .frame(width: DeviceTypes.ScreenSize.width * 0.60, height: DeviceTypes.ScreenSize.width * 0.60)
                 
                 VStack {
                     Text(user.name)
@@ -58,7 +58,7 @@ struct MoreProfileOptions: View {
                     HStack(spacing: 10)  {
                         Image(systemName: "square.and.arrow.up")
                             .font(.title3.weight(.medium))
-
+                        
                         Text("Share profile")
                             .fontWeight(.medium)
                     }
@@ -73,11 +73,14 @@ struct MoreProfileOptions: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
             .padding(.horizontal, 20)
             .padding(.bottom, 180)
-            
-            XDismissButton()
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                .padding(.top)
-                .padding(.trailing)
+        }
+        .overlay(alignment: .topTrailing) {
+            Image(systemName: "xmark")
+                .font(.title3)
+                .fontWeight(.medium)
+                .foregroundColor(.white)
+                .padding(20)
+                .contentShape(Rectangle())
                 .onTapGesture {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
                         action()

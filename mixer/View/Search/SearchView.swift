@@ -99,13 +99,13 @@ fileprivate struct UserSearchCell: View {
                 HStack {
                     Text("@\(user.username)")
                         .font(.subheadline)
-                        .foregroundColor(.secondary.opacity(0.7))
+                        .foregroundColor(.secondary)
                     
                     Spacer()
                     
-                    Text("Friend")
-                        .font(.subheadline)
-                        .foregroundColor(.mixerIndigo)
+//                    Text("Friend")
+//                        .font(.subheadline)
+//                        .foregroundColor(.mixerIndigo)
                 }
             }
         }

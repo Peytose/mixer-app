@@ -315,6 +315,14 @@ struct ProfileView: View {
 //                                        }
 //                                    }
 //                                }
+                                Button(action: {
+                                    presentationMode.wrappedValue.dismiss()
+                                }, label: {
+                                    BackArrowButton()
+                                })
+                                .padding(.horizontal)
+                                
+                                Spacer()
                                 
                                 Image(systemName: "ellipsis")
                                     .font(.callout)
@@ -330,6 +338,8 @@ struct ProfileView: View {
                                         }
                                     }
                                     .padding(.horizontal)
+                                
+                                
                                 
                             }
                         }
