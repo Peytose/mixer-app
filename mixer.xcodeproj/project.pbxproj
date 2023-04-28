@@ -127,7 +127,6 @@
 		A643044F294FC3080058C0F0 /* BlobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A643044E294FC3080058C0F0 /* BlobView.swift */; };
 		A6430451294FC3380058C0F0 /* HexagonBlobView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430450294FC3380058C0F0 /* HexagonBlobView.swift */; };
 		A6430453294FC3A00058C0F0 /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430452294FC3A00058C0F0 /* PreferenceKeys.swift */; };
-		A6430455294FC4470058C0F0 /* UserProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430454294FC4470058C0F0 /* UserProfileViewModel.swift */; };
 		A6430457294FC50C0058C0F0 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430456294FC50C0058C0F0 /* AvatarView.swift */; };
 		A6430459294FC6D00058C0F0 /* NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430458294FC6D00058C0F0 /* NavigationBar.swift */; };
 		A643045B294FC72F0058C0F0 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = A643045A294FC72F0058C0F0 /* Model.swift */; };
@@ -146,7 +145,6 @@
 		A6AB6C7E2960EFE7007E9BF0 /* CustomPopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AB6C7D2960EFE7007E9BF0 /* CustomPopUpView.swift */; };
 		A6B9E65729518A3C009C936E /* EventCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B9E65629518A3C009C936E /* EventCellView.swift */; };
 		A6B9E65929518AB2009C936E /* CustomStickyHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B9E65829518AB2009C936E /* CustomStickyHeader.swift */; };
-		A6B9E65D29539729009C936E /* temp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B9E65C29539728009C936E /* temp.swift */; };
 		A6B9E6622953A47C009C936E /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = A6B9E6612953A47C009C936E /* CodeScanner */; };
 		A6B9E6692953A889009C936E /* MapClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B9E6682953A889009C936E /* MapClusterView.swift */; };
 		A6B9E6762953B6DA009C936E /* LogoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B9E6752953B6DA009C936E /* LogoView.swift */; };
@@ -280,7 +278,6 @@
 		A643044E294FC3080058C0F0 /* BlobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlobView.swift; sourceTree = "<group>"; };
 		A6430450294FC3380058C0F0 /* HexagonBlobView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HexagonBlobView.swift; sourceTree = "<group>"; };
 		A6430452294FC3A00058C0F0 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
-		A6430454294FC4470058C0F0 /* UserProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewModel.swift; sourceTree = "<group>"; };
 		A6430456294FC50C0058C0F0 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
 		A6430458294FC6D00058C0F0 /* NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBar.swift; sourceTree = "<group>"; };
 		A643045A294FC72F0058C0F0 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
@@ -298,7 +295,6 @@
 		A6AB6C7D2960EFE7007E9BF0 /* CustomPopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPopUpView.swift; sourceTree = "<group>"; };
 		A6B9E65629518A3C009C936E /* EventCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCellView.swift; sourceTree = "<group>"; };
 		A6B9E65829518AB2009C936E /* CustomStickyHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStickyHeader.swift; sourceTree = "<group>"; };
-		A6B9E65C29539728009C936E /* temp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = temp.swift; sourceTree = "<group>"; };
 		A6B9E6682953A889009C936E /* MapClusterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapClusterView.swift; sourceTree = "<group>"; };
 		A6B9E6752953B6DA009C936E /* LogoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoView.swift; sourceTree = "<group>"; };
 		A6B9E6772953B8A3009C936E /* MapSnapshotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapSnapshotView.swift; sourceTree = "<group>"; };
@@ -582,7 +578,6 @@
 				9C2B8967298F53510011FC56 /* MapViewModel.swift */,
 				9C4B0E342982417000A9D963 /* WaitlistViewModel.swift */,
 				9C4B0E43298241AE00A9D963 /* CheckInViewModel.swift */,
-				A6B9E66B2953B3F9009C936E /* Mock View Models */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -590,7 +585,6 @@
 		9C3BADD3291F55B1009C8043 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				A6B9E66A2953B3E5009C936E /* Mock View Models */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -844,22 +838,6 @@
 			path = "Embedded Views";
 			sourceTree = "<group>";
 		};
-		A6B9E66A2953B3E5009C936E /* Mock View Models */ = {
-			isa = PBXGroup;
-			children = (
-				A6430454294FC4470058C0F0 /* UserProfileViewModel.swift */,
-			);
-			path = "Mock View Models";
-			sourceTree = "<group>";
-		};
-		A6B9E66B2953B3F9009C936E /* Mock View Models */ = {
-			isa = PBXGroup;
-			children = (
-				A6B9E65C29539728009C936E /* temp.swift */,
-			);
-			path = "Mock View Models";
-			sourceTree = "<group>";
-		};
 		A6B9E6712953B529009C936E /* Events */ = {
 			isa = PBXGroup;
 			children = (
@@ -1074,9 +1052,7 @@
 				9C3BADBA291F54B4009C8043 /* mixerApp.swift in Sources */,
 				A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */,
 				9C58B3AE29C8E5CA0024CB7E /* OptionView.swift in Sources */,
-				A6430455294FC4470058C0F0 /* UserProfileViewModel.swift in Sources */,
 				9C58B39929C7F8190024CB7E /* EventLocationAndDates.swift in Sources */,
-				A6B9E65D29539729009C936E /* temp.swift in Sources */,
 				9C05C1C32983A21700841100 /* CustomTextField.swift in Sources */,
 				A62BE19D29C8231A0052D34F /* CardView.swift in Sources */,
 				9C2B898B299D8C200011FC56 /* UserCache.swift in Sources */,

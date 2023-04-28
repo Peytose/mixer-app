@@ -61,7 +61,7 @@ class EventCache {
                     .order(by: "startDate", descending: true)
             case .future:
                 return COLLECTION_EVENTS
-                    .whereField("startDate", isGreaterThan: Timestamp(date: endOfToday))
+                    .whereField("startDate", isGreaterThan: Timestamp())
                     .order(by: "startDate", descending: true)
             case .userSaves(uid: let uid):
                 return COLLECTION_EVENTS.document(uid).collection("user-saves")
