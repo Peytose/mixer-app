@@ -153,7 +153,6 @@ struct Event: Identifiable, Codable {
     
     // Event Options
     var eventOptions: [String: Bool]
-    var hasStarted: Bool?
     
     // Payment and Reviews
     var cost: Float?

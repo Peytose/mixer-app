@@ -75,7 +75,6 @@ struct CachedEvent: Hashable, Identifiable, Codable {
         self.guestInviteLimit              = event.guestInviteLimit
         self.memberInviteLimit             = event.memberInviteLimit
         self.eventOptions                  = event.eventOptions
-        self.hasStarted                    = event.hasStarted
         self.amenities                     = event.amenities
         self.checkInMethods                = event.checkInMethods
         self.cost                          = event.cost

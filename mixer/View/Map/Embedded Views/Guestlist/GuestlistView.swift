@@ -25,17 +25,18 @@ struct GuestlistView: View {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Text(viewModel.event.title)
-                        .font(.title)
+                        .font(.title3)
                         .fontWeight(.semibold)
-                        .padding(.horizontal)
+                        .foregroundColor(.secondary)
                     
                     Spacer()
                     
                     Text(viewModel.event.startDate.getTimestampString(format: "MMM d"))
-                        .font(.title)
+                        .font(.title3)
                         .fontWeight(.semibold)
-                        .padding(.horizontal)
+                        .foregroundColor(.secondary)
                 }
+                .padding(.horizontal)
                 
                 List {
                     if viewModel.guests.isEmpty {
