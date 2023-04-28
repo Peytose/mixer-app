@@ -23,7 +23,7 @@ struct StretchablePhotoBanner: View {
                 .mask(Color.profileGradient) // mask the blurred image using the gradient's alpha values
                 .offset(y: scrollY > 0 ? -scrollY : 0)
                 .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
-                .blur(radius: scrollY > 0 ? scrollY / 40 : 0)
+//                .blur(radius: scrollY > 0 ? scrollY / 40 : 0)
                 .matchedGeometryEffect(id: imageUrl, in: namespace)
             
         }
