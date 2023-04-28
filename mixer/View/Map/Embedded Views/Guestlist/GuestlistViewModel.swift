@@ -38,7 +38,7 @@ final class GuestlistViewModel: ObservableObject {
             return Dictionary(grouping: guests, by: {
                 let name = $0.name
                 let normalizedName = name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-                let firstChar = String(normalizedName.first!).uppercased()
+                let firstChar = String(normalizedName.first ?? "z").uppercased()
                 return firstChar
             })
         }()
