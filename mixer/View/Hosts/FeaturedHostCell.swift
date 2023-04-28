@@ -127,7 +127,7 @@ struct NameAndLinksRow: View {
                 .minimumScaleFactor(0.75)
                 .matchedGeometryEffect(id: "name-\(host.username)", in: namespace)
                 .onAppear {
-                    timer = Timer.publish(every: Double.random(in: 1...5), on: .main, in: .common)
+                    timer = Timer.publish(every: Double.random(in: 3...7), on: .main, in: .common)
                         .autoconnect()
                         .sink { _ in
                             withAnimation(.easeInOut) {
