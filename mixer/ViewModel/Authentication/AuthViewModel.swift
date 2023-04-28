@@ -152,7 +152,6 @@ class AuthViewModel: ObservableObject {
     
     func sendEmailLink() {
         print("DEBUG: BUTTON PRESSED ✅")
-        if !email.hasSuffix(".edu") { return } // make sure email ends in .edu (temp solution)
         
         // Create action code settings object
         let actionCodeSettings = ActionCodeSettings()

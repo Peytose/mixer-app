@@ -15,20 +15,26 @@ final class GuestlistViewModel: ObservableObject {
     @Published var showUserInfoModal: Bool = false
     @Published var alertItem: AlertItem?
     @Published var alertItemTwo: AlertItemTwo?
-    var selectedGuest: EventGuest?
+    @Published var selectedGuest: EventGuest?
     let event: CachedEvent
     let eventUid: String
     
     init(event: CachedEvent) {
         self.event = event
         self.eventUid = event.id ?? ""
-        
+
         if let eventId = event.id {
-            EventLists.loadUsers(eventUid: eventId) { users in
-                self.guests = users
+            let query = COLLECTION_EVENTS.document(eventId).collection("attendance-list")
+            query.addSnapshotListener { (querySnapshot, error) in
+                guard let documents = querySnapshot?.documents else {
+                    print("No documents")
+                    return
+                }
+
+                self.guests = documents.compactMap { queryDocumentSnapshot in
+                    try? queryDocumentSnapshot.data(as: EventGuest.self)
+                }
                 self.sectionDictionary = self.getSectionedDictionary()
-                print("DEBUG: guests from event list: \(self.guests)")
-                print("DEBUG: section dictionary for guestlist: \(self.sectionDictionary)")
             }
         }
     }
@@ -54,7 +60,7 @@ final class GuestlistViewModel: ObservableObject {
             return
         }
         
-        if guest.status == .attending && !self.showUserInfoModal {
+        if guest.status == .checkedIn && !self.showUserInfoModal {
             alertItemTwo = AlertContext.guestAlreadyCheckedIn {
                 COLLECTION_EVENTS.document(self.eventUid).collection("attendance-list").document(guestId).delete { _ in
 //                    COLLECTION_USERS.document(guestId).collection("events-attended").document(self.eventUid).delete {
@@ -76,14 +82,14 @@ final class GuestlistViewModel: ObservableObject {
     }
     
     @MainActor func createGuest(name: String, university: String, status: GuestStatus, age: Int, gender: String) {
-        guard let currentUserName = AuthViewModel.shared.currentUser?.name else { return }
+        guard let currentUsername = AuthViewModel.shared.currentUser?.name else { return }
         
         let data = ["name": name,
                     "university": university,
                     "age": age,
                     "gender": gender,
                     "status": status.rawValue,
-                    "invitedBy": currentUserName,
+                    "invitedBy": currentUsername,
                     "timestamp": Timestamp()] as [String: Any]
         
         print("DEBUG: Create guest data: \(data)")
@@ -100,7 +106,7 @@ final class GuestlistViewModel: ObservableObject {
                                       age: age,
                                       gender: gender,
                                       status: status,
-                                      invitedBy: currentUserName,
+                                      invitedBy: currentUsername,
                                       timestamp: Timestamp())
             
             self.guests.append(newGuest)
@@ -109,11 +115,9 @@ final class GuestlistViewModel: ObservableObject {
         }
     }
     
-    @MainActor func checkIn(guest: EventGuest) {
+    @MainActor func checkIn(guest: inout EventGuest) {
         guard let guestId = guest.id else { return }
         guard let currentUserName = AuthViewModel.shared.currentUser?.name else { return }
-        
-        var updatedGuest = guest // Make a copy of the guest object
         
         HostService.checkInUser(eventUid: eventUid, uid: guestId, currentUserName: currentUserName) { error in
             if let error = error {
@@ -122,16 +126,15 @@ final class GuestlistViewModel: ObservableObject {
                 return
             }
             
-            updatedGuest.status = .attending // Update the status of the copied object
-            
             if let index = self.guests.firstIndex(where: { $0.id == guestId }) {
-                self.guests[index] = updatedGuest // Update the guests array with the updated object
-                self.selectedGuest = updatedGuest
+                self.guests[index].status = .checkedIn // Update the guests array with the updated guest
                 self.sectionDictionary = self.getSectionedDictionary()
             }
             
             HapticManager.playSuccess()
         }
+        
+        guest.status = .checkedIn // Update the status of the guest
     }
     
     @MainActor func refreshGuests() {

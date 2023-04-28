@@ -11,7 +11,7 @@ import Kingfisher
 
 struct GuestlistUserView: View {
     @ObservedObject var viewModel: GuestlistViewModel
-    var guest: EventGuest
+    @State var guest: EventGuest
 
     var body: some View {
         VStack {
@@ -107,7 +107,7 @@ struct GuestlistUserView: View {
         .overlay(alignment: .bottom) {
             Button {
                 if guest.status == .invited {
-                    viewModel.checkIn(guest: guest)
+                    viewModel.checkIn(guest: &guest)
                 } else {
                     viewModel.remove(guest: guest)
                 }
@@ -137,7 +137,7 @@ struct GuestlistUserView: View {
 
 struct GuestlistUserView_Previews: PreviewProvider {
     static var previews: some View {
-        GuestlistUserView(viewModel: GuestlistViewModel(event: CachedEvent(from: Mockdata.event)), guest: EventGuest(name: "Peyton Lyons", university: "MIT", age: 20, gender: "Male", status: GuestStatus.attending, invitedBy: "Jose", timestamp: Timestamp()))
+        GuestlistUserView(viewModel: GuestlistViewModel(event: CachedEvent(from: Mockdata.event)), guest: EventGuest(name: "Peyton Lyons", university: "MIT", age: 20, gender: "Male", status: GuestStatus.checkedIn, invitedBy: "Jose", timestamp: Timestamp()))
     }
 }
 

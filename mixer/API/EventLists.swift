@@ -10,7 +10,7 @@ import SwiftUI
 
 enum GuestStatus: String, Codable, CaseIterable {
     case invited   = "isInvited"
-    case attending = "isCheckedIn"
+    case checkedIn = "isCheckedIn"
 }
 
 struct EventLists {

@@ -55,28 +55,28 @@ struct GuestlistView: View {
                     }
                     
                     ForEach(viewModel.sectionDictionary.keys.sorted(), id:\.self) { key in
-                        if let guests = viewModel.sectionDictionary[key]?.filter({ guest -> Bool in
+                        if var guests = viewModel.sectionDictionary[key]?.filter({ guest -> Bool in
                             searchText.isEmpty || guest.name.lowercased().contains(searchText.lowercased())
                         }), !guests.isEmpty {
                             Section {
-                                ForEach(guests) { guest in
-                                    GuestlistRow(guest: guest)
+                                ForEach(guests.indices, id: \.self) { index in
+                                    GuestlistRow(guest: guests[index])
                                         .contentShape(Rectangle())
                                         .onTapGesture {
                                             withAnimation() {
                                                 viewModel.showUserInfoModal = true
-                                                viewModel.selectedGuest = guest
+                                                viewModel.selectedGuest = guests[index]
                                             }
                                         }
                                         .swipeActions {
                                             Button(role: .destructive,
                                                    action: {
-                                                viewModel.remove(guest: guest)
+                                                viewModel.remove(guest: guests[index])
                                             }, label: { Label("Delete", systemImage: "trash.fill") })
                                         }
                                         .swipeActions(edge: .leading) {
                                             Button(action: {
-                                                viewModel.checkIn(guest: guest)
+                                                viewModel.checkIn(guest: &guests[index])
                                             }, label: { Label("Add", systemImage: "list.clipboard") })
                                             .tint(Color.mixerIndigo)
                                         }
@@ -93,32 +93,7 @@ struct GuestlistView: View {
                 }
                 .navigationTitle("Guestlist")
                 .navigationBarTitleDisplayMode(.automatic)
-                .searchable(text: $searchText, prompt: "Search Guests") {
-                    //                    if !searchText.isEmpty {
-                    //                        ForEach(viewModel.guests.filter({ $0.name.localizedCaseInsensitiveContains(searchText) })) { guestSuggestion in
-                    //                            GuestlistRow(guest: guestSuggestion)
-                    //                                .swipeActions {
-                    //                                    Button(role: .destructive,
-                    //                                           action: { viewModel.remove(guest: guestSuggestion) },
-                    //                                           label: { Label("Delete", systemImage: "trash.fill") })
-                    //                                }
-                    //                                .swipeActions(edge: .leading) {
-                    //                                    Button(action: {
-                    //                                        viewModel.checkIn(guest: guestSuggestion)
-                    //                                    }, label: { Label("Add", systemImage: "list.clipboard") })
-                    //                                    .tint(Color.mixerIndigo)
-                    //                                }
-                    //                                .contentShape(Rectangle())
-                    //                                .onTapGesture {
-                    //                                    withAnimation() {
-                    //                                        showUserInfoModal.toggle()
-                    //                                        viewModel.selectedGuest = guestSuggestion
-                    //                                    }
-                    //                                }
-                    //                                .searchCompletion(guestSuggestion.name)
-                    //                        }
-                    //                    }
-                }
+                .searchable(text: $searchText, prompt: "Search Guests")
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         HStack {
