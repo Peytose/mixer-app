@@ -55,6 +55,13 @@ struct GuestlistView: View {
                             Section {
                                 ForEach(guests) { guest in
                                     GuestlistRow(guest: guest)
+                                        .contentShape(Rectangle())
+                                        .onTapGesture {
+                                            withAnimation() {
+                                                showUserInfoModal.toggle()
+                                                viewModel.selectedGuest = guest
+                                            }
+                                        }
                                         .swipeActions {
                                             Button(role: .destructive,
                                                    action: { viewModel.remove(guest: guest) },
@@ -66,13 +73,6 @@ struct GuestlistView: View {
                                             }, label: { Label("Add", systemImage: "list.clipboard") })
                                             .tint(Color.mixerIndigo)
                                         }
-                                        .contentShape(Rectangle())
-                                        .onTapGesture {
-                                            withAnimation() {
-                                                showUserInfoModal.toggle()
-                                                viewModel.selectedGuest = guest
-                                            }
-                                        }
                                 }
                             } header: { Text("\(key)") }
                         }
@@ -80,34 +80,37 @@ struct GuestlistView: View {
                 }
                 .refreshable { viewModel.refreshGuests() }
                 .scrollContentBackground(.hidden)
-                .background(Color.mixerBackground.ignoresSafeArea())
+                .background { Color.mixerBackground.ignoresSafeArea()}
+                .onTapGesture {
+                    self.hideKeyboard()
+                }
                 .navigationTitle("Guestlist")
                 .navigationBarTitleDisplayMode(.automatic)
                 .searchable(text: $searchText, prompt: "Search Guests") {
-                    if !searchText.isEmpty {
-                        ForEach(viewModel.guests.filter({ $0.name.localizedCaseInsensitiveContains(searchText) })) { guestSuggestion in
-                            GuestlistRow(guest: guestSuggestion)
-                                .swipeActions {
-                                    Button(role: .destructive,
-                                           action: { viewModel.remove(guest: guestSuggestion) },
-                                           label: { Label("Delete", systemImage: "trash.fill") })
-                                }
-                                .swipeActions(edge: .leading) {
-                                    Button(action: {
-                                        viewModel.checkIn(guest: guestSuggestion)
-                                    }, label: { Label("Add", systemImage: "list.clipboard") })
-                                    .tint(Color.mixerIndigo)
-                                }
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    withAnimation() {
-                                        showUserInfoModal.toggle()
-                                        viewModel.selectedGuest = guestSuggestion
-                                    }
-                                }
-                                .searchCompletion(guestSuggestion.name)
-                        }
-                    }
+                    //                    if !searchText.isEmpty {
+                    //                        ForEach(viewModel.guests.filter({ $0.name.localizedCaseInsensitiveContains(searchText) })) { guestSuggestion in
+                    //                            GuestlistRow(guest: guestSuggestion)
+                    //                                .swipeActions {
+                    //                                    Button(role: .destructive,
+                    //                                           action: { viewModel.remove(guest: guestSuggestion) },
+                    //                                           label: { Label("Delete", systemImage: "trash.fill") })
+                    //                                }
+                    //                                .swipeActions(edge: .leading) {
+                    //                                    Button(action: {
+                    //                                        viewModel.checkIn(guest: guestSuggestion)
+                    //                                    }, label: { Label("Add", systemImage: "list.clipboard") })
+                    //                                    .tint(Color.mixerIndigo)
+                    //                                }
+                    //                                .contentShape(Rectangle())
+                    //                                .onTapGesture {
+                    //                                    withAnimation() {
+                    //                                        showUserInfoModal.toggle()
+                    //                                        viewModel.selectedGuest = guestSuggestion
+                    //                                    }
+                    //                                }
+                    //                                .searchCompletion(guestSuggestion.name)
+                    //                        }
+                    //                    }
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -134,10 +137,10 @@ struct GuestlistView: View {
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showAddGuestView) { AddToGuestlistView(viewModel: viewModel,
                                                                     showAddGuestView: $showAddGuestView) }
-        //        .sheet(isPresented: $showUserInfoModal, content: {
-        //            GuestListUserView(user: guestManager.selectedGuest!)
-        //                .presentationDetents([.medium])
-        //        })
+        .sheet(isPresented: $showUserInfoModal, content: {
+            GuestListUserView(parentViewModel: viewModel, guest: viewModel.selectedGuest!)
+                .presentationDetents([.medium])
+        })
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .alert(item: $viewModel.alertItemTwo, content: { $0.alert })
     }

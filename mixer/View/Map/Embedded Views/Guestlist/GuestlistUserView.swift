@@ -6,121 +6,102 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct GuestListUserView: View {
-    @State var showAlert = false
-//    var user: MockUser
-    var user: EventGuest
-    
+    @ObservedObject var parentViewModel: GuestlistViewModel
+    var guest: EventGuest
+
     var body: some View {
         VStack {
-            Image("default-avatar")
+            Image("mock-user-1")
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(contentMode: .fill)
                 .clipShape(Circle())
-                .frame(width: 180, height: 180)
+                .frame(width: DeviceTypes.ScreenSize.width * 0.50, height: DeviceTypes.ScreenSize.width * 0.50)
                 .padding(.top)
             
-            Text(user.name)
-                .font(.title.weight(.semibold))
+            HStack(alignment: .bottom) {
+                Text(guest.name)
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                
+                Text(String(guest.age!))
+                    .font(.title3)
+                    .foregroundColor(.secondary)
+            }
             
-            HStack() {
+            HStack {
                 Image(systemName: "graduationcap.fill")
                     .imageScale(.small)
                     .padding(.trailing, -6)
                 
-                Text(user.university)
+                Text(guest.university)
                     .font(.headline)
                     .foregroundColor(.secondary)
-                
-                
-                Image(systemName: "house.fill")
-                    .imageScale(.small)
-                    .padding(.trailing, -6)
-
-//                Text(user.)
-//                    .font(.headline)
-//                    .foregroundColor(.secondary)
             }
             
             HStack(spacing: 50) {
                 VStack(alignment: .center, spacing: 0) {
-                    Text(String(describing: user.age))
-                        .font(.title2.weight(.bold))
+                    Text(guest.invitedBy!)
+                        .font(.title2)
+                        .fontWeight(.semibold)
                     
-                    Text("Age")
+                    Text("Invited by")
+                        .font(.headline)
                         .foregroundColor(.secondary)
-                        .font(.body.weight(.semibold))
                 }
-                
                 
                 VStack(alignment: .center, spacing: 0) {
-                    Text(user.gender!)
-                        .font(.title2.weight(.bold))
+                    Text(guest.gender!)
+                        .font(.title2)
+                        .fontWeight(.semibold)
                     
                     Text("Gender")
+                        .font(.headline)
                         .foregroundColor(.secondary)
-                        .font(.body.weight(.semibold))
                 }
-                
             }
             .font(.title3.weight(.semibold))
             .padding(2)
-            
-//            Text("Invited by \(user.a)")
-//                .font(.headline)
-//                .foregroundColor(.secondary)
-//                .padding(.bottom, 10)
-            
-            HStack {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.mixerPurpleGradient)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .padding(.horizontal, 30)
-                    .shadow(radius: 15)
-                    .shadow(radius: 5, y: 10)
-                    .overlay(content: {
-                        Text("Check in")
-                            .foregroundColor(Color.white)
-                            .font(.title2.weight(.semibold))
-                    })
-                
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color.red.opacity(0.7))
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .padding(.horizontal, 30)
-                    .shadow(radius: 15)
-                    .shadow(radius: 5, y: 10)
-                    .overlay(content: {
-                        Text("Blacklist")
-                            .foregroundColor(Color.white)
-                            .font(.title2.weight(.semibold))
-                    })
-                    .onTapGesture {
-                        showAlert.toggle()
-                    }
-            }
-            
+            .padding(.bottom)
         }
         .frame(maxWidth: .infinity ,maxHeight: .infinity, alignment: .top)
         .background(Color.mixerBackground)
         .preferredColorScheme(.dark)
-        .alert("Are you sure?", isPresented: $showAlert, actions: {
-            // 1
-            Button("Cancel", role: .cancel, action: {})
-            
-            Button("Blacklist", role: .destructive, action: {})
-        }, message: {
-            Text("Selecting Blacklist will add this user to your organization's blacklist thus preventing them from attending your organization's events in the future.")
-        })
+        .overlay(alignment: .bottom) {
+            Button {
+                let impact = UIImpactFeedbackGenerator(style: .light)
+                impact.impactOccurred()
+                parentViewModel.checkIn(guest: guest)
+            } label: {
+                Capsule()
+                    .fill(Color.mixerSecondaryBackground)
+                    .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
+                    .shadow(radius: 20, x: -8, y: -8)
+                    .shadow(radius: 20, x: 8, y: 8)
+                    .overlay {
+                        HStack {
+                            Image(systemName: "list.clipboard")
+                                .imageScale(.large)
+                                .foregroundColor(.mainFont)
+                            
+                            Text("Check in")
+                                .font(.body.weight(.medium))
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .shadow(radius: 5, y: 10)
+            }
+        }
      }
 }
 
-//struct GuestListUserView_Previews: PreviewProvider {
-//    static var previews: some View {
+struct GuestListUserView_Previews: PreviewProvider {
+    static var previews: some View {
 //        GuestListUserView(user: EventGuest(name: "Jose", university: "MIT"))
-//    }
-//}
+        GuestListUserView(parentViewModel: GuestlistViewModel(event: CachedEvent(from: Mockdata.event)), guest: EventGuest(name: "Peyton Lyons", university: "MIT", age: 20, gender: "Male", status: GuestStatus.attending, invitedBy: "Jose", timestamp: Timestamp()))
+    }
+}
 
