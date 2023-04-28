@@ -12,6 +12,7 @@ import FirebaseFirestoreSwift
 final class GuestlistViewModel: ObservableObject {
     @Published var guests = [EventGuest]()
     @Published var sectionDictionary: [String: [EventGuest]] = [:]
+    @Published var showUserInfoModal: Bool = false
     @Published var alertItem: AlertItem?
     @Published var alertItemTwo: AlertItemTwo?
     var selectedGuest: EventGuest?
@@ -48,9 +49,12 @@ final class GuestlistViewModel: ObservableObject {
     
     
     @MainActor func remove(guest: EventGuest) {
-        guard let guestId = guest.id else { return }
+        guard let guestId = guest.id else {
+//            completion(true)
+            return
+        }
         
-        if guest.status == .attending {
+        if guest.status == .attending && !self.showUserInfoModal {
             alertItemTwo = AlertContext.guestAlreadyCheckedIn {
                 COLLECTION_EVENTS.document(self.eventUid).collection("attendance-list").document(guestId).delete { _ in
 //                    COLLECTION_USERS.document(guestId).collection("events-attended").document(self.eventUid).delete {
@@ -59,10 +63,14 @@ final class GuestlistViewModel: ObservableObject {
 //                    }
                 }
             }
-        } else if guest.status == .invited {
+        } else if guest.status == .invited || self.showUserInfoModal {
             COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(guestId).delete { _ in
                 self.guests.removeAll(where: { $0.id == guestId })
                 self.sectionDictionary = self.getSectionedDictionary()
+                
+                if self.showUserInfoModal {
+                    self.showUserInfoModal = false
+                }
             }
         }
     }
@@ -118,6 +126,7 @@ final class GuestlistViewModel: ObservableObject {
             
             if let index = self.guests.firstIndex(where: { $0.id == guestId }) {
                 self.guests[index] = updatedGuest // Update the guests array with the updated object
+                self.selectedGuest = updatedGuest
                 self.sectionDictionary = self.getSectionedDictionary()
             }
             

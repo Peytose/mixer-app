@@ -13,7 +13,6 @@ struct GuestlistView: View {
     @Binding var isShowingGuestlistView: Bool
     @State private var searchText: String = ""
     @State var showAddGuestView: Bool     = false
-    @State var showUserInfoModal: Bool    = false
     
     init(viewModel: GuestlistViewModel, isShowingGuestlistView: Binding<Bool>) {
         self.viewModel = viewModel
@@ -28,16 +27,16 @@ struct GuestlistView: View {
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
-                    
+
                     Spacer()
-                    
+
                     Text(viewModel.event.startDate.getTimestampString(format: "MMM d"))
                         .font(.title3)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
                 }
                 .padding(.horizontal)
-                
+
                 List {
                     if viewModel.guests.isEmpty {
                         Section {
@@ -48,6 +47,7 @@ struct GuestlistView: View {
                             .listRowBackground(Color.mixerSecondaryBackground)
                         }
                     }
+                    
                     ForEach(viewModel.sectionDictionary.keys.sorted(), id:\.self) { key in
                         if let guests = viewModel.sectionDictionary[key]?.filter({ guest -> Bool in
                             searchText.isEmpty || guest.name.lowercased().contains(searchText.lowercased())
@@ -58,14 +58,15 @@ struct GuestlistView: View {
                                         .contentShape(Rectangle())
                                         .onTapGesture {
                                             withAnimation() {
-                                                showUserInfoModal.toggle()
+                                                viewModel.showUserInfoModal = true
                                                 viewModel.selectedGuest = guest
                                             }
                                         }
                                         .swipeActions {
                                             Button(role: .destructive,
-                                                   action: { viewModel.remove(guest: guest) },
-                                                   label: { Label("Delete", systemImage: "trash.fill") })
+                                                   action: {
+                                                viewModel.remove(guest: guest)
+                                            }, label: { Label("Delete", systemImage: "trash.fill") })
                                         }
                                         .swipeActions(edge: .leading) {
                                             Button(action: {
@@ -117,7 +118,7 @@ struct GuestlistView: View {
                         Button("Add Guest") { showAddGuestView.toggle() }
                             .foregroundColor(.blue)
                     }
-                    
+
                     ToolbarItem(placement: .navigationBarLeading) {
                         HStack {
                             Button { isShowingGuestlistView = false } label: {
@@ -137,10 +138,12 @@ struct GuestlistView: View {
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showAddGuestView) { AddToGuestlistView(viewModel: viewModel,
                                                                     showAddGuestView: $showAddGuestView) }
-        .sheet(isPresented: $showUserInfoModal, content: {
-            GuestListUserView(parentViewModel: viewModel, guest: viewModel.selectedGuest!)
-                .presentationDetents([.medium])
-        })
+        .sheet(isPresented: $viewModel.showUserInfoModal) {
+            if let guest = viewModel.selectedGuest {
+                GuestlistUserView(viewModel: viewModel, guest: guest)
+                    .presentationDetents([.medium])
+            }
+        }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .alert(item: $viewModel.alertItemTwo, content: { $0.alert })
     }
@@ -157,11 +160,19 @@ struct GuestlistRow: View {
     
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
-            Image("default-avatar")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .frame(width: 30, height: 30)
-                .clipShape(Circle())
+            if let imageUrl = guest.profileImageUrl {
+                KFImage(URL(string: imageUrl))
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 30, height: 30)
+                    .clipShape(Circle())
+            } else {
+                Image("default-avatar")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 30, height: 30)
+                    .clipShape(Circle())
+            }
             
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 0) {

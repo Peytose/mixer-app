@@ -18,6 +18,7 @@ struct EventGuest: Identifiable, Codable {
     var gender: String?
     var status: GuestStatus?
     var invitedBy: String?
+    var checkedInBy: String?
     var timestamp: Timestamp?
     
     init(from user: CachedUser) {
@@ -52,6 +53,7 @@ struct EventGuest: Identifiable, Codable {
             "gender": gender as String? ?? "",
             "status": status as GuestStatus? ?? "",
             "invitedBy": invitedBy as String? ?? "",
+            "checkedInBy": checkedInBy as String? ?? "",
             "timestamp": timestamp as Timestamp? ?? Timestamp(),
         ]
     }

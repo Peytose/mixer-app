@@ -54,6 +54,7 @@ struct AddToGuestlistView: View {
                     Section {
                         TextField("Name", text: $name)
                             .foregroundColor(Color.mainFont)
+                            .autocorrectionDisabled()
                         
                         HStack {
                             Text(university == UniversityExamples.other ? universityName : university.rawValue)
@@ -74,6 +75,7 @@ struct AddToGuestlistView: View {
                         if university == .other {
                             TextField("School Name", text: $universityName, axis: .vertical)
                                 .foregroundColor(Color.mainFont)
+                                .autocorrectionDisabled()
                         }
                         
                         HStack {
