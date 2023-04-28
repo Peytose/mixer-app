@@ -13,6 +13,7 @@ struct GuestlistView: View {
     @Binding var isShowingGuestlistView: Bool
     @State private var searchText: String = ""
     @State var showAddGuestView: Bool     = false
+    @State var showGuestlistCharts: Bool  = false
     
     init(viewModel: GuestlistViewModel, isShowingGuestlistView: Binding<Bool>) {
         self.viewModel = viewModel
@@ -36,6 +37,11 @@ struct GuestlistView: View {
                         .foregroundColor(.secondary)
                 }
                 .padding(.horizontal)
+                
+                Text("\(viewModel.guests.count) guests")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal)
 
                 List {
                     if viewModel.guests.isEmpty {
@@ -115,8 +121,12 @@ struct GuestlistView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Add Guest") { showAddGuestView.toggle() }
-                            .foregroundColor(.blue)
+                        HStack {
+                            Button("Analytics") { showGuestlistCharts.toggle() }
+                            
+                            Button("Add Guest") { showAddGuestView.toggle() }
+                                .foregroundColor(.blue)
+                        }
                     }
 
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -144,6 +154,9 @@ struct GuestlistView: View {
                     .presentationDetents([.medium])
             }
         }
+        .sheet(isPresented: $showGuestlistCharts, content: {
+            GuestlistChartsView()
+        })
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .alert(item: $viewModel.alertItemTwo, content: { $0.alert })
     }

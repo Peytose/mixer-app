@@ -155,6 +155,9 @@
 		A6B9E690295464A8009C936E /* EventLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6B9E68F295464A8009C936E /* EventLocationView.swift */; };
 		A6BAEF612955064200410DED /* ReviewCreatedEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BAEF602955064200410DED /* ReviewCreatedEventView.swift */; };
 		A6BAEF63295D40D700410DED /* SocialPageNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BAEF62295D40D700410DED /* SocialPageNavigationBar.swift */; };
+		A6BF681329FC6D9E000FF54B /* GuestlistChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681229FC6D9E000FF54B /* GuestlistChartsView.swift */; };
+		A6BF681629FC6DEE000FF54B /* PieSlice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681529FC6DEE000FF54B /* PieSlice.swift */; };
+		A6BF681829FC6E03000FF54B /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681729FC6E03000FF54B /* PieChartView.swift */; };
 		A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */; };
 		A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */; };
 		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
@@ -304,6 +307,9 @@
 		A6B9E68F295464A8009C936E /* EventLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventLocationView.swift; sourceTree = "<group>"; };
 		A6BAEF602955064200410DED /* ReviewCreatedEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewCreatedEventView.swift; sourceTree = "<group>"; };
 		A6BAEF62295D40D700410DED /* SocialPageNavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialPageNavigationBar.swift; sourceTree = "<group>"; };
+		A6BF681229FC6D9E000FF54B /* GuestlistChartsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestlistChartsView.swift; sourceTree = "<group>"; };
+		A6BF681529FC6DEE000FF54B /* PieSlice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieSlice.swift; sourceTree = "<group>"; };
+		A6BF681729FC6E03000FF54B /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 		A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBirthdayView.swift; sourceTree = "<group>"; };
 		A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGenderView.swift; sourceTree = "<group>"; };
 		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
@@ -504,6 +510,7 @@
 		9C3BADCC291F552F009C8043 /* CustomViews */ = {
 			isa = PBXGroup;
 			children = (
+				A6BF681429FC6DDD000FF54B /* Pie Chart */,
 				9C58B3B129C8E71B0024CB7E /* AddressSearch */,
 				A6B9E65829518AB2009C936E /* CustomStickyHeader.swift */,
 				A682CC592970F60C008EA546 /* EventRow.swift */,
@@ -822,6 +829,7 @@
 				9C4B0E41298241AE00A9D963 /* GuestlistViewModel.swift */,
 				A67352792979B8FD00AAD32E /* GuestlistUserView.swift */,
 				9C3E2CA629EE767E00A74D05 /* AddToGuestlistView.swift */,
+				A6BF681229FC6D9E000FF54B /* GuestlistChartsView.swift */,
 			);
 			path = Guestlist;
 			sourceTree = "<group>";
@@ -865,6 +873,15 @@
 				9C3E2C9B29EA3A5900A74D05 /* SmallCornerNumber.swift */,
 			);
 			path = "Small Items";
+			sourceTree = "<group>";
+		};
+		A6BF681429FC6DDD000FF54B /* Pie Chart */ = {
+			isa = PBXGroup;
+			children = (
+				A6BF681529FC6DEE000FF54B /* PieSlice.swift */,
+				A6BF681729FC6E03000FF54B /* PieChartView.swift */,
+			);
+			path = "Pie Chart";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -970,8 +987,10 @@
 				A6F003AA29807646007E8CCA /* FeaturedHostCell.swift in Sources */,
 				9C4B0E4C298241CF00A9D963 /* EventLists.swift in Sources */,
 				A643044C294FC2960058C0F0 /* ProfileSettingsView.swift in Sources */,
+				A6BF681829FC6E03000FF54B /* PieChartView.swift in Sources */,
 				A6B9E65729518A3C009C936E /* EventCellView.swift in Sources */,
 				A6AB6C7E2960EFE7007E9BF0 /* CustomPopUpView.swift in Sources */,
+				A6BF681629FC6DEE000FF54B /* PieSlice.swift in Sources */,
 				9C3E2CA029EA8A7300A74D05 /* MoreProfileOptions.swift in Sources */,
 				9C58B3A629C8E5250024CB7E /* CachedEvent.swift in Sources */,
 				9C93318729201C7B0079E039 /* ExploreView.swift in Sources */,
@@ -1090,6 +1109,7 @@
 				9C50D23329FB4F65002FAE76 /* EventMapAnnotation.swift in Sources */,
 				A62BE1A629CA4FCA0052D34F /* UIScreen+Ext.swift in Sources */,
 				A61D12B429B42D3D00AE0EED /* HostInfoView.swift in Sources */,
+				A6BF681329FC6D9E000FF54B /* GuestlistChartsView.swift in Sources */,
 				9C58B3C129C8EB270024CB7E /* BackArrowButton.swift in Sources */,
 				9C93319429203D8B0079E039 /* Notification.swift in Sources */,
 				9C58B3CA29CAD4D50024CB7E /* Binding+Ext.swift in Sources */,
