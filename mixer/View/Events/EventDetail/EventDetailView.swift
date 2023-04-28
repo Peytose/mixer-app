@@ -344,43 +344,6 @@ fileprivate struct EventFlyerHeader: View {
 //                            }
                         }
                         
-                        HStack(spacing: 5) {
-                            Image(systemName: "person.3.fill")
-                                .symbolRenderingMode(.hierarchical)
-                            
-                            if let saves = event.saves {
-                                Text("\(saves) interested")
-                                    .font(.callout.weight(.semibold))
-                            }
-                            
-                            Spacer()
-                            
-                            HStack(spacing: -8) {
-                                Image("profile-banner-1")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 30, height: 30)
-                                    .clipShape(Circle())
-                                
-                                Image("mock-user-1")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 30, height: 30)
-                                    .clipShape(Circle())
-                                
-                                Circle()
-                                    .fill(Color.mixerSecondaryBackground)
-                                    .frame(width: 30, height: 30)
-                                    .overlay(alignment: .center) {
-                                        Text("+99")
-                                            .foregroundColor(.white)
-                                            .font(.footnote)
-                                            .lineLimit(1)
-                                            .minimumScaleFactor(0.5)
-                                    }
-                            }
-                        }
-                        
                         Divider()
                             .foregroundColor(.secondary)
                             .padding(.vertical, 6)

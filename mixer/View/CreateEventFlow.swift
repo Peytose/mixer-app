@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CreateEventFlow: View {
     @ObservedObject var viewModel = CreateEventViewModel()
+    @Binding var isShowingCreateEventView: Bool
     @State private var showArrow = false
     
     var body: some View {
@@ -64,11 +65,12 @@ struct CreateEventFlow: View {
         }
         .overlay(alignment: .top) {
             HStack(alignment: .center) {
-                Button(action: viewModel.previous) {
+                Button(action: showArrow ? viewModel.previous : { isShowingCreateEventView = false } ) {
                     Image(systemName: showArrow ? "chevron.backward" : "xmark")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 23, height: 23)
+                        .font(.title3)
+                        .fontWeight(.medium)
+                        .foregroundColor(.white)
+                        .contentShape(Rectangle())
                 }
                 .frame(width: 50, height: 50)
                 
@@ -82,7 +84,6 @@ struct CreateEventFlow: View {
                     .minimumScaleFactor(0.75)
                 
                 Spacer()
-                
                 
                 ProgressView(value: Double(viewModel.active.rawValue) / 5.0)
                     .frame(width: 50)
@@ -102,7 +103,7 @@ struct CreateEventFlow: View {
 
 struct CreateEventFlow_Previews: PreviewProvider {
     static var previews: some View {
-        CreateEventFlow()
+        CreateEventFlow(isShowingCreateEventView: .constant(true))
             .preferredColorScheme(.dark)
     }
 }

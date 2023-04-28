@@ -48,7 +48,7 @@ struct MainTabView: View {
             ExploreView()
                 .tabItem(for: Item.first)
 
-            MapTemp(namespace: namespace)
+            MapView(namespace: namespace)
                 .tabItem(for: Item.second)
             
             SearchView()
