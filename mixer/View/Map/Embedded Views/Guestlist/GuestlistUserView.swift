@@ -87,7 +87,7 @@ struct GuestListUserView: View {
                                 .imageScale(.large)
                                 .foregroundColor(.mainFont)
                             
-                            Text("Check in")
+                            Text("Check \(guest.name) in")
                                 .font(.body.weight(.medium))
                                 .foregroundColor(.white)
                         }
