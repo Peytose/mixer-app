@@ -9,6 +9,7 @@ import SwiftUI
 import Firebase
 import FirebaseFirestoreSwift
 import CoreLocation
+import MapKit
 
 final class EventDetailViewModel: ObservableObject {
     @Published var event: CachedEvent
@@ -17,6 +18,15 @@ final class EventDetailViewModel: ObservableObject {
 
     init(event: CachedEvent) {
         self.event = event
+    }
+    
+    
+    func getDirectionsToLocation(coordinates: CLLocationCoordinate2D) {
+        let placemark = MKPlacemark(coordinate: coordinates)
+        let mapItem   = MKMapItem(placemark: placemark)
+        mapItem.name = host?.name ?? event.title
+        
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking])
     }
 
     
@@ -117,10 +127,20 @@ final class EventDetailViewModel: ObservableObject {
     
     
     @MainActor func getEventCoordinates() {
-        if event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false { return }
-        
-        if let longitude = event.longitude, let latitude = event.latitude {
-            self.coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+        Task {
+            do {
+                if event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false { return }
+                
+                if let longitude = event.longitude, let latitude = event.latitude {
+                    self.coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+                    print("DEBUG: 1 coordinates on event \(String(describing: self.coordinates))")
+                } else {
+                    self.coordinates = try await event.address.coordinates()
+                    print("DEBUG: 2 coordinates on event \(String(describing: self.coordinates))")
+                }
+            } catch {
+                print("DEBUG: Error getting event coordinates on event view. \(error.localizedDescription)")
+            }
         }
     }
 }

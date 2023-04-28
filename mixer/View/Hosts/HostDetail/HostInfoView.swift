@@ -35,8 +35,8 @@ struct HostInfoView: View {
                         .matchedGeometryEffect(id: "bio-\(host.username)", in: namespace)
                 }
                 
-                FriendsWhoFollowView()
-                    .opacity(appear[0] ? 1 : 0)
+//                FriendsWhoFollowView()
+//                    .opacity(appear[0] ? 1 : 0)
             }
             
             
@@ -85,7 +85,7 @@ struct HostInfoView: View {
             if let coordinates = coordinates {
                 HostSubheading(text: "Located At")
                 
-                MapSnapshotView(location: coordinates, isInvited: true, host: host)
+                MapSnapshotView(location: coordinates, host: host)
                     .cornerRadius(16)
                     .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coordinates) }
             }

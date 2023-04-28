@@ -14,7 +14,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     @Published var isShowingDetailView = false
     @Published var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 42.350710, longitude: -71.090980),
                                                span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-    @Published var mapItems: [CachedHost: CachedEvent?] = [:]
+    @Published var mapItems: [CachedHost: Optional<CachedEvent>] = [:]
     @Published var alertItem: AlertItem?
     @Published var isLoading = false
     @Published var userLocation: CLLocation?
@@ -58,8 +58,6 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                 
                 print("DEBUG: today events fetched!. \(String(describing: todayEvents))")
                 print("DEBUG: hosts fetched!. \(String(describing: hosts))")
-                // Remove hosts with no events
-                hosts.removeAll(where: { host in !todayEvents.contains(where: { $0.hostUuid == host.id }) })
 
                 for var host in hosts {
                     guard let hostId = host.id else { return }

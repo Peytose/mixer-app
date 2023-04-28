@@ -14,8 +14,8 @@ struct MapSnapshotView: View {
     var delay: CGFloat          = 0.3
     var width: CGFloat          = 350
     var height: CGFloat         = 220
-    var isInvited: Bool         = false
     var host: CachedHost?
+    var event: CachedEvent?
     @State private var mapPreviewImageView: Image?
     
     var body: some View {
@@ -23,19 +23,21 @@ struct MapSnapshotView: View {
             if let image = mapPreviewImageView {
                 ZStack(alignment: .center) {
                     image
-                        .blur(radius: isInvited ? 0 : 6)
                     
                     if let host = host {
                         HostMapAnnotation(host: host)
+                    } else if let event = event {
+                        EventMapAnnotation(event: event)
                     } else {
-                        Image(systemName: isInvited ? "music.note.house.fill" : "exclamationmark.lock.fill")
+                        Image(systemName: "mappin")
                             .resizable()
                             .scaledToFit()
                             .foregroundColor(.mixerIndigo)
                             .shadow(radius: 10)
-                            .frame(width: isInvited ? 20 : 40)
+                            .frame(width: 20)
                     }
                 }
+                .cornerRadius(9)
             } else {
                 LoadingView()
             }

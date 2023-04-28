@@ -53,7 +53,7 @@ enum StudentMajor: String, Codable, CaseIterable {
     case biologicalAndBiomedicalSciences = "Biological and Biomedical Sciences"
     case business                        = "Business"
     case communicationAndJournalism      = "Communication and Journalism"
-    case computerScience                        = "Computer Science"
+    case computerScience                 = "Computer Science"
     case economics                       = "Economics"
     case education                       = "Education"
     case engineering                     = "Engineering"

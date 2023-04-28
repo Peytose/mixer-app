@@ -15,16 +15,20 @@ final class GuestlistViewModel: ObservableObject {
     @Published var alertItem: AlertItem?
     @Published var alertItemTwo: AlertItemTwo?
     var selectedGuest: EventGuest?
-    private let eventUid: String
+    let event: CachedEvent
+    let eventUid: String
     
-    init(eventUid: String) {
-        self.eventUid = eventUid
+    init(event: CachedEvent) {
+        self.event = event
+        self.eventUid = event.id ?? ""
         
-        EventLists.loadUsers(eventUid: self.eventUid) { users in
-            self.guests = users
-            self.sectionDictionary = self.getSectionedDictionary()
-            print("DEBUG: guests from event list: \(self.guests)")
-            print("DEBUG: section dictionary for guestlist: \(self.sectionDictionary)")
+        if let eventId = event.id {
+            EventLists.loadUsers(eventUid: eventId) { users in
+                self.guests = users
+                self.sectionDictionary = self.getSectionedDictionary()
+                print("DEBUG: guests from event list: \(self.guests)")
+                print("DEBUG: section dictionary for guestlist: \(self.sectionDictionary)")
+            }
         }
     }
     
@@ -106,7 +110,7 @@ final class GuestlistViewModel: ObservableObject {
         HostService.checkInUser(eventUid: eventUid, uid: guestId, currentUserName: currentUserName) { error in
             if let error = error {
                 print("DEBUG: Error checking guest in. \(error.localizedDescription)")
-                // self.alertItem = AlertContext.unableToCheckIn(error)
+//                self.alertItem = AlertContext.unableToCheck
                 return
             }
             
@@ -116,6 +120,16 @@ final class GuestlistViewModel: ObservableObject {
                 self.guests[index] = updatedGuest // Update the guests array with the updated object
                 self.sectionDictionary = self.getSectionedDictionary()
             }
+            
+            HapticManager.playSuccess()
+        }
+    }
+    
+    @MainActor func refreshGuests() {
+        EventLists.loadUsers(eventUid: self.eventUid) { users in
+            self.guests = users
+            self.sectionDictionary = self.getSectionedDictionary()
+            print("DEBUG: Refreshed guestlist!")
         }
     }
 }

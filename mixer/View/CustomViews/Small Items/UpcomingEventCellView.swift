@@ -53,6 +53,7 @@ struct UpcomingEventCellView: View {
                 }
         }
     }
+    
     var cellInfo: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)

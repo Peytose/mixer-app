@@ -58,6 +58,8 @@
 		9C4B0E4C298241CF00A9D963 /* EventLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B0E48298241CD00A9D963 /* EventLists.swift */; };
 		9C4B0E4F298241CF00A9D963 /* HostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B0E4B298241CF00A9D963 /* HostService.swift */; };
 		9C4B0E512983795600A9D963 /* EventListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B0E502983795600A9D963 /* EventListView.swift */; };
+		9C50D23329FB4F65002FAE76 /* EventMapAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C50D23229FB4F65002FAE76 /* EventMapAnnotation.swift */; };
+		9C50D23529FB54A6002FAE76 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C50D23429FB54A6002FAE76 /* HapticManager.swift */; };
 		9C567A98292FFF1800EA5FCB /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C567A97292FFF1800EA5FCB /* String+Ext.swift */; };
 		9C567A9E2934F83100EA5FCB /* PhotoPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C567A9D2934F83100EA5FCB /* PhotoPicker.swift */; };
 		9C567AA02934FCFF00EA5FCB /* GetUsername.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C567A9F2934FCFF00EA5FCB /* GetUsername.swift */; };
@@ -210,6 +212,8 @@
 		9C4B0E48298241CD00A9D963 /* EventLists.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventLists.swift; sourceTree = "<group>"; };
 		9C4B0E4B298241CF00A9D963 /* HostService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostService.swift; sourceTree = "<group>"; };
 		9C4B0E502983795600A9D963 /* EventListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventListView.swift; sourceTree = "<group>"; };
+		9C50D23229FB4F65002FAE76 /* EventMapAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMapAnnotation.swift; sourceTree = "<group>"; };
+		9C50D23429FB54A6002FAE76 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		9C567A97292FFF1800EA5FCB /* String+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Ext.swift"; sourceTree = "<group>"; };
 		9C567A9D2934F83100EA5FCB /* PhotoPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoPicker.swift; sourceTree = "<group>"; };
 		9C567A9F2934FCFF00EA5FCB /* GetUsername.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUsername.swift; sourceTree = "<group>"; };
@@ -461,6 +465,7 @@
 		9C3BADCA291F551A009C8043 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				9C50D23629FB54B7002FAE76 /* Managers */,
 				9C2B8969298F87320011FC56 /* Cache */,
 				9C3BADCB291F551E009C8043 /* Extensions */,
 				9C3BADD6291F55D1009C8043 /* Constants.swift */,
@@ -518,6 +523,7 @@
 				A6430458294FC6D00058C0F0 /* NavigationBar.swift */,
 				A6BAEF62295D40D700410DED /* SocialPageNavigationBar.swift */,
 				9C2B898329947EAF0011FC56 /* HostMapAnnotation.swift */,
+				9C50D23229FB4F65002FAE76 /* EventMapAnnotation.swift */,
 				9C2B898E29A179A20011FC56 /* LoadingView.swift */,
 				9C2B899029A2DB2C0011FC56 /* QRCodeView.swift */,
 				A6B9E6752953B6DA009C936E /* LogoView.swift */,
@@ -652,6 +658,14 @@
 				9C4B0E3D2982419F00A9D963 /* EventDetailViewModel.swift */,
 			);
 			path = Events;
+			sourceTree = "<group>";
+		};
+		9C50D23629FB54B7002FAE76 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				9C50D23429FB54A6002FAE76 /* HapticManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		9C58B38C29C7F8190024CB7E /* CreateEventFlow */ = {
@@ -1042,6 +1056,7 @@
 				A6BAEF63295D40D700410DED /* SocialPageNavigationBar.swift in Sources */,
 				A62BE1A829CA501F0052D34F /* QRCodeAnimationView.swift in Sources */,
 				A682CC562970915B008EA546 /* DetailRowView.swift in Sources */,
+				9C50D23529FB54A6002FAE76 /* HapticManager.swift in Sources */,
 				9C3BADBC291F54B4009C8043 /* ContentView.swift in Sources */,
 				9C58B39A29C7F8190024CB7E /* BasicEventInfo.swift in Sources */,
 				A6B9E6692953A889009C936E /* MapClusterView.swift in Sources */,
@@ -1088,6 +1103,7 @@
 				A62BE1A229CA4EFC0052D34F /* QRCodeBoxView.swift in Sources */,
 				A6430459294FC6D00058C0F0 /* NavigationBar.swift in Sources */,
 				A6CD2C84297B201C00AA0B98 /* PlaceHolderColorModifier.swift in Sources */,
+				9C50D23329FB4F65002FAE76 /* EventMapAnnotation.swift in Sources */,
 				A62BE1A629CA4FCA0052D34F /* UIScreen+Ext.swift in Sources */,
 				A61D12B429B42D3D00AE0EED /* HostInfoView.swift in Sources */,
 				9C58B3C129C8EB270024CB7E /* BackArrowButton.swift in Sources */,

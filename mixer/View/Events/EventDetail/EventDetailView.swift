@@ -114,11 +114,22 @@ struct EventDetailView: View {
                     }
                     
                     if let coords = viewModel.coordinates {
-                        Text("Where you'll be")
-                            .font(.title)
-                            .bold()
-                        
-                        MapSnapshotView(location: coords)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Where you'll be")
+                                .font(.title)
+                                .bold()
+                                .foregroundColor(.white)
+                            
+                            VStack(alignment: .leading, spacing: 5) {
+                                MapSnapshotView(location: coords, event: viewModel.event)
+                                    .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
+                                
+                                Text("Tap the map for directions to this event!")
+                                    .font(.footnote)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
                 }
                 .padding()
@@ -296,6 +307,7 @@ fileprivate struct EventFlyerHeader: View {
     var body: some View {
         GeometryReader { proxy in
             let scrollY = proxy.frame(in: .named("scroll")).minY
+            
             VStack {
                 ZStack {
                     VStack(alignment: .center, spacing: 2) {

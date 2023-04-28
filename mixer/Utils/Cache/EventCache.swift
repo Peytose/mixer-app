@@ -50,19 +50,25 @@ class EventCache {
                 return COLLECTION_USERS.document(uid).collection("user-history")
                     .whereField("endDate", isLessThanOrEqualTo: Timestamp())
                     .whereField("endDate", isGreaterThanOrEqualTo: Timestamp(date: fromDate))
+                    .order(by: "startDate", descending: true)
             case .hostEvents(uid: let uid):
                 return COLLECTION_EVENTS
                     .whereField("hostUuid", isEqualTo: uid)
+                    .order(by: "startDate", descending: true)
             case .today:
                 return COLLECTION_EVENTS
                     .whereField("hasStarted", isEqualTo: true)
+                    .order(by: "startDate", descending: true)
             case .future:
                 return COLLECTION_EVENTS
                     .whereField("startDate", isGreaterThan: Timestamp(date: endOfToday))
+                    .order(by: "startDate", descending: true)
             case .userSaves(uid: let uid):
                 return COLLECTION_EVENTS.document(uid).collection("user-saves")
+                    .order(by: "startDate", descending: true)
             case .all:
                 return COLLECTION_EVENTS
+                    .order(by: "startDate", descending: true)
             }
         }
     }

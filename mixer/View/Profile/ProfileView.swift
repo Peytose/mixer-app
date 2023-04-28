@@ -284,10 +284,11 @@ struct ProfileView: View {
                     .overlay(alignment: .topTrailing) {
                         HStack(spacing: viewModel.user.isCurrentUser ? 5 : 5) {
                             if viewModel.user.isCurrentUser {
-                                ProfileCornerButton(isOn: $showNotifications, icon: "bell")
-                                    .overlay(alignment: .topTrailing) {
-                                        IconBadge(count: viewModel.notifications.count)
-                                    }
+                                //MARK: Notification button (debug report: needs to populate view)
+//                                ProfileCornerButton(isOn: $showNotifications, icon: "bell")
+//                                    .overlay(alignment: .topTrailing) {
+//                                        IconBadge(count: viewModel.notifications.count)
+//                                    }
                                 
                                 ProfileCornerButton(isOn: $showEditProfile,
                                                     icon: "gearshape")

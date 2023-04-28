@@ -80,9 +80,9 @@ struct MapTemp: View {
                 }
             }
         }
-        .sheet(isPresented: $isShowingGuestlistView) {
-            if let eventId = viewModel.hostEvents.first?.value.id, !viewModel.hostEvents.isEmpty {
-                GuestlistView(viewModel: GuestlistViewModel(eventUid: eventId))
+        .fullScreenCover(isPresented: $isShowingGuestlistView) {
+            if let event = viewModel.hostEvents.first?.value, !viewModel.hostEvents.isEmpty {
+                GuestlistView(viewModel: GuestlistViewModel(event: event), isShowingGuestlistView: $isShowingGuestlistView)
             }
         }
         .sheet(isPresented: $isShowingCreateEventView) {
@@ -96,9 +96,9 @@ struct MapTemp: View {
             }
         }
         .overlay(alignment: .bottom, content: {
-            if let isHost = AuthViewModel.shared.currentUser?.isHost {
-                MapWideButton(action: { isShowingGuestlistView.toggle() })
-                    .padding(.bottom, 90)
+            if let _ = AuthViewModel.shared.currentUser?.isHost {
+                GuestlistButton { isShowingGuestlistView.toggle() }
+                    .padding(.bottom, 100)
             }
         })
         .overlay(alignment: .bottomTrailing) {
@@ -161,8 +161,9 @@ fileprivate struct MapIconButton: View {
     }
 }
 
-fileprivate struct MapWideButton: View {
+fileprivate struct GuestlistButton: View {
     let action: () -> Void
+    
     var body: some View {
         Button {
             let impact = UIImpactFeedbackGenerator(style: .light)
@@ -179,13 +180,13 @@ fileprivate struct MapWideButton: View {
                         Image(systemName: "list.clipboard")
                             .imageScale(.large)
                             .foregroundColor(.mainFont)
-
-                        Text("GuestList")
+                        
+                        Text("Guestlist")
                             .font(.body.weight(.medium))
                             .foregroundColor(.white)
                     }
                 }
-                        .shadow(radius: 5, y: 10)
+                .shadow(radius: 5, y: 10)
         }
     }
 }
