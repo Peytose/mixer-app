@@ -22,101 +22,121 @@ struct GuestlistView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                Section {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Text(viewModel.event.title)
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal)
+                    
+                    Spacer()
+                    
+                    Text(viewModel.event.startDate.getTimestampString(format: "MMM d"))
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal)
+                }
+                
+                List {
                     if viewModel.guests.isEmpty {
-                        VStack(alignment: .center) {
-                            Text("📭 The guestlist is currently empty ...")
-                                .font(.headline)
-                        }
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                    }
-                }
-                
-                ForEach(viewModel.sectionDictionary.keys.sorted(), id:\.self) { key in
-                    if let guests = viewModel.sectionDictionary[key]?.filter({ guest -> Bool in
-                        searchText.isEmpty || guest.name.lowercased().contains(searchText.lowercased())
-                    }), !guests.isEmpty {
                         Section {
-                            ForEach(guests) { guest in
-                                GuestlistRow(guest: guest)
-                                    .swipeActions {
-                                        Button(role: .destructive,
-                                               action: { viewModel.remove(guest: guest) },
-                                               label: { Label("Delete", systemImage: "trash.fill") })
-                                    }
-                                    .swipeActions(edge: .leading) {
-                                        Button(action: {
-                                            viewModel.checkIn(guest: guest)
-                                        }, label: { Label("Add", systemImage: "list.clipboard") })
-                                        .tint(Color.mixerIndigo)
-                                    }
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        withAnimation() {
-                                            showUserInfoModal.toggle()
-                                            viewModel.selectedGuest = guest
+                            VStack(alignment: .center) {
+                                Text("📭 The guestlist is currently empty ...")
+                                    .font(.headline)
+                            }
+                            .listRowBackground(Color.mixerSecondaryBackground)
+                        }
+                    }
+                    ForEach(viewModel.sectionDictionary.keys.sorted(), id:\.self) { key in
+                        if let guests = viewModel.sectionDictionary[key]?.filter({ guest -> Bool in
+                            searchText.isEmpty || guest.name.lowercased().contains(searchText.lowercased())
+                        }), !guests.isEmpty {
+                            Section {
+                                ForEach(guests) { guest in
+                                    GuestlistRow(guest: guest)
+                                        .swipeActions {
+                                            Button(role: .destructive,
+                                                   action: { viewModel.remove(guest: guest) },
+                                                   label: { Label("Delete", systemImage: "trash.fill") })
                                         }
-                                    }
-                            }
-                        } header: { Text("\(key)") }
-                    }
-                }
-            }
-            .refreshable { viewModel.refreshGuests() }
-            .scrollContentBackground(.hidden)
-            .background(Color.mixerBackground.ignoresSafeArea())
-            .navigationTitle("Guestlist")
-            .navigationBarTitleDisplayMode(.automatic)
-            .searchable(text: $searchText, prompt: "Search Guests") {
-                if !searchText.isEmpty {
-                    ForEach(viewModel.guests.filter({ $0.name.localizedCaseInsensitiveContains(searchText) })) { guestSuggestion in
-                        GuestlistRow(guest: guestSuggestion)
-                            .swipeActions {
-                                Button(role: .destructive,
-                                       action: { viewModel.remove(guest: guestSuggestion) },
-                                       label: { Label("Delete", systemImage: "trash.fill") })
-                            }
-                            .swipeActions(edge: .leading) {
-                                Button(action: {
-                                    viewModel.checkIn(guest: guestSuggestion)
-                                }, label: { Label("Add", systemImage: "list.clipboard") })
-                                .tint(Color.mixerIndigo)
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                withAnimation() {
-                                    showUserInfoModal.toggle()
-                                    viewModel.selectedGuest = guestSuggestion
+                                        .swipeActions(edge: .leading) {
+                                            Button(action: {
+                                                viewModel.checkIn(guest: guest)
+                                            }, label: { Label("Add", systemImage: "list.clipboard") })
+                                            .tint(Color.mixerIndigo)
+                                        }
+                                        .contentShape(Rectangle())
+                                        .onTapGesture {
+                                            withAnimation() {
+                                                showUserInfoModal.toggle()
+                                                viewModel.selectedGuest = guest
+                                            }
+                                        }
                                 }
+                            } header: { Text("\(key)") }
+                        }
+                    }
+                }
+                .refreshable { viewModel.refreshGuests() }
+                .scrollContentBackground(.hidden)
+                .background(Color.mixerBackground.ignoresSafeArea())
+                .navigationTitle("Guestlist")
+                .navigationBarTitleDisplayMode(.automatic)
+                .searchable(text: $searchText, prompt: "Search Guests") {
+                    if !searchText.isEmpty {
+                        ForEach(viewModel.guests.filter({ $0.name.localizedCaseInsensitiveContains(searchText) })) { guestSuggestion in
+                            GuestlistRow(guest: guestSuggestion)
+                                .swipeActions {
+                                    Button(role: .destructive,
+                                           action: { viewModel.remove(guest: guestSuggestion) },
+                                           label: { Label("Delete", systemImage: "trash.fill") })
+                                }
+                                .swipeActions(edge: .leading) {
+                                    Button(action: {
+                                        viewModel.checkIn(guest: guestSuggestion)
+                                    }, label: { Label("Add", systemImage: "list.clipboard") })
+                                    .tint(Color.mixerIndigo)
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    withAnimation() {
+                                        showUserInfoModal.toggle()
+                                        viewModel.selectedGuest = guestSuggestion
+                                    }
+                                }
+                                .searchCompletion(guestSuggestion.name)
+                        }
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Add Guest") { showAddGuestView.toggle() }
+                            .foregroundColor(.blue)
+                    }
+                    
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        HStack {
+                            Button { isShowingGuestlistView = false } label: {
+                                Image(systemName: "xmark")
+                                    .font(.title3)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.white)
+                                    .contentShape(Rectangle())
                             }
-                            .searchCompletion(guestSuggestion.name)
+                        }
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Add Guest") { showAddGuestView.toggle() }
-                        .foregroundColor(.blue)
-                }
-                
-                ToolbarItem(placement: .principal) {
-                    Text("\(viewModel.event.title) | \(viewModel.event.startDate.getTimestampString(format: "MMM d"))")
-                }
-                
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button { isShowingGuestlistView = false } label: { XDismissButton() }
-                }
-            }
+            .background(Color.mixerBackground)
         }
         .background(Color.mixerBackground.ignoresSafeArea())
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showAddGuestView) { AddToGuestlistView(viewModel: viewModel,
                                                                     showAddGuestView: $showAddGuestView) }
-//        .sheet(isPresented: $showUserInfoModal, content: {
-//            GuestListUserView(user: guestManager.selectedGuest!)
-//                .presentationDetents([.medium])
-//        })
+        //        .sheet(isPresented: $showUserInfoModal, content: {
+        //            GuestListUserView(user: guestManager.selectedGuest!)
+        //                .presentationDetents([.medium])
+        //        })
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .alert(item: $viewModel.alertItemTwo, content: { $0.alert })
     }

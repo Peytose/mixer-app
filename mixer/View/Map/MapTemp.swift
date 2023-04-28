@@ -83,6 +83,7 @@ struct MapTemp: View {
         .fullScreenCover(isPresented: $isShowingGuestlistView) {
             if let event = viewModel.hostEvents.first?.value, !viewModel.hostEvents.isEmpty {
                 GuestlistView(viewModel: GuestlistViewModel(event: event), isShowingGuestlistView: $isShowingGuestlistView)
+                    .zIndex(2)
             }
         }
         .sheet(isPresented: $isShowingCreateEventView) {
