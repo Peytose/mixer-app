@@ -81,16 +81,19 @@ final class GuestlistViewModel: ObservableObject {
         }
     }
     
-    @MainActor func createGuest(name: String, university: String, status: GuestStatus, age: Int, gender: String) {
+    @MainActor func createGuest(name: String, university: String, status: GuestStatus, age: Int?, gender: String) {
         guard let currentUsername = AuthViewModel.shared.currentUser?.name else { return }
         
-        let data = ["name": name,
-                    "university": university,
-                    "age": age,
-                    "gender": gender,
-                    "status": status.rawValue,
-                    "invitedBy": currentUsername,
-                    "timestamp": Timestamp()] as [String: Any]
+        var data: [String: Any] = ["name": name,
+                                   "university": university,
+                                   "gender": gender,
+                                   "status": status.rawValue,
+                                   "invitedBy": currentUsername,
+                                   "timestamp": Timestamp()]
+        
+        if let age = age, age > 17 {
+            data["age"] = age
+        }
         
         print("DEBUG: Create guest data: \(data)")
         
