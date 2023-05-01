@@ -184,9 +184,7 @@ struct ProfileSettingsView: View {
                 .listStyle(.insetGrouped)
             }
             .navigationTitle("Settings")
-            .sheet(isPresented: $imagePickerPresented) {
-                ImagePicker(image: $viewModel.selectedImage)
-            }
+            .cropImagePicker(show: $imagePickerPresented, croppedImage: $viewModel.selectedImage)
             .onChange(of: viewModel.selectedImage) { _ in viewModel.save(for: .image) }
             .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
         }

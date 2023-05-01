@@ -158,6 +158,8 @@
 		A6BF681329FC6D9E000FF54B /* GuestlistChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681229FC6D9E000FF54B /* GuestlistChartsView.swift */; };
 		A6BF681629FC6DEE000FF54B /* PieSlice.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681529FC6DEE000FF54B /* PieSlice.swift */; };
 		A6BF681829FC6E03000FF54B /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681729FC6E03000FF54B /* PieChartView.swift */; };
+		A6BF681A29FF14F0000FF54B /* ParticleEffectModifier+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681929FF14F0000FF54B /* ParticleEffectModifier+Ext.swift */; };
+		A6BF681D29FF1FE5000FF54B /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681C29FF1FE5000FF54B /* CustomImagePicker.swift */; };
 		A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */; };
 		A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */; };
 		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
@@ -310,6 +312,8 @@
 		A6BF681229FC6D9E000FF54B /* GuestlistChartsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestlistChartsView.swift; sourceTree = "<group>"; };
 		A6BF681529FC6DEE000FF54B /* PieSlice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieSlice.swift; sourceTree = "<group>"; };
 		A6BF681729FC6E03000FF54B /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
+		A6BF681929FF14F0000FF54B /* ParticleEffectModifier+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ParticleEffectModifier+Ext.swift"; sourceTree = "<group>"; };
+		A6BF681C29FF1FE5000FF54B /* CustomImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
 		A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBirthdayView.swift; sourceTree = "<group>"; };
 		A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGenderView.swift; sourceTree = "<group>"; };
 		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
@@ -487,7 +491,7 @@
 			children = (
 				9C9331AA2925D2ED0079E039 /* Color+Ext.swift */,
 				9C567A97292FFF1800EA5FCB /* String+Ext.swift */,
-				9C567A9D2934F83100EA5FCB /* PhotoPicker.swift */,
+				A6BF681B29FF1FCE000FF54B /* ImagePickers */,
 				A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */,
 				A6A731C02974FA3A008DAC17 /* CustomStackView.swift */,
 				A6B9E6792953B95E009C936E /* Animation+Ext.swift */,
@@ -503,6 +507,7 @@
 				9C58B3C929CAD4D50024CB7E /* Binding+Ext.swift */,
 				A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */,
 				A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */,
+				A6BF681929FF14F0000FF54B /* ParticleEffectModifier+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -884,6 +889,15 @@
 			path = "Pie Chart";
 			sourceTree = "<group>";
 		};
+		A6BF681B29FF1FCE000FF54B /* ImagePickers */ = {
+			isa = PBXGroup;
+			children = (
+				9C567A9D2934F83100EA5FCB /* PhotoPicker.swift */,
+				A6BF681C29FF1FE5000FF54B /* CustomImagePicker.swift */,
+			);
+			path = ImagePickers;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -997,6 +1011,7 @@
 				9C58B3A729C8E5250024CB7E /* CachedHost.swift in Sources */,
 				A6430446294FBDBF0058C0F0 /* CreateEventView.swift in Sources */,
 				A643044F294FC3080058C0F0 /* BlobView.swift in Sources */,
+				A6BF681A29FF14F0000FF54B /* ParticleEffectModifier+Ext.swift in Sources */,
 				9C2B8989299D87A90011FC56 /* SearchViewModel.swift in Sources */,
 				9C93318529201C760079E039 /* SearchView.swift in Sources */,
 				9C4B0E47298241B700A9D963 /* AuthViewModel.swift in Sources */,
@@ -1044,6 +1059,7 @@
 				9C58B39B29C7F8190024CB7E /* EventGuestsAndInvitations.swift in Sources */,
 				9C2B8973299170670011FC56 /* HostCache.swift in Sources */,
 				9C4B0E44298241AE00A9D963 /* GuestlistViewModel.swift in Sources */,
+				A6BF681D29FF1FE5000FF54B /* CustomImagePicker.swift in Sources */,
 				9C567AA02934FCFF00EA5FCB /* GetUsername.swift in Sources */,
 				9C05C1C52983A72000841100 /* ExploreViewModel.swift in Sources */,
 				A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */,

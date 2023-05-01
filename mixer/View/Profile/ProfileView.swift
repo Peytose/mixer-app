@@ -1,247 +1,3 @@
-////
-////  ProfileView.swift
-////  mixer
-////
-////  Created by Peyton Lyons on 11/12/22.
-////
-//
-//import SwiftUI
-//
-//struct ProfileView: View {
-//    @ObservedObject var viewModel: ProfileViewModel
-//    @State var showEditProfile   = false
-//    @State var showNotifications = false
-//    @State var showQRCode        = false
-//    @State var showUsername      = false
-//    @State private var selectedOption: String = "Single"
-//
-//    @Namespace var namespace
-//
-//    init(user: CachedUser) {
-//        self.viewModel = ProfileViewModel(user: user)
-//    }
-//
-//    var body: some View {
-//        ScrollView(showsIndicators: false) {
-//            StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl,
-//                                   namespace: namespace)
-//                .overlay(alignment: .topTrailing) {
-//                    if viewModel.user.isCurrentUser {
-//                        HStack(spacing: 5) {
-//                            ProfileCornerButton(action: { showNotifications.toggle() }, icon: "bell")
-//                                .overlay(alignment: .topTrailing) {
-//                                    SmallCornerNumber(number: "9")
-//                                }
-//
-//                            ProfileCornerButton(action: { showEditProfile.toggle() },
-//                                                icon: "gearshape")
-//                            .padding(.trailing)
-//                        }
-//                        .padding(.top, 40)
-//                    }
-//                }
-//                .padding(.top, -40)
-//
-//            profileInfo
-//
-//            details
-//
-//            VStack {
-//                if viewModel.user.relationshiptoUser != .friends && !viewModel.user.isCurrentUser {
-//                    Text("🫣 Sorry, you have to be friends with @\(viewModel.user.username) in order to see this info.")
-//                        .multilineTextAlignment(.center)
-//                        .foregroundColor(.secondary)
-//                        .frame(width: UIScreen.main.bounds.width / 1.3, height: 300, alignment: .center)
-//                } else {
-//                    // Segmented Event Header
-//                    LazyVStack(pinnedViews: [.sectionHeaders]) {
-//                        Section {
-//                            if viewModel.eventSection == .interests {
-//                                ScrollView(.vertical, showsIndicators: false) {
-//                                    if !viewModel.savedEvents.isEmpty {
-//                                        ForEach(viewModel.savedEvents) { event in
-//                                            NavigationLink {
-//                                                EventDetailView(viewModel: EventDetailViewModel(event: event),
-//                                                                namespace: namespace)
-//                                            } label: {
-//                                                EventCellView(event: event, hasStarted: false, namespace: namespace)
-//                                                    .padding(.horizontal)
-//
-//                                                Divider()
-//                                            }
-//                                            .frame(height: 380)
-//                                            .onChange(of: event.didSave) { _ in
-//                                                viewModel.savedEvents.removeAll(where: { $0.id == event.id })
-//                                            }
-//                                        }
-//                                    } else {
-//                                        Text("Nothin' to see here. 🙅‍♂️")
-//                                            .multilineTextAlignment(.center)
-//                                            .foregroundColor(.secondary)
-//                                            .frame(width: UIScreen.main.bounds.width / 1.3, height: 300, alignment: .center)
-//                                    }
-//                                }
-//                            } else {
-////                                EventListView(events: viewModel.pastEvents,
-////                                              hasStarted: true,
-////                                              namespace: namespace)
-//                            }
-//                        } header: { viewModel.stickyHeader() }
-//                    }
-//                }
-//            }
-//            .padding(.bottom, 120)
-//        }
-//        .task {
-//            if let uid = viewModel.user.id { viewModel.getProfileEvents(uid: uid) }
-//        }
-//
-//    }
-//
-//    var profileInfo: some View {
-//        VStack(alignment: .leading, spacing: 16) {
-//            HStack(alignment: .center) {
-//                VStack(alignment: .leading, spacing: 2) {
-//                    HStack {
-//                        HStack(alignment: .bottom, spacing: 15) {
-//                            Text(showUsername ? "@\(viewModel.user.username)" : viewModel.user.name)
-//                                .textSelection(.enabled)
-//                                .font(.largeTitle)
-//                                .bold()
-//                                .lineLimit(1)
-//                                .minimumScaleFactor(0.5)
-//                                .onTapGesture {
-//                                    withAnimation(.easeInOut) {
-//                                        showUsername.toggle()
-//                                    }
-//                                }
-//
-//                            Text("21")
-//                                .font(.title.weight(.light))
-//                        }
-//
-//                        Spacer()
-//
-//                        Button(action: { showQRCode.toggle() }) {
-//                            Image(systemName: "square.and.arrow.up")
-//                                .resizable()
-//                                .scaledToFit()
-//                                .foregroundColor(Color.mainFont)
-//                                .frame(width: 25, height: 25)
-//                        }
-//
-//                        Image("Instagram_Glyph_Gradient 1")
-//                            .resizable()
-//                            .scaledToFit()
-//                            .frame(width: 25, height: 25)
-//                    }
-//
-//                    HStack {
-//                        Image(systemName: "graduationcap.fill")
-//                            .resizable()
-//                            .scaledToFill()
-//                            .foregroundColor(.white)
-//                            .frame(width: 15, height: 15)
-//
-//                        Text(viewModel.user.university)
-//                            .foregroundColor(.secondary)
-//                            .font(.body)
-//                            .lineLimit(1)
-//                            .minimumScaleFactor(0.75)
-//                    }
-//
-//                    HStack {
-//                        Image(systemName: "house.fill")
-//                            .resizable()
-//                            .scaledToFill()
-//                            .foregroundColor(.white)
-//                            .frame(width: 15, height: 15)
-//
-//                        Text("MIT Theta Chi")
-//                            .foregroundColor(.secondary)
-//                            .font(.body)
-//                            .lineLimit(1)
-//                            .minimumScaleFactor(0.75)
-//                    }
-//                }
-//
-//                Spacer()
-//
-//            }
-//
-//            if let bio = viewModel.user.bio {
-//                Text(bio)
-//                    .foregroundColor(.white.opacity(0.9))
-//                    .font(.body.weight(.medium))
-//                    .lineLimit(3)
-//                    .minimumScaleFactor(0.75)
-//            }
-//        }
-//        .padding(.horizontal)
-//    }
-//
-//    var details: some View {
-//        VStack(alignment: .leading, spacing: 12) {
-//            Text("About")
-//                .font(.title).bold()
-//
-//            VStack(alignment: .leading) {
-//                HStack {
-//                    DetailRow(image: "figure.2.arms.open", text: selectedOption)
-//
-//                    Spacer()
-//
-//                    Menu("Change") {
-//                        Button("Single", action: { selectedOption = "Single" })
-//                        Button("Taken", action: { selectedOption = "Taken" })
-//                        Button("Complicated", action: { selectedOption = "Complicated" })
-//                        Button("N/A", action: { selectedOption = "N/A" })
-//                    }
-//                    .accentColor(.mixerIndigo)
-//                }
-//
-//                DetailRow(image: "briefcase", text: "Civil Engineering Major")
-//
-//            }
-//            .fontWeight(.medium)
-//        }
-//        .frame(maxWidth: .infinity, alignment: .leading)
-//        .padding(.horizontal)
-//        .padding(.top, 16)
-//
-//    }
-//}
-//
-//struct ProfileView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ProfileView(viewModel: ProfileViewModel(user: CachedUser(from: Mockdata.user)))
-//            .preferredColorScheme(.dark)
-//    }
-//}
-//
-//fileprivate struct ProfileCornerButton: View {
-//    let action: () -> Void
-//    let icon: String
-//
-//    var body: some View {
-//        Button {
-//            let impact = UIImpactFeedbackGenerator(style: .light)
-//            impact.impactOccurred()
-//            withAnimation(.spring()) { action() }
-//        } label: {
-//            Image(systemName: icon)
-//                .resizable()
-//                .scaledToFit()
-//                .foregroundColor(Color.mainFont)
-//                .frame(width: 25, height: 25)
-//                .padding(.vertical)
-//                .padding(.horizontal, 5)
-//        }
-//    }
-//}
-//
-//
-
 //
 //  ProfileView.swift
 //  mixer
@@ -282,7 +38,7 @@ struct ProfileView: View {
             ScrollView(showsIndicators: false) {
                 StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl, namespace: namespace)
                     .overlay(alignment: .topTrailing) {
-                        HStack(spacing: viewModel.user.isCurrentUser ? 5 : 5) {
+                        HStack(spacing: viewModel.user.isCurrentUser ? 5 : 10) {
                             if viewModel.user.isCurrentUser {
                                 //MARK: Notification button (debug report: needs to populate view)
 //                                ProfileCornerButton(isOn: $showNotifications, icon: "bell")
@@ -296,26 +52,27 @@ struct ProfileView: View {
                                 
                             } else {
                                 //MARK: Friend button (debug report: looks jank as fuck and i dont believe it works)
-//                                if let relationship = viewModel.user.relationshiptoUser {
-//                                    HStack(alignment: .center, spacing: 5) {
-//                                        ProfileRelationButton(icon: relationship.buttonSystemImage, color: .primary) {
-//                                            switch relationship {
-//                                            case .friends, .sentRequest:
-//                                                viewModel.cancelFriendRequest()
-//                                            case .receivedRequest:
-//                                                viewModel.acceptFriendRequest()
-//                                            case .notFriends:
-//                                                viewModel.sendFriendRequest()
-//                                            }
-//                                        }
-//
-//                                        if relationship == .receivedRequest {
-//                                            ProfileRelationButton(icon: "xmark", color: .red) {
-//                                                viewModel.cancelFriendRequest()
-//                                            }
-//                                        }
-//                                    }
-//                                }
+                                if let relationship = viewModel.user.relationshiptoUser {
+                                    HStack(alignment: .center, spacing: 5) {
+                                        ProfileRelationButton(icon: relationship.buttonSystemImage, color: .primary) {
+                                            switch relationship {
+                                            case .friends, .sentRequest:
+                                                viewModel.cancelFriendRequest()
+                                            case .receivedRequest:
+                                                viewModel.acceptFriendRequest()
+                                            case .notFriends:
+                                                viewModel.sendFriendRequest()
+                                            }
+                                        }
+
+                                        if relationship == .receivedRequest {
+                                            ProfileRelationButton(icon: "xmark", color: .red) {
+                                                viewModel.cancelFriendRequest()
+                                            }
+                                        }
+                                    }
+                                }
+                                                                
                                 Button(action: {
                                     presentationMode.wrappedValue.dismiss()
                                 }, label: {
@@ -325,9 +82,11 @@ struct ProfileView: View {
                                 
                                 Spacer()
                                 
+                                ProfileRelationButtonPrototype(namespace: namespace)
+                                
                                 Image(systemName: "ellipsis")
                                     .font(.callout)
-                                    .padding(12)
+                                    .padding(11)
                                     .background {
                                         Circle()
                                             .stroke(lineWidth: 1.3)
@@ -335,16 +94,15 @@ struct ProfileView: View {
                                     }
                                     .onTapGesture {
                                         withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                                            let impact = UIImpactFeedbackGenerator(style: .light)
+                                            impact.impactOccurred()
                                             showOptions.toggle()
                                         }
                                     }
-                                    .padding(.horizontal)
-                                
-                                
-                                
+                                    .padding(.trailing)
                             }
                         }
-                        .padding(.top, 40)
+                        .padding(.top, viewModel.user.isCurrentUser ? 40 : 60)
                     }
                 
                 ProfileInfo(user: $viewModel.user, mutuals: viewModel.mutuals)
@@ -417,9 +175,45 @@ fileprivate struct ProfileRelationButton: View {
                 .onTapGesture {
                     let impact = UIImpactFeedbackGenerator(style: .light)
                     impact.impactOccurred()
-
                 }
         }
+
+    }
+}
+
+fileprivate struct ProfileRelationButtonPrototype: View {
+    @State var isFriends = false
+    var namespace: Namespace.ID
+    var body: some View {
+        Button {
+            withAnimation(.spring()) {
+                let impact = UIImpactFeedbackGenerator(style: .light)
+                impact.impactOccurred()
+                isFriends.toggle()
+            }
+        } label: {
+            if isFriends {
+                Text("\(Image(systemName: "person.fill.checkmark"))")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
+                    .background {
+                        Capsule()
+                            .stroke()
+                    }
+            } else {
+                Text("Add Friend")
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
+                    .background {
+                        Capsule()
+                            .stroke()
+                    }
+            }
+
+        }
+        .buttonStyle(.plain)
 
     }
 }

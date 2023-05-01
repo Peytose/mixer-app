@@ -31,10 +31,23 @@ struct GuestlistView: View {
 
                     Spacer()
 
-                    Text(viewModel.event.startDate.getTimestampString(format: "MMM d"))
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
+//                    Menu("Change") {
+//                        ForEach(RelationshipStatus.allCases, id: \.self) { status in
+//                            Button(status.rawValue) {
+//                                viewModel.relationshipStatus = status
+//                                viewModel.save(for: .relationship)
+//                            }
+//                        }
+//                    }
+//                    .accentColor(.mixerIndigo)
+                    Menu("Change") {
+                        Button("Event 1", action: {})
+                        Button("Event 2", action: {})
+                        Button("Event 3", action: {})
+                        Button("Event 4", action: {})
+                        Button("See all", action: {})
+                    }
+                    .accentColor(.mixerIndigo)
                 }
                 .padding(.horizontal)
                 
@@ -74,12 +87,7 @@ struct GuestlistView: View {
                                                 viewModel.remove(guest: guests[index])
                                             }, label: { Label("Delete", systemImage: "trash.fill") })
                                         }
-                                        .swipeActions(edge: .leading) {
-                                            Button(action: {
-                                                viewModel.checkIn(guest: &guests[index])
-                                            }, label: { Label("Add", systemImage: "list.clipboard") })
-                                            .tint(Color.mixerIndigo)
-                                        }
+                                        .swipeActions(edge: .leading) w2
                                 }
                             } header: { Text("\(key)") }
                         }

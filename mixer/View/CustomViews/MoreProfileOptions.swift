@@ -76,7 +76,7 @@ struct MoreProfileOptions: View {
         }
         .overlay(alignment: .topTrailing) {
             Image(systemName: "xmark")
-                .font(.title3)
+                .font(.title2)
                 .fontWeight(.medium)
                 .foregroundColor(.white)
                 .padding(20)
