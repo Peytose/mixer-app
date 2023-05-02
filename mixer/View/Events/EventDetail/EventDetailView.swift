@@ -44,7 +44,7 @@ struct EventDetailView: View {
                                 .font(.title)
                                 .fontWeight(.bold)
                             
-                            ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(2)), id: \.self) { category in
+                            ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
                                 let amenitiesInCategory = viewModel.event.amenities?.filter({ $0.category == category }) ?? []
                                 if !amenitiesInCategory.isEmpty {
                                     Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
@@ -64,10 +64,26 @@ struct EventDetailView: View {
                                                         .padding(.trailing, 5)
                                                 } else if amenity == .dj {
                                                     Text("🎧")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
                                                 } else if amenity == .coatCheck {
                                                     Text("🧥")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else if amenity == .nonAlcohol {
+                                                    Text("🧃")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else if amenity == .food {
+                                                    Text("🍕")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else if amenity == .danceFloor {
+                                                    Text("🕺")
+                                                        .font(.system(size: 15))
+                                                        .padding(.trailing, 5)
+                                                } else if amenity == .snacks {
+                                                    Text("🍪")
+                                                } else if amenity == . drinkingGames{
+                                                    Text("🏓")
                                                         .font(.system(size: 15))
                                                         .padding(.trailing, 5)
                                                 } else {
@@ -83,7 +99,7 @@ struct EventDetailView: View {
                                                 
                                                 Spacer()
                                             }
-                                            .foregroundColor(.white.opacity(0.7))
+                                            .foregroundColor(.white)
                                         }
                                     }
                                 }
@@ -196,7 +212,16 @@ struct EventDetailView: View {
                     
                     InfoButton(action: { showInfoAlert.toggle() })
                         .alert("Wet and Dry Events", isPresented: $showInfoAlert, actions: {}, message: {Text("Wet events offer beer/alcohol. Dry events do not offer alcohol.")})
-                    
+                }
+                
+                HStack {
+                    if viewModel.event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false {
+                        DetailRow(image: "list.clipboard.fill", text: "Invite Only Event")
+                            .fontWeight(.medium)
+                    } else {
+                        DetailRow(image: "list.clipboard.fill", text: "Open Event")
+                            .fontWeight(.medium)
+                    }
                 }
             }
         }

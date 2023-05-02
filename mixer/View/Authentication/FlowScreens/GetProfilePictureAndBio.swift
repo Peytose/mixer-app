@@ -83,7 +83,7 @@ fileprivate struct BioTextField: View {
                             .stroke(lineWidth: 2)
                     }
                 
-                CharactersRemainView(valueName: "Bio", currentCount: bio.count)
+                CharactersRemainView(currentCount: bio.count)
             }
         }
         .frame(width: DeviceTypes.ScreenSize.width / 1.2)

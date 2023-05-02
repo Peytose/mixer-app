@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseFirestoreSwift
 import Firebase
+import MapKit
 
 enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
     case qrCode   = "QR Code"
@@ -38,12 +39,17 @@ enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
 final class CreateEventViewModel: ObservableObject {
     @Published var title: String                       = ""
     @Published var description: String                 = ""
+    //MARK: Peyton - Add these to the create event function
+    @Published var note: String                        = ""
+    @Published var hasNote: Bool                       = false
+    
     @Published var guestLimit: String                  = ""
     @Published var guestInviteLimit: String            = ""
     @Published var memberInviteLimit: String           = ""
     @Published var startDate: Date                     = Date()
     @Published var endDate: Date                       = Date().addingTimeInterval(80600)
     @Published var address: String                     = ""
+    @Published var previewCoordinates: CLLocationCoordinate2D?
     @Published var publicAddress: String               = ""
     @Published var selectedAmenities: Set<EventAmenities> = []
     @Published var type: EventType                     = .kickback

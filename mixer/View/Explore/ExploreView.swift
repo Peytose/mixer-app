@@ -83,7 +83,6 @@ struct ExploreView: View {
                                 self.selectedHost = nil
                             }
                         }
-                    
                         .padding(20)
                 }
             }

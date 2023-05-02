@@ -87,6 +87,7 @@ struct ProfileView: View {
                                 Image(systemName: "ellipsis")
                                     .font(.callout)
                                     .padding(11)
+                                    .contentShape(Rectangle())
                                     .background {
                                         Circle()
                                             .stroke(lineWidth: 1.3)
@@ -197,6 +198,7 @@ fileprivate struct ProfileRelationButtonPrototype: View {
                     .font(.subheadline)
                     .fontWeight(.semibold)
                     .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
+                    .contentShape(Rectangle())
                     .background {
                         Capsule()
                             .stroke()
@@ -205,6 +207,7 @@ fileprivate struct ProfileRelationButtonPrototype: View {
                 Text("Add Friend")
                     .font(.subheadline)
                     .fontWeight(.semibold)
+                    .contentShape(Rectangle())
                     .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
                     .background {
                         Capsule()
@@ -235,6 +238,7 @@ fileprivate struct ProfileCornerButton: View {
                 .frame(width: 25, height: 25)
                 .padding(.vertical)
                 .padding(.horizontal, 5)
+                .contentShape(Rectangle())
         }
     }
 }

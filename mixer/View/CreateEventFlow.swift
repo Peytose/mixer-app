@@ -11,7 +11,8 @@ struct CreateEventFlow: View {
     @ObservedObject var viewModel = CreateEventViewModel()
     @Binding var isShowingCreateEventView: Bool
     @State private var showArrow = false
-    
+    var namespace: Namespace.ID
+
     var body: some View {
         ZStack {
             Color.mixerBackground.ignoresSafeArea()
@@ -23,16 +24,16 @@ struct CreateEventFlow: View {
                 BasicEventInfo(selectedImage: $viewModel.image,
                                title: $viewModel.title,
                                description: $viewModel.description,
-                               action: viewModel.next)
-                    .tag(CreateEventViewModel.Screen.basicInfo)
+                               note: $viewModel.note,
+                               hasNote: $viewModel.hasNote) { viewModel.next(); self.hideKeyboard() }
+                               .tag(CreateEventViewModel.Screen.basicInfo)
                 
                 EventLocationAndDates(startDate: $viewModel.startDate,
                                       endDate: $viewModel.endDate,
                                       address: $viewModel.address,
                                       publicAddress: $viewModel.publicAddress,
-                                      hasPublicAddress: $viewModel.eventOptions.binding(for: EventOption.hasPublicAddress.rawValue),
-                                      action: viewModel.next)
-                    .tag(CreateEventViewModel.Screen.locationAndDates)
+                                      hasPublicAddress: $viewModel.eventOptions.binding(for: EventOption.hasPublicAddress.rawValue), coordinate: $viewModel.previewCoordinates) { viewModel.next(); self.hideKeyboard() }
+                .tag(CreateEventViewModel.Screen.locationAndDates)
                 
                 EventGuestsAndInvitations(selectedVisibility: $viewModel.visibility,
                                           selectedInvitePreferrence: $viewModel.privacy,
@@ -54,9 +55,9 @@ struct CreateEventFlow: View {
                 
                 EventAmenitiesAndCost(selectedAmenities: $viewModel.selectedAmenities, bathroomCount: $viewModel.bathroomCount, viewModel: viewModel,
                                       action: viewModel.next)
-                    .tag(CreateEventViewModel.Screen.costAndAmenities)
+                .tag(CreateEventViewModel.Screen.costAndAmenities)
                 
-                ReviewCreatedEventView(viewModel: viewModel)
+                ReviewCreatedEventView(viewModel: viewModel, namespace: namespace)
                     .tag(CreateEventViewModel.Screen.review)
             }
             .animation(.easeInOut, value: viewModel.active)
@@ -67,9 +68,10 @@ struct CreateEventFlow: View {
             HStack(alignment: .center) {
                 Button(action: showArrow ? viewModel.previous : { isShowingCreateEventView = false } ) {
                     Image(systemName: showArrow ? "chevron.backward" : "xmark")
-                        .font(.title3)
+                        .font(.title)
                         .fontWeight(.medium)
                         .foregroundColor(.white)
+                        .padding(20)
                         .contentShape(Rectangle())
                 }
                 .frame(width: 50, height: 50)
@@ -102,8 +104,9 @@ struct CreateEventFlow: View {
 }
 
 struct CreateEventFlow_Previews: PreviewProvider {
+    @Namespace static var namespace
     static var previews: some View {
-        CreateEventFlow(isShowingCreateEventView: .constant(true))
+        CreateEventFlow(isShowingCreateEventView: .constant(true), namespace: namespace)
             .preferredColorScheme(.dark)
     }
 }

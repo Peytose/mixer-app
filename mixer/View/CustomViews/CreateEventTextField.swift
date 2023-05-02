@@ -17,16 +17,30 @@ struct CreateEventTextField: View {
     var footnote: String?
     var textfieldHeader: String?
     var keyboard: UIKeyboardType
-    
+    var hasToggle: Bool?
+    @Binding var toggleBool: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if let title = title {
-                Text(title)
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
+            HStack {
+                if let title = title {
+                    Text(title)
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                    
+                    if hasToggle ?? false {
+                        Toggle(isOn: $toggleBool.animation()) {
+                            Text("Add Notes")
+                        }
+                        .toggleStyle(iOSCheckboxToggleStyle())
+                        .buttonStyle(.plain)
+                    }
+                }
+                
             }
-            
             if let note = note {
                 Text(note)
                     .font(.body)
@@ -55,7 +69,6 @@ struct CreateEventTextField: View {
                 }
             })
                 .keyboardType(keyboard)
-                .disableAutocorrection(true)
                 .foregroundColor(Color.mainFont)
                 .font(.title3)
                 .tint(Color.mixerIndigo)
@@ -80,7 +93,7 @@ struct CreateEventTextField_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color.black
-            CreateEventTextField(input: .constant(""), title: "Peyton, is this a placeholder?", note: "penis", placeholder: "Placeholder", footnote: "This is a footnote placeholder.", textfieldHeader: "Placeholder", keyboard: .default)
+            CreateEventTextField(input: .constant(""), title: "Peyton, is this a placeholder?", note: "penis", placeholder: "Placeholder", footnote: "This is a footnote placeholder.", textfieldHeader: "Placeholder", keyboard: .default, toggleBool: .constant(false))
         }
         .preferredColorScheme(.dark)
     }

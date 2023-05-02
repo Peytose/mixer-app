@@ -16,6 +16,7 @@ struct EventLocationAndDates: View {
     @Binding var address: String
     @Binding var publicAddress: String
     @Binding var hasPublicAddress: Bool
+    @Binding var coordinate: CLLocationCoordinate2D?
     
     @State private var showSearch = true
     @FocusState private var addressSearchIsFocused: Bool
@@ -63,7 +64,7 @@ struct EventLocationAndDates: View {
                 }
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    AddressPickerView(hasPublicAddress: $hasPublicAddress, publicAddress: $publicAddress, address: $address)
+                    AddressPickerView(selectedCoordinate: $coordinate, hasPublicAddress: $hasPublicAddress, publicAddress: $publicAddress, address: $address)
                 }
             }
             .padding()
@@ -74,7 +75,12 @@ struct EventLocationAndDates: View {
             self.hideKeyboard()
         }
         .overlay(alignment: .bottom) {
-            CreateEventNextButton(text: "Continue", action: action, isActive: true)
+            if address.isEmpty {
+                CreateEventNextButton(text: "Continue", action: action, isActive: false)
+                    .disabled(true)
+            } else {
+                CreateEventNextButton(text: "Continue", action: action, isActive: true)
+            }
     }
     }
 }
@@ -104,7 +110,7 @@ fileprivate struct CustomDateSelection: View {
             DatePicker("", selection: $date,
                        in: range,
                        displayedComponents: [.date, .hourAndMinute])
-            .datePickerStyle(CompactDatePickerStyle())
+            .datePickerStyle(.compact)
             .labelsHidden()
         }
         .padding()
@@ -118,7 +124,7 @@ fileprivate struct CustomDateSelection: View {
 
 struct AddressPickerView: View {
     @State private var selectedMapItem: MKMapItem?
-    @State private var selectedCoordinate = CLLocationCoordinate2D()
+    @Binding var selectedCoordinate: CLLocationCoordinate2D?
     @State private var showingPicker = false
     @Binding var hasPublicAddress: Bool
     @Binding var publicAddress: String
@@ -156,14 +162,15 @@ struct AddressPickerView: View {
                 .padding(.bottom, 4)
             
             if hasPublicAddress {
-                CreateEventTextField(input: $publicAddress, placeholder: "Back Bay, Boston", footnote: "Loosely describe the area. Shown to all users", keyboard: .default)
+                CreateEventTextField(input: $publicAddress, title: "Public Address", placeholder: "e.g., Back Bay, Boston", footnote: "Loosely describe the area. Shown to all users", keyboard: .default, toggleBool: .constant(false))
+                    .zIndex(2)
             }
             
             Map(coordinateRegion: $mapRegion,
                 interactionModes: .all,
                 showsUserLocation: true,
                 userTrackingMode: .constant(.none),
-                annotationItems: [AnnotationItem(coordinate: selectedCoordinate)]) { item in
+                annotationItems: [AnnotationItem(coordinate: selectedCoordinate ?? CLLocationCoordinate2D(latitude: 42.350710, longitude: -71.090980))]) { item in
                 MapMarker(coordinate: item.coordinate)
             }
                 .frame(height: 300)

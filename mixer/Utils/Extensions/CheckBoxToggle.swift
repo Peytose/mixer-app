@@ -13,8 +13,9 @@ struct iOSCheckboxToggleStyle: ToggleStyle {
         Button(action: {
 
             // 2
-            configuration.isOn.toggle()
-
+            withAnimation() {
+                configuration.isOn.toggle()
+            }
         }, label: {
             HStack {
                 // 3

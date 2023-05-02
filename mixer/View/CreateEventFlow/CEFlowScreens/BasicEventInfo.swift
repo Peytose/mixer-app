@@ -13,51 +13,65 @@ struct BasicEventInfo: View {
     @State var imagePickerPresented = false
     @Binding var title: String
     @Binding var description: String
+    @Binding var note: String
+    @Binding var hasNote: Bool
     let action: () -> Void
     
     enum FocusedField {
-        case title, description
+        case title, description, notes
     }
+    
     @FocusState private var focusedField: FocusedField?
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 35) {
-                // Title
-                CreateEventTextField(input: $title, title: "Title", placeholder: "Choose something catchy!", keyboard: .default)
+                // MARK: Title
+                VStack(alignment: .leading, spacing: 5) {
+                    CreateEventTextField(input: $title,
+                                         title: "Title",
+                                         placeholder: "Choose something catchy!",
+                                         keyboard: .default,
+                                         toggleBool: .constant(false))
+                    .disableAutocorrection(true)
                     .focused($focusedField, equals: .title)
-                
-                // Description
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Description")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                    .autocorrectionDisabled()
                     
-                    VStack(alignment: .leading, spacing: 5) {
-                        TextField("Include important details, such as attire or theme!",
-                                  text: $description,
-                                  axis: .vertical)
-                        .lineLimit(7, reservesSpace: true)
-                        .keyboardType(.default)
-                        .foregroundColor(Color.mainFont)
-                        .font(.body)
-                        .fontWeight(.medium)
-                        .focused($focusedField, equals: .description)
-                        .padding()
-                        .background(alignment: .center) {
-                            RoundedRectangle(cornerRadius: 9)
-                                .stroke(lineWidth: 3)
-                                .foregroundColor(.mixerIndigo)
-                        }
-                        
-                        CharactersRemainView(valueName: "",
-                                             currentCount: description.count,
-                                             limit: 250)
-                    }
+                    CharactersRemainView(currentCount: title.count,
+                                         limit: 50)
                 }
                 
-                // Flyer
+                // MARK: Description
+                VStack(alignment: .leading, spacing: 5) {
+                    CreateEventTextField(input: $description,
+                                         title: "Description",
+                                         placeholder: "Briefly describe your event",
+                                         keyboard: .default,
+                                         hasToggle: true,
+                                         toggleBool: $hasNote)
+                    .focused($focusedField, equals: .description)
+                    
+                    CharactersRemainView(currentCount: description.count,
+                                         limit: 150)
+                }
+                
+                // MARK: Notes
+                if hasNote {
+                    VStack(alignment: .leading, spacing: 5) {
+                        CreateEventTextField(input: $note,
+                                             title: "Note for guests",
+                                             placeholder: "Add any additional notes",
+                                             keyboard: .default,
+                                             toggleBool: .constant(false))
+                            .focused($focusedField, equals: .notes)
+                        
+                        CharactersRemainView(currentCount: description.count,
+                                             limit: 250)
+                    }
+                    .zIndex(2)
+                }
+                
+                // MARK: Flyer
                 VStack(alignment: .center) {
                     Button { self.imagePickerPresented.toggle() } label: {
                         if let image = image {
@@ -65,7 +79,7 @@ struct BasicEventInfo: View {
                                 .resizable()
                                 .scaledToFit()
                                 .cornerRadius(12)
-                                .frame(width: 200, height: 200)
+                                .frame(width: 250, height: 250)
                                 .frame(maxWidth: .infinity, alignment: .center)
                         } else {
                             VStack {
@@ -103,26 +117,25 @@ struct BasicEventInfo: View {
             .onSubmit {
                 if focusedField == .title {
                     focusedField = .description
+                } else if focusedField == .description {
+                    focusedField = .notes
                 } else {
                     focusedField = nil
                 }
             }
         }
         .background(Color.mixerBackground)
-        .onTapGesture {
-            self.hideKeyboard()
-        }
         .overlay(alignment: .bottom) {
             if selectedImage == nil ||
                 title.isEmpty ||
-                description.isEmpty {
+                description.isEmpty ||
+                title.count > 50 ||
+                description.count > 150 ||
+                note.count > 250 {
                 CreateEventNextButton(text: "Continue", action: action, isActive: false)
                     .disabled(true)
             } else {
                 CreateEventNextButton(text: "Continue", action: action, isActive: true)
-                    .onTapGesture {
-                        self.hideKeyboard()
-                    }
             }
         }
         .sheet(isPresented: $imagePickerPresented) {
@@ -144,7 +157,9 @@ struct BasicEventInfo_Previews: PreviewProvider {
     static var previews: some View {
         BasicEventInfo(selectedImage: $selectedImage,
                        title: .constant(""),
-                       description: .constant("")) {  }
+                       description: .constant(""),
+                       note: .constant(""),
+                       hasNote: .constant(false)) {  }
         .preferredColorScheme(.dark)
     }
 }

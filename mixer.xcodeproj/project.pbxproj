@@ -160,6 +160,7 @@
 		A6BF681829FC6E03000FF54B /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681729FC6E03000FF54B /* PieChartView.swift */; };
 		A6BF681A29FF14F0000FF54B /* ParticleEffectModifier+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681929FF14F0000FF54B /* ParticleEffectModifier+Ext.swift */; };
 		A6BF681D29FF1FE5000FF54B /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681C29FF1FE5000FF54B /* CustomImagePicker.swift */; };
+		A6BF681F2A0074EC000FF54B /* EventPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681E2A0074EC000FF54B /* EventPreviewView.swift */; };
 		A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */; };
 		A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */; };
 		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
@@ -314,6 +315,7 @@
 		A6BF681729FC6E03000FF54B /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 		A6BF681929FF14F0000FF54B /* ParticleEffectModifier+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ParticleEffectModifier+Ext.swift"; sourceTree = "<group>"; };
 		A6BF681C29FF1FE5000FF54B /* CustomImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
+		A6BF681E2A0074EC000FF54B /* EventPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPreviewView.swift; sourceTree = "<group>"; };
 		A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBirthdayView.swift; sourceTree = "<group>"; };
 		A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGenderView.swift; sourceTree = "<group>"; };
 		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
@@ -688,6 +690,7 @@
 				A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */,
 				9C58B38629C7F8180024CB7E /* CreateEventFlow.swift */,
 				9C58B38D29C7F8190024CB7E /* CEFlowScreens */,
+				A6BF681E2A0074EC000FF54B /* EventPreviewView.swift */,
 			);
 			path = CreateEventFlow;
 			sourceTree = "<group>";
@@ -1043,6 +1046,7 @@
 				9C2B8968298F53510011FC56 /* MapViewModel.swift in Sources */,
 				A68971CF296E7E8D00289516 /* CustomTabItemView.swift in Sources */,
 				9C58B3A829C8E5250024CB7E /* CachedUser.swift in Sources */,
+				A6BF681F2A0074EC000FF54B /* EventPreviewView.swift in Sources */,
 				9C4B0E322982410600A9D963 /* Feedback.swift in Sources */,
 				9C4B0E45298241AE00A9D963 /* CheckInViewModel.swift in Sources */,
 				9C9331AB2925D2ED0079E039 /* Color+Ext.swift in Sources */,

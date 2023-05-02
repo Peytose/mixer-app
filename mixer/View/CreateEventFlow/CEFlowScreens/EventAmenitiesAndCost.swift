@@ -77,14 +77,40 @@ struct EventAmenitiesAndCost: View {
                                     ForEach(EventAmenities.allCases.filter { $0.category == category }, id: \.self) { amenity in
                                         Button {
                                             if selectedAmenities.contains(amenity) {
-                                                selectedAmenities.remove(amenity)
+                                                if amenity != .bathrooms {
+                                                    selectedAmenities.remove(amenity)
+                                                }
                                             } else {
-                                                selectedAmenities.insert(amenity)
+                                                if amenity != .bathrooms {
+                                                    selectedAmenities.insert(amenity)
+                                                }
                                             }
                                         } label: {
                                             HStack {
-                                                Image(systemName: amenity.icon)
-                                                    .foregroundColor(Color.mixerIndigo)
+                                                if amenity == .beer {
+                                                    Text("🍺")
+                                                } else if amenity == .water {
+                                                    Text("💦")
+                                                } else if amenity == .smokingArea {
+                                                    Text("🚬")
+                                                } else if amenity == .dj {
+                                                    Text("🎧")
+                                                } else if amenity == .coatCheck {
+                                                    Text("🧥")
+                                                } else if amenity == .nonAlcohol {
+                                                    Text("🧃")
+                                                } else if amenity == .food {
+                                                    Text("🍕")
+                                                } else if amenity == .danceFloor {
+                                                    Text("🕺")
+                                                } else if amenity == .snacks {
+                                                    Text("🍪")
+                                                } else if amenity == . drinkingGames{
+                                                    Text("🏓")
+                                                } else {
+                                                    Image(systemName: amenity.icon)
+                                                        .foregroundColor(.white)
+                                                }
                                                 
                                                 Text(amenity.rawValue)
                                                     .font(.body)
@@ -95,6 +121,13 @@ struct EventAmenitiesAndCost: View {
                                                 
                                                 if amenity == EventAmenities.bathrooms {
                                                     AmenityCountView(count: $bathroomCount)
+                                                        .onChange(of: bathroomCount) { value in
+                                                            if value > 0 {
+                                                                selectedAmenities.insert(EventAmenities.bathrooms)
+                                                            } else if value == 0 {
+                                                                selectedAmenities.remove(EventAmenities.bathrooms)
+                                                            }
+                                                        }
                                                 } else if selectedAmenities.contains(amenity) {
                                                     Image(systemName: "checkmark")
                                                         .fontWeight(.medium)

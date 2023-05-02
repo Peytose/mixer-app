@@ -11,22 +11,33 @@ import FirebaseFirestoreSwift
 
 struct ReviewCreatedEventView: View {
     @ObservedObject var viewModel: CreateEventViewModel
+    var namespace: Namespace.ID
+    @State var showPreview      = false
+    @State var showAllAmenities = false
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 10) {
                     VStack(alignment: .leading, spacing: 2.5) {
-                        Text(viewModel.title)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
+                            Text(viewModel.title)
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                                
                         HStack(spacing: 5) {
                             Text("\(viewModel.visibility.rawValue) \(viewModel.privacy.rawValue) Event")
                                 .font(.subheadline).fontWeight(.medium)
                                 .foregroundColor(.secondary)
                             Image(systemName: "\(viewModel.visibility.icon)")
                                 .font(.subheadline)
+                            
+                            Spacer()
+                            
+                            Button("Preview Event", action: { showPreview.toggle() })
+                                .fontWeight(.semibold)
+                                .foregroundColor(.mixerIndigo)
+                                .contentShape(Rectangle())
                         }
                     }
                     
@@ -156,7 +167,9 @@ struct ReviewCreatedEventView: View {
                     }
                     
                     EventOptionRow(text: "Bathrooms: \(viewModel.bathroomCount)")
-                    
+                    if (viewModel.selectedAmenities) != nil {
+                        amenitiesView
+                    }
                 }
                 
                 if let image = viewModel.image {
@@ -199,12 +212,99 @@ struct ReviewCreatedEventView: View {
                                   action: viewModel.createEvent,
                                   isActive: true)
     }
+        .sheet(isPresented: $showPreview) {
+            EventPreviewView(viewModel: viewModel, namespace: namespace)
+        }
+    }
+    var amenitiesView: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 8) {
+                if showAllAmenities && !viewModel.selectedAmenities.isEmpty {
+                    Text("Amenities")
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                
+                ForEach(EventAmenities.allCases, id: \.self) { amenity in
+                    if viewModel.selectedAmenities.contains(amenity) {
+                        HStack {
+                            if amenity == .beer {
+                                Text("🍺")
+                            } else if amenity == .water {
+                                Text("💦")
+                            } else if amenity == .smokingArea {
+                                Text("🚬")
+                            } else if amenity == .dj {
+                                Text("🎧")
+                            } else if amenity == .coatCheck {
+                                Text("🧥")
+                            } else if amenity == .nonAlcohol {
+                                Text("🧃")
+                            } else if amenity == .food {
+                                Text("🍕")
+                            } else if amenity == .danceFloor {
+                                Text("🕺")
+                            } else if amenity == .snacks {
+                                Text("🍪")
+                            } else if amenity == . drinkingGames{
+                                Text("🏓")
+                            } else {
+                                Image(systemName: amenity.icon)
+                                    .foregroundColor(.white)
+                            }
+                            
+                            Text(amenity.rawValue)
+                                .font(.headline)
+                                .fontWeight(.regular)
+                                .foregroundColor(.white)
+                        }
+                    }
+                }
+            }
+                
+                HStack {
+                    Spacer()
+                    Button {
+                        withAnimation(.spring(dampingFraction: 0.8)) {
+                            showAllAmenities.toggle()
+                        }
+                    } label: {
+                        ZStack {
+                            if viewModel.selectedAmenities.isEmpty {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .foregroundColor(.DesignCodeWhite)
+                                    .frame(width: 350, height: 45)
+                                    .overlay {
+                                        Text("No Amenities Selected")
+                                            .font(.body)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.black)
+                                    }
+                                    .disabled(true)
+                            } else {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .foregroundColor(.DesignCodeWhite)
+                                    .frame(width: 350, height: 45)
+                                    .overlay {
+                                        Text(showAllAmenities ? "Show less" : "Show all \(viewModel.selectedAmenities.count ?? 0) amenities")
+                                            .font(.body)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.black)
+                                    }
+                            }
+                        }
+                    }
+                    Spacer()
+                }
+            }
+        }
     }
 }
 
 struct ReviewCreatedEventView_Previews: PreviewProvider {
+    @Namespace static var namespace
     static var previews: some View {
-        ReviewCreatedEventView(viewModel: CreateEventViewModel())
+        ReviewCreatedEventView(viewModel: CreateEventViewModel(), namespace: namespace)
             .preferredColorScheme(.dark)
     }
 }

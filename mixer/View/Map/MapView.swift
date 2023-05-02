@@ -87,7 +87,7 @@ struct MapView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingCreateEventView) {
-            CreateEventFlow(isShowingCreateEventView: $isShowingCreateEventView)
+            CreateEventFlow(isShowingCreateEventView: $isShowingCreateEventView, namespace: namespace)
         }
         .overlay(alignment: .topTrailing) {
             if let isHost = AuthViewModel.shared.currentUser?.isHost {
