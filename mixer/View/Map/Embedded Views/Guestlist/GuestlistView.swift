@@ -40,6 +40,7 @@ struct GuestlistView: View {
 //                        }
 //                    }
 //                    .accentColor(.mixerIndigo)
+                    
                     Menu("Change") {
                         Button("Event 1", action: {})
                         Button("Event 2", action: {})
@@ -82,12 +83,19 @@ struct GuestlistView: View {
                                             }
                                         }
                                         .swipeActions {
-                                            Button(role: .destructive,
-                                                   action: {
+                                            Button(role: .destructive) {
                                                 viewModel.remove(guest: guests[index])
-                                            }, label: { Label("Delete", systemImage: "trash.fill") })
+                                            } label: {
+                                                Label("Delete", systemImage: "trash.fill")
+                                            }
                                         }
-                                        .swipeActions(edge: .leading) w2
+                                        .swipeActions(edge: .leading) {
+                                            Button {
+                                                viewModel.checkIn(guest: &guests[index])
+                                            } label: {
+                                                Label("Check-in", systemImage: "list.bullet.clipboard.fill")
+                                            }
+                                        }
                                 }
                             } header: { Text("\(key)") }
                         }

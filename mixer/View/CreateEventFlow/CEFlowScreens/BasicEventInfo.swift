@@ -13,7 +13,7 @@ struct BasicEventInfo: View {
     @State var imagePickerPresented = false
     @Binding var title: String
     @Binding var description: String
-    @Binding var note: String
+    @Binding var notes: String
     @Binding var hasNote: Bool
     let action: () -> Void
     
@@ -58,14 +58,14 @@ struct BasicEventInfo: View {
                 // MARK: Notes
                 if hasNote {
                     VStack(alignment: .leading, spacing: 5) {
-                        CreateEventTextField(input: $note,
+                        CreateEventTextField(input: $notes,
                                              title: "Note for guests",
                                              placeholder: "Add any additional notes",
                                              keyboard: .default,
                                              toggleBool: .constant(false))
                             .focused($focusedField, equals: .notes)
                         
-                        CharactersRemainView(currentCount: description.count,
+                        CharactersRemainView(currentCount: notes.count,
                                              limit: 250)
                     }
                     .zIndex(2)
@@ -131,7 +131,7 @@ struct BasicEventInfo: View {
                 description.isEmpty ||
                 title.count > 50 ||
                 description.count > 150 ||
-                note.count > 250 {
+                notes.count > 250 {
                 CreateEventNextButton(text: "Continue", action: action, isActive: false)
                     .disabled(true)
             } else {
@@ -158,7 +158,7 @@ struct BasicEventInfo_Previews: PreviewProvider {
         BasicEventInfo(selectedImage: $selectedImage,
                        title: .constant(""),
                        description: .constant(""),
-                       note: .constant(""),
+                       notes: .constant(""),
                        hasNote: .constant(false)) {  }
         .preferredColorScheme(.dark)
     }

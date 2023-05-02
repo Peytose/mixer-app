@@ -186,15 +186,17 @@ struct EventDetailView: View {
                     .lineLimit(4)
             }
             
-//            VStack(alignment: .leading, spacing: 6) {
-//                Text("Notes for guest")
-//                    .font(.title).bold()
-//
-//                Text("This is where the notes for the event would be")
-//                    .font(.body)
-//                    .foregroundColor(.secondary)
-//                    .lineLimit(4)
-//            }
+            if let notes = viewModel.event.notes {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Notes for guest")
+                        .font(.title).bold()
+                    
+                    Text(notes)
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                        .lineLimit(4)
+                }
+            }
             
             VStack(alignment: .leading, spacing: 12) {
                 Text("Event details")
@@ -346,44 +348,6 @@ fileprivate struct EventFlyerHeader: View {
                                 .minimumScaleFactor(0.65)
                             
                             Spacer()
-                            
-//                            if !(event.hasStarted ?? false) {
-//                                if let didSave = event.didSave {
-//                                    Button {
-//                                        let impact = UIImpactFeedbackGenerator(style: .light)
-//                                        impact.impactOccurred()
-//                                        withAnimation() {
-//                                            didSave ? unsave() : save()
-//                                        }
-//                                    } label: {
-//                                        Image(systemName: didSave ? "bookmark.fill" : "bookmark")
-//                                            .resizable()
-//                                            .aspectRatio(contentMode: .fit)
-//                                            .foregroundColor(didSave ? Color.yellow : Color.white)
-//                                            .frame(width: 19, height: 19)
-//                                            .offset(y: 1)
-//                                            .padding(5)
-//                                            .background(.ultraThinMaterial)
-//                                            .backgroundStyle(cornerRadius: 18, opacity: 0.4)
-//                                    }
-//                                }
-//                            }
-//                            Button {
-//                                let impact = UIImpactFeedbackGenerator(style: .light)
-//                                impact.impactOccurred()
-//                                withAnimation() { isLiked.toggle() }
-//                            } label: {
-//                                Image(systemName: isLiked ? "heart.fill" : "heart")
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fit)
-//                                    .foregroundColor(isLiked ? Color.red : Color.white)
-//                                    .frame(width: 19, height: 19)
-//                                    .offset(y: 1)
-//                                    .padding(5)
-//                                    .background(.ultraThinMaterial)
-//                                    .backgroundStyle(cornerRadius: 18, opacity: 0.4)
-//                                    .particleEffect(systemImage: "heart.fill", font: .footnote, status: <#T##Bool#>, activeTint: <#T##Color#>, inActiveTint: <#T##Color#>)
-//                            }
                             
                             CustomButton(systemImage: "heart.fill", status: isLiked, activeTint: .pink, inActiveTint: .secondary) {
                                 isLiked.toggle()

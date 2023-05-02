@@ -66,7 +66,6 @@
 		9C58B39429C7F8190024CB7E /* CreateEventFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B38629C7F8180024CB7E /* CreateEventFlow.swift */; };
 		9C58B39929C7F8190024CB7E /* EventLocationAndDates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B38E29C7F8190024CB7E /* EventLocationAndDates.swift */; };
 		9C58B39A29C7F8190024CB7E /* BasicEventInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B38F29C7F8190024CB7E /* BasicEventInfo.swift */; };
-		9C58B39B29C7F8190024CB7E /* EventGuestsAndInvitations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B39029C7F8190024CB7E /* EventGuestsAndInvitations.swift */; };
 		9C58B3A429C8E5250024CB7E /* Host.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B39E29C8E5240024CB7E /* Host.swift */; };
 		9C58B3A529C8E5250024CB7E /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B39F29C8E5240024CB7E /* User.swift */; };
 		9C58B3A629C8E5250024CB7E /* CachedEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B3A029C8E5250024CB7E /* CachedEvent.swift */; };
@@ -132,7 +131,7 @@
 		A643045B294FC72F0058C0F0 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = A643045A294FC72F0058C0F0 /* Model.swift */; };
 		A66E671E29DF70F800AB355E /* CreateEventTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671D29DF70F800AB355E /* CreateEventTextField.swift */; };
 		A66E672029DF7ED500AB355E /* CreateEventNextButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671F29DF7ED500AB355E /* CreateEventNextButton.swift */; };
-		A66E672429DFCE9D00AB355E /* PrototypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E672329DFCE9D00AB355E /* PrototypeView.swift */; };
+		A66E672429DFCE9D00AB355E /* EventGuestsAndInvitations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */; };
 		A673527A2979B8FD00AAD32E /* GuestlistUserView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67352792979B8FD00AAD32E /* GuestlistUserView.swift */; };
 		A678594A29C647F200A2D884 /* GetPhoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A678594929C647F200A2D884 /* GetPhoneView.swift */; };
 		A682CC562970915B008EA546 /* DetailRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A682CC552970915B008EA546 /* DetailRowView.swift */; };
@@ -224,7 +223,6 @@
 		9C58B38629C7F8180024CB7E /* CreateEventFlow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CreateEventFlow.swift; path = mixer/View/CreateEventFlow.swift; sourceTree = SOURCE_ROOT; };
 		9C58B38E29C7F8190024CB7E /* EventLocationAndDates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventLocationAndDates.swift; sourceTree = "<group>"; };
 		9C58B38F29C7F8190024CB7E /* BasicEventInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BasicEventInfo.swift; sourceTree = "<group>"; };
-		9C58B39029C7F8190024CB7E /* EventGuestsAndInvitations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventGuestsAndInvitations.swift; sourceTree = "<group>"; };
 		9C58B39E29C8E5240024CB7E /* Host.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Host.swift; sourceTree = "<group>"; };
 		9C58B39F29C8E5240024CB7E /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		9C58B3A029C8E5250024CB7E /* CachedEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CachedEvent.swift; sourceTree = "<group>"; };
@@ -289,7 +287,7 @@
 		A643045A294FC72F0058C0F0 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		A66E671D29DF70F800AB355E /* CreateEventTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventTextField.swift; sourceTree = "<group>"; };
 		A66E671F29DF7ED500AB355E /* CreateEventNextButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateEventNextButton.swift; sourceTree = "<group>"; };
-		A66E672329DFCE9D00AB355E /* PrototypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrototypeView.swift; sourceTree = "<group>"; };
+		A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventGuestsAndInvitations.swift; sourceTree = "<group>"; };
 		A67352792979B8FD00AAD32E /* GuestlistUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestlistUserView.swift; sourceTree = "<group>"; };
 		A678594929C647F200A2D884 /* GetPhoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPhoneView.swift; sourceTree = "<group>"; };
 		A682CC552970915B008EA546 /* DetailRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailRowView.swift; sourceTree = "<group>"; };
@@ -700,8 +698,7 @@
 			children = (
 				9C58B38F29C7F8190024CB7E /* BasicEventInfo.swift */,
 				9C58B38E29C7F8190024CB7E /* EventLocationAndDates.swift */,
-				A66E672329DFCE9D00AB355E /* PrototypeView.swift */,
-				9C58B39029C7F8190024CB7E /* EventGuestsAndInvitations.swift */,
+				A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */,
 				9C58B3C729CA69C70024CB7E /* EventAmenitiesAndCost.swift */,
 				A6BAEF602955064200410DED /* ReviewCreatedEventView.swift */,
 			);
@@ -1031,7 +1028,7 @@
 				9C58B3C329C8EB270024CB7E /* ContinueSignUpButton.swift in Sources */,
 				9C93318D29201D010079E039 /* MockData.swift in Sources */,
 				9C58B3AF29C8E5CA0024CB7E /* CharactersRemainView.swift in Sources */,
-				A66E672429DFCE9D00AB355E /* PrototypeView.swift in Sources */,
+				A66E672429DFCE9D00AB355E /* EventGuestsAndInvitations.swift in Sources */,
 				A613C3602978C61B00C4015C /* GuestlistView.swift in Sources */,
 				A6C99FC629DA691C0046D61B /* NotificationFeedView.swift in Sources */,
 				9C4B0E512983795600A9D963 /* EventListView.swift in Sources */,
@@ -1060,7 +1057,6 @@
 				9C3E2CA729EE767E00A74D05 /* AddToGuestlistView.swift in Sources */,
 				9C93318329201C3F0079E039 /* MainTabView.swift in Sources */,
 				9C9331A92925D0D20079E039 /* SignUpTextField.swift in Sources */,
-				9C58B39B29C7F8190024CB7E /* EventGuestsAndInvitations.swift in Sources */,
 				9C2B8973299170670011FC56 /* HostCache.swift in Sources */,
 				9C4B0E44298241AE00A9D963 /* GuestlistViewModel.swift in Sources */,
 				A6BF681D29FF1FE5000FF54B /* CustomImagePicker.swift in Sources */,
@@ -1283,7 +1279,6 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -1321,7 +1316,6 @@
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;

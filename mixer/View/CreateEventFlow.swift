@@ -24,7 +24,7 @@ struct CreateEventFlow: View {
                 BasicEventInfo(selectedImage: $viewModel.image,
                                title: $viewModel.title,
                                description: $viewModel.description,
-                               note: $viewModel.note,
+                               notes: $viewModel.notes,
                                hasNote: $viewModel.hasNote) { viewModel.next(); self.hideKeyboard() }
                                .tag(CreateEventViewModel.Screen.basicInfo)
                 

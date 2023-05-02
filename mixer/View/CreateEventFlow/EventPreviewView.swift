@@ -143,12 +143,13 @@ struct EventPreviewView: View {
                     .foregroundColor(.secondary)
                     .lineLimit(4)
             }
-            if viewModel.hasNote && !viewModel.note.isEmpty {
+            
+            if viewModel.hasNote && !viewModel.notes.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Notes for guest")
                         .font(.title).bold()
                     
-                    Text(viewModel.note)
+                    Text(viewModel.notes)
                         .font(.body)
                         .foregroundColor(.secondary)
                         .lineLimit(4)
@@ -157,7 +158,9 @@ struct EventPreviewView: View {
             
             VStack(alignment: .leading, spacing: 12) {
                 Text("Event details")
-                    .font(.title).bold()
+                    .font(.title)
+                    .bold()
+                
                 HStack {
                     if viewModel.selectedAmenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
                         DetailRow(image: "drop.fill", text: "Wet Event")
@@ -189,6 +192,7 @@ struct EventPreviewView: View {
 
 struct EventPreviewView_Previews: PreviewProvider {
     @Namespace static var namespace
+    
     static var previews: some View {
         EventPreviewView(viewModel: CreateEventViewModel(),
                         namespace: namespace)
@@ -208,6 +212,7 @@ fileprivate struct EventImageModalView: View {
                 .backgroundBlur(radius: 10, opaque: true)
                 .ignoresSafeArea()
                 .onTapGesture { withAnimation { isShowingModal = false } }
+            
             if let image = viewModel.image {
                 Image(uiImage: image)
                     .resizable()

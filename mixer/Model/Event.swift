@@ -137,6 +137,7 @@ struct Event: Identifiable, Codable {
     let type: EventType
     let address: String
     var amenities: [EventAmenities]
+    var notes: String?
     var checkInMethods: [CheckInMethod]?
     
     // Time and Dates

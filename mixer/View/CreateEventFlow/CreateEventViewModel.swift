@@ -39,10 +39,8 @@ enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
 final class CreateEventViewModel: ObservableObject {
     @Published var title: String                       = ""
     @Published var description: String                 = ""
-    //MARK: Peyton - Add these to the create event function
-    @Published var note: String                        = ""
+    @Published var notes: String                       = ""
     @Published var hasNote: Bool                       = false
-    
     @Published var guestLimit: String                  = ""
     @Published var guestInviteLimit: String            = ""
     @Published var memberInviteLimit: String           = ""
@@ -165,6 +163,8 @@ final class CreateEventViewModel: ObservableObject {
                                        "type": self.type.rawValue,
                                        "cost": self.cost as Float? ?? 0,
                                        "timePosted": Timestamp()]
+            
+            if self.notes != "" { data["notes"] = self.notes }
             
             if let checkInMethod = self.checkInMethod?.rawValue {
                 data["checkInMethod"] = checkInMethod
