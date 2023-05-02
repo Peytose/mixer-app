@@ -80,6 +80,7 @@ struct User: Identifiable, Codable {
     let email: String
     var profileImageUrl: String
     var name: String
+    var displayName: String
     var birthday: Timestamp
     let universityData: [String: String]
     

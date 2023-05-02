@@ -19,6 +19,7 @@ struct EventDetailView: View {
     @State private var showAllAmenities = false
     @State var showInfoAlert1            = false
     @State var showInfoAlert2            = false
+    @State var showInfoAlert3            = false
     var namespace: Namespace.ID
 
     var body: some View {
@@ -48,7 +49,7 @@ struct EventDetailView: View {
                             ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
                                 let amenitiesInCategory = viewModel.event.amenities?.filter({ $0.category == category }) ?? []
                                 if !amenitiesInCategory.isEmpty {
-                                    Section(header: Text(category.rawValue).font(.headline).padding(.vertical, 2)) {
+                                    Section(header: Text(category.rawValue).font(.title3.weight(.semibold)).padding(.top, 10).padding(.bottom, 2)) {
                                         ForEach(amenitiesInCategory, id: \.self) { amenity in
                                             HStack {
                                                 if amenity == .beer {
@@ -138,7 +139,7 @@ struct EventDetailView: View {
                                 .foregroundColor(.white)
                             
                             InfoButton(action: { showInfoAlert2.toggle() })
-                                .alert("Wet and Dry Events", isPresented: $showInfoAlert2, actions: {}, message: {Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location")})
+                                .alert("Location Details", isPresented: $showInfoAlert2, actions: {}, message: {Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location")})
                         }
 
                         if viewModel.event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false {
@@ -156,6 +157,9 @@ struct EventDetailView: View {
                                         .fontWeight(.semibold)
                                         .foregroundColor(.secondary)
                                 }
+                            } else {
+                                DetailRow(image: "mappin.and.ellipse", text: "Available when you are on the guest list")
+                                    .fontWeight(.medium)
                             }
                         } else {
                             if let coords = viewModel.coordinates {
@@ -207,7 +211,6 @@ struct EventDetailView: View {
                 Text(viewModel.event.description)
                     .font(.body)
                     .foregroundColor(.secondary)
-                    .lineLimit(4)
             }
             
             if let notes = viewModel.event.notes {
@@ -218,7 +221,6 @@ struct EventDetailView: View {
                     Text(notes)
                         .font(.body)
                         .foregroundColor(.secondary)
-                        .lineLimit(4)
                 }
             }
             
@@ -248,6 +250,9 @@ struct EventDetailView: View {
                         DetailRow(image: "list.clipboard.fill", text: "Open Event")
                             .fontWeight(.medium)
                     }
+                    
+                    InfoButton(action: { showInfoAlert3.toggle() })
+                        .alert("Open and Invite Only Events", isPresented: $showInfoAlert3, actions: {}, message: {Text("You can only see the exact location and start time of an Invite Only Event if you are on its guestlist. On the other hand, you can always see all the details of an Open Event")})
                 }
             }
         }
@@ -396,12 +401,12 @@ fileprivate struct EventFlyerHeader: View {
                             Spacer()
                             
                             VStack(alignment: .center, spacing: 4) {
-                                Image(systemName: event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "lock.fill" : "globe")
+                                Image(systemName: event.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "lock.fill" : "globe")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 20, height: 20)
                                 
-                                Text(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Invite Only" : "Public")
+                                Text(event.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "Private" : "Public")
                                     .foregroundColor(.secondary)
                                 
                             }

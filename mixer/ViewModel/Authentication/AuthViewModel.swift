@@ -16,6 +16,7 @@ class AuthViewModel: ObservableObject {
     @Published var emailIsVerified           = false
     @Published var showAuthFlow              = false
     @Published var name                      = ""
+    @Published var displayName               = ""
     @Published var email                     = ""
     @Published var emailCode                 = ""
     @Published var universityData            = [String: String]()
@@ -72,6 +73,7 @@ class AuthViewModel: ObservableObject {
         DispatchQueue.main.async {
             self.active      = Screen.allCases.first!
             self.name        = ""
+            self.displayName = ""
             self.phoneNumber = ""
             self.countryCode = ""
             self.code        = ""
@@ -277,8 +279,9 @@ class AuthViewModel: ObservableObject {
                 return
             }
             print("DEBUG: ✅ Successfully registered user ... ")
-            
+            //MARK: Peyton - Add the displayName to firebase properly (set it to equal the name upon creating a user)
             let data = ["name": self.name,
+                        "displayName" : self.displayName,
                         "email": self.email.lowercased(),
                         "profileImageUrl": imageUrl,
                         "bio": self.bio,

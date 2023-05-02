@@ -254,7 +254,7 @@ fileprivate struct ProfileInfo: View {
                 VStack(alignment: .leading, spacing: 2) {
                     HStack {
                         HStack(alignment: .center, spacing: 15) {
-                            Text(showUsername ? "@\(user.username)" : user.name)
+                            Text(showUsername ? "@\(user.username)" : user.displayName)
                                 .textSelection(.enabled)
                                 .font(.largeTitle)
                                 .bold()

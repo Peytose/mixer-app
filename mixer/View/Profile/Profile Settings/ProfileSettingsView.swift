@@ -47,14 +47,14 @@ struct ProfileSettingsView: View {
                     Section(header: Text("Profile").fontWeight(.semibold),
                             footer: Text("Right now, you can only edit your name and bio.")) {
                         EditableRow(viewModel: viewModel,
-                                    rowTitle: "Name",
-                                    rowContent: viewModel.user.name,
-                                    alertTitle: "Name Change",
+                                    rowTitle: "Display Name",
+                                    rowContent: viewModel.user.displayName,
+                                    alertTitle: "Display Name Change",
                                     alertMessage: "Please enter your preferred name.",
                                     alertPlaceholder: "Preferred name",
                                     icon: "person",
-                                    value: $viewModel.name,
-                                    saveType: .name)
+                                    value: $viewModel.displayName,
+                                    saveType: .displayName)
                         .listRowBackground(Color.mixerSecondaryBackground)
                         
                         EditableRow(viewModel: viewModel,
@@ -77,6 +77,11 @@ struct ProfileSettingsView: View {
                                     icon: "instagram",
                                     value: $viewModel.instagramHandle,
                                     saveType: .instagram)
+                        .listRowBackground(Color.mixerSecondaryBackground)
+                        
+                        SettingRow(title: "Name",
+                                   content: viewModel.user.name,
+                                   icon: "person")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         
                         SettingRow(title: "Username",

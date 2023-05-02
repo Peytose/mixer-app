@@ -48,6 +48,8 @@ struct CreateEventFlow: View {
                                           isManualApprovalEnabled: $viewModel.eventOptions.binding(for: EventOption.isManualApprovalEnabled.rawValue),
                                           isWaitlistEnabled: $viewModel.eventOptions.binding(for: EventOption.isWaitlistEnabled.rawValue),
                                           isRegistrationDeadlineEnabled: $viewModel.eventOptions.binding(for: EventOption.isRegistrationDeadlineEnabled.rawValue),
+                                          isInviteOnly: $viewModel.eventOptions.binding(for: EventOption.isInviteOnly.rawValue),
+                                          isPrivate: $viewModel.eventOptions.binding(for: EventOption.isPrivate.rawValue),
                                           alertItem: $viewModel.alertItem,
                                           action: viewModel.next)
                 .tag(CreateEventViewModel.Screen.guestsAndInvitations)

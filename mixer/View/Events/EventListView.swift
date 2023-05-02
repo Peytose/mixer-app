@@ -77,7 +77,7 @@ fileprivate struct CellDateView: View {
                             .minimumScaleFactor(0.75)
                     }
                     
-                    Image(systemName: event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "lock.fill" : "globe")
+                    Image(systemName: event.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "lock.fill" : "globe")
                         .imageScale(.large)
                         .padding(.top, -7)
                 }

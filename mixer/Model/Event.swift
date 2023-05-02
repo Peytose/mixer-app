@@ -111,6 +111,7 @@ enum EventAmenities: String, Codable, CaseIterable {
 enum EventOption: String, Codable {
     case containsAlcohol               = "containsAlcohol"
     case isInviteOnly                  = "isInviteOnly"
+    case isPrivate                      = "isPrivate"
     case hasPublicAddress              = "hasPublicAddress"
     case isManualApprovalEnabled       = "isManualApprovalEnabled"
     case isGuestlistEnabled            = "isGuestlistEnabled"

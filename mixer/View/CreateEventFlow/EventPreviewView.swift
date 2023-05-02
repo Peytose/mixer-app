@@ -176,7 +176,7 @@ struct EventPreviewView: View {
                 }
                 
                 HStack {
-                    if viewModel.privacy == .inviteOnly {
+                    if viewModel.eventOptions[EventOption.isInviteOnly.rawValue] ?? false {
                         DetailRow(image: "list.clipboard.fill", text: "Invite Only Event")
                             .fontWeight(.medium)
                     } else {
@@ -184,6 +184,7 @@ struct EventPreviewView: View {
                             .fontWeight(.medium)
                     }
                 }
+                
             }
             
         }
@@ -340,25 +341,15 @@ fileprivate struct EventFlyerHeader: View {
 
                             Spacer()
                             
-
                             VStack(alignment: .center, spacing: 4) {
-                                if viewModel.visibility == ._public {
-                                    Image(systemName: "globe")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 20, height: 20)
-
-                                    Text("Public")
-                                        .foregroundColor(.secondary)
-                                } else {
-                                    Image(systemName: "lock.fill")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: 20, height: 20)
-
-                                    Text("Invite Only")
-                                        .foregroundColor(.secondary)
-                                }
+                                Image(systemName: viewModel.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "lock.fill" : "globe")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 20, height: 20)
+                                
+                                Text(viewModel.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "Private" : "Public")
+                                    .foregroundColor(.secondary)
+                                
                             }
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)

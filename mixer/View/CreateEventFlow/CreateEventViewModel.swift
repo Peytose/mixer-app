@@ -55,6 +55,7 @@ final class CreateEventViewModel: ObservableObject {
     @Published var visibility: VisibilityType          = ._public
     @Published var eventOptions: [String: Bool]        = ["containsAlcohol": false,
                                                           "isInviteOnly": false,
+                                                          "isPrivate": false,
                                                           "hasPublicAddress": false,
                                                           "isManualApprovalEnabled": false,
                                                           "isGuestLimitEnabled": false,

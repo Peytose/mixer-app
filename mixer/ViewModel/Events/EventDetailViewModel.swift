@@ -24,7 +24,7 @@ final class EventDetailViewModel: ObservableObject {
     func getDirectionsToLocation(coordinates: CLLocationCoordinate2D) {
         let placemark = MKPlacemark(coordinate: coordinates)
         let mapItem   = MKMapItem(placemark: placemark)
-        mapItem.name = host?.name ?? event.title
+        mapItem.name = event.title
         
         mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault])
     }

@@ -16,7 +16,7 @@ struct Mockdata {
                     username: "test_user",
                     email: "test@email.edu",
                     profileImageUrl: "https://images.squarespace-cdn.com/content/v1/53ed0e3ce4b0c296acaeae80/1584577511464-8FDZYWQVXUI1OBS4VTZP/Bonneville14082-Edit-DHWEB%2BNick%2BFerguson%2BDenver%2BBroncos%2BHeadshot%2BPhotography%2Bby%2BAaron%2BLucy%2BDenver%2BColorado%2BHeadshots%2BPhotographer.jpg?format=2500w",
-                    name: "William",
+                    name: "William", displayName: "Creel",
                     birthday: Timestamp(date: Date(timeIntervalSince1970: 1028578547)),
                     universityData: ["name": "Mississippi State University",
                                      "uid": ""],
@@ -34,7 +34,8 @@ struct Mockdata {
                      eventImageUrl: "https://www.instagram.com/p/CqBwaJ3gcyU/media?size=l",
                      type: EventType.kickback,
                      address: "528 Beacon St, Boston, MA 02215",
-                     amenities: [],
+                     amenities: [.alcohol,.bathrooms,.beer,.drinkingGames,.water,.dj
+                                 ,.danceFloor, .coatCheck],
                      startDate: Timestamp(),
                      endDate: Timestamp(),
                      attendance: 50,

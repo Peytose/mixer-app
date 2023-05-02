@@ -60,7 +60,7 @@ struct BasicEventInfo: View {
                     VStack(alignment: .leading, spacing: 5) {
                         CreateEventTextField(input: $notes,
                                              title: "Note for guests",
-                                             placeholder: "Add any additional notes",
+                                             placeholder: "Add any additional notes/info",
                                              keyboard: .default,
                                              toggleBool: .constant(false))
                             .focused($focusedField, equals: .notes)

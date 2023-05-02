@@ -10,15 +10,16 @@ import Firebase
 
 class ProfileViewModel: ObservableObject {
     @Published var user: CachedUser
-    @Published var showSettingsView     = false
-    @Published var showUnfriendAlert    = false
-    @Published var continueUnfriendFunc = false
-    @Published var eventSection         = EventSection.interests
-    @Published var savedEvents          = [CachedEvent]()
-    @Published var pastEvents           = [CachedEvent]()
-    @Published var mutuals              = [CachedUser]()
-    @Published var notifications        = [Notification]()
+    @Published var showSettingsView         = false
+    @Published var showUnfriendAlert        = false
+    @Published var continueUnfriendFunc     = false
+    @Published var eventSection             = EventSection.interests
+    @Published var savedEvents              = [CachedEvent]()
+    @Published var pastEvents               = [CachedEvent]()
+    @Published var mutuals                  = [CachedUser]()
+    @Published var notifications            = [Notification]()
     @Published var name: String             = ""
+    @Published var displayName: String      = ""
     @Published var bio: String              = ""
     @Published var instagramHandle: String  = ""
     @Published var showAgeOnProfile: Bool
@@ -30,6 +31,7 @@ class ProfileViewModel: ObservableObject {
 
     enum ProfileSaveType {
         case name
+        case displayName
         case image
         case bio
         case instagram
@@ -173,6 +175,14 @@ class ProfileViewModel: ObservableObject {
                 self.user.name = self.name
                 completion()
             }
+        case .displayName:
+            guard self.displayName != "" else { return }
+            
+            COLLECTION_USERS.document(uid).updateData(["displayName": self.displayName]) { _ in
+                self.user.displayName = self.displayName
+                completion()
+            }
+            
         case .image:
             guard let image = self.selectedImage else {
                 print("DEBUG: image not found.")

@@ -17,6 +17,7 @@ struct CachedUser: Hashable, Identifiable, Codable {
     
     // Basic Information
     var name: String
+    var displayName: String
     let username: String
     let email: String
     var profileImageUrl: String
@@ -45,6 +46,7 @@ struct CachedUser: Hashable, Identifiable, Codable {
         self.id                 = user.id
         self.dateJoined         = user.dateJoined
         self.name               = user.name
+        self.displayName        = user.displayName
         self.username           = user.username
         self.email              = user.email
         self.profileImageUrl    = user.profileImageUrl

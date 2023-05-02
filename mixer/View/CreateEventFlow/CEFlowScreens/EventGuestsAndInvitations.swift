@@ -23,6 +23,8 @@ struct EventGuestsAndInvitations: View {
     @Binding var isManualApprovalEnabled: Bool
     @Binding var isWaitlistEnabled: Bool
     @Binding var isRegistrationDeadlineEnabled: Bool
+    @Binding var isInviteOnly: Bool
+    @Binding var isPrivate: Bool
     
     @Binding var alertItem: AlertItem?
     
@@ -82,9 +84,9 @@ struct EventGuestsAndInvitations: View {
                     HStack(spacing: 5) {
                         InfoButton(action: { alertItem = AlertContext.eventVisiblityInfo })
                         
-                        Picker("", selection: $selectedVisibility.animation()) {
-                            Text("Public").tag(CreateEventViewModel.VisibilityType._public)
-                            Text("Private").tag(CreateEventViewModel.VisibilityType._private)
+                        Picker("", selection: $isPrivate.animation()) {
+                            Text("Public").tag(false)
+                            Text("Private").tag(true)
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .padding(.trailing)
@@ -93,9 +95,9 @@ struct EventGuestsAndInvitations: View {
                     HStack(spacing: 5) {
                         InfoButton(action: { alertItem = AlertContext.invitePreferrenceInfo })
                         
-                        Picker("", selection: $selectedInvitePreferrence.animation()) {
-                            Text("Open").tag(CreateEventViewModel.InvitePreferrence.open)
-                            Text("Invite Only").tag(CreateEventViewModel.InvitePreferrence.inviteOnly)
+                        Picker("", selection: $isInviteOnly.animation()) {
+                            Text("Open").tag(false)
+                            Text("Invite Only").tag(true)
                         }
                         .pickerStyle(SegmentedPickerStyle())
                         .padding(.trailing)
