@@ -17,7 +17,8 @@ struct EventDetailView: View {
     @State private var finalAmount      = 1.0
     @State private var showHost         = false
     @State private var showAllAmenities = false
-    @State var showInfoAlert            = false
+    @State var showInfoAlert1            = false
+    @State var showInfoAlert2            = false
     var namespace: Namespace.ID
 
     var body: some View {
@@ -130,22 +131,43 @@ struct EventDetailView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Where you'll be")
-                            .font(.title)
-                            .bold()
-                            .foregroundColor(.white)
-                        
-                        if let publicAddress = viewModel.event.publicAddress {
-                            //MARK: JOSE LEFT OFF (DEBUG REPORT: FINISH PUBLIC/PRIVATE LOGIC)
-                        } else if let coords = viewModel.coordinates {
-                            VStack(alignment: .leading, spacing: 5) {
-                                MapSnapshotView(location: coords, event: viewModel.event)
-                                    .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
-                                
-                                Text("Tap the map for directions to this event!")
-                                    .font(.footnote)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.secondary)
+                        HStack {
+                            Text("Where you'll be")
+                                .font(.title)
+                                .bold()
+                                .foregroundColor(.white)
+                            
+                            InfoButton(action: { showInfoAlert2.toggle() })
+                                .alert("Wet and Dry Events", isPresented: $showInfoAlert2, actions: {}, message: {Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location")})
+                        }
+
+                        if viewModel.event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false {
+                            if let publicAddress = viewModel.event.publicAddress {
+                                //MARK: JOSE LEFT OFF (DEBUG REPORT: FINISH PUBLIC/PRIVATE LOGIC)
+                                DetailRow(image: "mappin.and.ellipse", text: publicAddress)
+                                    .fontWeight(.medium)
+                            } else if let coords = viewModel.coordinates {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    MapSnapshotView(location: coords, event: viewModel.event)
+                                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
+                                    
+                                    Text("Tap the map for directions to this event!")
+                                        .font(.footnote)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        } else {
+                            if let coords = viewModel.coordinates {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    MapSnapshotView(location: coords, event: viewModel.event)
+                                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
+                                    
+                                    Text("Tap the map for directions to this event!")
+                                        .font(.footnote)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                         }
                     }
@@ -214,8 +236,8 @@ struct EventDetailView: View {
                         }
                     }
                     
-                    InfoButton(action: { showInfoAlert.toggle() })
-                        .alert("Wet and Dry Events", isPresented: $showInfoAlert, actions: {}, message: {Text("Wet events offer beer/alcohol. Dry events do not offer alcohol.")})
+                    InfoButton(action: { showInfoAlert1.toggle() })
+                        .alert("Wet and Dry Events", isPresented: $showInfoAlert1, actions: {}, message: {Text("Wet events offer beer/alcohol. Dry events do not offer alcohol.")})
                 }
                 
                 HStack {

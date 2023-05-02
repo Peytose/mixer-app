@@ -26,7 +26,7 @@ final class EventDetailViewModel: ObservableObject {
         let mapItem   = MKMapItem(placemark: placemark)
         mapItem.name = host?.name ?? event.title
         
-        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeWalking])
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault])
     }
 
     

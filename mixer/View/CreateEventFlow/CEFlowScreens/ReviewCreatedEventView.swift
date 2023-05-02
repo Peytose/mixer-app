@@ -14,6 +14,7 @@ struct ReviewCreatedEventView: View {
     var namespace: Namespace.ID
     @State var showPreview      = false
     @State var showAllAmenities = false
+    let action: () -> Void
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -209,7 +210,7 @@ struct ReviewCreatedEventView: View {
         .background(Color.mixerBackground.ignoresSafeArea())
         .overlay(alignment: .bottom) {
             CreateEventNextButton(text: "Continue",
-                                  action: viewModel.createEvent,
+                                  action: action,
                                   isActive: true)
     }
         .sheet(isPresented: $showPreview) {
@@ -304,7 +305,7 @@ struct ReviewCreatedEventView: View {
 struct ReviewCreatedEventView_Previews: PreviewProvider {
     @Namespace static var namespace
     static var previews: some View {
-        ReviewCreatedEventView(viewModel: CreateEventViewModel(), namespace: namespace)
+        ReviewCreatedEventView(viewModel: CreateEventViewModel(), namespace: namespace) {}
             .preferredColorScheme(.dark)
     }
 }

@@ -57,7 +57,7 @@ struct CreateEventFlow: View {
                                       action: viewModel.next)
                 .tag(CreateEventViewModel.Screen.costAndAmenities)
                 
-                ReviewCreatedEventView(viewModel: viewModel, namespace: namespace)
+                ReviewCreatedEventView(viewModel: viewModel, namespace: namespace) {viewModel.createEvent(); isShowingCreateEventView = false }
                     .tag(CreateEventViewModel.Screen.review)
             }
             .animation(.easeInOut, value: viewModel.active)
