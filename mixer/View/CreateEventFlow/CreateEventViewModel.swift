@@ -165,6 +165,7 @@ final class CreateEventViewModel: ObservableObject {
                                        "timePosted": Timestamp()]
             
             if self.notes != "" { data["notes"] = self.notes }
+            if self.publicAddress != "" { data["publicAddress"] = self.publicAddress }
             
             if let checkInMethod = self.checkInMethod?.rawValue {
                 data["checkInMethod"] = checkInMethod

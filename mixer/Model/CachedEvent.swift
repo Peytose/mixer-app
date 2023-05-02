@@ -24,6 +24,7 @@ struct CachedEvent: Hashable, Identifiable, Codable {
     var address: String
     var amenities: [EventAmenities]?
     var notes: String?
+    var publicAddress: String?
     var checkInMethods: [CheckInMethod]?
     
     // Time and Dates
@@ -78,6 +79,7 @@ struct CachedEvent: Hashable, Identifiable, Codable {
         self.eventOptions                  = event.eventOptions
         self.amenities                     = event.amenities
         self.notes                         = event.notes
+        self.publicAddress                 = event.publicAddress
         self.checkInMethods                = event.checkInMethods
         self.cost                          = event.cost
         self.averageRating                 = event.averageRating

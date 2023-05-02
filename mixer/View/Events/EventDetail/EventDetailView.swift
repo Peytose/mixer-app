@@ -129,13 +129,15 @@ struct EventDetailView: View {
                         }
                     }
                     
-                    if let coords = viewModel.coordinates {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Where you'll be")
-                                .font(.title)
-                                .bold()
-                                .foregroundColor(.white)
-                            
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Where you'll be")
+                            .font(.title)
+                            .bold()
+                            .foregroundColor(.white)
+                        
+                        if let publicAddress = viewModel.event.publicAddress {
+                            //MARK: JOSE LEFT OFF (DEBUG REPORT: FINISH PUBLIC/PRIVATE LOGIC)
+                        } else if let coords = viewModel.coordinates {
                             VStack(alignment: .leading, spacing: 5) {
                                 MapSnapshotView(location: coords, event: viewModel.event)
                                     .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
