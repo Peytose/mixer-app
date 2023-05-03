@@ -242,6 +242,7 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
+    
     func getVersion() -> String {
         let dictionary = Bundle.main.infoDictionary!
         let version = dictionary["CFBundleShortVersionString"] as! String

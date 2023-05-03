@@ -160,6 +160,8 @@
 		A6BF681A29FF14F0000FF54B /* ParticleEffectModifier+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681929FF14F0000FF54B /* ParticleEffectModifier+Ext.swift */; };
 		A6BF681D29FF1FE5000FF54B /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681C29FF1FE5000FF54B /* CustomImagePicker.swift */; };
 		A6BF681F2A0074EC000FF54B /* EventPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681E2A0074EC000FF54B /* EventPreviewView.swift */; };
+		A6BF68212A02255F000FF54B /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF68202A02255F000FF54B /* LaunchScreenView.swift */; };
+		A6BF68232A023912000FF54B /* SmallEventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF68222A023912000FF54B /* SmallEventCell.swift */; };
 		A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */; };
 		A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */; };
 		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
@@ -314,6 +316,8 @@
 		A6BF681929FF14F0000FF54B /* ParticleEffectModifier+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ParticleEffectModifier+Ext.swift"; sourceTree = "<group>"; };
 		A6BF681C29FF1FE5000FF54B /* CustomImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
 		A6BF681E2A0074EC000FF54B /* EventPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPreviewView.swift; sourceTree = "<group>"; };
+		A6BF68202A02255F000FF54B /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
+		A6BF68222A023912000FF54B /* SmallEventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallEventCell.swift; sourceTree = "<group>"; };
 		A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBirthdayView.swift; sourceTree = "<group>"; };
 		A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGenderView.swift; sourceTree = "<group>"; };
 		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
@@ -544,6 +548,7 @@
 				A62ED41029DE31A0008D6274 /* ShareProfileView.swift */,
 				9C01918629DE9A8B000F3D1F /* SelectionPicker.swift */,
 				9C3E2C9F29EA8A7300A74D05 /* MoreProfileOptions.swift */,
+				A6BF68202A02255F000FF54B /* LaunchScreenView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -876,6 +881,7 @@
 				A6077A9129C0E5380038E1ED /* UpcomingEventCellView.swift */,
 				A6C99FC729DA694F0046D61B /* FollowRequestCell.swift */,
 				9C3E2C9B29EA3A5900A74D05 /* SmallCornerNumber.swift */,
+				A6BF68222A023912000FF54B /* SmallEventCell.swift */,
 			);
 			path = "Small Items";
 			sourceTree = "<group>";
@@ -1007,6 +1013,7 @@
 				A6BF681629FC6DEE000FF54B /* PieSlice.swift in Sources */,
 				9C3E2CA029EA8A7300A74D05 /* MoreProfileOptions.swift in Sources */,
 				9C58B3A629C8E5250024CB7E /* CachedEvent.swift in Sources */,
+				A6BF68212A02255F000FF54B /* LaunchScreenView.swift in Sources */,
 				9C93318729201C7B0079E039 /* ExploreView.swift in Sources */,
 				9C58B3A729C8E5250024CB7E /* CachedHost.swift in Sources */,
 				A6430446294FBDBF0058C0F0 /* CreateEventView.swift in Sources */,
@@ -1026,6 +1033,7 @@
 				9C4B0E3F2982419F00A9D963 /* EventDetailViewModel.swift in Sources */,
 				9C05C1BB2983A14200841100 /* ProfileView.swift in Sources */,
 				9C58B3C329C8EB270024CB7E /* ContinueSignUpButton.swift in Sources */,
+				A6BF68232A023912000FF54B /* SmallEventCell.swift in Sources */,
 				9C93318D29201D010079E039 /* MockData.swift in Sources */,
 				9C58B3AF29C8E5CA0024CB7E /* CharactersRemainView.swift in Sources */,
 				A66E672429DFCE9D00AB355E /* EventGuestsAndInvitations.swift in Sources */,

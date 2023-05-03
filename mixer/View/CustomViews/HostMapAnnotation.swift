@@ -11,7 +11,7 @@ import Kingfisher
 struct HostMapAnnotation: View {
     var host: CachedHost
     @State private var progress: CGFloat = 0
-    let gradient1 = Gradient(colors: [.purple, .yellow])
+    let gradient1 = Gradient(colors: [.purple, .pink])
     let gradient2 = Gradient(colors: [.blue, .purple])
     let defaultGradient = Gradient(colors: [.white, .white])
     

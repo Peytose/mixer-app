@@ -37,7 +37,6 @@ final class ExploreViewModel: ObservableObject {
                         if eventSection == section {
                             RoundedRectangle(cornerRadius: 4, style: .continuous)
                                 .fill(Color.mixerIndigo)
-                            //                                    .matchedGeometryEffect(id: "TAB", in: animation)
                         }
                         else {
                             RoundedRectangle(cornerRadius: 4, style: .continuous)
@@ -47,7 +46,6 @@ final class ExploreViewModel: ObservableObject {
                     .padding(.horizontal,8)
                     .frame(height: 4)
                 }
-                //                    .padding(.leading)
                 .contentShape(Rectangle())
                 .onTapGesture {
                     withAnimation(.easeInOut) {
@@ -57,8 +55,8 @@ final class ExploreViewModel: ObservableObject {
             }
         }
         .padding(.horizontal)
-        .padding(.top, 25)
-        .padding(.bottom,5)
+        .padding(.top, 70)
+        .padding(.bottom, 0)
     }
     
     

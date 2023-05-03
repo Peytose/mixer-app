@@ -11,11 +11,13 @@ struct XDismissButton: View {
     var body: some View {
         Image(systemName: "xmark")
             .font(.system(size: 17, weight: .bold))
-            .foregroundColor(.secondary)
+            .foregroundColor(.white)
             .padding(8)
             .background(.ultraThinMaterial)
             .backgroundColor(opacity: 0.2)
             .clipShape(Circle())
+            .padding(20)
+            .contentShape(Rectangle())
     }
 }
 

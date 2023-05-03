@@ -17,7 +17,7 @@ struct MapView: View {
     @State private var selectedEvent: CachedEvent?
     @State private var selectedHost: CachedHost?
     @State private var progress: CGFloat = 0
-    let gradient1 = Gradient(colors: [.purple, .yellow])
+    let gradient1 = Gradient(colors: [.purple, .pink])
     let gradient2 = Gradient(colors: [.blue, .purple])
     var namespace: Namespace.ID
     
@@ -40,23 +40,13 @@ struct MapView: View {
                         }
                 }
             }
-            .ignoresSafeArea()
+                .ignoresSafeArea()
             
             Spacer()
             
-            LogoView(frameWidth: 75)
-                .animatableGradient(fromGradient: gradient1,
-                                    toGradient: gradient2,
-                                    progress: progress)
-                .frame(height: 75)
-                .mask(LogoView(frameWidth: 75))
+            LogoView(frameWidth: 65)
                 .shadow(radius: 10)
                 .allowsHitTesting(false)
-                .onAppear {
-                    withAnimation(.linear(duration: 5.0).repeatForever(autoreverses: true)) {
-                        self.progress = 1.0
-                    }
-                }
         }
         .sheet(isPresented: $isShowingDetailView) {
             if let event = selectedEvent {

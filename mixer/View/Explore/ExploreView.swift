@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import TabBar
 import FirebaseFirestore
 
 struct ExploreView: View {
@@ -50,6 +49,7 @@ struct ExploreView: View {
                             }
                         }
                     }
+                    .padding(.bottom, -50)
                     
                     // Segmented Event Header
                     LazyVStack(pinnedViews: [.sectionHeaders]) {
@@ -94,8 +94,7 @@ struct ExploreView: View {
                 .zIndex(3)
                 .overlay(alignment: .topTrailing) {
                     XDismissButton()
-                        .padding(.top, 50)
-                        .padding(.trailing, 30)
+                        .padding(20)
                         .onTapGesture {
                             withAnimation(.closeCard) {
                                 self.showEventView = false
@@ -113,7 +112,7 @@ struct ExploreView: View {
         .ignoresSafeArea()
         .background(Color.mixerBackground)
         .preferredColorScheme(.dark)
-        .statusBar(hidden: showHostView)
+        .statusBar(hidden: showHostView || showEventView)
     }
 }
 

@@ -12,6 +12,7 @@ import Combine
 struct HostInfoView: View {
     let host: CachedHost
     let coordinates: CLLocationCoordinate2D?
+    @State var showAllEvents = false
     
     var namespace: Namespace.ID
 //    @Binding var isFollowing: Bool
@@ -41,22 +42,48 @@ struct HostInfoView: View {
             
             
             if !viewModel.upcomingEvents.isEmpty {
-                HostSubheading(text: "Upcoming Events")
-                    .opacity(appear[1] ? 1 : 0)
-                
-                ForEach(viewModel.upcomingEvents) { event in
-                    NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
-                                                                namespace: namespace)) {
-                        UpcomingEventCellView(title: event.title,
-                                              duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
-                                              visibility: "\(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Closed" : "Open") Event",
-                                              dateMonth: event.startDate.getTimestampString(format: "MMM"),
-                                              dateNumber: event.startDate.getTimestampString(format: "d"),
-                                              dateDay: event.startDate.getTimestampString(format: "E"))
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 10) {
+                        HostSubheading(text: "Upcoming Events")
+                            .opacity(appear[1] ? 1 : 0)
+                        
+                        ForEach(showAllEvents ? viewModel.upcomingEvents : Array(viewModel.upcomingEvents.prefix(1))) { event in
+                            NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
+                                                                        namespace: namespace)) {
+
+                                SmallEventCell(title: event.title,
+                                               duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
+                                               visibility: "\(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Closed" : "Open") Event",
+                                               dateMonth: event.startDate.getTimestampString(format: "MMM"),
+                                               dateNumber: event.startDate.getTimestampString(format: "d"),
+                                               imageURL: event.eventImageUrl)
+                            }
+                        }
+                        HStack {
+                            Spacer()
+                            Button {
+                                withAnimation(.spring(dampingFraction: 0.8)) {
+                                    showAllEvents.toggle()
+                                }
+                            } label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .foregroundColor(.DesignCodeWhite)
+                                        .frame(width: 350, height: 45)
+                                        .overlay {
+                                            Text(showAllEvents ? "Show less" : "Show all \(viewModel.upcomingEvents.count) amenities")
+                                                .font(.body)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.black)
+                                        }
+                                }
+                            }
+                            Spacer()
+                        }
+                        .padding(.top)
                     }
                 }
             }
-            
             
             //MARK: About host (debug report: Seems irrelevant, potentially a tab on the host detail view)
 //            VStack(alignment: .leading, spacing: 10) {

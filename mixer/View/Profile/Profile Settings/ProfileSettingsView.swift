@@ -38,6 +38,7 @@ struct ProfileSettingsView: View {
                                         .padding(5)
                                         .background(Color.mixerSecondaryBackground, in: Circle())
                                         .background(Color.mainFont, in: Circle().stroke(lineWidth: 2))
+                                        .offset(x: -4, y: -4)
                                 }
                         }
                     }
@@ -331,12 +332,16 @@ fileprivate struct EasterEggView: View {
         HStack {
             Spacer()
             
-            Text(text)
-                .font(.body)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .offset(x: 0, y: 100)
-                .background(Color.clear)
+            VStack {
+                Text(text)
+
+                Text("Born at MIT 🦫")
+            }
+            .font(.body)
+            .foregroundColor(.secondary)
+            .multilineTextAlignment(.center)
+            .offset(x: 0, y: 100)
+            .background(Color.clear)
             
             Spacer()
         }
