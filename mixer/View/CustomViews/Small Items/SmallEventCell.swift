@@ -17,12 +17,13 @@ struct SmallEventCell: View {
     var imageURL: String
     
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 5) {
             KFImage(URL(string: imageURL))
+//            Image("theta-chi-party-poster")
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 80, height: 80, alignment: .leading)
                 .cornerRadius(16)
-                .frame(width: 100, height: 80, alignment: .leading)
             
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
@@ -33,20 +34,20 @@ struct SmallEventCell: View {
                     Text(duration)
                         .foregroundColor(.secondary)
                 }
-                .font(.callout)
+                .font(.subheadline)
                 .fontWeight(.medium)
                 
                 Text(title)
-                    .font(.title2.weight(.semibold))
+                    .font(.title3.weight(.semibold))
                     .lineLimit(2)
                     .minimumScaleFactor(0.85)
                 
                 Text(visibility)
-                    .font(.footnote.weight(.medium))
+                    .font(.caption.weight(.medium))
                     .foregroundColor(.secondary)
                 
             }
-            .padding(.trailing, 10)
+            .padding(.horizontal, 10)
         }
         .frame(maxHeight: 150, alignment: .leading)
         .frame(maxWidth: .infinity, alignment: .leading)
