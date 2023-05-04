@@ -42,7 +42,8 @@ struct CachedHost: Hashable, Identifiable, Codable {
     var instagramHandle: String?
     var website: String?
     var address: String?
-    var bio: String?
+    var tagline: String?
+    var description: String?
     var rating: Float?         = 0.0
     
     // Flags
@@ -70,7 +71,8 @@ struct CachedHost: Hashable, Identifiable, Codable {
         self.instagramHandle   = host.instagramHandle
         self.website           = host.website
         self.address           = host.address
-        self.bio               = host.bio
+        self.tagline           = host.tagline
+        self.description       = host.description
         
         if let geopoint = host.geopoint {
             self.location = Coordinate(CLLocationCoordinate2D(latitude: geopoint.latitude, longitude: geopoint.longitude))

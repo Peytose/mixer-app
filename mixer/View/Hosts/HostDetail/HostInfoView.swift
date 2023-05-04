@@ -19,6 +19,8 @@ struct HostInfoView: View {
     @ObservedObject var viewModel: HostDetailViewModel
     @State var showMore = false
     @State var appear = [false, false, false]
+    @State private var bioHeight: CGFloat = 65
+    @State private var contentHeight: CGFloat = 0 // Track the actual height of the ScrollView's content view
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -27,7 +29,7 @@ struct HostInfoView: View {
                 NameAndLinksRow(host: host,
                                 namespace: namespace)
                 
-                if let bio = host.bio {
+                if let bio = host.tagline {
                     Text(bio)
                         .font(.subheadline.weight(.medium))
                         .foregroundColor(.white.opacity(0.8))
@@ -50,7 +52,6 @@ struct HostInfoView: View {
                         ForEach(showAllEvents ? viewModel.upcomingEvents : Array(viewModel.upcomingEvents.prefix(1))) { event in
                             NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
                                                                         namespace: namespace)) {
-
                                 SmallEventCell(title: event.title,
                                                duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
                                                visibility: "\(event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false ? "Closed" : "Open") Event",
@@ -71,7 +72,7 @@ struct HostInfoView: View {
                                         .foregroundColor(.DesignCodeWhite)
                                         .frame(width: 350, height: 45)
                                         .overlay {
-                                            Text(showAllEvents ? "Show less" : "Show all \(viewModel.upcomingEvents.count) amenities")
+                                            Text(showAllEvents ? "Show less" : "Show all \(viewModel.upcomingEvents.count) events")
                                                 .font(.body)
                                                 .fontWeight(.medium)
                                                 .foregroundColor(.black)
@@ -85,29 +86,40 @@ struct HostInfoView: View {
                 }
             }
             
-            //MARK: About host (debug report: Seems irrelevant, potentially a tab on the host detail view)
-//            VStack(alignment: .leading, spacing: 10) {
-//                HostSubheading(text: "About this host")
-//
-//                Text("Established in 1902, Theta Chi Beta Chapter is the oldest active Theta Chi chapter in the country, and is one of the first fraternities founded at MIT. We have a storied history of developing leaders: our alumni go on to start companies, build self-driving cars, cure diseases, get involved in politics, serve in the military, and change the world. The brothers of Theta Chi are dedicated to helping each other achieve their goals and give back to the community.Theta Chi is committed to fostering a fun, engaging environment built on a foundation of scholarship, love, and respect. We develop lifelong friendships that grow beyond the four short years we spend together at MIT.")
-//                    .font(.body)
-//                    .foregroundColor(.secondary)
-//                    .lineLimit(showMore ? nil : 4)
-//
-//                Text(showMore ? "Show less" : "Show more")
-//                    .fontWeight(.semibold)
-//                    .foregroundColor(.blue)
-//                    .frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .leading)
-//                    .onTapGesture {
-//                        withAnimation(.spring()) {
-//                            showMore.toggle()
-//                        }
-//                    }
-//                    .padding(.top, -8)
-//
-//            }
-//            .opacity(appear[1] ? 1 : 0)
-
+            if let description = host.description {
+                VStack(alignment: .leading, spacing: 10) {
+                    HostSubheading(text: "About this host")
+                    
+                    ScrollView {
+                        Text(description)
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity)
+                            .background(GeometryReader { geo in // Use a GeometryReader to update the height of the Text view
+                                Color.clear.preference(key: ViewHeightKey.self, value: geo.size.height)
+                            })
+                            .onPreferenceChange(ViewHeightKey.self) { // Use onPreferenceChange to receive updates to the height of the Text view
+                                contentHeight = $0
+                                showMore = contentHeight > bioHeight // Update the state variable based on the new height
+                            }
+                    }
+                    .frame(height: bioHeight) // Use the bioHeight state variable to control the height of the ScrollView's content view
+                    .scrollDisabled(true)
+                    
+                    if showMore { // Only show the "Show more" button if the content is taller than the initial height
+                        Text(contentHeight > bioHeight ? "Show less" : "Show more") // Update the text based on whether the content is currently truncated or not
+                            .fontWeight(.semibold)
+                            .foregroundColor(.blue)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .onTapGesture {
+                                withAnimation(.spring()) {
+                                    bioHeight = contentHeight > bioHeight ? contentHeight : 65 // Update the bioHeight state variable to the appropriate value
+                                }
+                            }
+                    }
+                }
+                .opacity(appear[1] ? 1 : 0)
+            }
             
             if let coordinates = coordinates {
                 HostSubheading(text: "Located At")
@@ -222,5 +234,13 @@ fileprivate struct FriendsWhoFollowView: View {
                     .foregroundColor(.secondary)
             }
         }
+    }
+}
+
+struct ViewHeightKey: PreferenceKey { // Define a custom preference key to track the height of the Text view
+    static var defaultValue: CGFloat = 0
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
     }
 }

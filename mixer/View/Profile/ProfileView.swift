@@ -9,6 +9,7 @@ import SwiftUI
 import MapKit
 import Kingfisher
 import TabBar
+import PopupView
 
 struct ProfileView: View {
     @Environment(\.presentationMode) var presentationMode
@@ -22,7 +23,8 @@ struct ProfileView: View {
     @State var showNotifications = false
     @State var selectedEvent: CachedEvent?
     @State var showChangeMajor   = false
-
+    @State var friendRequestSent = false
+    
     @Namespace var animation
     @Namespace var namespace: Namespace.ID
     @ObservedObject var viewModel: ProfileViewModel
@@ -41,10 +43,10 @@ struct ProfileView: View {
                         HStack(spacing: viewModel.user.isCurrentUser ? 5 : 10) {
                             if viewModel.user.isCurrentUser {
                                 //MARK: Notification button (debug report: needs to populate view)
-//                                ProfileCornerButton(isOn: $showNotifications, icon: "bell")
-//                                    .overlay(alignment: .topTrailing) {
-//                                        IconBadge(count: viewModel.notifications.count)
-//                                    }
+                                //                                ProfileCornerButton(isOn: $showNotifications, icon: "bell")
+                                //                                    .overlay(alignment: .topTrailing) {
+                                //                                        IconBadge(count: viewModel.notifications.count)
+                                //                                    }
                                 
                                 ProfileCornerButton(isOn: $showEditProfile,
                                                     icon: "gearshape")
@@ -63,8 +65,9 @@ struct ProfileView: View {
                                             case .notFriends:
                                                 viewModel.sendFriendRequest()
                                             }
+                                            friendRequestSent.toggle()
                                         }
-
+                                        
                                         if relationship == .receivedRequest {
                                             ProfileRelationButton(icon: "xmark", color: .red) {
                                                 viewModel.cancelFriendRequest()
@@ -72,7 +75,7 @@ struct ProfileView: View {
                                         }
                                     }
                                 }
-                                                                
+                                
                                 Button(action: {
                                     presentationMode.wrappedValue.dismiss()
                                 }, label: {
@@ -98,6 +101,7 @@ struct ProfileView: View {
                                             let impact = UIImpactFeedbackGenerator(style: .light)
                                             impact.impactOccurred()
                                             showOptions.toggle()
+                                            friendRequestSent.toggle()
                                         }
                                     }
                                     .padding(.trailing)
@@ -110,12 +114,12 @@ struct ProfileView: View {
                 
                 details
                 
-                //MARK: Profile event list (debug report: 
-//                EventsSection(viewModel: viewModel,
-//                              showEventView: $showEventView,
-//                              isFriends: $isFriends,
-//                              namespace: namespace,
-//                              selectedEvent: $selectedEvent)
+                //MARK: Profile event list (debug report:
+                //                EventsSection(viewModel: viewModel,
+                //                              showEventView: $showEventView,
+                //                              isFriends: $isFriends,
+                //                              namespace: namespace,
+                //                              selectedEvent: $selectedEvent)
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
@@ -145,6 +149,15 @@ struct ProfileView: View {
                 .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
                 .zIndex(3)
             }
+        }
+        .popup(isPresented: $friendRequestSent) {
+            FriendRequestSentNotification()
+        } customize: {
+            $0
+                .type(.floater())
+                .position(.top)
+                .animation(.spring())
+                .autohideIn(2)
         }
     }
 }

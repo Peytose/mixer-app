@@ -66,7 +66,8 @@ struct Mockdata {
                     instagramHandle: "mitthetachi",
                     website: "http://ox.mit.edu/main/",
                     address: "528 Beacon St, Boston, MA 02215",
-                    bio: "The best frat in the greater Boston area",
+                    tagline: "The best frat in the greater Boston area",
+                    description: "We like to throw parties every friday.",
                     memberUUIDs: ["5aAWqFni8iMhj8MyZ4lGQgapfxo1"],
                     hostType: .fraternity)
     }

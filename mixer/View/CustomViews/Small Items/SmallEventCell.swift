@@ -22,7 +22,7 @@ struct SmallEventCell: View {
 //            Image("theta-chi-party-poster")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(width: 80, height: 80, alignment: .leading)
+                .frame(width: 70, height: 70, alignment: .leading)
                 .cornerRadius(16)
             
             VStack(alignment: .leading, spacing: 2) {
@@ -39,8 +39,9 @@ struct SmallEventCell: View {
                 
                 Text(title)
                     .font(.title3.weight(.semibold))
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.85)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.80)
+                    .multilineTextAlignment(.leading)
                 
                 Text(visibility)
                     .font(.caption.weight(.medium))
@@ -60,7 +61,7 @@ struct SmallEventCell: View {
 
 struct SmallEventCell_Previews: PreviewProvider {
     static var previews: some View {
-        SmallEventCell(title: "Neon Party", duration: "10:00 PM - 1:00 PM", visibility: "Open Event", dateMonth: "Mar", dateNumber: "15", imageURL: "")
+        SmallEventCell(title: "Phi Sig Uncaged: Black Light Party", duration: "10:00 PM - 1:00 PM", visibility: "Open Event", dateMonth: "Mar", dateNumber: "15", imageURL: "https://firebasestorage.googleapis.com:443/v0/b/mixer-firebase-project.appspot.com/o/event_images%2F7328864A-384F-4A42-A13F-EF46A3B3F309?alt=media&token=8826f13c-a038-4324-b6e6-affbd2558bff")
             .preferredColorScheme(.dark)
     }
 }

@@ -22,7 +22,7 @@ struct FeaturedHostCell: View {
             VStack(alignment: .leading, spacing: 10) {
                 NameAndLinksRow(host: host, namespace: namespace)
                 
-                if let bio = host.bio {
+                if let bio = host.tagline {
                     Text(bio)
                         .font(.subheadline.weight(.medium))
                         .foregroundColor(.white.opacity(0.8))
@@ -74,7 +74,7 @@ struct PlaceholderHostCard: View {
             VStack(alignment: .leading, spacing: 10) {
 //                NameAndLinksRow(host: host, isFollowing: $isFollowing, namespace: namespace)
                 
-                if let bio = host.bio {
+                if let bio = host.tagline {
                     Text(bio)
                         .font(.subheadline.weight(.medium))
                         .foregroundColor(.white.opacity(0.8))

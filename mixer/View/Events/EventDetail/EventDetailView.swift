@@ -9,6 +9,7 @@ import SwiftUI
 import MapKit
 import TabBar
 import Kingfisher
+import PopupView
 
 struct EventDetailView: View {
     @ObservedObject var viewModel: EventDetailViewModel
@@ -17,9 +18,13 @@ struct EventDetailView: View {
     @State private var finalAmount      = 1.0
     @State private var showHost         = false
     @State private var showAllAmenities = false
-    @State var showInfoAlert1            = false
-    @State var showInfoAlert2            = false
-    @State var showInfoAlert3            = false
+    @State var showInfoAlert1           = false
+    @State var showInfoAlert2           = false
+    @State var showInfoAlert3           = false
+    @State var isLiked                  = false
+    @State var addedEvent               = false
+    @State var removedEvent             = false
+    
     var namespace: Namespace.ID
 
     var body: some View {
@@ -29,7 +34,10 @@ struct EventDetailView: View {
                                  unsave: viewModel.unsave,
                                  save: viewModel.save,
                                  namespace: namespace,
-                                 isShowingModal: $isShowingModal)
+                                 isShowingModal: $isShowingModal,
+                                 isLiked: $isLiked,
+                                 addedEvent: $addedEvent,
+                                 removedEvent: $removedEvent)
                 
                 VStack(alignment: .leading, spacing: 20) {
                     HostedBySection(viewModel: viewModel,
@@ -181,7 +189,6 @@ struct EventDetailView: View {
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
-            
             if isShowingModal {
                 EventImageModalView(imageUrl: viewModel.event.eventImageUrl, isShowingModal: $isShowingModal)
                     .transition(.opacity)
@@ -194,6 +201,24 @@ struct EventDetailView: View {
             if let host = viewModel.host {
                 HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
             }
+        }
+        .popup(isPresented: $addedEvent) {
+            LikedEventNotification(title: viewModel.event.title, text: "has been added to your liked events")
+        } customize: {
+            $0
+                .type(.floater(verticalPadding: 50, useSafeAreaInset: true))
+                .position(.top)
+                .animation(.spring())
+                .autohideIn(2)
+        }
+        .popup(isPresented: $removedEvent) {
+            LikedEventNotification(title: viewModel.event.title, text: "has been removed from your liked events")
+        } customize: {
+            $0
+                .type(.floater(verticalPadding: 50, useSafeAreaInset: true))
+                .position(.top)
+                .animation(.spring())
+                .autohideIn(2)
         }
         .task {
             viewModel.checkIfUserSavedEvent()
@@ -359,8 +384,10 @@ fileprivate struct EventFlyerHeader: View {
     @Binding var isShowingModal: Bool
     @State private var currentAmount = 0.0
     @State private var finalAmount   = 1.0
-    @State var isLiked               = false
-
+    @Binding var isLiked: Bool
+    @Binding var addedEvent: Bool
+    @Binding var removedEvent: Bool
+    
     var body: some View {
         GeometryReader { proxy in
             let scrollY = proxy.frame(in: .named("scroll")).minY
@@ -380,6 +407,11 @@ fileprivate struct EventFlyerHeader: View {
                             
                             CustomButton(systemImage: "heart.fill", status: isLiked, activeTint: .pink, inActiveTint: .secondary) {
                                 isLiked.toggle()
+                                if isLiked {
+                                    addedEvent.toggle()
+                                } else {
+                                    removedEvent.toggle()
+                                }
                             }
                         }
                         

@@ -41,9 +41,9 @@ struct Host: Hashable, Identifiable, Codable {
     var instagramHandle: String?
     var website: String?
     var address: String?
-    var bio: String?
-    
-    // Location
+    var tagline: String?
+    var description: String?
+        // Location
     var geopoint: GeoPoint?
     
     // Members
