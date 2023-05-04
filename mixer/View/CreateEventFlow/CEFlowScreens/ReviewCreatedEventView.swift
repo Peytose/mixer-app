@@ -27,9 +27,10 @@ struct ReviewCreatedEventView: View {
                                 .foregroundColor(.white)
                                 
                         HStack(spacing: 5) {
-                            Text("\(viewModel.visibility.rawValue) \(viewModel.privacy.rawValue) Event")
+                            Text("\(viewModel.visibility.rawValue) \(viewModel.privacy.rawValue) \(viewModel.type.rawValue)")
                                 .font(.subheadline).fontWeight(.medium)
                                 .foregroundColor(.secondary)
+                            
                             Image(systemName: "\(viewModel.visibility.icon)")
                                 .font(.subheadline)
                             
@@ -52,6 +53,20 @@ struct ReviewCreatedEventView: View {
                             .font(.headline)
                             .fontWeight(.regular)
                             .foregroundColor(.secondary)
+                    }
+                    
+                    if viewModel.hasNote {
+                            VStack(alignment: .leading, spacing: 2.5) {
+                                Text("Note")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                
+                                Text(viewModel.notes)
+                                        .font(.headline)
+                                        .fontWeight(.regular)
+                                        .foregroundColor(.secondary)
+                            }
                     }
                 }
                 

@@ -90,7 +90,7 @@ struct ProfileView: View {
                         .padding(.top, viewModel.user.isCurrentUser ? 40 : 60)
                     }
                 
-                ProfileInfo(user: $viewModel.user, mutuals: viewModel.mutuals)
+                ProfileInfo(user: $viewModel.user, viewModel: viewModel, mutuals: viewModel.mutuals)
                 
                 details
                 
@@ -168,32 +168,48 @@ fileprivate struct ProfileRelationButtons: View {
                     break
                 }
             } label: {
-                Image(systemName: viewModel.user.relationshiptoUser?.icon ?? "tornado")
-                    .foregroundColor(.white)
-                    .font(.footnote)
-                    .fontWeight(.semibold)
-                    .padding(10)
-                    .background {
-                        Capsule()
-                            .stroke(lineWidth: 1.3)
-                    }
-            }
-            
-            if viewModel.user.relationshiptoUser == .receivedRequest {
-                Button {
-                    viewModel.cancelFriendRequest()
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundColor(.red)
-                        .font(.footnote)
+                switch viewModel.user.relationshiptoUser {
+                case .friends:
+                    Text("\(Image(systemName: "person.fill.checkmark"))")
+                        .font(.subheadline)
                         .fontWeight(.semibold)
-                        .padding(10)
+                        .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
                         .background {
                             Capsule()
-                                .stroke(lineWidth: 1.3)
+                                .stroke()
                         }
+                case .notFriends:
+                    Text("Add Friend")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
+                        .background {
+                            Capsule()
+                                .stroke()
+                        }
+                case .sentRequest:
+                    Text("Requested")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
+                        .background {
+                            Capsule()
+                                .stroke()
+                        }
+                case .receivedRequest:
+                    Text("Add Friend")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
+                        .background {
+                            Capsule()
+                                .stroke()
+                        }
+                case .none:
+                    Text("N/A")
                 }
             }
+            .buttonStyle(.plain)
         }
     }
 }
@@ -223,6 +239,7 @@ fileprivate struct ProfileCornerButton: View {
 fileprivate struct ProfileInfo: View {
     @State private var showUsername: Bool = false
     @Binding var user: CachedUser
+    @ObservedObject var viewModel: ProfileViewModel
     let mutuals: [CachedUser]
     
     var body: some View {
@@ -299,6 +316,42 @@ fileprivate struct ProfileInfo: View {
                 
                 Spacer()
             }
+            
+            if viewModel.user.relationshiptoUser == .receivedRequest {
+                HStack {
+                    Text("\(Text(user.name).fontWeight(.semibold)) wants to be friends")
+                        .font(.subheadline)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.9)
+                    
+                    Spacer()
+                    
+                    Actionbutton(text: "Accept", color: Color.mixerIndigo) {
+                        viewModel.acceptFriendRequest()
+                    }
+                    
+                    Actionbutton(text: "Reject", color: Color.mixerSecondaryBackground) {
+                        viewModel.cancelFriendRequest()
+                    }
+                }
+                .frame(maxHeight: 60)
+            }
+            
+//            if viewModel.user.relationshiptoUser == .receivedRequest {
+//                Button {
+//                    viewModel.cancelFriendRequest()
+//                } label: {
+//                    Image(systemName: "xmark")
+//                        .foregroundColor(.red)
+//                        .font(.footnote)
+//                        .fontWeight(.semibold)
+//                        .padding(10)
+//                        .background {
+//                            Capsule()
+//                                .stroke(lineWidth: 1.3)
+//                        }
+//                }
+//            }
             
             if let bio = user.bio {
                 Text(bio)

@@ -15,6 +15,8 @@ struct BasicEventInfo: View {
     @Binding var description: String
     @Binding var notes: String
     @Binding var hasNote: Bool
+    @Binding var selectedType: EventType
+
     let action: () -> Void
     
     enum FocusedField {
@@ -27,6 +29,46 @@ struct BasicEventInfo: View {
         ScrollView(showsIndicators: false) {
             VStack(alignment: .leading, spacing: 35) {
                 // MARK: Title
+                
+                HStack(spacing: 10) {
+                    Text(selectedType.rawValue)
+                        .font(.title).bold()
+                    
+                    Spacer()
+                    
+                    Menu("Change") {
+                        //    case rager    = "Rager"
+                        //    case darty    = "Darty"
+                        Button("Party") {
+                            setType(type: .party)
+                        }
+                        
+                        Button("Kickback") {
+                            setType(type: .kickback)
+                        }
+                        
+                        Button("Club Event") {
+                            setType(type: .club)
+                            
+                        }
+                        Button("School Event") {
+                            setType(type: .school)
+                        }
+                        Button("Mixer") {
+                            setType(type: .mixer)
+                        }
+                        Button("Rager") {
+                            setType(type: .rager)
+                        }
+                        Button("Darty") {
+                            setType(type: .darty)
+                        }
+                    }
+                    .accentColor(.mixerIndigo)
+                    .fontWeight(.medium)
+                }
+                .padding(.bottom, -17)
+                
                 VStack(alignment: .leading, spacing: 5) {
                     CreateEventTextField(input: $title,
                                          title: "Title",
@@ -149,6 +191,10 @@ extension BasicEventInfo {
         guard let selectedImage = selectedImage else { return }
         image = Image(uiImage: selectedImage)
     }
+    
+    func setType(type: EventType) {
+        selectedType = type
+    }
 }
 
 struct BasicEventInfo_Previews: PreviewProvider {
@@ -159,7 +205,8 @@ struct BasicEventInfo_Previews: PreviewProvider {
                        title: .constant(""),
                        description: .constant(""),
                        notes: .constant(""),
-                       hasNote: .constant(false)) {  }
+                       hasNote: .constant(false),
+                       selectedType: .constant(.party)) {  }
         .preferredColorScheme(.dark)
     }
 }

@@ -50,7 +50,7 @@ final class CreateEventViewModel: ObservableObject {
     @Published var previewCoordinates: CLLocationCoordinate2D?
     @Published var publicAddress: String               = ""
     @Published var selectedAmenities: Set<EventAmenities> = []
-    @Published var type: EventType                     = .kickback
+    @Published var type: EventType                     = .party
     @Published var privacy: InvitePreferrence          = .open
     @Published var visibility: VisibilityType          = ._public
     @Published var eventOptions: [String: Bool]        = ["containsAlcohol": false,

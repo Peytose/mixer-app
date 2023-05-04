@@ -31,10 +31,10 @@ struct FollowRequestCell: View {
             
             Spacer()
             
-            Actionbutton(text: "Accept", color: Color.mixerIndigo)
+            Actionbutton(text: "Accept", color: Color.mixerIndigo) {}
                 .padding(.leading, 20)
             
-            Actionbutton(text: "Reject", color: Color.mixerSecondaryBackground)
+            Actionbutton(text: "Reject", color: Color.mixerSecondaryBackground) {}
         }
         .frame(maxHeight: 60)
     }
@@ -47,12 +47,14 @@ struct FollowRequestCell_Previews: PreviewProvider {
     }
 }
 
-fileprivate struct Actionbutton: View {
+struct Actionbutton: View {
     let text: String
     let color: Color
     
+    let action: () -> Void
+    
     var body: some View {
-        Button(action: {}) {
+        Button(action: { action() }) {
             RoundedRectangle(cornerRadius: 10)
                 .fill(color)
                 .frame(width: 70, height: 30)

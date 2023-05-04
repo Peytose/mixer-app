@@ -25,7 +25,8 @@ struct CreateEventFlow: View {
                                title: $viewModel.title,
                                description: $viewModel.description,
                                notes: $viewModel.notes,
-                               hasNote: $viewModel.hasNote) { viewModel.next(); self.hideKeyboard() }
+                               hasNote: $viewModel.hasNote,
+                               selectedType: $viewModel.type) { viewModel.next(); self.hideKeyboard() }
                                .tag(CreateEventViewModel.Screen.basicInfo)
                 
                 EventLocationAndDates(startDate: $viewModel.startDate,
