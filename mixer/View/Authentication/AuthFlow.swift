@@ -55,6 +55,8 @@ struct AuthFlow: View {
             .animation(.easeInOut, value: viewModel.active)
             .tabViewStyle(.page(indexDisplayMode: .never))
             .padding(.top, 40)
+            
+            if viewModel.isLoading { LoadingView() }
         }
         .preferredColorScheme(.dark)
         .overlay(alignment: .topLeading) {
@@ -97,6 +99,7 @@ struct AuthFlow: View {
             showArrow = newValue != AuthViewModel.Screen.allCases.first
         }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
+        .alert(item: $viewModel.alertItemTwo, content: { $0.alert })
         .onOpenURL { url in viewModel.handleEmailLink(url) }
     }
 }

@@ -32,6 +32,15 @@ struct AlertItemTwo: Identifiable {
 
 struct AlertContext {
     //MARK: - Authentication Errors/Messages
+    static func existingCountryCode(code: String, confirmAction: @escaping () -> Void, denyAction: @escaping () -> Void) -> AlertItemTwo {
+        AlertItemTwo(title: Text("Confirm Phone Number"),
+                     message: Text("We detected the country code \(code) in your phone number. Is this correct?"),
+                     primaryButton: .default(Text("Yes").bold(),
+                                             action: confirmAction),
+                     secondaryButton: .default(Text("Nope"),
+                                               action: denyAction))
+    }
+    
     static let sentEmailLink                      = AlertItem(title: Text("Email Verification Link Sent"),
                                                               message: Text("Good news .. your email link was sent!\nFollow the instructions to confirm your email."),
                                                               dismissButton: .default(Text("Okie dokie")))

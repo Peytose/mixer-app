@@ -58,7 +58,8 @@ class ProfileViewModel: ObservableObject {
         relationshipStatus = user.relationshipStatus ?? .preferNotToSay
         major = user.major ?? .preferNotToSay
         showAgeOnProfile = user.userOptions[UserOption.showAgeOnProfile.rawValue] ?? false
-//        self.getUserRelationship()
+        
+        self.getUserRelationship()
     }
     
     
@@ -105,6 +106,7 @@ class ProfileViewModel: ObservableObject {
         UserService.sendFriendRequest(uid: uid) { _ in
             self.user.relationshiptoUser = .sentRequest
             NotificationsViewModel.uploadNotifications(toUid: uid, type: .follow)
+            HapticManager.playLightImpact()
         }
     }
     
@@ -114,6 +116,7 @@ class ProfileViewModel: ObservableObject {
         UserService.acceptFriendRequest(uid: uid) { _ in
             self.user.relationshiptoUser = .friends
             NotificationsViewModel.uploadNotifications(toUid: uid, type: .follow)
+            HapticManager.playLightImpact()
         }
     }
     
@@ -125,6 +128,7 @@ class ProfileViewModel: ObservableObject {
         if continueUnfriendFunc || self.user.relationshiptoUser == .receivedRequest {
             UserService.cancelRequestOrRemoveFriend(uid: uid) { _ in
                 self.user.relationshiptoUser = .notFriends
+                HapticManager.playLightImpact()
             }
         }
     }
@@ -175,6 +179,7 @@ class ProfileViewModel: ObservableObject {
                 self.user.name = self.name
                 completion()
             }
+            
         case .displayName:
             guard self.displayName != "" else { return }
             
@@ -196,6 +201,7 @@ class ProfileViewModel: ObservableObject {
                     completion()
                 }
             }
+            
         case .bio:
             guard self.bio != "" else { return }
             
@@ -203,6 +209,7 @@ class ProfileViewModel: ObservableObject {
                 self.user.bio = self.bio
                 completion()
             }
+            
         case .instagram:
             guard self.instagramHandle != "" else { return }
             

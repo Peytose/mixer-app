@@ -8,13 +8,13 @@
 import FirebaseFirestoreSwift
 import Firebase
 
-enum UserRelationship: Int, Codable {
+enum UserRelationship: Int, Codable, IconRepresentable {
     case friends
     case sentRequest
     case receivedRequest
     case notFriends
 
-    var buttonText: String {
+    var text: String {
         switch self {
             case .friends: return "Friends"
             case .sentRequest: return "Request Sent"
@@ -23,7 +23,7 @@ enum UserRelationship: Int, Codable {
         }
     }
     
-    var buttonSystemImage: String {
+    var icon: String {
         switch self {
             case .friends: return "person.2.fill"
             case .sentRequest: return "person.wave.2.fill"

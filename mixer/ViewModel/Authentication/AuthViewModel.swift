@@ -11,7 +11,11 @@ import FirebaseAuth
 import FirebaseFirestoreSwift
 
 class AuthViewModel: ObservableObject {
-    @Published var userSession: FirebaseAuth.User?
+    @Published var userSession: FirebaseAuth.User? {
+        didSet {
+            isLoading = false
+        }
+    }
     @Published var currentUser: CachedUser?
     @Published var emailIsVerified           = false
     @Published var showAuthFlow              = false
@@ -34,7 +38,8 @@ class AuthViewModel: ObservableObject {
     @Published var didSendResentPasswordLink = false
     @Published var active                    = Screen.allCases.first!
     @Published var alertItem: AlertItem?
-    @Published var isLoading: Bool = false
+    @Published var alertItemTwo: AlertItemTwo?
+    @Published var isLoading: Bool = true
     var hosts = [CachedHost]()
     
     static let shared = AuthViewModel()
@@ -51,7 +56,6 @@ class AuthViewModel: ObservableObject {
     }
     
     init() {
-        self.isLoading = true
         userSession = Auth.auth().currentUser
         fetchUser()
     }
@@ -154,6 +158,7 @@ class AuthViewModel: ObservableObject {
     
     func sendEmailLink() {
         print("DEBUG: BUTTON PRESSED ✅")
+        self.isLoading = true
         
         // Create action code settings object
         let actionCodeSettings = ActionCodeSettings()
@@ -168,6 +173,7 @@ class AuthViewModel: ObservableObject {
             }
             
             print("DEBUG: Sent email to \(self.email). ✅")
+            self.isLoading = false
             self.alertItem = AlertContext.sentEmailLink
         }
     }
@@ -218,18 +224,52 @@ class AuthViewModel: ObservableObject {
     
     
     func sendPhoneVerification() {
-        let phoneNumWithCode = "\(countryCode)\(phoneNumber)"
-        print("DEBUG: phone number with country code. \(phoneNumWithCode)")
-        
+        self.isLoading = true
+        // Check if the phone number already includes a country code
+        if phoneNumber.hasPrefix("+") {
+            let detectedCountryCode = extractCountryCode(from: phoneNumber)
+            if detectedCountryCode != countryCode {
+                // Prompt the user to confirm their phone number
+                alertItemTwo = AlertContext.existingCountryCode(code: detectedCountryCode, confirmAction: {
+                    // User confirmed the phone number, so use it as is
+                    self.continuePhoneVerification(with: self.phoneNumber)
+                }, denyAction: {
+                    // User wants to correct the phone number, so remove the detected country code and use the stored one
+                    let correctedPhoneNumber = self.phoneNumber.replacingOccurrences(of: detectedCountryCode, with: "")
+                    let phoneNumWithCode = "\(self.countryCode)\(correctedPhoneNumber)"
+                    self.continuePhoneVerification(with: phoneNumWithCode)
+                })
+            }
+        } else {
+            // Phone number doesn't already include a country code, so proceed with verification
+            let phoneNumWithCode = "\(countryCode)\(phoneNumber)"
+            print("DEBUG: phone number with country code. \(phoneNumWithCode)")
+            self.continuePhoneVerification(with: phoneNumWithCode)
+        }
+    }
+
+    
+    func continuePhoneVerification(with phoneNumWithCode: String) {
         PhoneAuthProvider.provider().verifyPhoneNumber(phoneNumWithCode, uiDelegate: nil) { verificationID, error in
             if let error = error as? NSError {
                 self.handleAuthError(error)
                 return
             }
-            
+
             UserDefaults.standard.set(verificationID, forKey: "authVerificationID")
+            self.isLoading = false
             self.next()
         }
+    }
+
+    
+    func extractCountryCode(from phoneNumber: String) -> String {
+        // Extract the country code from a phone number string that starts with a plus sign
+        if let endIndex = phoneNumber.firstIndex(where: { !("0"..."9").contains($0) }) {
+            return String(phoneNumber[phoneNumber.startIndex..<endIndex])
+        }
+        
+        return ""
     }
     
     
@@ -368,6 +408,7 @@ class AuthViewModel: ObservableObject {
     
     private func handleAuthError(_ error: NSError) {
         let errorCode = AuthErrorCode(_nsError: error)
+        self.isLoading = false
         
         switch errorCode.code {
         case .invalidCredential:

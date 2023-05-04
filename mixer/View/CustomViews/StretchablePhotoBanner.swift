@@ -24,7 +24,6 @@ struct StretchablePhotoBanner: View {
                 .offset(y: scrollY > 0 ? -scrollY : 0)
                 .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
 //                .blur(radius: scrollY > 0 ? scrollY / 40 : 0)
-                .matchedGeometryEffect(id: imageUrl, in: namespace)
             
         }
         .frame(width: DeviceTypes.ScreenSize.width, height: DeviceTypes.ScreenSize.height / 2.5)
@@ -47,6 +46,7 @@ struct HostBannerView: View {
                 .offset(y: scrollY > 0 ? -scrollY : 0)
                 .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
                 .blur(radius: scrollY > 0 ? scrollY / 40 : 0)
+                .matchedGeometryEffect(id: "blur-\(host.username)", in: namespace)
                 .matchedGeometryEffect(id: "image-\(host.username)", in: namespace)
                 .mask {
                     RoundedRectangle(cornerRadius: 30, style: .continuous)

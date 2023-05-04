@@ -53,29 +53,6 @@ struct ProfileView: View {
                                 .padding(.trailing)
                                 
                             } else {
-                                //MARK: Friend button (debug report: looks jank as fuck and i dont believe it works)
-                                if let relationship = viewModel.user.relationshiptoUser {
-                                    HStack(alignment: .center, spacing: 5) {
-                                        ProfileRelationButton(icon: relationship.buttonSystemImage, color: .primary) {
-                                            switch relationship {
-                                            case .friends, .sentRequest:
-                                                viewModel.cancelFriendRequest()
-                                            case .receivedRequest:
-                                                viewModel.acceptFriendRequest()
-                                            case .notFriends:
-                                                viewModel.sendFriendRequest()
-                                            }
-                                            friendRequestSent.toggle()
-                                        }
-                                        
-                                        if relationship == .receivedRequest {
-                                            ProfileRelationButton(icon: "xmark", color: .red) {
-                                                viewModel.cancelFriendRequest()
-                                            }
-                                        }
-                                    }
-                                }
-                                
                                 Button(action: {
                                     presentationMode.wrappedValue.dismiss()
                                 }, label: {
@@ -85,7 +62,10 @@ struct ProfileView: View {
                                 
                                 Spacer()
                                 
-                                ProfileRelationButtonPrototype(namespace: namespace)
+                                if let relationship = viewModel.user.relationshiptoUser {
+                                    ProfileRelationButtons(viewModel: viewModel,
+                                                           friendRequestSent: $friendRequestSent)
+                                }
                                 
                                 Image(systemName: "ellipsis")
                                     .font(.callout)
@@ -168,69 +148,53 @@ struct UserProfileView_Previews: PreviewProvider {
     }
 }
 
-fileprivate struct ProfileRelationButton: View {
-    let icon: String
-    let color: Color
-    let action: () -> Void
+fileprivate struct ProfileRelationButtons: View {
+    @ObservedObject var viewModel: ProfileViewModel
+    @Binding var friendRequestSent: Bool
     
     var body: some View {
-        Button {
-            action()
-        } label: {
-            Image(systemName: icon)
-                .foregroundColor(color)
-                .font(.footnote)
-                .fontWeight(.semibold)
-                .padding(EdgeInsets(top: 7, leading: 10, bottom: 7, trailing: 10))
-                .background {
-                    Capsule()
-                        .stroke(lineWidth: 1.3)
+        HStack(alignment: .center, spacing: 5) {
+            Button {
+                switch viewModel.user.relationshiptoUser {
+                case .friends, .sentRequest:
+                    viewModel.cancelFriendRequest()
+                    friendRequestSent = false
+                case .receivedRequest:
+                    viewModel.acceptFriendRequest()
+                    friendRequestSent = true
+                case .notFriends:
+                    viewModel.sendFriendRequest()
+                case .none:
+                    break
                 }
-                .onTapGesture {
-                    let impact = UIImpactFeedbackGenerator(style: .light)
-                    impact.impactOccurred()
-                }
-        }
-
-    }
-}
-
-fileprivate struct ProfileRelationButtonPrototype: View {
-    @State var isFriends = false
-    var namespace: Namespace.ID
-    var body: some View {
-        Button {
-            withAnimation(.spring()) {
-                let impact = UIImpactFeedbackGenerator(style: .light)
-                impact.impactOccurred()
-                isFriends.toggle()
-            }
-        } label: {
-            if isFriends {
-                Text("\(Image(systemName: "person.fill.checkmark"))")
-                    .font(.subheadline)
+            } label: {
+                Image(systemName: viewModel.user.relationshiptoUser?.icon ?? "tornado")
+                    .foregroundColor(.white)
+                    .font(.footnote)
                     .fontWeight(.semibold)
-                    .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
-                    .contentShape(Rectangle())
+                    .padding(10)
                     .background {
                         Capsule()
-                            .stroke()
-                    }
-            } else {
-                Text("Add Friend")
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .contentShape(Rectangle())
-                    .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
-                    .background {
-                        Capsule()
-                            .stroke()
+                            .stroke(lineWidth: 1.3)
                     }
             }
-
+            
+            if viewModel.user.relationshiptoUser == .receivedRequest {
+                Button {
+                    viewModel.cancelFriendRequest()
+                } label: {
+                    Image(systemName: "xmark")
+                        .foregroundColor(.red)
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .padding(10)
+                        .background {
+                            Capsule()
+                                .stroke(lineWidth: 1.3)
+                        }
+                }
+            }
         }
-        .buttonStyle(.plain)
-
     }
 }
 
