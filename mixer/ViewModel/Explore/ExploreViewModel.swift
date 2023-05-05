@@ -65,17 +65,11 @@ final class ExploreViewModel: ObservableObject {
         EventCache.shared.clearCache()
         HostCache.shared.clearCache()
 
-        Task {
-            do {
-                self.hosts = try await HostCache.shared.fetchHosts(filter: .all)
-                self.todayEvents = try await EventCache.shared.fetchEvents(filter: .today)
-                self.futureEvents = try await EventCache.shared.fetchEvents(filter: .future)
-            } catch {
-                print("DEBUG: Error fetching data for explore. \(error)")
-            }
+        getHosts()
+        getTodayEvents()
+        getFutureEvents()
 
-            self.isRefreshing = false
-        }
+        self.isRefreshing = false
     }
     
     
@@ -89,23 +83,25 @@ final class ExploreViewModel: ObservableObject {
         }
     }
     
-    
     @MainActor func getTodayEvents() {
         Task {
-            do {
-                self.todayEvents = try await EventCache.shared.fetchEvents(filter: .today)
-                print("DEBUG: ✅today events: \(todayEvents)")
-            } catch {
-                print("DEBUG: Error getting today events for explore. \(error)")
-            }
+            self.todayEvents = await UserService.getTodayEvents()
         }
     }
     
     
     @MainActor func getFutureEvents() {
+        let today = Date()
+        let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+        let endOfToday = Calendar.current.startOfDay(for: tomorrow)
+        
         Task {
             do {
-                self.futureEvents = try await EventCache.shared.fetchEvents(filter: .future)
+                self.futureEvents = try await EventCache.shared.fetchEvents(filter: .unfinished)
+                    .filter({ $0.startDate.compare(Timestamp(date: endOfToday)) == .orderedDescending})
+                    .sorted(by: { event1, event2 in
+                        event1.startDate.compare(event2.startDate) == .orderedAscending
+                    })
                 print("DEBUG: ✅future events: \(todayEvents)")
             } catch {
                 print("DEBUG: Error getting future events for explore. \(error)")

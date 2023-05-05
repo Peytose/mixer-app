@@ -86,16 +86,14 @@ struct MapView: View {
                     .padding(.top)
             }
         }
-        .overlay(alignment: .bottom, content: {
+        .overlay(alignment: .bottom) {
             if let _ = AuthViewModel.shared.currentUser?.isHost {
                 GuestlistButton { isShowingGuestlistView.toggle() }
                     .padding(.bottom, 100)
             }
-        })
+        }
         .overlay(alignment: .bottomTrailing) {
             Button {
-                let impact = UIImpactFeedbackGenerator(style: .light)
-                impact.impactOccurred()
                 viewModel.requestAlwaysOnLocationPermission()
             } label: {
                 Image("recenter-button")

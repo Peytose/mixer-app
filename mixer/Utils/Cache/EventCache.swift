@@ -18,8 +18,7 @@ class EventCache {
     enum EventFilterOption {
         case pastUser(uid: String, fromDate: Date)
         case hostEvents(uid: String)
-        case today
-        case future
+        case unfinished
         case userSaves(uid: String)
         case all
         
@@ -29,10 +28,8 @@ class EventCache {
                 return "past-\(uid)"
             case .hostEvents(uid: let uid):
                 return "events-\(uid)"
-            case .today:
-                return "today-events"
-            case .future:
-                return "future-events"
+            case .unfinished:
+                return "unfinished-events"
             case .userSaves(uid: let uid):
                 return "saves-\(uid)"
             case .all:
@@ -43,7 +40,6 @@ class EventCache {
         func query() -> Query {
             let today = Date()
             let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
-            let endOfToday = Calendar.current.startOfDay(for: tomorrow)
             
             switch self {
             case .pastUser(uid: let uid, fromDate: let fromDate):
@@ -54,15 +50,11 @@ class EventCache {
             case .hostEvents(uid: let uid):
                 return COLLECTION_EVENTS
                     .whereField("hostUuid", isEqualTo: uid)
+                    .whereField("startDate", isGreaterThan: Timestamp())
                     .order(by: "startDate", descending: true)
-            case .today:
+            case .unfinished:
                 return COLLECTION_EVENTS
-                    .whereField("startDate", isLessThan: Timestamp(date: endOfToday))
-                    .order(by: "startDate", descending: true)
-            case .future:
-                return COLLECTION_EVENTS
-                    .whereField("startDate", isGreaterThan: Timestamp(date: endOfToday))
-                    .order(by: "startDate", descending: true)
+                    .whereField("endDate", isGreaterThan: Timestamp())
             case .userSaves(uid: let uid):
                 return COLLECTION_EVENTS.document(uid).collection("user-saves")
                     .order(by: "startDate", descending: true)

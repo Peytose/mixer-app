@@ -10,6 +10,23 @@ import Firebase
 typealias FirestoreCompletion = ((Error?) -> Void)?
 
 struct UserService {
+    static func getTodayEvents() async -> [CachedEvent] {
+        do {
+            let today = Date()
+            let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: today)!
+            
+            return try await EventCache.shared.fetchEvents(filter: .unfinished)
+                .filter({ $0.startDate.compare(Timestamp()) == .orderedAscending || $0.startDate.compare(Timestamp(date: tomorrow)) == .orderedAscending } )
+                .sorted(by: { event1, event2 in
+                    event1.startDate.compare(event2.startDate) == .orderedAscending
+                })
+        } catch {
+            print("DEBUG: Error getting today events for explore. \(error)")
+        }
+        
+        return []
+    }
+    
     static func joinGuestlist(eventUid: String, user: CachedUser, completion: FirestoreCompletion) {
         guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
         

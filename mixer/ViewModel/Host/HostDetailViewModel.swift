@@ -65,9 +65,7 @@ final class HostDetailViewModel: ObservableObject {
         
         Task {
             do {
-                let futureEvents = try await EventCache.shared.fetchEvents(filter: .future)
-                
-                DispatchQueue.main.async { self.upcomingEvents = futureEvents.filter({ $0.hostUuid == hostId }) }
+                self.upcomingEvents = try await EventCache.shared.fetchEvents(filter: .hostEvents(uid: hostId))
             } catch {
                 print("DEBUG: Error getting host's upcoming events. \(error.localizedDescription)")
             }

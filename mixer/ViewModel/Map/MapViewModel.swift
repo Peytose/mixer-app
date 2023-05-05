@@ -31,6 +31,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     // Request always-on location permission
     func requestAlwaysOnLocationPermission() {
         deviceLocationManager.requestAlwaysAuthorization()
+        HapticManager.playLightImpact()
     }
     
     // Update the user's location when it changes
@@ -53,7 +54,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     @MainActor func getMapItems() {
         Task {
             do {
-                let todayEvents = try await EventCache.shared.fetchEvents(filter: .today)
+                let todayEvents = await UserService.getTodayEvents()
                 var hosts = try await HostCache.shared.fetchHosts(filter: .all)
                 
                 print("DEBUG: today events fetched!. \(String(describing: todayEvents))")
@@ -88,7 +89,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     }
     
     
-    func getEventForGuestlist() {
+    @MainActor func getEventForGuestlist() {
         Task {
             do {
                 guard let privileges = AuthViewModel.shared.currentUser?.hostPrivileges else { return }
@@ -104,13 +105,12 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                     guard let event = try await EventCache.shared.fetchEvents(filter: .hostEvents(uid: hostId)).first else { return }
                     print("DEBUG: EVENT \(event)")
                     
-                    DispatchQueue.main.async {
-                        self.hostEvents.updateValue(event, forKey: host)
-                        print("DEBUG: Host event for guest list updated. \(self.hostEvents)")
-                    }
+                    
+                    self.hostEvents.updateValue(event, forKey: host)
+                    print("DEBUG: Host event for guest list updated. \(self.hostEvents)")
                 }
             } catch {
-//                alertItem = AlertContext.unableToGetMapItems
+                alertItem = AlertContext.unableToGetMapItems
                 print("DEBUG: Error getting event. \(error)")
             }
         }
