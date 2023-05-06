@@ -98,6 +98,7 @@ class NotificationsViewModel: ObservableObject {
         var data = ["timestamp": Timestamp(date: Date()),
                     "username": user.username,
                     "uid": user.id ?? "",
+                    "hasBeenSeen": false,
                     "profileImageUrl": user.profileImageUrl,
                     "type": type.rawValue] as [String: Any]
         
