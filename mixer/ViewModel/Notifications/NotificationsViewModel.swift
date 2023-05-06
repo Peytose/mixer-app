@@ -16,6 +16,21 @@ class NotificationsViewModel: ObservableObject {
     }
     
     
+    static func deleteNotification(_ notification: Notification, completion: @escaping() -> Void) {
+        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let notificationId = notification.id else { return }
+        
+        COLLECTION_NOTIFICATIONS.document(currentUid).collection("user-notifications").document(notificationId)
+            .delete { error in
+                if let error = error {
+                    print("DEBUG: Error deleting notification. \(error.localizedDescription)")
+                }
+                
+                completion()
+            }
+    }
+    
+    
     private static func cacheUser(user: CachedUser) {
         Task {
             do {
@@ -66,6 +81,19 @@ class NotificationsViewModel: ObservableObject {
     }
     
     
+    static func updateHasSeen(_ notification: Notification) {
+        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let notificationId = notification.id else { return }
+        
+        COLLECTION_NOTIFICATIONS.document(currentUid).collection("user-notifications").document(notificationId)
+            .updateData(["hasBeenSeen": true, "timestamp": Timestamp()]) { error in
+                if let error = error {
+                    print("DEBUG: Error updating has seen on notification. \(error.localizedDescription)")
+                }
+            }
+    }
+    
+    
     static func cancelFriendRequest(notification: Notification) {
         UserService.cancelRequestOrRemoveFriend(uid: notification.uid) { _ in
             guard var user = notification.user else { return }
@@ -78,7 +106,7 @@ class NotificationsViewModel: ObservableObject {
     
     
     static func acceptFriendRequest(notification: Notification, completion: @escaping() -> Void) {
-        UserService.acceptFriendRequest(uid: notification.uid) { _ in
+        UserService.acceptFriendRequest(uid: notification.uid, notificationId: notification.id) { _ in
             guard var user = notification.user else { return }
             user.relationshiptoUser = .friends
             self.cacheUser(user: user)

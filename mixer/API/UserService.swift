@@ -96,7 +96,6 @@ struct UserService {
                                      "toUser": uid,
                                    "fromUser": currentUid,
                                     "pending": true,
-                                "hasBeenSeen": false,
                                   "timestamp": Timestamp(date: Date())]
 
         COLLECTION_RELATIONSHIPS.document(path).setData(data, completion: completion)
@@ -111,15 +110,23 @@ struct UserService {
     }
 
 
-    static func acceptFriendRequest(uid: String, completion: FirestoreCompletion) {
+    static func acceptFriendRequest(uid: String, notificationId: String? = "", completion: FirestoreCompletion) {
         guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
         
-        let updatedData: [String: Any] = ["pending": false,
-                                      "hasBeenSeen": true,
-                                        "timestamp": Timestamp(date: Date())]
-        
-        COLLECTION_RELATIONSHIPS.document(path).updateData(updatedData, completion: completion)
+        COLLECTION_RELATIONSHIPS.document(path).updateData(["pending": false,
+                                                            "timestamp": Timestamp(date: Date())]) { error in
+            if let error = error {
+                print("DEBUG: Error accepting friend request. \(error.localizedDescription)")
+            }
+            
+            if let notificationId = notificationId, notificationId != "" {
+                COLLECTION_NOTIFICATIONS.document(currentUid).collection("user-notifications").document(notificationId)
+                    .updateData(["type": NotificationType.acceptFriend.rawValue,
+                                 "hasBeenSeen": true,
+                                 "timestamp": Timestamp()], completion: completion)
+            }
+        }
     }
 
 

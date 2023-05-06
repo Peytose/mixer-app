@@ -57,6 +57,18 @@ struct NotificationCell: View {
             }
         }
         .frame(maxHeight: 60)
+        .onAppear {
+            if notification.type == .acceptFriend && !notification.hasBeenSeen {
+                notification.hasBeenSeen = true
+                NotificationsViewModel.updateHasSeen(notification)
+            }
+        }
+        .onChange(of: notification.type) { newValue in
+            if newValue != .requestFriend && !notification.hasBeenSeen {
+                notification.hasBeenSeen = true
+                NotificationsViewModel.updateHasSeen(notification)
+            }
+        }
     }
 }
 

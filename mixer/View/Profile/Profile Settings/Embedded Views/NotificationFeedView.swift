@@ -11,19 +11,24 @@ struct NotificationFeedView: View {
     @Binding var notifications: [Notification]
     
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack {
-                    ForEach($notifications) { notification in
-                        NotificationCell(notification: notification)
-                            .padding(.vertical, 5)
+        List {
+            ForEach($notifications) { notification in
+                NotificationCell(notification: notification)
+                    .padding(.vertical, 5)
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            NotificationsViewModel.deleteNotification(notification.wrappedValue) {
+                                notifications.removeAll(where: { $0.id == notification.id })
+                            }
+                        } label: {
+                            Label("", systemImage: "trash.fill")
+                        }
                     }
-                }
-                .padding()
-                .navigationTitle("Notifications")
             }
-            .background(Color.mixerBackground)
+            .listRowBackground(Color.mixerSecondaryBackground)
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.mixerBackground.ignoresSafeArea())
         .preferredColorScheme(.dark)
     }
 }

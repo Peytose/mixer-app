@@ -109,7 +109,15 @@ struct ProfileView: View {
             .statusBar(hidden: true)
             .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel) }
             .sheet(isPresented: $showNotifications) {
-                NotificationFeedView(notifications: $notificationsViewModel.notifications)
+                NavigationView {
+                    NotificationFeedView(notifications: $notificationsViewModel.notifications)
+                        .navigationTitle("Notifications")
+                        .toolbar {
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button { showNotifications = false  } label: { XDismissButton() }
+                            }
+                        }
+                }
             }
             //            .fullScreenCover(isPresented: $viewModel.showEventView) {
             //                EventInfoView(parentViewModel: ExplorePageViewModel(), tabBarVisibility: $tabBarVisibility, event: eventManager.selectedEvent!, coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50), namespace: namespace)
