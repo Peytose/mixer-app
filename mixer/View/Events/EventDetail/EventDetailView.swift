@@ -48,93 +48,98 @@ struct EventDetailView: View {
                     
                     content
                     
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("What this event offers")
-                                .font(.title)
-                                .fontWeight(.bold)
-                            
-                            ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
-                                let amenitiesInCategory = viewModel.event.amenities?.filter({ $0.category == category }) ?? []
-                                if !amenitiesInCategory.isEmpty {
-                                    Section(header: Text(category.rawValue).font(.title3.weight(.semibold)).padding(.top, 10).padding(.bottom, 2)) {
-                                        ForEach(amenitiesInCategory, id: \.self) { amenity in
-                                            HStack {
-                                                if amenity == .beer {
-                                                    Text("🍺")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
-                                                } else if amenity == .water {
-                                                    Text("💦")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
-                                                } else if amenity == .smokingArea {
-                                                    Text("🚬")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
-                                                } else if amenity == .dj {
-                                                    Text("🎧")
-                                                } else if amenity == .coatCheck {
-                                                    Text("🧥")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
-                                                } else if amenity == .nonAlcohol {
-                                                    Text("🧃")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
-                                                } else if amenity == .food {
-                                                    Text("🍕")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
-                                                } else if amenity == .danceFloor {
-                                                    Text("🕺")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
-                                                } else if amenity == .snacks {
-                                                    Text("🍪")
-                                                } else if amenity == . drinkingGames{
-                                                    Text("🏓")
-                                                        .font(.system(size: 15))
-                                                        .padding(.trailing, 5)
-                                                } else {
-                                                    Image(systemName: amenity.icon)
-                                                        .resizable()
-                                                        .scaledToFill()
-                                                        .frame(width: 15, height: 15)
-                                                        .padding(.trailing, 5)
+                    if let amenities = viewModel.event.amenities {
+                        ScrollView {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("What this event offers")
+                                    .font(.title)
+                                    .fontWeight(.bold)
+                                
+                                //MARK: ERROR: Amenities outside first category don't display.
+                                ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
+                                    let amenitiesInCategory = amenities.filter({ $0.category == category })
+                                    if !amenitiesInCategory.isEmpty {
+                                        Section(header: Text(category.rawValue).font(.title3.weight(.semibold)).padding(.top, 10).padding(.bottom, 2)) {
+                                            ForEach(amenitiesInCategory, id: \.self) { amenity in
+                                                HStack {
+                                                    if amenity == .beer {
+                                                        Text("🍺")
+                                                            .font(.system(size: 15))
+                                                            .padding(.trailing, 5)
+                                                    } else if amenity == .water {
+                                                        Text("💦")
+                                                            .font(.system(size: 15))
+                                                            .padding(.trailing, 5)
+                                                    } else if amenity == .smokingArea {
+                                                        Text("🚬")
+                                                            .font(.system(size: 15))
+                                                            .padding(.trailing, 5)
+                                                    } else if amenity == .dj {
+                                                        Text("🎧")
+                                                    } else if amenity == .coatCheck {
+                                                        Text("🧥")
+                                                            .font(.system(size: 15))
+                                                            .padding(.trailing, 5)
+                                                    } else if amenity == .nonAlcohol {
+                                                        Text("🧃")
+                                                            .font(.system(size: 15))
+                                                            .padding(.trailing, 5)
+                                                    } else if amenity == .food {
+                                                        Text("🍕")
+                                                            .font(.system(size: 15))
+                                                            .padding(.trailing, 5)
+                                                    } else if amenity == .danceFloor {
+                                                        Text("🕺")
+                                                            .font(.system(size: 15))
+                                                            .padding(.trailing, 5)
+                                                    } else if amenity == .snacks {
+                                                        Text("🍪")
+                                                    } else if amenity == . drinkingGames{
+                                                        Text("🏓")
+                                                            .font(.system(size: 15))
+                                                            .padding(.trailing, 5)
+                                                    } else {
+                                                        Image(systemName: amenity.icon)
+                                                            .resizable()
+                                                            .scaledToFill()
+                                                            .frame(width: 15, height: 15)
+                                                            .padding(.trailing, 5)
+                                                    }
+                                                    
+                                                    Text(amenity.rawValue)
+                                                        .font(.body)
+                                                    
+                                                    Spacer()
                                                 }
-                                                
-                                                Text(amenity.rawValue)
-                                                    .font(.body)
-                                                
-                                                Spacer()
+                                                .foregroundColor(.white)
                                             }
-                                            .foregroundColor(.white)
                                         }
                                     }
                                 }
-                            }
-                            
-                            HStack {
-                                Spacer()
-                                Button {
-                                    withAnimation(.spring(dampingFraction: 0.8)) {
-                                        showAllAmenities.toggle()
-                                    }
-                                } label: {
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .foregroundColor(.DesignCodeWhite)
-                                            .frame(width: 350, height: 45)
-                                            .overlay {
-                                                Text(showAllAmenities ? "Show less" : "Show all \(viewModel.event.amenities?.count ?? 0) amenities")
-                                                    .font(.body)
-                                                    .fontWeight(.medium)
-                                                    .foregroundColor(.black)
+                                
+                                if amenities.count != amenities.filter({ $0.category == amenities.first?.category }).count {
+                                    HStack {
+                                        Spacer()
+                                        Button {
+                                            withAnimation(.spring(dampingFraction: 0.8)) {
+                                                showAllAmenities.toggle()
                                             }
+                                        } label: {
+                                            ZStack {
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .foregroundColor(.DesignCodeWhite)
+                                                    .frame(width: 350, height: 45)
+                                                    .overlay {
+                                                        Text(showAllAmenities ? "Show less" : "Show all \(amenities.count) amenities")
+                                                            .font(.body)
+                                                            .fontWeight(.medium)
+                                                            .foregroundColor(.black)
+                                                    }
+                                            }
+                                        }
+                                        Spacer()
                                     }
                                 }
-                                Spacer()
                             }
                         }
                     }
@@ -152,7 +157,6 @@ struct EventDetailView: View {
 
                         if viewModel.event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false {
                             if let publicAddress = viewModel.event.publicAddress {
-                                //MARK: JOSE LEFT OFF (DEBUG REPORT: FINISH PUBLIC/PRIVATE LOGIC)
                                 DetailRow(image: "mappin.and.ellipse", text: publicAddress)
                                     .fontWeight(.medium)
                             } else if let coords = viewModel.coordinates {
@@ -219,11 +223,6 @@ struct EventDetailView: View {
                 .position(.top)
                 .animation(.spring())
                 .autohideIn(2)
-        }
-        .task {
-            viewModel.checkIfUserSavedEvent()
-            viewModel.fetchEventHost()
-            viewModel.getEventCoordinates()
         }
     }
     

@@ -28,6 +28,7 @@ struct ProfileView: View {
     @Namespace var animation
     @Namespace var namespace: Namespace.ID
     @ObservedObject var viewModel: ProfileViewModel
+    @ObservedObject var notificationsViewModel = NotificationsViewModel()
     
     init(viewModel: ProfileViewModel) {
         self._isFriends = Binding(get: { viewModel.user.relationshiptoUser == .friends },
@@ -42,11 +43,10 @@ struct ProfileView: View {
                     .overlay(alignment: .topTrailing) {
                         HStack(spacing: viewModel.user.isCurrentUser ? 5 : 10) {
                             if viewModel.user.isCurrentUser {
-                                //MARK: Notification button (debug report: needs to populate view)
-                                //                                ProfileCornerButton(isOn: $showNotifications, icon: "bell")
-                                //                                    .overlay(alignment: .topTrailing) {
-                                //                                        IconBadge(count: viewModel.notifications.count)
-                                //                                    }
+                                ProfileCornerButton(isOn: $showNotifications, icon: "bell")
+                                    .overlay(alignment: .topTrailing) {
+                                        IconBadge(count: notificationsViewModel.notifications.filter({ $0.hasBeenSeen }).count)
+                                    }
                                 
                                 ProfileCornerButton(isOn: $showEditProfile,
                                                     icon: "gearshape")
@@ -108,7 +108,9 @@ struct ProfileView: View {
             .navigationBarHidden(true)
             .statusBar(hidden: true)
             .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel) }
-            .sheet(isPresented: $showNotifications) { NotificationFeedView() }
+            .sheet(isPresented: $showNotifications) {
+                NotificationFeedView(notifications: $notificationsViewModel.notifications)
+            }
             //            .fullScreenCover(isPresented: $viewModel.showEventView) {
             //                EventInfoView(parentViewModel: ExplorePageViewModel(), tabBarVisibility: $tabBarVisibility, event: eventManager.selectedEvent!, coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50), namespace: namespace)
             //            }
@@ -326,11 +328,11 @@ fileprivate struct ProfileInfo: View {
                     
                     Spacer()
                     
-                    Actionbutton(text: "Accept", color: Color.mixerIndigo) {
+                    ActionButton(text: "Accept", color: Color.mixerIndigo) {
                         viewModel.acceptFriendRequest()
                     }
                     
-                    Actionbutton(text: "Reject", color: Color.mixerSecondaryBackground) {
+                    ActionButton(text: "Reject", color: Color.mixerSecondaryBackground) {
                         viewModel.cancelFriendRequest()
                     }
                 }
@@ -403,7 +405,6 @@ fileprivate struct EventsSection: View {
 }
 
 extension ProfileView {
-    
     var details: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("About")

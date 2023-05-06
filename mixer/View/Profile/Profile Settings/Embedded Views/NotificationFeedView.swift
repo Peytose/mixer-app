@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct NotificationFeedView: View {
+    @Binding var notifications: [Notification]
     
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack {
-                    ForEach(0..<6) { cell in
-                        FollowRequestCell()
+                    ForEach($notifications) { notification in
+                        NotificationCell(notification: notification)
                             .padding(.vertical, 5)
                     }
                 }
@@ -29,7 +30,7 @@ struct NotificationFeedView: View {
 
 struct NotificationFeedView_Previews: PreviewProvider {
     static var previews: some View {
-        NotificationFeedView()
+        NotificationFeedView(notifications: .constant([]))
             .preferredColorScheme(.dark)
     }
 }

@@ -96,6 +96,7 @@ struct UserService {
                                      "toUser": uid,
                                    "fromUser": currentUid,
                                     "pending": true,
+                                "hasBeenSeen": false,
                                   "timestamp": Timestamp(date: Date())]
 
         COLLECTION_RELATIONSHIPS.document(path).setData(data, completion: completion)
@@ -113,8 +114,12 @@ struct UserService {
     static func acceptFriendRequest(uid: String, completion: FirestoreCompletion) {
         guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
-
-        COLLECTION_RELATIONSHIPS.document(path).updateData(["pending": false, "timestamp": Timestamp(date: Date())], completion: completion)
+        
+        let updatedData: [String: Any] = ["pending": false,
+                                      "hasBeenSeen": true,
+                                        "timestamp": Timestamp(date: Date())]
+        
+        COLLECTION_RELATIONSHIPS.document(path).updateData(updatedData, completion: completion)
     }
 
 

@@ -15,9 +15,16 @@ final class EventDetailViewModel: ObservableObject {
     @Published var event: CachedEvent
     @Published var host: CachedHost?
     private (set) var coordinates: CLLocationCoordinate2D?
+    @Published var isDataReady: Bool = false
 
     init(event: CachedEvent) {
         self.event = event
+        Task.init {
+            await checkIfUserSavedEvent()
+            await fetchEventHost()
+            await getEventCoordinates()
+            isDataReady = true
+        }
     }
     
     

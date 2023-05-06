@@ -11,7 +11,8 @@ import CoreLocationUI
 
 struct MapView: View {
     @ObservedObject var viewModel = MapViewModel()
-    @State var isShowingDetailView: Bool      = false
+    @State var isShowingEventDetailView: Bool = false
+    @State var isShowingHostDetailView: Bool  = false
     @State var isShowingGuestlistView: Bool   = false
     @State var isShowingCreateEventView: Bool = false
     @State private var selectedEvent: CachedEvent?
@@ -21,52 +22,78 @@ struct MapView: View {
     let gradient2 = Gradient(colors: [.blue, .purple])
     var namespace: Namespace.ID
     
-    var body: some View {
-        ZStack(alignment: .top) {
-            Map(coordinateRegion: $viewModel.region,
-                showsUserLocation: true,
-                annotationItems: viewModel.mapItems.keys.compactMap { $0 }) { host in
-                MapAnnotation(coordinate: host.location?.locationCoordinate ?? CLLocationCoordinate2D(latitude: 42.3598, longitude: 71.0921),
-                              anchorPoint: CGPoint(x: 0.75, y: 0.75)) {
-                    HostMapAnnotation(host: host)
-                        .onTapGesture {
-                            if let event = viewModel.mapItems[host] as? CachedEvent {
-                                self.selectedEvent = event
-                            } else {
-                                self.selectedHost = host
-                            }
-                            
-                            isShowingDetailView = true
-                        }
-                }
-            }
-                .ignoresSafeArea()
-            
-            Spacer()
-            
-            LogoView(frameWidth: 65)
-                .shadow(radius: 10)
-                .allowsHitTesting(false)
+    var eventSheetBinding: Binding<Bool> {
+        Binding {
+            return isShowingEventDetailView && selectedEvent != nil && (viewModel.eventDetailViewModel?.isDataReady ?? false)
+        } set: { newValue in
+            isShowingEventDetailView = newValue
         }
-        .sheet(isPresented: $isShowingDetailView) {
-            if let event = selectedEvent {
-                NavigationView {
-                    EventDetailView(viewModel: EventDetailViewModel(event: event),
-                                    namespace: namespace)
-                    .toolbar {
-                        ToolbarItem(placement: .destructiveAction) {
-                            Button { isShowingDetailView = false  } label: { XDismissButton() }
-                        }
+    }
+
+    var hostSheetBinding: Binding<Bool> {
+        Binding {
+            return isShowingHostDetailView && selectedHost != nil && (viewModel.hostDetailViewModel?.isDataReady ?? false)
+        } set: { newValue in
+            isShowingHostDetailView = newValue
+        }
+    }
+
+    
+    var body: some View {
+        ZStack(alignment: .center) {
+            ZStack(alignment: .top) {
+                Map(coordinateRegion: $viewModel.region,
+                    showsUserLocation: true,
+                    annotationItems: viewModel.mapItems.keys.compactMap { $0 }) { host in
+                    MapAnnotation(coordinate: host.location?.locationCoordinate ?? CLLocationCoordinate2D(latitude: 42.3598, longitude: 71.0921),
+                                  anchorPoint: CGPoint(x: 0.75, y: 0.75)) {
+                        HostMapAnnotation(host: host)
+                            .onTapGesture {
+                                if let event = viewModel.mapItems[host] as? CachedEvent {
+                                    self.selectedEvent = event
+                                    viewModel.eventDetailViewModel = EventDetailViewModel(event: event)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        isShowingEventDetailView = true
+                                    }
+                                } else {
+                                    // Set the selected host
+                                    self.selectedHost = host
+                                    viewModel.hostDetailViewModel = HostDetailViewModel(host: host)
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        isShowingHostDetailView = true
+                                    }
+                                }
+                            }
                     }
                 }
-            } else if let host = selectedHost {
-                NavigationView {
-                    HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
-                        .toolbar {
-                            ToolbarItem(placement: .destructiveAction) {
-                                Button { isShowingDetailView = false  } label: { XDismissButton() }
-                            }
-                        }
+                .ignoresSafeArea()
+                
+                Spacer()
+                
+                LogoView(frameWidth: 65)
+                    .shadow(radius: 10)
+                    .allowsHitTesting(false)
+            }
+            
+            if viewModel.isLoading {
+                LoadingView()
+            }
+        }
+        .sheet(isPresented: eventSheetBinding) {
+            if let event = selectedEvent {
+                EventDetailView(viewModel: viewModel.eventDetailViewModel!,
+                                namespace: namespace)
+                .overlay(alignment: .topTrailing) {
+                    Button { isShowingEventDetailView = false  } label: { XDismissButton() }
+                }
+            }
+        }
+        .sheet(isPresented: hostSheetBinding) {
+            if let host = selectedHost {
+                HostDetailView(viewModel: viewModel.hostDetailViewModel!,
+                               namespace: namespace)
+                .overlay(alignment: .topTrailing) {
+                    Button { isShowingHostDetailView = false  } label: { XDismissButton() }
                 }
             }
         }
@@ -141,7 +168,7 @@ fileprivate struct MapIconButton: View {
             Image(systemName: icon)
                 .font(hasLargerSize ? .title2 : .title3)
                 .fontWeight(.medium)
-                .foregroundColor(Color.mainFont)
+                .foregroundColor(icon == "plus" ? Color.mixerIndigo : Color.mainFont)
                 .padding(hasLargerSize ? 15 : 10)
                 .background(Color.mixerSecondaryBackground)
                 .clipShape(Circle())

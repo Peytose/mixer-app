@@ -19,6 +19,8 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     @Published var isLoading = false
     @Published var userLocation: CLLocation?
     @Published var hostEvents: [CachedHost: CachedEvent] = [:]
+    @Published var hostDetailViewModel: HostDetailViewModel?
+    @Published var eventDetailViewModel: EventDetailViewModel?
     
     let deviceLocationManager = CLLocationManager()
     
@@ -54,16 +56,22 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     @MainActor func getMapItems() {
         Task {
             do {
-                let todayEvents = await UserService.getTodayEvents()
+                isLoading = true
+                
+                let currentEvents = await UserService.getTodayEvents()
+                    .filter({ $0.startDate.compare(Timestamp()) == .orderedAscending })
                 var hosts = try await HostCache.shared.fetchHosts(filter: .all)
                 
-                print("DEBUG: today events fetched!. \(String(describing: todayEvents))")
+                print("DEBUG: today events fetched!. \(String(describing: currentEvents))")
                 print("DEBUG: hosts fetched!. \(String(describing: hosts))")
 
                 for var host in hosts {
-                    guard let hostId = host.id else { return }
+                    guard let hostId = host.id else {
+                        isLoading = false
+                        return
+                    }
                     
-                    if let currentEvent = todayEvents.first(where: { $0.hostUuid == hostId }) {
+                    if let currentEvent = currentEvents.first(where: { $0.hostUuid == hostId }) {
                         host.hasCurrentEvent = true
                         
                         try HostCache.shared.cacheHost(host)
@@ -75,8 +83,10 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                     }
                 }
                 
+                isLoading = false
                 print("DEBUG: Map Items fetched!. \(mapItems)")
             } catch {
+                isLoading = false
                 alertItem = AlertContext.unableToGetMapItems
                 print("DEBUG: Error getting map items. \(error.localizedDescription)")
             }
@@ -84,8 +94,10 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     }
     
     // Update a map item for a given host with an optional event
-    @MainActor func updateMapItem(for host: CachedHost, with event: CachedEvent? = nil) {
-        self.mapItems.updateValue(event, forKey: host)
+    private func updateMapItem(for host: CachedHost, with event: CachedEvent? = nil) {
+        DispatchQueue.main.async {
+            self.mapItems.updateValue(event, forKey: host)
+        }
     }
     
     
@@ -124,7 +136,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                     host.location = Coordinate(CLLocationCoordinate2D(latitude: coords.latitude, longitude: coords.longitude))
                     print("DEBUG: Host coords are changed to the event coords.")
                     try HostCache.shared.cacheHost(host)
-                    await updateMapItem(for: host, with: event)
+                    updateMapItem(for: host, with: event)
                 }
             }
         } else {
@@ -132,7 +144,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                 host.location = Coordinate(CLLocationCoordinate2D(latitude: coords.latitude, longitude: coords.longitude))
                 print("DEBUG: Host did not have coords so changed to event coords.")
                 try HostCache.shared.cacheHost(host)
-                await updateMapItem(for: host, with: event)
+                updateMapItem(for: host, with: event)
             }
         }
     }

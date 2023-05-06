@@ -170,7 +170,7 @@
 		A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */; };
 		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
 		A6C99FC629DA691C0046D61B /* NotificationFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC529DA691C0046D61B /* NotificationFeedView.swift */; };
-		A6C99FC829DA694F0046D61B /* FollowRequestCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC729DA694F0046D61B /* FollowRequestCell.swift */; };
+		A6C99FC829DA694F0046D61B /* NotificationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC729DA694F0046D61B /* NotificationCell.swift */; };
 		A6CD2C84297B201C00AA0B98 /* PlaceHolderColorModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CD2C83297B201C00AA0B98 /* PlaceHolderColorModifier.swift */; };
 		A6CD2C8F297B482A00AA0B98 /* MapItemPicker in Frameworks */ = {isa = PBXBuildFile; productRef = A6CD2C8E297B482A00AA0B98 /* MapItemPicker */; };
 		A6D6FC8129DF595700BFCF52 /* MailViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */; };
@@ -329,7 +329,7 @@
 		A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGenderView.swift; sourceTree = "<group>"; };
 		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
 		A6C99FC529DA691C0046D61B /* NotificationFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationFeedView.swift; sourceTree = "<group>"; };
-		A6C99FC729DA694F0046D61B /* FollowRequestCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowRequestCell.swift; sourceTree = "<group>"; };
+		A6C99FC729DA694F0046D61B /* NotificationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCell.swift; sourceTree = "<group>"; };
 		A6CD2C83297B201C00AA0B98 /* PlaceHolderColorModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceHolderColorModifier.swift; sourceTree = "<group>"; };
 		A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailViewModal.swift; sourceTree = "<group>"; };
 		A6F003A929807646007E8CCA /* FeaturedHostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedHostCell.swift; sourceTree = "<group>"; };
@@ -847,6 +847,7 @@
 			isa = PBXGroup;
 			children = (
 				A6C99FC529DA691C0046D61B /* NotificationFeedView.swift */,
+				A6C99FC729DA694F0046D61B /* NotificationCell.swift */,
 			);
 			path = "Embedded Views";
 			sourceTree = "<group>";
@@ -898,7 +899,6 @@
 			children = (
 				A682CC552970915B008EA546 /* DetailRowView.swift */,
 				A6077A9129C0E5380038E1ED /* UpcomingEventCellView.swift */,
-				A6C99FC729DA694F0046D61B /* FollowRequestCell.swift */,
 				9C3E2C9B29EA3A5900A74D05 /* SmallCornerNumber.swift */,
 				A6BF68222A023912000FF54B /* SmallEventCell.swift */,
 			);
@@ -1121,7 +1121,7 @@
 				9C2B898F29A179A20011FC56 /* LoadingView.swift in Sources */,
 				A6B9E6762953B6DA009C936E /* LogoView.swift in Sources */,
 				9C3D48372987227D00116C9E /* Timestamp+Ext.swift in Sources */,
-				A6C99FC829DA694F0046D61B /* FollowRequestCell.swift in Sources */,
+				A6C99FC829DA694F0046D61B /* NotificationCell.swift in Sources */,
 				9C3BADBA291F54B4009C8043 /* mixerApp.swift in Sources */,
 				A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */,
 				9C58B3AE29C8E5CA0024CB7E /* OptionView.swift in Sources */,

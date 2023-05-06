@@ -228,7 +228,8 @@ class AuthViewModel: ObservableObject {
         // Check if the phone number already includes a country code
         if phoneNumber.hasPrefix("+") {
             let detectedCountryCode = extractCountryCode(from: phoneNumber)
-            if detectedCountryCode != countryCode {
+            print("DEBUG: detectedCountryCode: \(detectedCountryCode). countryCode: \(countryCode).")
+            if !detectedCountryCode.contains(countryCode) {
                 // Prompt the user to confirm their phone number
                 alertItemTwo = AlertContext.existingCountryCode(code: detectedCountryCode, confirmAction: {
                     // User confirmed the phone number, so use it as is
@@ -239,6 +240,8 @@ class AuthViewModel: ObservableObject {
                     let phoneNumWithCode = "\(self.countryCode)\(correctedPhoneNumber)"
                     self.continuePhoneVerification(with: phoneNumWithCode)
                 })
+            } else {
+                self.continuePhoneVerification(with: phoneNumber)
             }
         } else {
             // Phone number doesn't already include a country code, so proceed with verification
@@ -264,9 +267,10 @@ class AuthViewModel: ObservableObject {
 
     
     func extractCountryCode(from phoneNumber: String) -> String {
-        // Extract the country code from a phone number string that starts with a plus sign
-        if let endIndex = phoneNumber.firstIndex(where: { !("0"..."9").contains($0) }) {
-            return String(phoneNumber[phoneNumber.startIndex..<endIndex])
+        let pattern = #"^\+\d{1,3}"#
+        
+        if let range = phoneNumber.range(of: pattern, options: .regularExpression) {
+            return String(phoneNumber[range])
         }
         
         return ""

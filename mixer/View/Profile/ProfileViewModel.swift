@@ -17,7 +17,6 @@ class ProfileViewModel: ObservableObject {
     @Published var savedEvents              = [CachedEvent]()
     @Published var pastEvents               = [CachedEvent]()
     @Published var mutuals                  = [CachedUser]()
-    @Published var notifications            = [Notification]()
     @Published var name: String             = ""
     @Published var displayName: String      = ""
     @Published var bio: String              = ""
@@ -105,7 +104,7 @@ class ProfileViewModel: ObservableObject {
         guard let uid = user.id else { return }
         UserService.sendFriendRequest(uid: uid) { _ in
             self.user.relationshiptoUser = .sentRequest
-            NotificationsViewModel.uploadNotifications(toUid: uid, type: .follow)
+            NotificationsViewModel.uploadNotifications(toUid: uid, type: .requestFriend)
             HapticManager.playLightImpact()
         }
     }
@@ -115,7 +114,7 @@ class ProfileViewModel: ObservableObject {
         guard let uid = user.id else { return }
         UserService.acceptFriendRequest(uid: uid) { _ in
             self.user.relationshiptoUser = .friends
-            NotificationsViewModel.uploadNotifications(toUid: uid, type: .follow)
+            NotificationsViewModel.uploadNotifications(toUid: uid, type: .acceptFriend)
             HapticManager.playLightImpact()
         }
     }

@@ -22,16 +22,20 @@ struct HostDetailView: View {
     }
     
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack {
-                HostBannerView(host: viewModel.host, namespace: namespace)
-                
-                HostInfoView(host: viewModel.host,
-                             coordinates: viewModel.coordinates,
-                             namespace: namespace,
-                             viewModel: viewModel)
+        ZStack(alignment: .center ) {
+            ScrollView(showsIndicators: false) {
+                VStack {
+                    HostBannerView(host: viewModel.host, namespace: namespace)
+                    
+                    HostInfoView(host: viewModel.host,
+                                 coordinates: viewModel.coordinates,
+                                 namespace: namespace,
+                                 viewModel: viewModel)
+                }
+                .padding(.bottom, 180)
             }
-            .padding(.bottom, 180)
+            
+            if viewModel.isLoading { LoadingView() }
         }
         .background(Color.mixerBackground)
         .coordinateSpace(name: "scroll")

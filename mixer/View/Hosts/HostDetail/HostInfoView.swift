@@ -29,8 +29,8 @@ struct HostInfoView: View {
                 NameAndLinksRow(host: host,
                                 namespace: namespace)
                 
-                if let bio = host.tagline {
-                    Text(bio)
+                if let tagline = host.tagline {
+                    Text(tagline)
                         .font(.subheadline.weight(.medium))
                         .foregroundColor(.white.opacity(0.8))
                         .lineLimit(2)
@@ -60,28 +60,33 @@ struct HostInfoView: View {
                                                imageURL: event.eventImageUrl)
                             }
                         }
-                        HStack {
-                            Spacer()
-                            Button {
-                                withAnimation(.spring(dampingFraction: 0.8)) {
-                                    showAllEvents.toggle()
+                        
+                        if viewModel.upcomingEvents.count > 1 {
+                            HStack {
+                                Spacer()
+                                
+                                Button {
+                                    withAnimation(.spring(dampingFraction: 0.8)) {
+                                        showAllEvents.toggle()
+                                    }
+                                } label: {
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .foregroundColor(.DesignCodeWhite)
+                                            .frame(width: 350, height: 45)
+                                            .overlay {
+                                                Text(showAllEvents ? "Show less" : "Show all \(viewModel.upcomingEvents.count) events")
+                                                    .font(.body)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.black)
+                                            }
+                                    }
                                 }
-                            } label: {
-                                ZStack {
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .foregroundColor(.DesignCodeWhite)
-                                        .frame(width: 350, height: 45)
-                                        .overlay {
-                                            Text(showAllEvents ? "Show less" : "Show all \(viewModel.upcomingEvents.count) events")
-                                                .font(.body)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.black)
-                                        }
-                                }
+                                
+                                Spacer()
                             }
-                            Spacer()
+                            .padding(.top)
                         }
-                        .padding(.top)
                     }
                 }
             }
