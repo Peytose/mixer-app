@@ -45,7 +45,7 @@ struct ProfileView: View {
                             if viewModel.user.isCurrentUser {
                                 ProfileCornerButton(isOn: $showNotifications, icon: "bell")
                                     .overlay(alignment: .topTrailing) {
-                                        IconBadge(count: notificationsViewModel.notifications.filter({ $0.hasBeenSeen }).count)
+                                        IconBadge(count: notificationsViewModel.notifications.filter({ !$0.hasBeenSeen }).count)
                                     }
                                 
                                 ProfileCornerButton(isOn: $showEditProfile,

@@ -30,7 +30,7 @@ enum NotificationType: Int, Decodable {
     var notificationMessage: String {
         switch self {
             case .requestFriend: return " wants to be friends!"
-            case .acceptFriend: return " accepted your friend request."
+            case .acceptFriend: return " is now your friend."
             case .likedEvent: return " liked one of your events."
         }
     }
