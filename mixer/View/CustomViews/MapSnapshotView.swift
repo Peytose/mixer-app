@@ -37,7 +37,7 @@ struct MapSnapshotView: View {
                             .frame(width: 20)
                     }
                 }
-                .cornerRadius(9)
+                .cornerRadius(16)
             } else {
                 LoadingView()
             }

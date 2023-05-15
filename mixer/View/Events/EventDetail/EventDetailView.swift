@@ -56,6 +56,8 @@ struct EventDetailView: View {
                                     .fontWeight(.bold)
                                 
                                 //MARK: ERROR: Amenities outside first category don't display.
+                                
+                                
                                 ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
                                     let amenitiesInCategory = amenities.filter({ $0.category == category })
                                     if !amenitiesInCategory.isEmpty {
@@ -112,12 +114,13 @@ struct EventDetailView: View {
                                                     Spacer()
                                                 }
                                                 .foregroundColor(.white)
+                                                
                                             }
                                         }
                                     }
                                 }
                                 
-                                if amenities.count != amenities.filter({ $0.category == amenities.first?.category }).count {
+//                                if amenities.count != amenities.filter({ $0.category == amenities.first?.category }).count {
                                     HStack {
                                         Spacer()
                                         Button {
@@ -139,7 +142,7 @@ struct EventDetailView: View {
                                         }
                                         Spacer()
                                     }
-                                }
+//                                }
                             }
                         }
                     }

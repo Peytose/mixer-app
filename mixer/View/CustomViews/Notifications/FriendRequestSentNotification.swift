@@ -19,11 +19,9 @@ struct FriendRequestSentNotification: View {
                 .font(.subheadline)
                 .lineLimit(1)
             }
-            .frame(width: DeviceTypes.ScreenSize.width - 60, height: 60, alignment: .center)
+            .notificationContentFrameShort()
         }
-        .frame(width: DeviceTypes.ScreenSize.width * 0.5, height: 60)
-        .background(Color.mixerSecondaryBackground)
-        .cornerRadius(24)
+        .notificationBackgroundShort()
     }
 }
 

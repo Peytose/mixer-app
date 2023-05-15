@@ -13,8 +13,7 @@ struct CharactersRemainView: View {
     
     var body: some View {
         Text("\(limit - currentCount)")
-            .bold()
-            .font(.callout)
+            .font(.callout.weight(.bold))
             .foregroundColor(currentCount <= limit ? .mixerIndigo : Color(.systemPink))
         +
         Text(" characters remain")

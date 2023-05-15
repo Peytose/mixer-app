@@ -19,7 +19,6 @@ struct SmallEventCell: View {
     var body: some View {
         HStack(spacing: 5) {
             KFImage(URL(string: imageURL))
-//            Image("theta-chi-party-poster")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 70, height: 70, alignment: .leading)

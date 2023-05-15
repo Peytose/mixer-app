@@ -24,8 +24,9 @@ struct NotificationFeedView: View {
                             Label("", systemImage: "trash.fill")
                         }
                     }
+                    .padding(.vertical, 0)
             }
-            .listRowBackground(Color.mixerSecondaryBackground)
+            .listRowBackground(Color.clear)
         }
         .scrollContentBackground(.hidden)
         .background(Color.mixerBackground.ignoresSafeArea())

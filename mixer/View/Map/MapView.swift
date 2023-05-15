@@ -162,7 +162,6 @@ fileprivate struct MapIconButton: View {
         Button {
             let impact = UIImpactFeedbackGenerator(style: .light)
             impact.impactOccurred()
-            
             action()
         } label: {
             Image(systemName: icon)

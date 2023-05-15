@@ -21,5 +21,6 @@ struct LogoView: View {
 struct LogoView_Previews: PreviewProvider {
     static var previews: some View {
         LogoView(frameWidth: 250)
+            .preferredColorScheme(.dark)
     }
 }

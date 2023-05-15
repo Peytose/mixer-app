@@ -10,7 +10,7 @@ import SwiftUI
 struct CreateEventTextField: View {
     @Binding var input: String
     @State var isEditing = false
-
+    
     var title: String?
     var note: String?
     var placeholder: String
@@ -19,15 +19,13 @@ struct CreateEventTextField: View {
     var keyboard: UIKeyboardType
     var hasToggle: Bool?
     @Binding var toggleBool: Bool
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 if let title = title {
                     Text(title)
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .textFieldSmallTitle()
                     
                     Spacer()
                     
@@ -43,8 +41,7 @@ struct CreateEventTextField: View {
             }
             if let note = note {
                 Text(note)
-                    .font(.body)
-                    .foregroundColor(.secondary)
+                    .textFieldNote()
                     .lineLimit(2)
                     .minimumScaleFactor(0.75)
                     .padding(.bottom)
@@ -53,8 +50,7 @@ struct CreateEventTextField: View {
             
             if let textfieldHeader = textfieldHeader {
                 Text(textfieldHeader)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .textFieldHeader()
             }
             
             TextField(placeholder, text: $input, onEditingChanged: { (editingChanged) in
@@ -68,24 +64,19 @@ struct CreateEventTextField: View {
                     }
                 }
             })
-                .keyboardType(keyboard)
-                .foregroundColor(Color.mainFont)
-                .font(.title3)
-                .tint(Color.mixerIndigo)
-                .padding(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
-                .background {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(lineWidth: isEditing ? 3 : 1)
-                        .foregroundColor(Color.mixerIndigo)
-                }
+            .textFieldStyle(keyboardType: keyboard)
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(lineWidth: isEditing ? 3 : 1)
+                    .foregroundColor(Color.mixerIndigo)
+            }
             
             if let footnote = footnote {
                 Text(footnote)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .textFieldFootnote()
             }
         }
-        .frame(width: DeviceTypes.ScreenSize.width * 0.9)
+        .textFieldFrame()
     }
 }
 

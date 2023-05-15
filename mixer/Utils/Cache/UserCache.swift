@@ -20,7 +20,7 @@ class UserCache {
         cache.maxDiskCacheSize = 100 * 1024 * 1024    // 100 MB
         cache.maxCachePeriodInSecond = 60 * 60        // 60 mins
     }
-    
+
     
     func fetchUsers() async throws -> [CachedUser] {
         print("DEBUG: Started fetching hosts!")

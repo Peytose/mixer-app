@@ -22,9 +22,7 @@ struct SignUpTextField: View {
         VStack(alignment: .leading, spacing: 10) {
             if let title = title {
                 Text(title)
-                    .font(.largeTitle)
-                    .foregroundColor(.mainFont)
-                    .fontWeight(.semibold)
+                    .textFieldTitle()
                     .lineLimit(2)
                     .minimumScaleFactor(0.75)
                     .padding(.bottom, 10)
@@ -32,20 +30,16 @@ struct SignUpTextField: View {
             
             if let note = note {
                 Text(note)
-                    .font(.body)
-                    .foregroundColor(.secondary)
+                    .textFieldNote()
                     .lineLimit(2)
                     .minimumScaleFactor(0.75)
                     .padding(.bottom)
                     .padding(.top, -6)
-
-
             }
             
             if let textfieldHeader = textfieldHeader {
                 Text(textfieldHeader)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .textFieldHeader()
             }
             
             TextField(placeholder, text: $input, onEditingChanged: { (editingChanged) in
@@ -53,12 +47,7 @@ struct SignUpTextField: View {
                     isEditing = editingChanged
                 }
             })
-            .keyboardType(keyboard)
-            .disableAutocorrection(true)
-            .foregroundColor(Color.mainFont)
-            .font(.title3)
-            .tint(Color.mixerIndigo)
-            .padding(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
+            .textFieldStyle(keyboardType: keyboard, disableAutocorrection: true)
             .background {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(lineWidth: isEditing ? 3 : 1)
@@ -67,11 +56,10 @@ struct SignUpTextField: View {
             
             if let footnote = footnote {
                 Text(footnote)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .textFieldFootnote()
             }
         }
-        .frame(width: DeviceTypes.ScreenSize.width * 0.9)
+        .textFieldFrame()
     }
 }
 
@@ -79,7 +67,7 @@ struct SignUpTextField_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color.black
-            SignUpTextField(input: .constant(""), title: "Peyton, is this a placeholder?", note: "penis", placeholder: "Placeholder", footnote: "This is a footnote placeholder.", textfieldHeader: "Placeholder", keyboard: .default)
+            SignUpTextField(input: .constant(""), title: "Title", note: "Note", placeholder: "Placeholder", footnote: "This is a footnote placeholder.", textfieldHeader: "Placeholder", keyboard: .default)
         }
         .preferredColorScheme(.dark)
     }

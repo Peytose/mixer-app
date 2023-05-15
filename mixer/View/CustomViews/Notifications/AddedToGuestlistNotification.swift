@@ -22,11 +22,9 @@ struct AddedToGuestlistNotification: View {
                 }
                 .lineLimit(1)
             }
-            .frame(width: DeviceTypes.ScreenSize.width - 60, height: 60, alignment: .leading)
+            .notificationContentFrame()
         }
-        .frame(width: DeviceTypes.ScreenSize.width - 20, height: 60)
-        .background(Color.mixerSecondaryBackground)
-        .cornerRadius(24)
+        .notificationBackground()
     }
 }
 
