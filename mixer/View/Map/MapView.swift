@@ -167,9 +167,9 @@ fileprivate struct MapIconButton: View {
             Image(systemName: icon)
                 .font(hasLargerSize ? .title2 : .title3)
                 .fontWeight(.medium)
-                .foregroundColor(icon == "plus" ? Color.mixerIndigo : Color.mainFont)
+                .foregroundColor(Color.mainFont)
                 .padding(hasLargerSize ? 15 : 10)
-                .background(Color.mixerSecondaryBackground)
+                .background(Color.mixerPurpleGradient)
                 .clipShape(Circle())
                 .shadow(radius: 5, y: 8)
         }

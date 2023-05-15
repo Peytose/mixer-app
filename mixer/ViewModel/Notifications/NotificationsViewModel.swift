@@ -62,6 +62,7 @@ class NotificationsViewModel: ObservableObject {
                         if var notification = try? document.data(as: Notification.self) {
                             // Fetch the user from the uid
                             notification.user = try await UserCache.shared.getUser(withId: notification.uid)
+                            print("DEBUG: User on notification: \(String(describing: notification.user?.name))")
                             notifications.append(notification)
                             group.leave()
                         } else {
@@ -106,15 +107,28 @@ class NotificationsViewModel: ObservableObject {
     
     
     static func acceptFriendRequest(notification: Notification, completion: @escaping() -> Void) {
-        UserService.acceptFriendRequest(uid: notification.uid, notificationId: notification.id) { _ in
-            guard var user = notification.user else { return }
-            user.relationshiptoUser = .friends
-            self.cacheUser(user: user)
+        guard let notificationId = notification.id else { return }
+        
+        UserService.acceptFriendRequest(uid: notification.uid, notificationId: notificationId) { error in
+            if let error = error {
+                print("DEBUG: Error accepting friend request. \(error.localizedDescription)")
+            }
             
-            NotificationsViewModel.uploadNotifications(toUid: notification.uid, type: .acceptFriend)
-            HapticManager.playLightImpact()
-            
-            completion()
+            Task {
+                do {
+                    var user = try await UserCache.shared.getUser(withId: notification.uid)
+                    
+                    user.relationshiptoUser = .friends
+                    self.cacheUser(user: user)
+                    
+                    self.uploadNotifications(toUid: notification.uid, type: .acceptFriend)
+                    HapticManager.playLightImpact()
+                    
+                    completion()
+                } catch {
+                    print("DEBUG: Error getting user for accepting friend request.")
+                }
+            }
         }
     }
     

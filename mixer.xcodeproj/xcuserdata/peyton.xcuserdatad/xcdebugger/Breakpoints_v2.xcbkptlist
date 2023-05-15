@@ -3,4 +3,22 @@
    uuid = "42719F80-8C3F-44D2-8EA4-E113CECA94F7"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "F9EA809E-6BF5-4EBD-91DC-DC71064CA507"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../../../../../var/folders/1p/g4mhxc2s7xn818tngv80yp5h0000gn/T/xcode/scm/mixer-app/8ed6dfe22746d1c6cee4925390284dc16039f5c8/mixer/View/Events/EventDetail/EventDetailView.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "body"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

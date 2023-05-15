@@ -63,7 +63,7 @@ struct ProfileView: View {
                                 
                                 Spacer()
                                 
-                                if let relationship = viewModel.user.relationshiptoUser {
+                                if let _ = viewModel.user.relationshiptoUser {
                                     ProfileRelationButtons(viewModel: viewModel,
                                                            friendRequestSent: $friendRequestSent)
                                 }
@@ -93,14 +93,57 @@ struct ProfileView: View {
                 
                 ProfileInfo(user: $viewModel.user, viewModel: viewModel, mutuals: viewModel.mutuals)
                 
-                details
-                
-                //MARK: Profile event list (debug report:
-                //                EventsSection(viewModel: viewModel,
-                //                              showEventView: $showEventView,
-                //                              isFriends: $isFriends,
-                //                              namespace: namespace,
-                //                              selectedEvent: $selectedEvent)
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("About")
+                        .font(.title)
+                        .bold()
+                    
+                    VStack(alignment: .leading) {
+                        HStack {
+                            DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus.rawValue)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                            
+                            Spacer()
+                            
+                            if viewModel.user.isCurrentUser {
+                                Menu("Change") {
+                                    ForEach(RelationshipStatus.allCases, id: \.self) { status in
+                                        Button(status.rawValue) {
+                                            viewModel.relationshipStatus = status
+                                            viewModel.save(for: .relationship)
+                                        }
+                                    }
+                                }
+                                .accentColor(.mixerIndigo)
+                            }
+                        }
+                        
+                        HStack {
+                            DetailRow(image: "briefcase", text: viewModel.major.rawValue)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                            
+                            Spacer()
+                            
+                            if viewModel.user.isCurrentUser {
+                                Menu("Change") {
+                                    ForEach(StudentMajor.allCases, id: \.self) { major in
+                                        Button(major.rawValue) {
+                                            viewModel.major = major
+                                            viewModel.save(for: .major)
+                                        }
+                                    }
+                                }
+                                .accentColor(.mixerIndigo)
+                            }
+                        }
+                    }
+                    .fontWeight(.medium)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal)
+                .padding(.top, 16)
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
@@ -120,9 +163,6 @@ struct ProfileView: View {
                         }
                 }
             }
-            //            .fullScreenCover(isPresented: $viewModel.showEventView) {
-            //                EventInfoView(parentViewModel: ExplorePageViewModel(), tabBarVisibility: $tabBarVisibility, event: eventManager.selectedEvent!, coordinates: CLLocationCoordinate2D(latitude: 40, longitude: 50), namespace: namespace)
-            //            }
             
             Color.mixerSecondaryBackground.opacity(0.6)
                 .backgroundBlur(radius: 5, opaque: true)
@@ -208,16 +248,9 @@ fileprivate struct ProfileRelationButtons: View {
                                 .stroke()
                         }
                 case .receivedRequest:
-                    Text("Add Friend")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
-                        .background {
-                            Capsule()
-                                .stroke()
-                        }
+                    Text("")
                 case .none:
-                    Text("N/A")
+                    Text("")
                 }
             }
             .buttonStyle(.plain)
@@ -348,22 +381,6 @@ fileprivate struct ProfileInfo: View {
                 .frame(maxHeight: 60)
             }
             
-//            if viewModel.user.relationshiptoUser == .receivedRequest {
-//                Button {
-//                    viewModel.cancelFriendRequest()
-//                } label: {
-//                    Image(systemName: "xmark")
-//                        .foregroundColor(.red)
-//                        .font(.footnote)
-//                        .fontWeight(.semibold)
-//                        .padding(10)
-//                        .background {
-//                            Capsule()
-//                                .stroke(lineWidth: 1.3)
-//                        }
-//                }
-//            }
-            
             if let bio = user.bio {
                 Text(bio)
                     .foregroundColor(.white.opacity(0.9))
@@ -410,63 +427,6 @@ fileprivate struct EventsSection: View {
             }
         }
         .padding(.bottom, 120)
-    }
-}
-
-extension ProfileView {
-    var details: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("About")
-                .font(.title)
-                .bold()
-            
-            VStack(alignment: .leading) {
-                HStack {
-                    DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus.rawValue)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                    
-                    Spacer()
-                    
-                    if viewModel.user.isCurrentUser {
-                        Menu("Change") {
-                            ForEach(RelationshipStatus.allCases, id: \.self) { status in
-                                Button(status.rawValue) {
-                                    viewModel.relationshipStatus = status
-                                    viewModel.save(for: .relationship)
-                                }
-                            }
-                        }
-                        .accentColor(.mixerIndigo)
-                    }
-                }
-                
-                HStack {
-                    DetailRow(image: "briefcase", text: viewModel.major.rawValue)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                    
-                    Spacer()
-                    
-                    if viewModel.user.isCurrentUser {
-                        Menu("Change") {
-                            ForEach(StudentMajor.allCases, id: \.self) { major in
-                                Button(major.rawValue) {
-                                    viewModel.major = major
-                                    viewModel.save(for: .major)
-                                }
-                            }
-                        }
-                        .accentColor(.mixerIndigo)
-                    }
-                }
-            }
-            .fontWeight(.medium)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal)
-        .padding(.top, 16)
-        
     }
 }
 

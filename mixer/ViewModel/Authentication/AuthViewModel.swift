@@ -323,9 +323,9 @@ class AuthViewModel: ObservableObject {
                 return
             }
             print("DEBUG: ✅ Successfully registered user ... ")
-            //MARK: Peyton - Add the displayName to firebase properly (set it to equal the name upon creating a user)
+
             let data = ["name": self.name,
-                        "displayName" : self.displayName,
+                        "displayName": self.name,
                         "email": self.email.lowercased(),
                         "profileImageUrl": imageUrl,
                         "bio": self.bio,

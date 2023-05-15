@@ -143,6 +143,7 @@ class ProfileViewModel: ObservableObject {
         
         UserService.getUserRelationship(uid: uid) { relation in
             self.user.relationshiptoUser = relation
+            print("DEBUG: relation to user. \(relation)")
         }
     }
     

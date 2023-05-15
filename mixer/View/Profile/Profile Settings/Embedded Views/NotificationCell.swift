@@ -44,8 +44,11 @@ struct NotificationCell: View {
                 HStack(alignment: .center, spacing: 10) {
                     ActionButton(text: "Accept", color: Color.mixerIndigo) {
                         NotificationsViewModel.acceptFriendRequest(notification: notification) {
-                            notification.type = .acceptFriend
-                            notification.hasBeenSeen = true
+                            DispatchQueue.main.async {
+                                print("DEBUG: Accept friend request button pressed!")
+                                notification.type = .acceptFriend
+                                notification.hasBeenSeen = true
+                            }
                         }
                     }
                     
