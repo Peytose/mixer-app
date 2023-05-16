@@ -95,8 +95,7 @@ struct ProfileView: View {
                 
                 VStack(alignment: .leading, spacing: 12) {
                     Text("About")
-                        .font(.title)
-                        .bold()
+                        .heading()
                     
                     VStack(alignment: .leading) {
                         HStack {
@@ -308,6 +307,7 @@ fileprivate struct ProfileInfo: View {
                                 Text("\(age)")
                                     .font(.title)
                                     .fontWeight(.light)
+                                
                             }
                         }
                         
@@ -334,6 +334,7 @@ fileprivate struct ProfileInfo: View {
                             Text(university)
                                 .foregroundColor(.secondary)
                                 .font(.body)
+                                .subheading3(foregroundColor: .secondary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.75)
                         }

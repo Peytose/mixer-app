@@ -36,7 +36,7 @@ struct HostMapAnnotation: View {
                             }
                         }
                 }
-                .opacity(host.hasCurrentEvent ?? false ? 1.0 : 0.4)
+                .opacity(host.hasCurrentEvent ?? false ? 1.0 : 0.5)
             
             Text(host.name)
                 .font(.caption)

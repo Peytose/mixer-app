@@ -140,6 +140,7 @@
 		A68DA9FB2A12BE6C0069A5E7 /* Text+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68DA9FA2A12BE6C0069A5E7 /* Text+Ext.swift */; };
 		A68DA9FF2A12C20E0069A5E7 /* TextField+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68DA9FE2A12C20E0069A5E7 /* TextField+Ext.swift */; };
 		A68DAA012A12C22F0069A5E7 /* Frame+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68DAA002A12C22F0069A5E7 /* Frame+Ext.swift */; };
+		A68DAA032A12DFDB0069A5E7 /* Button+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A68DAA022A12DFDB0069A5E7 /* Button+Ext.swift */; };
 		A6A731C12974FA3A008DAC17 /* CustomStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6A731C02974FA3A008DAC17 /* CustomStackView.swift */; };
 		A6AB6C7C2960E20F007E9BF0 /* PinchZoomImageModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AB6C7B2960E20F007E9BF0 /* PinchZoomImageModifier.swift */; };
 		A6AB6C7E2960EFE7007E9BF0 /* CustomPopUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6AB6C7D2960EFE7007E9BF0 /* CustomPopUpView.swift */; };
@@ -296,6 +297,7 @@
 		A68DA9FA2A12BE6C0069A5E7 /* Text+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text+Ext.swift"; sourceTree = "<group>"; };
 		A68DA9FE2A12C20E0069A5E7 /* TextField+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TextField+Ext.swift"; sourceTree = "<group>"; };
 		A68DAA002A12C22F0069A5E7 /* Frame+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Frame+Ext.swift"; sourceTree = "<group>"; };
+		A68DAA022A12DFDB0069A5E7 /* Button+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Button+Ext.swift"; sourceTree = "<group>"; };
 		A6A731C02974FA3A008DAC17 /* CustomStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomStackView.swift; sourceTree = "<group>"; };
 		A6AB6C7B2960E20F007E9BF0 /* PinchZoomImageModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinchZoomImageModifier.swift; sourceTree = "<group>"; };
 		A6AB6C7D2960EFE7007E9BF0 /* CustomPopUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomPopUpView.swift; sourceTree = "<group>"; };
@@ -859,6 +861,7 @@
 				A68DA9FA2A12BE6C0069A5E7 /* Text+Ext.swift */,
 				A68DA9FE2A12C20E0069A5E7 /* TextField+Ext.swift */,
 				A68DAA002A12C22F0069A5E7 /* Frame+Ext.swift */,
+				A68DAA022A12DFDB0069A5E7 /* Button+Ext.swift */,
 			);
 			path = "View Extensions";
 			sourceTree = "<group>";
@@ -1065,6 +1068,7 @@
 				9C58B3C429C8EB270024CB7E /* XDismissButton.swift in Sources */,
 				A62BE1A429CA4F250052D34F /* QRCodeRoundedCornerView.swift in Sources */,
 				9C93319D29255D8D0079E039 /* AlertItem.swift in Sources */,
+				A68DAA032A12DFDB0069A5E7 /* Button+Ext.swift in Sources */,
 				9C567A98292FFF1800EA5FCB /* String+Ext.swift in Sources */,
 				A6B9E67A2953B95E009C936E /* Animation+Ext.swift in Sources */,
 				9C4B0E4F298241CF00A9D963 /* HostService.swift in Sources */,

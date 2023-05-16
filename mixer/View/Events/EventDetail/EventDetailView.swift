@@ -233,7 +233,7 @@ struct EventDetailView: View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 6) {
                 Text("Description")
-                    .font(.title).bold()
+                    .heading()
                 
                 Text(viewModel.event.description)
                     .font(.body)
@@ -253,7 +253,8 @@ struct EventDetailView: View {
             
             VStack(alignment: .leading, spacing: 12) {
                 Text("Event details")
-                    .font(.title).bold()
+                    .heading()
+                
                 HStack {
                     if let amenities = viewModel.event.amenities {
                         if amenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {

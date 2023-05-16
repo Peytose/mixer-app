@@ -25,14 +25,11 @@ struct MoreProfileOptions: View {
                 
                 VStack {
                     Text(user.name)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.mainFont)
+                        .subheading2()
                     
                     Text("@\(user.username)")
                         .foregroundColor(.secondary)
                 }
-                
             }
             .frame(maxWidth: .infinity,
                    maxHeight: .infinity,
@@ -75,17 +72,10 @@ struct MoreProfileOptions: View {
             .padding(.bottom, 180)
         }
         .overlay(alignment: .topTrailing) {
-            Image(systemName: "xmark")
-                .font(.title2)
-                .fontWeight(.medium)
-                .foregroundColor(.white)
-                .padding(20)
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-                        action()
-                    }
-                }
+            Button(action: buttonAction, label: {
+                Image(systemName: "xmark")
+            })
+            .buttonStyle(SmallButtonStyle())
         }
         .alert("Block \(user.name)?", isPresented: $showBlockAlert, actions: {
             Button("Cancel", role: .cancel, action: {})
@@ -93,6 +83,12 @@ struct MoreProfileOptions: View {
         }, message: {
             Text("\(user.name) will no longer be able to see your profile, activity, or follow you. ")
         })
+    }
+    
+    func buttonAction() {
+        withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+            action()
+        }
     }
 }
 

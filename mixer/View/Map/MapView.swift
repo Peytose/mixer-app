@@ -108,7 +108,7 @@ struct MapView: View {
         }
         .overlay(alignment: .topTrailing) {
             if let isHost = AuthViewModel.shared.currentUser?.isHost {
-                MapIconButton(icon: "plus", hasLargerSize: isHost) { isShowingCreateEventView.toggle() }
+                MapIconButton(icon: "plus") { isShowingCreateEventView.toggle() }
                     .padding(.trailing)
                     .padding(.top)
             }
@@ -155,7 +155,6 @@ struct MapView_Previews: PreviewProvider {
 
 fileprivate struct MapIconButton: View {
     let icon: String
-    let hasLargerSize: Bool
     let action: () -> Void
     
     var body: some View {
@@ -165,14 +164,15 @@ fileprivate struct MapIconButton: View {
             action()
         } label: {
             Image(systemName: icon)
-                .font(hasLargerSize ? .title2 : .title3)
+                .font(.title2)
                 .fontWeight(.medium)
                 .foregroundColor(Color.mainFont)
-                .padding(hasLargerSize ? 15 : 10)
+                .padding(15)
                 .background(Color.mixerPurpleGradient)
                 .clipShape(Circle())
                 .shadow(radius: 5, y: 8)
         }
+        .buttonStyle(.plain)
     }
 }
 
