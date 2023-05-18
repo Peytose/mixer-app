@@ -10,7 +10,6 @@ import MapKit
 import MapItemPicker
 
 struct EventLocationAndDates: View {
-    @StateObject private var handler = AddressSearchHandler()
     @Binding var startDate: Date
     @Binding var endDate: Date
     @Binding var address: String
@@ -18,22 +17,14 @@ struct EventLocationAndDates: View {
     @Binding var hasPublicAddress: Bool
     @Binding var coordinate: CLLocationCoordinate2D?
     
-    @State private var showSearch = true
-    @FocusState private var addressSearchIsFocused: Bool
-    @State private var useDefaultAddress = false
-    @State private var selectedLocation: IdentifiableLocation?
-    @State private var PickerAddress: String = "528 Beacon St"
-    @State var showingPicker = false
     let action: () -> Void
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 40) {
+            VStack(alignment: .leading, spacing: 35) {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("When")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                        .textFieldSmallTitle()
                     
                     VStack(spacing: 13) {
                         // Start Date Selection : now - 3 months
@@ -41,31 +32,14 @@ struct EventLocationAndDates: View {
                                             date: $startDate,
                                             range: Date.now...Date.now.addingTimeInterval(7889400))
                         
-                        VStack(alignment: .leading) {
-                            // End Date Selection : 1 hour - 25 hours
-                            CustomDateSelection(text: "End date",
-                                                date: $endDate,
-                                                range: startDate.addingTimeInterval(3600)...startDate.addingTimeInterval(86460))
-                            
-                            // More info about end date.
-                            HStack(alignment: .center) {
-                                Image(systemName: "info.circle")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundColor(.secondary)
-                                    .frame(width: 20, height: 20)
-                                
-                                Text("What if I don't have an end time?")
-                                    .font(.body)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
+                        // End Date Selection : 1 hour - 25 hours
+                        CustomDateSelection(text: "End date",
+                                            date: $endDate,
+                                            range: startDate.addingTimeInterval(3600)...startDate.addingTimeInterval(86460))
                     }
                 }
                 
-                VStack(alignment: .leading, spacing: 20) {
-                    AddressPickerView(selectedCoordinate: $coordinate, hasPublicAddress: $hasPublicAddress, publicAddress: $publicAddress, address: $address)
-                }
+                AddressPickerView(selectedCoordinate: $coordinate, hasPublicAddress: $hasPublicAddress, publicAddress: $publicAddress, address: $address)
             }
             .padding()
             .padding(.bottom, 80)
@@ -81,16 +55,9 @@ struct EventLocationAndDates: View {
             } else {
                 CreateEventNextButton(text: "Continue", action: action, isActive: true)
             }
-    }
+        }
     }
 }
-
-//struct EventLocationAndDates_Previews: PreviewProvider {
-//    static var previews: some View {
-//        EventLocationAndDates(startDate: .constant(Date.now), endDate: .constant(Date().addingTimeInterval(3700)), address: .constant(""), publicAddress: .constant(""), usePublicAddress: .constant(false)) {}
-//            .preferredColorScheme(.dark)
-//    }
-//}
 
 fileprivate struct CustomDateSelection: View {
     let text: String
@@ -116,25 +83,26 @@ fileprivate struct CustomDateSelection: View {
         .padding()
         .background(alignment: .center) {
             RoundedRectangle(cornerRadius: 9)
-                .stroke(lineWidth: 3)
+                .stroke(lineWidth: 1)
                 .foregroundColor(.mixerIndigo)
         }
     }
 }
 
 struct AddressPickerView: View {
-    @State private var selectedMapItem: MKMapItem?
     @Binding var selectedCoordinate: CLLocationCoordinate2D?
-    @State private var showingPicker = false
     @Binding var hasPublicAddress: Bool
     @Binding var publicAddress: String
     @Binding var address: String
+    
+    @State private var selectedMapItem: MKMapItem?
+    @State private var showingPicker = false
+    @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 42.3551, longitude: -71.0839), span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04))
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Where")
-                .font(.title)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
+                .textFieldSmallTitle()
             
             Text(selectedMapItem?.placemark.title ?? "Tap to choose address")
                 .foregroundColor(Color.mainFont)
@@ -144,16 +112,16 @@ struct AddressPickerView: View {
                 .padding(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
                 .background {
                     RoundedRectangle(cornerRadius: 8)
-                        .stroke(lineWidth: 3)
+                        .stroke(lineWidth: 1)
                         .foregroundColor(Color.mixerIndigo)
                 }
+                .contentShape(Rectangle())
                 .onTapGesture {
                     showingPicker = true
                 }
             
             Text("Shown only to approved guests")
-                .font(.footnote)
-                .foregroundColor(.secondary)
+                .textFieldFootnote()
             
             Toggle("Set public address", isOn: $hasPublicAddress.animation())
                 .font(.body)
@@ -174,7 +142,7 @@ struct AddressPickerView: View {
                 MapMarker(coordinate: item.coordinate)
             }
                 .frame(height: 300)
-                .cornerRadius(9)
+                .cornerRadius(8)
         }
         .mapItemPicker(isPresented: $showingPicker) { item in
             if let coordinate = item?.placemark.coordinate {
@@ -185,8 +153,6 @@ struct AddressPickerView: View {
             }
         }
     }
-
-    @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 42.3551, longitude: -71.0839), span: MKCoordinateSpan(latitudeDelta: 0.04, longitudeDelta: 0.04))
 }
 
 struct AnnotationItem: Identifiable {

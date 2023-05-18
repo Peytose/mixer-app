@@ -100,14 +100,6 @@ struct AddToGuestlistView: View {
                     
                     Section {
                         Stepper("Age: \(age == 17 ? "N/A" : String(age))", value: $age, in: 17...100)
-                        
-//                        Picker("Are you adding the guest to the guestlist or checking them in?", selection: $status) {
-//                            ForEach(GuestStatus.allCases, id: \.self) { option in
-//                                Text(option == GuestStatus.invited ? "Guestlist" : "Check-in")
-//                                    .tag(option)
-//                            }
-//                        }
-//                        .pickerStyle(SegmentedPickerStyle())
                     } header: {
                         Text("Optional Details")
                             .fontWeight(.semibold)

@@ -12,13 +12,11 @@ struct CreateEventFlow: View {
     @Binding var isShowingCreateEventView: Bool
     @State private var showArrow = false
     var namespace: Namespace.ID
-
+    
     var body: some View {
         ZStack {
             Color.mixerBackground.ignoresSafeArea()
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
+                .onTapGesture { self.hideKeyboard() }
             
             TabView(selection: $viewModel.active) {
                 BasicEventInfo(selectedImage: $viewModel.image,
@@ -27,18 +25,17 @@ struct CreateEventFlow: View {
                                notes: $viewModel.notes,
                                hasNote: $viewModel.hasNote,
                                selectedType: $viewModel.type) { viewModel.next(); self.hideKeyboard() }
-                               .tag(CreateEventViewModel.Screen.basicInfo)
+                    .tag(CreateEventViewModel.Screen.basicInfo)
                 
                 EventLocationAndDates(startDate: $viewModel.startDate,
                                       endDate: $viewModel.endDate,
                                       address: $viewModel.address,
                                       publicAddress: $viewModel.publicAddress,
-                                      hasPublicAddress: $viewModel.eventOptions.binding(for: EventOption.hasPublicAddress.rawValue), coordinate: $viewModel.previewCoordinates) { viewModel.next(); self.hideKeyboard() }
-                .tag(CreateEventViewModel.Screen.locationAndDates)
+                                      hasPublicAddress: $viewModel.eventOptions.binding(for: EventOption.hasPublicAddress.rawValue),
+                                      coordinate: $viewModel.previewCoordinates) { viewModel.next(); self.hideKeyboard() }
+                    .tag(CreateEventViewModel.Screen.locationAndDates)
                 
-                EventGuestsAndInvitations(selectedVisibility: $viewModel.visibility,
-                                          selectedInvitePreferrence: $viewModel.privacy,
-                                          checkInMethod: $viewModel.checkInMethod,
+                EventGuestsAndInvitations(checkInMethod: $viewModel.checkInMethod,
                                           guestLimit: $viewModel.guestLimit,
                                           guestInviteLimit: $viewModel.guestInviteLimit,
                                           memberInviteLimit: $viewModel.memberInviteLimit,
@@ -55,12 +52,13 @@ struct CreateEventFlow: View {
                                           action: viewModel.next)
                 .tag(CreateEventViewModel.Screen.guestsAndInvitations)
                 
-                
-                EventAmenitiesAndCost(selectedAmenities: $viewModel.selectedAmenities, bathroomCount: $viewModel.bathroomCount, viewModel: viewModel,
+                EventAmenitiesAndCost(viewModel: viewModel,
+                                      selectedAmenities: $viewModel.selectedAmenities,
+                                      bathroomCount: $viewModel.bathroomCount,
                                       action: viewModel.next)
                 .tag(CreateEventViewModel.Screen.costAndAmenities)
                 
-                ReviewCreatedEventView(viewModel: viewModel, namespace: namespace) {viewModel.createEvent(); isShowingCreateEventView = false }
+                ReviewCreatedEventView(viewModel: viewModel, namespace: namespace) { viewModel.createEvent(); isShowingCreateEventView = false }
                     .tag(CreateEventViewModel.Screen.review)
             }
             .animation(.easeInOut, value: viewModel.active)
@@ -71,20 +69,14 @@ struct CreateEventFlow: View {
             HStack(alignment: .center) {
                 Button(action: showArrow ? viewModel.previous : { isShowingCreateEventView = false } ) {
                     Image(systemName: showArrow ? "chevron.backward" : "xmark")
-                        .font(.title)
-                        .fontWeight(.medium)
-                        .foregroundColor(.white)
-                        .padding(20)
-                        .contentShape(Rectangle())
                 }
+                .buttonStyle(SmallButtonStyle())
                 .frame(width: 50, height: 50)
                 
                 Spacer()
                 
                 Text(viewModel.active.ScreenTitle)
-                    .font(.title)
-                    .bold()
-                    .foregroundColor(.white)
+                    .heading2()
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
                 

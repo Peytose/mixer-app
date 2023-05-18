@@ -100,8 +100,6 @@ struct ProfileView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus.rawValue)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
                             
                             Spacer()
                             
@@ -114,14 +112,12 @@ struct ProfileView: View {
                                         }
                                     }
                                 }
-                                .accentColor(.mixerIndigo)
+                                .menuTextStyle()
                             }
                         }
                         
                         HStack {
                             DetailRow(image: "briefcase", text: viewModel.major.rawValue)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
                             
                             Spacer()
                             
@@ -134,7 +130,7 @@ struct ProfileView: View {
                                         }
                                     }
                                 }
-                                .accentColor(.mixerIndigo)
+                                .menuTextStyle()
                             }
                         }
                     }
@@ -332,9 +328,8 @@ fileprivate struct ProfileInfo: View {
                                 .frame(width: 15, height: 15)
                             
                             Text(university)
-                                .foregroundColor(.secondary)
                                 .font(.body)
-                                .subheading3(foregroundColor: .secondary)
+                                .foregroundColor(.secondary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.75)
                         }

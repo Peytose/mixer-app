@@ -134,40 +134,33 @@ struct EventPreviewView: View {
     
     var content: some View {
         VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text("Description")
-                    .font(.title).bold()
+                    .heading()
                 
                 Text(viewModel.description)
-                    .font(.body)
                     .foregroundColor(.secondary)
-                    .lineLimit(4)
             }
             
             if viewModel.hasNote && !viewModel.notes.isEmpty {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Notes for guest")
-                        .font(.title).bold()
+                        .heading()
                     
                     Text(viewModel.notes)
-                        .font(.body)
                         .foregroundColor(.secondary)
-                        .lineLimit(4)
                 }
             }
             
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text("Event details")
-                    .font(.title)
-                    .bold()
+                    .heading()
                 
                 HStack {
                     if viewModel.selectedAmenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
                         DetailRow(image: "drop.fill", text: "Wet Event")
-                            .fontWeight(.medium)
                     } else {
                         DetailRow(image: "drop.fill", text: "Dry Event")
-                            .fontWeight(.medium)
                     }
                     
                     InfoButton(action: { showInfoAlert.toggle() })
@@ -178,10 +171,8 @@ struct EventPreviewView: View {
                 HStack {
                     if viewModel.eventOptions[EventOption.isInviteOnly.rawValue] ?? false {
                         DetailRow(image: "list.clipboard.fill", text: "Invite Only Event")
-                            .fontWeight(.medium)
                     } else {
                         DetailRow(image: "list.clipboard.fill", text: "Open Event")
-                            .fontWeight(.medium)
                     }
                 }
                 

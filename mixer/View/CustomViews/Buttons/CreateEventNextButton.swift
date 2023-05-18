@@ -18,10 +18,10 @@ struct CreateEventNextButton: View {
         Button(action: action) {
             if isActive {
                 Capsule()
-                    .fill(Color.mixerIndigo)
-                    .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
-                    .shadow(radius: 20, x: -8, y: -8)
-                    .shadow(radius: 20, x: 8, y: 8)
+                    .fill(Color.mixerIndigo.gradient.opacity(0.8))
+                    .longButtonFrame()
+                    .shadow(color: Color.mixerIndigo.opacity(0.05), radius: 20, x: -8, y: -8)
+                    .shadow(color: Color.mixerIndigo.opacity(0.05), radius: 20, x: 8, y: 8)
                     .overlay {
                         Text(text)
                             .font(.body.weight(.medium))
@@ -32,9 +32,8 @@ struct CreateEventNextButton: View {
             } else {
                 Capsule()
                     .fill(Color.mixerSecondaryBackground)
-                    .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
+                    .longButtonFrame()
                     .shadow(radius: 10, x: 0, y: 8)
-//                    .shadow(radius: 20, x: 8, y: 8)
                     .overlay {
                         Text(text)
                             .font(.body.weight(.medium))
@@ -44,5 +43,11 @@ struct CreateEventNextButton: View {
                     .padding(.bottom, 20)
             }
         }
+    }
+}
+
+struct CreateEventNextButton_Previews: PreviewProvider {
+    static var previews: some View {
+        CreateEventNextButton(text: "Continue", action: {}, isActive: true)
     }
 }

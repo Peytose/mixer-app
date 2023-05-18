@@ -105,7 +105,7 @@ struct AlertContext {
                                                               dismissButton: .default(Text("Ok")))
     
     static let checkInMethodInfo                  = AlertItem(title: Text("Check-in Method"),
-                                                              message: Text("Manual check-in allows you to handle check-in however you want. QR Code check-in allows you to quickly scan guests in and check if they are on the guest list."),
+                                                              message: Text("Manual check-in allows you to handle check-in manually in the app through swipe actions or buttons. QR Code check-in allows you to quickly scan guests in and check if they are on the guest list. If you want to handle check on your own then choose out-of-app"),
                                                               dismissButton: .default(Text("Ok")))
     
     static let guestlistInfo                      = AlertItem(title: Text("Use guestlist?"),

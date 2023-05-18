@@ -12,4 +12,10 @@ extension View {
         self
             .frame(width: DeviceTypes.ScreenSize.width * 0.9)
     }
+    
+    func longButtonFrame() -> some View {
+        self
+            .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
+    }
+
 }

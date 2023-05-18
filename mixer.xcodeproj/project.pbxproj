@@ -172,6 +172,7 @@
 		A6CD2C8F297B482A00AA0B98 /* MapItemPicker in Frameworks */ = {isa = PBXBuildFile; productRef = A6CD2C8E297B482A00AA0B98 /* MapItemPicker */; };
 		A6D6FC8129DF595700BFCF52 /* MailViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */; };
 		A6F003AA29807646007E8CCA /* FeaturedHostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F003A929807646007E8CCA /* FeaturedHostCell.swift */; };
+		A6F2142E2A145678006886E6 /* InfoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F2142D2A145678006886E6 /* InfoButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -327,6 +328,7 @@
 		A6CD2C83297B201C00AA0B98 /* PlaceHolderColorModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceHolderColorModifier.swift; sourceTree = "<group>"; };
 		A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailViewModal.swift; sourceTree = "<group>"; };
 		A6F003A929807646007E8CCA /* FeaturedHostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedHostCell.swift; sourceTree = "<group>"; };
+		A6F2142D2A145678006886E6 /* InfoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -754,6 +756,7 @@
 				9C58B3BE29C8EB270024CB7E /* NextButton.swift */,
 				9C58B3C029C8EB270024CB7E /* XDismissButton.swift */,
 				A66E671F29DF7ED500AB355E /* CreateEventNextButton.swift */,
+				A6F2142D2A145678006886E6 /* InfoButton.swift */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -1071,6 +1074,7 @@
 				A68DAA032A12DFDB0069A5E7 /* Button+Ext.swift in Sources */,
 				9C567A98292FFF1800EA5FCB /* String+Ext.swift in Sources */,
 				A6B9E67A2953B95E009C936E /* Animation+Ext.swift in Sources */,
+				A6F2142E2A145678006886E6 /* InfoButton.swift in Sources */,
 				9C4B0E4F298241CF00A9D963 /* HostService.swift in Sources */,
 				9C05C1CC2985C04E00841100 /* GeometryProxy+Ext.swift in Sources */,
 				9C3E2CA729EE767E00A74D05 /* AddToGuestlistView.swift in Sources */,

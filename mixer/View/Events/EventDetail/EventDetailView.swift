@@ -26,7 +26,7 @@ struct EventDetailView: View {
     @State var removedEvent             = false
     
     var namespace: Namespace.ID
-
+    
     var body: some View {
         ZStack {
             ScrollView(showsIndicators: false) {
@@ -119,30 +119,28 @@ struct EventDetailView: View {
                                         }
                                     }
                                 }
-                                
-//                                if amenities.count != amenities.filter({ $0.category == amenities.first?.category }).count {
-                                    HStack {
-                                        Spacer()
-                                        Button {
-                                            withAnimation(.spring(dampingFraction: 0.8)) {
-                                                showAllAmenities.toggle()
-                                            }
-                                        } label: {
-                                            ZStack {
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .foregroundColor(.DesignCodeWhite)
-                                                    .frame(width: 350, height: 45)
-                                                    .overlay {
-                                                        Text(showAllAmenities ? "Show less" : "Show all \(amenities.count) amenities")
-                                                            .font(.body)
-                                                            .fontWeight(.medium)
-                                                            .foregroundColor(.black)
-                                                    }
-                                            }
+                                HStack {
+                                    Spacer()
+                                    Button {
+                                        withAnimation(.spring(dampingFraction: 0.8)) {
+                                            showAllAmenities.toggle()
                                         }
-                                        Spacer()
+                                    } label: {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .foregroundColor(.DesignCodeWhite)
+                                                .frame(width: 350, height: 45)
+                                                .overlay {
+                                                    Text(showAllAmenities ? "Show less" : "Show all \(amenities.count) amenities")
+                                                        .font(.body)
+                                                        .fontWeight(.medium)
+                                                        .foregroundColor(.black)
+                                                }
+                                        }
                                     }
-//                                }
+                                    Spacer()
+                                }
+                                //                                }
                             }
                         }
                     }
@@ -157,11 +155,10 @@ struct EventDetailView: View {
                             InfoButton(action: { showInfoAlert2.toggle() })
                                 .alert("Location Details", isPresented: $showInfoAlert2, actions: {}, message: {Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location")})
                         }
-
+                        
                         if viewModel.event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false {
                             if let publicAddress = viewModel.event.publicAddress {
                                 DetailRow(image: "mappin.and.ellipse", text: publicAddress)
-                                    .fontWeight(.medium)
                             } else if let coords = viewModel.coordinates {
                                 VStack(alignment: .leading, spacing: 5) {
                                     MapSnapshotView(location: coords, event: viewModel.event)
@@ -174,7 +171,6 @@ struct EventDetailView: View {
                                 }
                             } else {
                                 DetailRow(image: "mappin.and.ellipse", text: "Available when you are on the guest list")
-                                    .fontWeight(.medium)
                             }
                         } else {
                             if let coords = viewModel.coordinates {
@@ -231,27 +227,25 @@ struct EventDetailView: View {
     
     var content: some View {
         VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text("Description")
                     .heading()
                 
                 Text(viewModel.event.description)
-                    .font(.body)
                     .foregroundColor(.secondary)
             }
             
             if let notes = viewModel.event.notes {
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Notes for guest")
-                        .font(.title).bold()
+                        .heading()
                     
                     Text(notes)
-                        .font(.body)
                         .foregroundColor(.secondary)
                 }
             }
             
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text("Event details")
                     .heading()
                 
@@ -259,10 +253,8 @@ struct EventDetailView: View {
                     if let amenities = viewModel.event.amenities {
                         if amenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
                             DetailRow(image: "drop.fill", text: "Wet Event")
-                                .fontWeight(.medium)
                         } else {
                             DetailRow(image: "drop.fill", text: "Dry Event")
-                                .fontWeight(.medium)
                         }
                     }
                     
@@ -273,10 +265,8 @@ struct EventDetailView: View {
                 HStack {
                     if viewModel.event.eventOptions[EventOption.isInviteOnly.rawValue] ?? false {
                         DetailRow(image: "list.clipboard.fill", text: "Invite Only Event")
-                            .fontWeight(.medium)
                     } else {
                         DetailRow(image: "list.clipboard.fill", text: "Open Event")
-                            .fontWeight(.medium)
                     }
                     
                     InfoButton(action: { showInfoAlert3.toggle() })

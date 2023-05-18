@@ -19,7 +19,7 @@ enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
         switch self {
         case .qrCode: return "qrcode"
         case .manual: return "pencil.line"
-        case .outOfApp: return "square.and.arrow.up"
+        case .outOfApp: return ""
         }
     }
     
@@ -34,7 +34,6 @@ enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
         }
     }
 }
-
 
 final class CreateEventViewModel: ObservableObject {
     @Published var title: String                       = ""
@@ -51,8 +50,6 @@ final class CreateEventViewModel: ObservableObject {
     @Published var publicAddress: String               = ""
     @Published var selectedAmenities: Set<EventAmenities> = []
     @Published var type: EventType                     = .party
-    @Published var privacy: InvitePreferrence          = .open
-    @Published var visibility: VisibilityType          = ._public
     @Published var eventOptions: [String: Bool]        = ["containsAlcohol": false,
                                                           "isInviteOnly": false,
                                                           "isPrivate": false,
@@ -73,32 +70,8 @@ final class CreateEventViewModel: ObservableObject {
     
     @Published var cost: Float?
     @Published var alcoholPresence: Bool?
-    @Published var bathroomCount: Int                   = 0
+    @Published var bathroomCount: Int                  = 0
     @Published var alertItem: AlertItem?
-    
-    enum InvitePreferrence: String, Codable, CaseIterable, IconRepresentable {
-        case open       = "Open"
-        case inviteOnly = "Invite-only"
-        
-        var icon: String {
-            switch self {
-            case .open: return "envelope.open"
-            case .inviteOnly: return "envelope"
-            }
-        }
-    }
-    
-    enum VisibilityType: String, Codable, CaseIterable, IconRepresentable {
-        case _public  = "Public"
-        case _private = "Private"
-
-        var icon: String {
-            switch self {
-            case ._public: return "globe.americas"
-            case ._private: return "lock"
-            }
-        }
-    }
     
     enum Screen: Int, Codable, CaseIterable {
         case basicInfo

@@ -8,15 +8,22 @@
 import SwiftUI
 
 extension Text {
-    //MARK: General Text
-    
-    //Headings
+    // MARK: General Text
+    // Headings
     func heading() -> some View {
         self
             .font(.title.weight(.bold))
+            .foregroundColor(.white)
+
     }
     
-    //Subheadings
+    func heading2() -> some View  {
+        self
+            .font(.title2.weight(.bold))
+            .foregroundColor(.white)
+    }
+    
+    // Subheadings
     func subheading() -> some View {
         self
             .font(.title2)
@@ -29,24 +36,19 @@ extension Text {
             .fontWeight(.semibold)
     }
     
-    func subheading3(foregroundColor: Color = .white) -> some View {
-        self
-            .font(.body)
-    }
     
     //MARK: Textfield Font Modifiers
-    
     // Titles
     func textFieldTitle() -> some View {
         self
             .font(.largeTitle.weight(.semibold))
-            .foregroundColor(.mainFont)
+            .foregroundColor(.white)
     }
     
     func textFieldSmallTitle() -> some View {
         self
-            .font(.title.weight(.semibold))
-            .foregroundColor(.mainFont)
+            .font(.title.weight(.bold))
+            .foregroundColor(.white)
     }
     
     // Notes
@@ -56,18 +58,25 @@ extension Text {
             .foregroundColor(.secondary)
     }
     
-    //Headers
+    // Headers
     func textFieldHeader() -> some View {
         self
             .font(.subheadline)
             .foregroundColor(.secondary)
     }
     
-    
-    //Footnotes
+    // Footnotes
     func textFieldFootnote() -> some View {
         self
             .font(.footnote)
             .foregroundColor(.secondary)
+    }
+}
+
+extension Menu {
+    func menuTextStyle() -> some View  {
+        self
+            .accentColor(.mixerIndigo)
+            .fontWeight(.medium)
     }
 }

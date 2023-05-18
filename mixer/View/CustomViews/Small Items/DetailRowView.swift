@@ -22,7 +22,8 @@ struct DetailRow: View {
             
             Text(text)
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
+                .minimumScaleFactor(0.8)
+                .fontWeight(.medium)
         }
     }
 }

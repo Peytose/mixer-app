@@ -187,8 +187,8 @@ fileprivate struct GuestlistButton: View {
         } label: {
             Capsule()
                 .fill(Color.mixerSecondaryBackground)
-                .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
-                .shadow(radius: 20, x: -8, y: -8)
+                .longButtonFrame()
+                 .shadow(radius: 20, x: -8, y: -8)
                 .shadow(radius: 20, x: 8, y: 8)
                 .overlay {
                     HStack {

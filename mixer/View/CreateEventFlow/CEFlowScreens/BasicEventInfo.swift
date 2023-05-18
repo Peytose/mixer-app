@@ -16,7 +16,7 @@ struct BasicEventInfo: View {
     @Binding var notes: String
     @Binding var hasNote: Bool
     @Binding var selectedType: EventType
-
+    
     let action: () -> Void
     
     enum FocusedField {
@@ -27,132 +27,16 @@ struct BasicEventInfo: View {
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 35) {
-                // MARK: Title
+            VStack(alignment: .leading, spacing: 16) {
+                //Event type menu
+                eventTypeRow
                 
-                HStack(spacing: 10) {
-                    Text(selectedType.rawValue)
-                        .font(.title).bold()
-                    
-                    Spacer()
-                    
-                    Menu("Change") {
-                        //    case rager    = "Rager"
-                        //    case darty    = "Darty"
-                        Button("Party") {
-                            setType(type: .party)
-                        }
-                        
-                        Button("Kickback") {
-                            setType(type: .kickback)
-                        }
-                        
-                        Button("Club Event") {
-                            setType(type: .club)
-                            
-                        }
-                        Button("School Event") {
-                            setType(type: .school)
-                        }
-                        Button("Mixer") {
-                            setType(type: .mixer)
-                        }
-                        Button("Rager") {
-                            setType(type: .rager)
-                        }
-                        Button("Darty") {
-                            setType(type: .darty)
-                        }
-                    }
-                    .accentColor(.mixerIndigo)
-                    .fontWeight(.medium)
-                }
-                .padding(.bottom, -17)
+                //Textfields section
+                textFields
                 
-                VStack(alignment: .leading, spacing: 5) {
-                    CreateEventTextField(input: $title,
-                                         title: "Title",
-                                         placeholder: "Choose something catchy!",
-                                         keyboard: .default,
-                                         toggleBool: .constant(false))
-                    .disableAutocorrection(true)
-                    .focused($focusedField, equals: .title)
-                    .autocorrectionDisabled()
-                    
-                    CharactersRemainView(currentCount: title.count,
-                                         limit: 50)
-                }
-                
-                // MARK: Description
-                VStack(alignment: .leading, spacing: 5) {
-                    CreateEventTextField(input: $description,
-                                         title: "Description",
-                                         placeholder: "Briefly describe your event",
-                                         keyboard: .default,
-                                         hasToggle: true,
-                                         toggleBool: $hasNote)
-                    .focused($focusedField, equals: .description)
-                    
-                    CharactersRemainView(currentCount: description.count,
-                                         limit: 150)
-                }
-                
-                // MARK: Notes
-                if hasNote {
-                    VStack(alignment: .leading, spacing: 5) {
-                        CreateEventTextField(input: $notes,
-                                             title: "Note for guests",
-                                             placeholder: "Add any additional notes/info",
-                                             keyboard: .default,
-                                             toggleBool: .constant(false))
-                            .focused($focusedField, equals: .notes)
-                        
-                        CharactersRemainView(currentCount: notes.count,
-                                             limit: 250)
-                    }
-                    .zIndex(2)
-                }
-                
-                // MARK: Flyer
-                VStack(alignment: .center) {
-                    Button { self.imagePickerPresented.toggle() } label: {
-                        if let image = image {
-                            image
-                                .resizable()
-                                .scaledToFit()
-                                .cornerRadius(12)
-                                .frame(width: 250, height: 250)
-                                .frame(maxWidth: .infinity, alignment: .center)
-                        } else {
-                            VStack {
-                                Text("Event Flyer")
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
-                                
-                                HStack {
-                                    Text("Select image")
-                                        .font(.body)
-                                        .foregroundColor(.secondary)
-                                    
-                                    Image(systemName: "hand.point.up")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .foregroundColor(.secondary)
-                                        .frame(width: 22, height: 22, alignment: .center)
-                                }
-                            }
-                            .frame(maxWidth: DeviceTypes.ScreenSize.width,
-                                   minHeight: DeviceTypes.ScreenSize.height / 5)
-                            .background(alignment: .center) {
-                                RoundedRectangle(cornerRadius: 9)
-                                    .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [10]))
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-                    }
-                    .onChange(of: selectedImage) { _ in loadImage() }
-                }
+                //Flyer section
+                flyerSection
+                    .padding(.top, 16)
             }
             .padding()
             .padding(.bottom, 80)
@@ -187,6 +71,125 @@ struct BasicEventInfo: View {
 }
 
 extension BasicEventInfo {
+    var eventTypeRow: some View {
+        HStack(spacing: 10) {
+            Text(selectedType.rawValue)
+                .heading()
+            
+            Spacer()
+            
+            Menu("Change") {
+                Button("Party") { setType(type: .party) }
+                
+                Button("Kickback") { setType(type: .kickback) }
+                
+                Button("Club Event") { setType(type: .club) }
+                
+                Button("School Event") { setType(type: .school) }
+                
+                Button("Mixer") { setType(type: .mixer) }
+                
+                Button("Rager") { setType(type: .rager) }
+                
+                Button("Darty") { setType(type: .darty) }
+            }
+            .menuTextStyle()
+        }
+        .padding(.bottom, 16)
+    }
+    
+    @ViewBuilder
+    var textFields: some View {
+        // MARK: Title
+        VStack(alignment: .leading, spacing: 4) {
+            CreateEventTextField(input: $title,
+                                 title: "Title",
+                                 placeholder: "Choose something catchy!",
+                                 keyboard: .default,
+                                 toggleBool: .constant(false))
+            .disableAutocorrection(true)
+            .focused($focusedField, equals: .title)
+            .autocorrectionDisabled()
+            
+            CharactersRemainView(currentCount: title.count,
+                                 limit: 50)
+        }
+        
+        // MARK: Description
+        VStack(alignment: .leading, spacing: 4) {
+            CreateEventTextField(input: $description,
+                                 title: "Description",
+                                 placeholder: "Briefly describe your event",
+                                 keyboard: .default,
+                                 hasToggle: true,
+                                 toggleBool: $hasNote)
+            .focused($focusedField, equals: .description)
+            
+            CharactersRemainView(currentCount: description.count,
+                                 limit: 150)
+        }
+        
+        // MARK: Notes
+        if hasNote {
+            VStack(alignment: .leading, spacing: 4) {
+                CreateEventTextField(input: $notes,
+                                     title: "Note for guests",
+                                     placeholder: "Add any additional notes/info",
+                                     keyboard: .default,
+                                     toggleBool: .constant(false))
+                .focused($focusedField, equals: .notes)
+                
+                CharactersRemainView(currentCount: notes.count,
+                                     limit: 250)
+            }
+        }
+    }
+    
+    var flyerSection: some View {
+        // MARK: Flyer
+        VStack(alignment: .center) {
+            Button { self.imagePickerPresented.toggle() } label: {
+                if let image = image {
+                    // Selected image
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .cornerRadius(12)
+                        .frame(width: 250, height: 250)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                } else {
+                    // Placeholder view
+                    VStack {
+                        Text("Event Flyer")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        
+                        HStack {
+                            Text("Select image")
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                            
+                            Image(systemName: "hand.point.up")
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundColor(.secondary)
+                                .frame(width: 22, height: 22, alignment: .center)
+                        }
+                    }
+                    .frame(maxWidth: DeviceTypes.ScreenSize.width,
+                           minHeight: DeviceTypes.ScreenSize.height / 5)
+                    .background(alignment: .center) {
+                        RoundedRectangle(cornerRadius: 8)
+                            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [10]))
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .onChange(of: selectedImage) { _ in loadImage() }
+        }
+    }
+    
     func loadImage() {
         guard let selectedImage = selectedImage else { return }
         image = Image(uiImage: selectedImage)

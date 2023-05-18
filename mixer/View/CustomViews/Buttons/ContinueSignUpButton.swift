@@ -17,7 +17,7 @@ struct ContinueSignUpButton: View {
             if isActive {
                 Capsule()
                     .fill(Color.mixerIndigo)
-                    .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
+                    .longButtonFrame()
                     .shadow(radius: 20, x: -8, y: -8)
                     .shadow(radius: 20, x: 8, y: 8)
                     .overlay {
@@ -31,7 +31,7 @@ struct ContinueSignUpButton: View {
                 Capsule()
                     .stroke(lineWidth: 2)
                     .fill(Color.mixerIndigo.opacity(0.4))
-                    .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
+                    .longButtonFrame()
                     .shadow(radius: 20, x: -8, y: -8)
                     .shadow(radius: 20, x: 8, y: 8)
                     .overlay {
