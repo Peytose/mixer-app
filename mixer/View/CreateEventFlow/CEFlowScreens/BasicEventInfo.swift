@@ -95,7 +95,6 @@ extension BasicEventInfo {
             }
             .menuTextStyle()
         }
-        .padding(.bottom, 16)
     }
     
     @ViewBuilder

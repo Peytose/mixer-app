@@ -16,7 +16,7 @@ struct XDismissButton: View {
             .background(.ultraThinMaterial)
             .backgroundColor(opacity: 0.2)
             .clipShape(Circle())
-            .padding(20)
+            .padding(10)
             .contentShape(Rectangle())
     }
 }

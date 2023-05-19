@@ -173,6 +173,7 @@
 		A6D6FC8129DF595700BFCF52 /* MailViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */; };
 		A6F003AA29807646007E8CCA /* FeaturedHostCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F003A929807646007E8CCA /* FeaturedHostCell.swift */; };
 		A6F2142E2A145678006886E6 /* InfoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F2142D2A145678006886E6 /* InfoButton.swift */; };
+		A6F214302A18083D006886E6 /* HostLinkIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6F2142F2A18083D006886E6 /* HostLinkIcon.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -329,6 +330,7 @@
 		A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailViewModal.swift; sourceTree = "<group>"; };
 		A6F003A929807646007E8CCA /* FeaturedHostCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedHostCell.swift; sourceTree = "<group>"; };
 		A6F2142D2A145678006886E6 /* InfoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoButton.swift; sourceTree = "<group>"; };
+		A6F2142F2A18083D006886E6 /* HostLinkIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostLinkIcon.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -895,6 +897,7 @@
 				A682CC552970915B008EA546 /* DetailRowView.swift */,
 				9C3E2C9B29EA3A5900A74D05 /* SmallCornerNumber.swift */,
 				A6BF68222A023912000FF54B /* SmallEventCell.swift */,
+				A6F2142F2A18083D006886E6 /* HostLinkIcon.swift */,
 			);
 			path = "Small Items";
 			sourceTree = "<group>";
@@ -1064,6 +1067,7 @@
 				9C2B8968298F53510011FC56 /* MapViewModel.swift in Sources */,
 				A68971CF296E7E8D00289516 /* CustomTabItemView.swift in Sources */,
 				9C58B3A829C8E5250024CB7E /* CachedUser.swift in Sources */,
+				A6F214302A18083D006886E6 /* HostLinkIcon.swift in Sources */,
 				A6BF681F2A0074EC000FF54B /* EventPreviewView.swift in Sources */,
 				9C4B0E322982410600A9D963 /* Feedback.swift in Sources */,
 				9C4B0E45298241AE00A9D963 /* CheckInViewModel.swift in Sources */,

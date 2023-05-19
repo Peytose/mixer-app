@@ -39,106 +39,16 @@ struct ProfileView: View {
     var body: some View {
         ZStack {
             ScrollView(showsIndicators: false) {
-                StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl, namespace: namespace)
-                    .overlay(alignment: .topTrailing) {
-                        HStack(spacing: viewModel.user.isCurrentUser ? 5 : 10) {
-                            if viewModel.user.isCurrentUser {
-                                ProfileCornerButton(isOn: $showNotifications, icon: "bell")
-                                    .overlay(alignment: .topTrailing) {
-                                        IconBadge(count: notificationsViewModel.notifications.filter({ !$0.hasBeenSeen }).count)
-                                    }
-                                
-                                ProfileCornerButton(isOn: $showEditProfile,
-                                                    icon: "gearshape")
-                                .padding(.trailing)
-                                
-                            } else {
-                                Button(action: {
-                                    presentationMode.wrappedValue.dismiss()
-                                }, label: {
-                                    BackArrowButton()
-                                })
-                                .padding(.horizontal)
-                                
-                                Spacer()
-                                
-                                if let _ = viewModel.user.relationshiptoUser {
-                                    ProfileRelationButtons(viewModel: viewModel,
-                                                           friendRequestSent: $friendRequestSent)
-                                }
-                                
-                                Image(systemName: "ellipsis")
-                                    .font(.callout)
-                                    .padding(11)
-                                    .contentShape(Rectangle())
-                                    .background {
-                                        Circle()
-                                            .stroke(lineWidth: 1.3)
-                                            .foregroundColor(.white)
-                                    }
-                                    .onTapGesture {
-                                        withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-                                            let impact = UIImpactFeedbackGenerator(style: .light)
-                                            impact.impactOccurred()
-                                            showOptions.toggle()
-                                            friendRequestSent.toggle()
-                                        }
-                                    }
-                                    .padding(.trailing)
-                            }
-                        }
-                        .padding(.top, viewModel.user.isCurrentUser ? 40 : 60)
-                    }
+                //Banner and overlayed buttons
+                banner
                 
+                //Name, age, links, school and bio
                 ProfileInfo(user: $viewModel.user, viewModel: viewModel, mutuals: viewModel.mutuals)
                 
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("About")
-                        .heading()
-                    
-                    VStack(alignment: .leading) {
-                        HStack {
-                            DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus.rawValue)
-                            
-                            Spacer()
-                            
-                            if viewModel.user.isCurrentUser {
-                                Menu("Change") {
-                                    ForEach(RelationshipStatus.allCases, id: \.self) { status in
-                                        Button(status.rawValue) {
-                                            viewModel.relationshipStatus = status
-                                            viewModel.save(for: .relationship)
-                                        }
-                                    }
-                                }
-                                .menuTextStyle()
-                            }
-                        }
-                        
-                        HStack {
-                            DetailRow(image: "briefcase", text: viewModel.major.rawValue)
-                            
-                            Spacer()
-                            
-                            if viewModel.user.isCurrentUser {
-                                Menu("Change") {
-                                    ForEach(StudentMajor.allCases, id: \.self) { major in
-                                        Button(major.rawValue) {
-                                            viewModel.major = major
-                                            viewModel.save(for: .major)
-                                        }
-                                    }
-                                }
-                                .menuTextStyle()
-                            }
-                        }
-                    }
-                    .fontWeight(.medium)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-                .padding(.top, 16)
+                //Contains user relationship status and major
+                aboutSection
                 
+                //Section for liked events and history etc...
                 EventsSection(viewModel: viewModel,
                               showEventView: $showEventView,
                               isFriends: $isFriends,
@@ -146,7 +56,6 @@ struct ProfileView: View {
                               selectedEvent: $selectedEvent)
             }
             .background(Color.mixerBackground)
-            .coordinateSpace(name: "scroll")
             .preferredColorScheme(.dark)
             .ignoresSafeArea(.all)
             .navigationBarHidden(true)
@@ -158,7 +67,7 @@ struct ProfileView: View {
                         .navigationTitle("Notifications")
                         .toolbar {
                             ToolbarItem(placement: .navigationBarTrailing) {
-                                Button { showNotifications = false  } label: { XDismissButton() }
+                                Button { showNotifications = false  } label: { XDismissButton().frame(width: 20, height: 20) }
                             }
                         }
                 }
@@ -193,6 +102,110 @@ struct ProfileView: View {
                 .animation(.spring())
                 .autohideIn(2)
         }
+    }
+}
+
+extension ProfileView {
+    var banner: some View {
+        StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl, namespace: namespace)
+            .overlay(alignment: .topTrailing) {
+                HStack(spacing: viewModel.user.isCurrentUser ? 5 : 10) {
+                    if viewModel.user.isCurrentUser {
+                        ProfileCornerButton(isOn: $showNotifications, icon: "bell")
+                            .overlay(alignment: .topTrailing) {
+                                IconBadge(count: notificationsViewModel.notifications.filter({ !$0.hasBeenSeen }).count)
+                            }
+                        
+                        ProfileCornerButton(isOn: $showEditProfile,
+                                            icon: "gearshape")
+                        .padding(.trailing)
+                        
+                    } else {
+                        Button(action: {
+                            presentationMode.wrappedValue.dismiss()
+                        }, label: {
+                            BackArrowButton()
+                        })
+                        .padding(.horizontal)
+                        
+                        Spacer()
+                        
+                        if let _ = viewModel.user.relationshiptoUser {
+                            ProfileRelationButtons(viewModel: viewModel,
+                                                   friendRequestSent: $friendRequestSent)
+                        }
+                        
+                        Image(systemName: "ellipsis")
+                            .font(.callout)
+                            .padding(11)
+                            .contentShape(Rectangle())
+                            .background {
+                                Circle()
+                                    .stroke(lineWidth: 1.3)
+                                    .foregroundColor(.white)
+                            }
+                            .onTapGesture {
+                                withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                                    let impact = UIImpactFeedbackGenerator(style: .light)
+                                    impact.impactOccurred()
+                                    showOptions.toggle()
+                                    friendRequestSent.toggle()
+                                }
+                            }
+                            .padding(.trailing)
+                    }
+                }
+                .padding(.top, viewModel.user.isCurrentUser ? 40 : 60)
+            }
+    }
+    
+    var aboutSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("About")
+                .heading()
+            
+            VStack(alignment: .leading) {
+                HStack {
+                    DetailRow(image: "figure.2.arms.open", text: viewModel.relationshipStatus.rawValue)
+                    
+                    Spacer()
+                    
+                    if viewModel.user.isCurrentUser {
+                        Menu("Change") {
+                            ForEach(RelationshipStatus.allCases, id: \.self) { status in
+                                Button(status.rawValue) {
+                                    viewModel.relationshipStatus = status
+                                    viewModel.save(for: .relationship)
+                                }
+                            }
+                        }
+                        .menuTextStyle()
+                    }
+                }
+                
+                HStack {
+                    DetailRow(image: "briefcase", text: viewModel.major.rawValue)
+                    
+                    Spacer()
+                    
+                    if viewModel.user.isCurrentUser {
+                        Menu("Change") {
+                            ForEach(StudentMajor.allCases, id: \.self) { major in
+                                Button(major.rawValue) {
+                                    viewModel.major = major
+                                    viewModel.save(for: .major)
+                                }
+                            }
+                        }
+                        .menuTextStyle()
+                    }
+                }
+            }
+            .fontWeight(.medium)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
+        .padding(.top, 16)
     }
 }
 
@@ -296,11 +309,10 @@ fileprivate struct ProfileInfo: View {
                     HStack {
                         HStack(alignment: .center, spacing: 15) {
                             Text(showUsername ? "@\(user.username)" : user.displayName)
-                                .textSelection(.enabled)
-                                .font(.largeTitle)
-                                .bold()
+                                .title()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
+                                .textSelection(.enabled)
                                 .onTapGesture {
                                     withAnimation(.easeInOut) {
                                         showUsername.toggle()
@@ -311,6 +323,7 @@ fileprivate struct ProfileInfo: View {
                                 Text("\(age)")
                                     .font(.title)
                                     .fontWeight(.light)
+                                
                                 
                             }
                         }
@@ -388,8 +401,6 @@ fileprivate struct ProfileInfo: View {
             if let bio = user.bio {
                 Text(bio)
                     .foregroundColor(.white.opacity(0.9))
-                    .font(.body)
-                    .fontWeight(.medium)
                     .lineLimit(3)
                     .minimumScaleFactor(0.75)
             }

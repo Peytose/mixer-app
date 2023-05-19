@@ -83,7 +83,7 @@ struct ExploreView: View {
                                 self.selectedHost = nil
                             }
                         }
-                        .padding(20)
+                        .offset(x: -15 , y: 15)
                 }
             }
             
@@ -94,13 +94,13 @@ struct ExploreView: View {
                 .zIndex(3)
                 .overlay(alignment: .topTrailing) {
                     XDismissButton()
-                        .padding(20)
                         .onTapGesture {
                             withAnimation(.closeCard) {
                                 self.showEventView = false
                                 self.selectedEvent = nil
                             }
                         }
+                        .offset(x: -15 , y: 15)
                 }
             }
         }

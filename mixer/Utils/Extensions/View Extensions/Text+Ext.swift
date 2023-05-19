@@ -9,6 +9,13 @@ import SwiftUI
 
 extension Text {
     // MARK: General Text
+    //Titles
+    func title() -> some View {
+        self
+            .font(.largeTitle)
+            .bold()
+    }
+    
     // Headings
     func heading() -> some View {
         self
@@ -34,6 +41,14 @@ extension Text {
         self
             .font(.title3)
             .fontWeight(.semibold)
+    }
+    
+    //Body
+    func tagline() -> some View {
+        self
+            .font(.subheadline)
+            .fontWeight(.medium)
+            .foregroundColor(.white.opacity(0.8))
     }
     
     

@@ -45,12 +45,9 @@ struct EventDetailView: View {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("What this event offers")
-                                    .font(.title)
-                                    .fontWeight(.bold)
+                                    .heading()
                                 
                                 //MARK: ERROR: Amenities outside first category don't display.
-                                
-                                
                                 ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
                                     let amenitiesInCategory = amenities.filter({ $0.category == category })
                                     if !amenitiesInCategory.isEmpty {
@@ -141,8 +138,7 @@ struct EventDetailView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Text("Where you'll be")
-                                .font(.title)
-                                .bold()
+                                .heading()
                                 .foregroundColor(.white)
                             
                             InfoButton(action: { showInfoAlert2.toggle() })
@@ -220,7 +216,7 @@ struct EventDetailView: View {
     
     var content: some View {
         VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Description")
                     .heading()
                 
@@ -229,7 +225,7 @@ struct EventDetailView: View {
             }
             
             if let notes = viewModel.event.notes {
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text("Notes for guest")
                         .heading()
                     
@@ -238,7 +234,7 @@ struct EventDetailView: View {
                 }
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Event details")
                     .heading()
                 
@@ -361,7 +357,6 @@ extension EventDetailView {
     var EventFlyerHeader: some View {
         GeometryReader { proxy in
             let scrollY = proxy.frame(in: .named("scroll")).minY
-            
             VStack {
                 ZStack {
                     VStack(alignment: .center, spacing: 2) {

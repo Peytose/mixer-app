@@ -12,52 +12,60 @@ import Combine
 struct FeaturedHostCell: View {
     let host: CachedHost
     var namespace: Namespace.ID
-    @State var showHostView = false
-    @State var isFollowing = false
     
     var body: some View {
         VStack {
             Spacer()
             
             VStack(alignment: .leading, spacing: 10) {
+                //Contains host's name, and links
                 NameAndLinksRow(host: host, namespace: namespace)
                 
-                if let bio = host.tagline {
-                    Text(bio)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundColor(.white.opacity(0.8))
+                //MARK: Tagline
+                if let tagline = host.tagline {
+                    Text(tagline)
+                        .tagline()
                         .lineLimit(2)
                         .minimumScaleFactor(0.7)
                         .matchedGeometryEffect(id: "bio-\(host.username)", in: namespace)
                 }
             }
-            .padding(EdgeInsets(top: 20, leading: 20, bottom: 15, trailing: 20))
-            .background {
-                Rectangle()
-                    .fill(.ultraThinMaterial.opacity(0.8))
-                    .background(Color.mixerBackground.opacity(0.2))
-                    .mask(RoundedRectangle(cornerRadius: 30, style: .continuous))
-                    .padding(-10)
-                    .padding(.horizontal, -15)
-                    .blur(radius: 30)
-                    .matchedGeometryEffect(id: "blur-\(host.username)", in: namespace)
-            }
+            //content padding
+            .padding(EdgeInsets(top: 15, leading: 15, bottom: 15, trailing: 15))
+            //blur
+            .background { backgroundBlur }
         }
-        .foregroundStyle(.white)
-        .background {
-            KFImage(URL(string: host.hostImageUrl))
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .mask(Color.profileGradient)
-                .matchedGeometryEffect(id: "image-\(host.username)", in: namespace)
-        }
+        //image
+        .background { backgroundImage }
+        //mask to create desired rounded corners
         .mask {
             RoundedRectangle(cornerRadius: 30, style: .continuous)
                 .matchedGeometryEffect(id: "corner-mask-\(host.username)", in: namespace)
         }
-        .frame(width: DeviceTypes.ScreenSize.width / 1.1, height: DeviceTypes.ScreenSize.height / 2.8)
+        .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: DeviceTypes.ScreenSize.height * 0.35)
         .padding(20)
         .preferredColorScheme(.dark)
+    }
+}
+
+
+extension FeaturedHostCell {
+    var backgroundBlur: some View {
+        Rectangle()
+            .fill(.ultraThinMaterial.opacity(0.8))
+            .background(Color.mixerBackground.opacity(0.2))
+            .mask(RoundedRectangle(cornerRadius: 30, style: .continuous))
+            .padding(-10)
+            .padding(.horizontal, -15)
+            .blur(radius: 30)
+            .matchedGeometryEffect(id: "blur-\(host.username)", in: namespace)
+    }
+    var backgroundImage: some View {
+        KFImage(URL(string: host.hostImageUrl))
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .mask(Color.profileGradient)
+            .matchedGeometryEffect(id: "image-\(host.username)", in: namespace)
     }
 }
 
@@ -120,11 +128,10 @@ struct NameAndLinksRow: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             Text(showUsername ? "@\(host.username)" : "\(host.name)")
-                .textSelection(.enabled)
-                .font(.largeTitle)
-                .bold()
+                .title()
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
+                .textSelection(.enabled)
                 .matchedGeometryEffect(id: "name-\(host.username)", in: namespace)
                 .onAppear {
                     timer = Timer.publish(every: Double.random(in: 3...7), on: .main, in: .common)

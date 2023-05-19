@@ -53,7 +53,6 @@ struct SmallEventCell: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.mixerSecondaryBackground)
         .cornerRadius(16)
-        .padding(.horizontal)
         .foregroundColor(.white)
     }
 }
