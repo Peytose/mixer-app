@@ -90,7 +90,6 @@
 		9C93318D29201D010079E039 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C93318C29201D010079E039 /* MockData.swift */; };
 		9C93318F29203CE60079E039 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C93318E29203CE60079E039 /* ProfileViewModel.swift */; };
 		9C93319429203D8B0079E039 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C93319329203D8B0079E039 /* Notification.swift */; };
-		9C9331972923803F0079E039 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9C9331962923803F0079E039 /* GoogleService-Info.plist */; };
 		9C93319B29242A9F0079E039 /* FirebaseDynamicLinks in Frameworks */ = {isa = PBXBuildFile; productRef = 9C93319A29242A9F0079E039 /* FirebaseDynamicLinks */; };
 		9C93319D29255D8D0079E039 /* AlertItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C93319C29255D8D0079E039 /* AlertItem.swift */; };
 		9C93319F2925B0390079E039 /* AuthFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C93319E2925B0390079E039 /* AuthFlow.swift */; };
@@ -104,6 +103,7 @@
 		9C99EAEA29A674B500D66FEB /* DebouncedOnChange in Frameworks */ = {isa = PBXBuildFile; productRef = 9C99EAE929A674B500D66FEB /* DebouncedOnChange */; };
 		9C99EAF429A6B33600D66FEB /* EventDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C99EAF329A6B33600D66FEB /* EventDetailView.swift */; };
 		9C99EAF829A6F12900D66FEB /* AmenityListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C99EAF729A6F12900D66FEB /* AmenityListView.swift */; };
+		9CA1E7522A17250D00BF74AD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CA1E7512A17250D00BF74AD /* GoogleService-Info.plist */; };
 		9CF84C9929AAA38A005BE430 /* GetNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9829AAA38A005BE430 /* GetNameView.swift */; };
 		9CF84C9B29AAE337005BE430 /* GetProfilePictureAndBio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9A29AAE337005BE430 /* GetProfilePictureAndBio.swift */; };
 		A611E6E52A03123200DDFD32 /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = A611E6E42A03123200DDFD32 /* PopupView */; };
@@ -252,7 +252,6 @@
 		9C93318E29203CE60079E039 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		9C93319329203D8B0079E039 /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		9C93319529235EDF0079E039 /* mixer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mixer.entitlements; sourceTree = "<group>"; };
-		9C9331962923803F0079E039 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9C9331982923816F0079E039 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9C93319C29255D8D0079E039 /* AlertItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertItem.swift; sourceTree = "<group>"; };
 		9C93319E2925B0390079E039 /* AuthFlow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlow.swift; sourceTree = "<group>"; };
@@ -264,6 +263,7 @@
 		9C99EAE529A56EB700D66FEB /* ImageUploader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageUploader.swift; sourceTree = "<group>"; };
 		9C99EAF329A6B33600D66FEB /* EventDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailView.swift; sourceTree = "<group>"; };
 		9C99EAF729A6F12900D66FEB /* AmenityListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmenityListView.swift; sourceTree = "<group>"; };
+		9CA1E7512A17250D00BF74AD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9CF84C9829AAA38A005BE430 /* GetNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetNameView.swift; sourceTree = "<group>"; };
 		9CF84C9A29AAE337005BE430 /* GetProfilePictureAndBio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetProfilePictureAndBio.swift; sourceTree = "<group>"; };
 		A611E6E72A0317B300DDFD32 /* LikedEventNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedEventNotification.swift; sourceTree = "<group>"; };
@@ -389,6 +389,7 @@
 			isa = PBXGroup;
 			children = (
 				9C3BADB8291F54B4009C8043 /* mixer */,
+				9CA1E7512A17250D00BF74AD /* GoogleService-Info.plist */,
 				9C3BADB7291F54B4009C8043 /* Products */,
 				9C93319929242A9F0079E039 /* Frameworks */,
 			);
@@ -413,7 +414,6 @@
 				9C3BADC8291F5501009C8043 /* ViewModel */,
 				9C3BADD8291F560C009C8043 /* API */,
 				9C3BADB9291F54B4009C8043 /* mixerApp.swift */,
-				9C9331962923803F0079E039 /* GoogleService-Info.plist */,
 				9C3BADBD291F54B5009C8043 /* Assets.xcassets */,
 				9C3BADBF291F54B5009C8043 /* Preview Content */,
 			);
@@ -1005,9 +1005,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9CA1E7522A17250D00BF74AD /* GoogleService-Info.plist in Resources */,
 				9C3BADC1291F54B5009C8043 /* Preview Assets.xcassets in Resources */,
 				9C3BADBE291F54B5009C8043 /* Assets.xcassets in Resources */,
-				9C9331972923803F0079E039 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1292,12 +1292,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = mixer/mixer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"mixer/Preview Content\"";
 				DEVELOPMENT_TEAM = H44T2Z74UM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = mixer/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Mixer uses your camera for check-in.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
@@ -1329,12 +1330,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = mixer/mixer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"mixer/Preview Content\"";
 				DEVELOPMENT_TEAM = H44T2Z74UM;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = mixer/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Mixer uses your camera for check-in.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Mixer uses your location to suggest social events tailored to your preferences and proximity, and to help verify event attendees and organizers.";

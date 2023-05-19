@@ -335,12 +335,12 @@ fileprivate struct EasterEggView: View {
             VStack {
                 Text(text)
 
-                Text("Born at MIT 🦫")
+                Text("🦫🐏")
             }
             .font(.body)
             .foregroundColor(.secondary)
             .multilineTextAlignment(.center)
-            .offset(x: 0, y: 100)
+            .offset(x: 0, y: 110)
             .background(Color.clear)
             
             Spacer()

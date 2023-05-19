@@ -159,22 +159,30 @@ class AuthViewModel: ObservableObject {
     func sendEmailLink() {
         print("DEBUG: BUTTON PRESSED ✅")
         self.isLoading = true
-        
-        // Create action code settings object
-        let actionCodeSettings = ActionCodeSettings()
-        actionCodeSettings.url = URL(string: "https://mixer.page.link/email-login?email=\(email)")
-        actionCodeSettings.handleCodeInApp = true
-        // Send email link with Firebase Auth
-        Auth.auth().sendSignInLink(toEmail: self.email, actionCodeSettings: actionCodeSettings) { error in
-            if let error = error as? NSError {
-                self.handleAuthError(error)
-                print("DEBUG: Error sending email link. \(error.localizedDescription)")
-                return
+
+        fetchUniversity { (success) in
+            if success {
+                // Create action code settings object
+                let actionCodeSettings = ActionCodeSettings()
+                actionCodeSettings.url = URL(string: "https://mixer.page.link/email-login?email=\(self.email)")
+                actionCodeSettings.handleCodeInApp = true
+                
+                // Send email link with Firebase Auth
+                Auth.auth().sendSignInLink(toEmail: self.email, actionCodeSettings: actionCodeSettings) { error in
+                    if let error = error as? NSError {
+                        self.handleAuthError(error)
+                        print("DEBUG: Error sending email link. \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    print("DEBUG: Sent email to \(self.email). ✅")
+                    self.isLoading = false
+                    self.alertItem = AlertContext.sentEmailLink
+                }
+            } else {
+                print("DEBUG: Unable to fetch university. Cannot proceed with sending email.")
+                self.isLoading = false
             }
-            
-            print("DEBUG: Sent email to \(self.email). ✅")
-            self.isLoading = false
-            self.alertItem = AlertContext.sentEmailLink
         }
     }
     
@@ -266,7 +274,7 @@ class AuthViewModel: ObservableObject {
     }
 
     
-    func extractCountryCode(from phoneNumber: String) -> String {
+    private func extractCountryCode(from phoneNumber: String) -> String {
         let pattern = #"^\+\d{1,3}"#
         
         if let range = phoneNumber.range(of: pattern, options: .regularExpression) {
