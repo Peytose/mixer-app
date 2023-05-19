@@ -31,7 +31,7 @@ class NotificationsViewModel: ObservableObject {
     }
     
     
-    private static func cacheUser(user: CachedUser) {
+    static func cacheUser(user: CachedUser) {
         Task {
             do {
                 try UserCache.shared.cacheUser(user)
@@ -96,17 +96,19 @@ class NotificationsViewModel: ObservableObject {
     
     
     static func cancelFriendRequest(notification: Notification) {
+        print("DEBUG: ❌Cancel button accidentally pressed!")
+        
         UserService.cancelRequestOrRemoveFriend(uid: notification.uid) { _ in
             guard var user = notification.user else { return }
             user.relationshiptoUser = .notFriends
             self.cacheUser(user: user)
-            
             HapticManager.playLightImpact()
         }
     }
     
     
     static func acceptFriendRequest(notification: Notification, completion: @escaping() -> Void) {
+        print("DEBUG: Accept friend request button started...")
         guard let notificationId = notification.id else { return }
         
         UserService.acceptFriendRequest(uid: notification.uid, notificationId: notificationId) { error in
@@ -114,21 +116,14 @@ class NotificationsViewModel: ObservableObject {
                 print("DEBUG: Error accepting friend request. \(error.localizedDescription)")
             }
             
-            Task {
-                do {
-                    var user = try await UserCache.shared.getUser(withId: notification.uid)
-                    
-                    user.relationshiptoUser = .friends
-                    self.cacheUser(user: user)
-                    
-                    self.uploadNotifications(toUid: notification.uid, type: .acceptFriend)
-                    HapticManager.playLightImpact()
-                    
-                    completion()
-                } catch {
-                    print("DEBUG: Error getting user for accepting friend request.")
-                }
-            }
+            guard var user = notification.user else { return }
+            user.relationshiptoUser = .friends
+            self.cacheUser(user: user)
+            
+            self.uploadNotifications(toUid: notification.uid, type: .acceptFriend)
+            HapticManager.playLightImpact()
+            
+            completion()
         }
     }
     
@@ -137,7 +132,7 @@ class NotificationsViewModel: ObservableObject {
         guard let user = AuthViewModel.shared.currentUser else { return }
         guard uid != user.id else { return }
         
-        var data = ["timestamp": Timestamp(date: Date()),
+        var data = ["timestamp": Timestamp(),
                     "username": user.username,
                     "uid": user.id ?? "",
                     "hasBeenSeen": false,

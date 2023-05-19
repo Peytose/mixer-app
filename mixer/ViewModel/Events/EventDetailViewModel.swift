@@ -12,7 +12,11 @@ import CoreLocation
 import MapKit
 
 final class EventDetailViewModel: ObservableObject {
-    @Published var event: CachedEvent
+    @Published var event: CachedEvent {
+        didSet {
+            EventCache.shared.cacheEvent(event)
+        }
+    }
     @Published var host: CachedHost?
     private (set) var coordinates: CLLocationCoordinate2D?
     @Published var isDataReady: Bool = false
@@ -20,10 +24,13 @@ final class EventDetailViewModel: ObservableObject {
     init(event: CachedEvent) {
         self.event = event
         Task.init {
-            await checkIfUserSavedEvent()
+            await checkIfUserLikedEvent()
             await fetchEventHost()
             await getEventCoordinates()
-            isDataReady = true
+            
+            DispatchQueue.main.async {
+                self.isDataReady = true
+            }
         }
     }
     
@@ -37,51 +44,21 @@ final class EventDetailViewModel: ObservableObject {
     }
 
     
-    func save() {
-        guard let uid = AuthViewModel.shared.userSession?.uid, let eventId = event.id else { return }
+    func updateLike(didLike: Bool) {
+        guard let eventId = event.id else { return }
         
-        let eventSavesRef = COLLECTION_EVENTS.document(eventId).collection("event-saves").document(uid)
-        let userSavesRef = COLLECTION_USERS.document(uid).collection("user-saves").document(eventId)
-        
-        let batch = Firestore.firestore().batch()
-        batch.setData([uid:true], forDocument: eventSavesRef)
-        batch.setData([uid:true], forDocument: userSavesRef)
-        
-        batch.commit { _ in
-            self.event.didSave = true
-            Task {
-                do {
-                    try EventCache.shared.cacheEvent(self.event)
-                } catch {
-                    print("DEBUG: didSave (save) cache event error! \(error.localizedDescription)")
-                }
+        UserService.updateLikeStatus(didLike: didLike, eventUid: eventId) { error in
+            if let error = error {
+                print("DEBUG: ❌ Error liking event. \(error.localizedDescription)")
+                return
             }
-        }
-    }
-
-
-    func unsave() {
-        guard let uid = AuthViewModel.shared.userSession?.uid, let eventId = event.id else { return }
-        
-        let eventSavesRef = COLLECTION_EVENTS.document(eventId).collection("event-saves").document(uid)
-        let userSavesRef = COLLECTION_USERS.document(uid).collection("user-saves").document(eventId)
-        
-        let batch = Firestore.firestore().batch()
-        batch.deleteDocument(eventSavesRef)
-        batch.deleteDocument(userSavesRef)
-        
-        batch.commit { _ in
-            self.event.didSave = false
             
-            Task {
-                do {
-                    try EventCache.shared.cacheEvent(self.event)
-                } catch {
-                    print("DEBUG: didSave (unsave) cache event error! \(error.localizedDescription)")
-                }
-            }
+            HapticManager.playLightImpact()
+            self.event.didLike = didLike
+            EventCache.shared.cacheEvent(self.event)
         }
     }
+    
     
     @MainActor func joinGuestlist() {
         guard let eventId = event.id else { return }
@@ -90,17 +67,10 @@ final class EventDetailViewModel: ObservableObject {
         UserService.joinGuestlist(eventUid: eventId, user: currentUser) { _ in
             self.event.didGuestlist = true
             
-            Task {
-                do {
-                    try EventCache.shared.cacheEvent(self.event)
-                } catch {
-                    print("DEBUG: Error caching event after joining guestlist. \(error.localizedDescription)")
-                }
-            }
-            
 //            NotificationsViewModel.uploadNotifications(toUid: uid, type: .follow)
         }
     }
+    
     
     @MainActor func followHost() {
         guard let hostId = host?.id else { return }
@@ -111,13 +81,15 @@ final class EventDetailViewModel: ObservableObject {
         }
     }
     
-    @MainActor func checkIfUserSavedEvent() {
+    
+    @MainActor func checkIfUserLikedEvent() {
         guard let uid = AuthViewModel.shared.userSession?.uid else { return }
         guard let eventId = event.id else { return }
         
-        COLLECTION_USERS.document(uid).collection("user-saves").document(eventId).getDocument { snapshot, _ in
-            guard let didSave = snapshot?.exists else { return }
-            self.event.didSave = didSave
+        COLLECTION_USERS.document(uid).collection("user-likes").document(eventId).getDocument { snapshot, _ in
+            guard let didLike = snapshot?.exists else { return }
+            self.event.didLike = didLike
+            EventCache.shared.cacheEvent(self.event)
         }
     }
     
@@ -140,10 +112,11 @@ final class EventDetailViewModel: ObservableObject {
                 
                 if let longitude = event.longitude, let latitude = event.latitude {
                     self.coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                    print("DEBUG: 1 coordinates on event \(String(describing: self.coordinates))")
+                    print("DEBUG: Found coordinates on event \(String(describing: self.coordinates))")
                 } else {
                     self.coordinates = try await event.address.coordinates()
-                    print("DEBUG: 2 coordinates on event \(String(describing: self.coordinates))")
+                    print("DEBUG: Fetched coordinates on event \(String(describing: self.coordinates))")
+                    EventCache.shared.cacheEvent(self.event)
                 }
             } catch {
                 print("DEBUG: Error getting event coordinates on event view. \(error.localizedDescription)")

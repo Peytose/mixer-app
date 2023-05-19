@@ -54,7 +54,7 @@ struct CachedEvent: Hashable, Identifiable, Codable {
     
     // Flags
     var didGuestlist: Bool? = false
-    var didSave: Bool?      = false
+    var didLike: Bool?      = false
     var didAttend: Bool?    = false
     var saves: Int?         = 0
     

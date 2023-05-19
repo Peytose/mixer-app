@@ -46,7 +46,6 @@ struct ProfileView: View {
                                 ProfileCornerButton(isOn: $showNotifications, icon: "bell")
                                     .overlay(alignment: .topTrailing) {
                                         IconBadge(count: notificationsViewModel.notifications.filter({ !$0.hasBeenSeen }).count)
-                                            .offset(x: -2, y: -2)
                                     }
                                 
                                 ProfileCornerButton(isOn: $showEditProfile,
@@ -139,6 +138,12 @@ struct ProfileView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
                 .padding(.top, 16)
+                
+                EventsSection(viewModel: viewModel,
+                              showEventView: $showEventView,
+                              isFriends: $isFriends,
+                              namespace: namespace,
+                              selectedEvent: $selectedEvent)
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
@@ -175,6 +180,9 @@ struct ProfileView: View {
                 .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
                 .zIndex(3)
             }
+        }
+        .task {
+            viewModel.getProfileEvents()
         }
         .popup(isPresented: $friendRequestSent) {
             FriendRequestSentNotification()
@@ -404,19 +412,21 @@ fileprivate struct EventsSection: View {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(pinnedViews: [.sectionHeaders]) {
                     Section(header: viewModel.stickyHeader()) {
-                        if isFriends {
-                            EventListView(events: viewModel.eventSection == .interests ? viewModel.savedEvents : viewModel.pastEvents,
-                                          hasStarted: true,
+                        if isFriends || viewModel.user.id == AuthViewModel.shared.currentUser?.id {
+                            EventListView(events: viewModel.eventSection == .interests ? viewModel.likedEvents : viewModel.pastEvents,
+                                          hasStarted: false,
                                           namespace: namespace,
                                           selectedEvent: $selectedEvent,
                                           showEventView: $showEventView) { event, hasStarted, namespace in
                                 EventCellView(event: event, hasStarted: hasStarted, namespace: namespace)
                             }
                         } else {
-//                            Text("Only \(isFriends ? "@" + viewModel.user.username : "friends") can see this activity")
-//                                .font(.title)
-//                                .bold()
-//                                .multilineTextAlignment(.center)
+                            Text("Only \(isFriends ? "@" + viewModel.user.username : "friends") can see this activity.")
+                                .font(.title3)
+                                .bold()
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.75)
                         }
                     }
                 }

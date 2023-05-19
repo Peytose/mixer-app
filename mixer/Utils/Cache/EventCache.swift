@@ -19,7 +19,7 @@ class EventCache {
         case pastUser(uid: String, fromDate: Date)
         case hostEvents(uid: String)
         case unfinished
-        case userSaves(uid: String)
+        case userLikes(uid: String)
         case all
         
         var filterKey: String {
@@ -30,8 +30,8 @@ class EventCache {
                 return "events-\(uid)"
             case .unfinished:
                 return "unfinished-events"
-            case .userSaves(uid: let uid):
-                return "saves-\(uid)"
+            case .userLikes(uid: let uid):
+                return "likes-\(uid)"
             case .all:
                 return "events"
             }
@@ -55,9 +55,9 @@ class EventCache {
             case .unfinished:
                 return COLLECTION_EVENTS
                     .whereField("endDate", isGreaterThan: Timestamp())
-            case .userSaves(uid: let uid):
-                return COLLECTION_EVENTS.document(uid).collection("user-saves")
-                    .order(by: "startDate", descending: true)
+            case .userLikes(uid: let uid):
+                return COLLECTION_USERS.document(uid).collection("user-likes")
+                    .order(by: "timestamp", descending: true)
             case .all:
                 return COLLECTION_EVENTS
                     .order(by: "startDate", descending: true)
@@ -97,6 +97,12 @@ class EventCache {
 
             // If documents exist, cache and return the events
             if !documents.isEmpty {
+                if key.prefix(5) == "likes" {
+                    // Fetch UUIDs and then fetch the associated events
+                    let uuids = documents.map { $0.documentID }
+                    return try await getEvents(from: uuids)
+                }
+                
                 let events = documents.compactMap { document -> CachedEvent? in
                     do {
                         let event = try document.data(as: Event.self)
@@ -110,19 +116,7 @@ class EventCache {
                 let eventIds = events.map({ $0.id })
                 print("DEBUG: Got events from firebase. \(events)")
                 try cache.write(codable: eventIds, forKey: key)
-
-                await withTaskGroup(of: Void.self) { group in
-                    for event in events {
-                        group.addTask {
-                            do {
-                                try self.cacheEvent(event)
-                            } catch {
-                                print("Error getting event: \(error)")
-                                return
-                            }
-                        }
-                    }
-                }
+                self.cacheEvents(events)
 
                 return events
             } else {
@@ -176,19 +170,26 @@ class EventCache {
         print("DEBUG: Got event from firebase. \(String(describing: event))")
         // Store in cache
         let cachedEvent = CachedEvent(from: event)
-        try cacheEvent(cachedEvent)
+        cacheEvent(cachedEvent)
 
         return cachedEvent
     }
 
     // Caching Events
-    private func cacheEvents(_ events: [CachedEvent]) async throws {
-        for event in events { try cacheEvent(event) }
+    private func cacheEvents(_ events: [CachedEvent]) {
+        for event in events { cacheEvent(event) }
     }
 
-    func cacheEvent(_ event: CachedEvent) throws {
-        guard let id = event.id else { return }
-        try cache.write(codable: event, forKey: id)
+    func cacheEvent(_ event: CachedEvent) {
+        Task {
+            do {
+                guard let id = event.id else { return }
+                try cache.write(codable: event, forKey: id)
+            } catch {
+                print("DEBUG: ❌ Error caching event. \(error.localizedDescription)")
+                return
+            }
+        }
     }
     
     // Clearing Cache

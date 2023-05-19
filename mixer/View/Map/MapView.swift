@@ -107,14 +107,14 @@ struct MapView: View {
             CreateEventFlow(isShowingCreateEventView: $isShowingCreateEventView, namespace: namespace)
         }
         .overlay(alignment: .topTrailing) {
-            if let isHost = AuthViewModel.shared.currentUser?.isHost {
+            if AuthViewModel.shared.currentUser?.isHost ?? false {
                 MapIconButton(icon: "plus") { isShowingCreateEventView.toggle() }
                     .padding(.trailing)
                     .padding(.top)
             }
         }
         .overlay(alignment: .bottom) {
-            if let _ = AuthViewModel.shared.currentUser?.isHost {
+            if AuthViewModel.shared.currentUser?.isHost ?? false {
                 GuestlistButton { isShowingGuestlistView.toggle() }
                     .padding(.bottom, 100)
             }
@@ -159,8 +159,7 @@ fileprivate struct MapIconButton: View {
     
     var body: some View {
         Button {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
+            HapticManager.playLightImpact()
             action()
         } label: {
             Image(systemName: icon)

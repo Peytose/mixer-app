@@ -10,6 +10,29 @@ import Firebase
 typealias FirestoreCompletion = ((Error?) -> Void)?
 
 struct UserService {
+    static func updateLikeStatus(didLike: Bool, eventUid: String, completion: FirestoreCompletion) {
+        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        
+        let eventLikesRef = COLLECTION_EVENTS.document(eventUid).collection("event-likes").document(currentUid)
+        let userLikesRef = COLLECTION_USERS.document(currentUid).collection("user-likes").document(eventUid)
+        
+        let batch = Firestore.firestore().batch()
+        
+        if didLike {
+            let data = [currentUid: true,
+                        "timestamp": Timestamp()] as [String: Any]
+            
+            batch.setData(data, forDocument: eventLikesRef)
+            batch.setData(data, forDocument: userLikesRef)
+        } else {
+            batch.deleteDocument(eventLikesRef)
+            batch.deleteDocument(userLikesRef)
+        }
+        
+        batch.commit(completion: completion)
+    }
+    
+    
     static func getTodayEvents() async -> [CachedEvent] {
         do {
             let today = Date()

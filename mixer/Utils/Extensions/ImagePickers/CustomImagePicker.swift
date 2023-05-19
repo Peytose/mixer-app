@@ -10,7 +10,7 @@ import SwiftUI
 import PhotosUI
 
 // MARK: View Extensions
-extension View{
+extension View {
     @ViewBuilder
     func cropImagePicker(options: [Crop] = [.custom(.init(width: DeviceTypes.ScreenSize.width, height: DeviceTypes.ScreenSize.height / 2.5))],show: Binding<Bool>,croppedImage: Binding<UIImage?>)->some View{
         CustomImagePicker(options: options, show: show, croppedImage: croppedImage) {

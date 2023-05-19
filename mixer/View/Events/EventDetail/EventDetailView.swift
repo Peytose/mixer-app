@@ -30,14 +30,7 @@ struct EventDetailView: View {
     var body: some View {
         ZStack {
             ScrollView(showsIndicators: false) {
-                EventFlyerHeader(event: viewModel.event,
-                                 unsave: viewModel.unsave,
-                                 save: viewModel.save,
-                                 namespace: namespace,
-                                 isShowingModal: $isShowingModal,
-                                 isLiked: $isLiked,
-                                 addedEvent: $addedEvent,
-                                 removedEvent: $removedEvent)
+                EventFlyerHeader
                 
                 VStack(alignment: .leading, spacing: 20) {
                     HostedBySection(viewModel: viewModel,
@@ -338,9 +331,9 @@ fileprivate struct HostedBySection: View {
                         
                         //MARK: Follow host button on event (debug report: same as other follow button(s))
                         Button {
-                            let impact = UIImpactFeedbackGenerator(style: .light)
-                            impact.impactOccurred()
-                            withAnimation(.follow) { viewModel.followHost() }
+                            withAnimation(.follow) {
+                                viewModel.followHost()
+                            }
                         } label: {
                             if let isFollowed = host.isFollowed {
                                 Text(isFollowed ? "Following" : "Follow")
@@ -349,14 +342,10 @@ fileprivate struct HostedBySection: View {
                                     .foregroundColor(isFollowed ? .white : .black)
                                     .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
                                     .background {
-                                        if isFollowed {
-                                            Capsule()
-                                                .stroke()
-                                                .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id)", in: namespace)
-                                        } else {
-                                            Capsule()
-                                                .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id)", in: namespace)
-                                        }
+                                        Capsule()
+                                            .stroke(lineWidth: isFollowed ? 1 : 0)
+                                            .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id ?? "")",
+                                                                   in: namespace)
                                     }
                             }
                         }
@@ -368,20 +357,8 @@ fileprivate struct HostedBySection: View {
     }
 }
 
-fileprivate struct EventFlyerHeader: View {
-    let event: CachedEvent
-    let unsave: () -> Void
-    let save: () -> Void
-    var namespace: Namespace.ID
-    
-    @Binding var isShowingModal: Bool
-    @State private var currentAmount = 0.0
-    @State private var finalAmount   = 1.0
-    @Binding var isLiked: Bool
-    @Binding var addedEvent: Bool
-    @Binding var removedEvent: Bool
-    
-    var body: some View {
+extension EventDetailView {
+    var EventFlyerHeader: some View {
         GeometryReader { proxy in
             let scrollY = proxy.frame(in: .named("scroll")).minY
             
@@ -389,7 +366,7 @@ fileprivate struct EventFlyerHeader: View {
                 ZStack {
                     VStack(alignment: .center, spacing: 2) {
                         HStack {
-                            Text(event.title)
+                            Text(viewModel.event.title)
                                 .font(.title)
                                 .bold()
                                 .foregroundColor(.primary)
@@ -398,13 +375,11 @@ fileprivate struct EventFlyerHeader: View {
                             
                             Spacer()
                             
-                            CustomButton(systemImage: "heart.fill", status: isLiked, activeTint: .pink, inActiveTint: .secondary) {
-                                isLiked.toggle()
-                                if isLiked {
-                                    addedEvent.toggle()
-                                } else {
-                                    removedEvent.toggle()
-                                }
+                            CustomButton(systemImage: "heart.fill",
+                                         status: viewModel.event.didLike ?? false,
+                                         activeTint: .pink,
+                                         inActiveTint: .secondary) {
+                                viewModel.updateLike(didLike: !(viewModel.event.didLike ?? false))
                             }
                         }
                         
@@ -414,10 +389,10 @@ fileprivate struct EventFlyerHeader: View {
                         
                         HStack {
                             VStack(alignment: .leading) {
-                                Text(event.startDate.getTimestampString(format: "EEEE, MMMM d"))
+                                Text(viewModel.event.startDate.getTimestampString(format: "EEEE, MMMM d"))
                                     .font(.headline)
                                 
-                                Text("\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))")
+                                Text("\(viewModel.event.startDate.getTimestampString(format: "h:mm a")) - \(viewModel.event.endDate.getTimestampString(format: "h:mm a"))")
                                     .foregroundColor(.secondary)
                             }
                             .lineLimit(1)
@@ -426,12 +401,12 @@ fileprivate struct EventFlyerHeader: View {
                             Spacer()
                             
                             VStack(alignment: .center, spacing: 4) {
-                                Image(systemName: event.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "lock.fill" : "globe")
+                                Image(systemName: viewModel.event.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "lock.fill" : "globe")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 20, height: 20)
                                 
-                                Text(event.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "Private" : "Public")
+                                Text(viewModel.event.eventOptions[EventOption.isPrivate.rawValue] ?? false ? "Private" : "Public")
                                     .foregroundColor(.secondary)
                                 
                             }
@@ -452,7 +427,7 @@ fileprivate struct EventFlyerHeader: View {
                     .offset(y: 120)
                     .background(
                         ZStack {
-                            KFImage(URL(string: event.eventImageUrl))
+                            KFImage(URL(string: viewModel.event.eventImageUrl))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .frame(maxHeight: 550)
@@ -472,7 +447,7 @@ fileprivate struct EventFlyerHeader: View {
                                     RoundedRectangle(cornerRadius: 20)
                                 )
                             
-                            KFImage(URL(string: event.eventImageUrl))
+                            KFImage(URL(string: viewModel.event.eventImageUrl))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
                                 .cornerRadius(20)

@@ -14,7 +14,7 @@ class ProfileViewModel: ObservableObject {
     @Published var showUnfriendAlert        = false
     @Published var continueUnfriendFunc     = false
     @Published var eventSection             = EventSection.interests
-    @Published var savedEvents              = [CachedEvent]()
+    @Published var likedEvents              = [CachedEvent]()
     @Published var pastEvents               = [CachedEvent]()
     @Published var mutuals                  = [CachedUser]()
     @Published var name: String             = ""
@@ -122,9 +122,8 @@ class ProfileViewModel: ObservableObject {
     
     func cancelFriendRequest() {
         guard let uid = user.id else { return }
-        if self.user.relationshiptoUser == .friends { showUnfriendAlert = true }
         
-        if continueUnfriendFunc || self.user.relationshiptoUser == .receivedRequest {
+        if self.user.relationshiptoUser != .notFriends {
             UserService.cancelRequestOrRemoveFriend(uid: uid) { _ in
                 self.user.relationshiptoUser = .notFriends
                 HapticManager.playLightImpact()
@@ -148,12 +147,19 @@ class ProfileViewModel: ObservableObject {
     }
     
     
-    @MainActor func getProfileEvents(uid: String) {
-        if user.relationshiptoUser != .friends && uid != AuthViewModel.shared.currentUser?.id { return }
+    @MainActor func getProfileEvents() {
+        print("DEBUG: Getting profile events ...")
+        if user.relationshiptoUser != .friends && user.id != AuthViewModel.shared.currentUser?.id {
+            print("DEBUG: Profile not a friend or self!")
+            return
+        }
+        
+        guard let uid = user.id else { return }
         
         Task {
             do {
-                self.savedEvents = try await EventCache.shared.fetchEvents(filter: .userSaves(uid: uid))
+                self.likedEvents = try await EventCache.shared.fetchEvents(filter: .userLikes(uid: uid))
+                print("DEBUG: Got liked events! \(self.likedEvents)")
             } catch {
                 print("DEBUG: Error getting profile events. \(error.localizedDescription)")
             }
