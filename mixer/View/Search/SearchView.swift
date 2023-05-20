@@ -103,9 +103,9 @@ fileprivate struct UserSearchCell: View {
                     
                     Spacer()
                     
-//                    Text("Friend")
-//                        .font(.subheadline)
-//                        .foregroundColor(.mixerIndigo)
+                    Text("Friend")
+                        .font(.subheadline)
+                        .foregroundColor(.mixerIndigo)
                 }
             }
         }
