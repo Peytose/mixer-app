@@ -11,7 +11,7 @@ import ConfettiSwiftUI
 
 struct HostMapAnnotation: View {
     var host: CachedHost
-    @State private var progress: CGFloat = 0
+    @State private var progress: CGFloat = 1.0
     let gradient1 = Gradient(colors: [.purple, .pink])
     let gradient2 = Gradient(colors: [.blue, .purple])
     let defaultGradient = Gradient(colors: [.white, .white])
@@ -39,13 +39,17 @@ struct HostMapAnnotation: View {
                             }
                         }
                 }
-//                .opacity(host.hasCurrentEvent ?? false ? 1.0 : 0.5)
+                .confettiCannon(counter: $counter,
+                                num: 30,
+                                rainHeight: 150,
+                                openingAngle: Angle(degrees: 0),
+                                closingAngle: Angle(degrees: 360),
+                                radius: 80)
             
             Text(host.name)
                 .font(.caption)
                 .fontWeight(.semibold)
         }
-        .confettiCannon(counter: $counter, openingAngle: Angle(degrees: 150), radius: 50)
         .onAppear {
             if host.hasCurrentEvent ?? false {
                 startAnimatingCounter()
@@ -58,7 +62,8 @@ struct HostMapAnnotation: View {
         Timer.scheduledTimer(withTimeInterval: TimeInterval(Int.random(in: 2...5)), repeats: true) { timer in
             counter += 1
         }
-    }}
+    }
+}
 
 struct HostMapAnnotation_Previews: PreviewProvider {
     static var previews: some View {
