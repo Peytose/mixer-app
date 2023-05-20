@@ -47,6 +47,6 @@ struct GetNameView: View {
 struct GetNameAndPhoneView_Previews: PreviewProvider {
     static var previews: some View {
         GetNameView(name: .constant("")) { }
-        .preferredColorScheme(.light)
+        .preferredColorScheme(.dark)
     }
 }

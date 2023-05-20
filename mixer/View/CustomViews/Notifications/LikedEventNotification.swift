@@ -12,21 +12,20 @@ struct LikedEventNotification: View {
     let text: String
     
     var body: some View {
-        ZStack {
-            HStack {
-                Image(systemName: "list.bullet.clipboard")
+        HStack {
+            Image(systemName: "list.bullet.clipboard")
+            
+            VStack(alignment: .leading) {
+                Text(title)
+                    .fontWeight(.semibold)
                 
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .fontWeight(.semibold)
-                    
-                    Text(text)
-                }
-                .font(.subheadline)
-                .lineLimit(1)
+                Text(text)
             }
-            .notificationContentFrame()
+            .font(.subheadline)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
         }
+        .notificationContentFrame()
         .notificationBackground()
     }
 }

@@ -10,20 +10,20 @@ import SwiftUI
 struct AddedToGuestlistNotification: View {
     let title: String
     var body: some View {
-        ZStack {
-            HStack {
-                Image(systemName: "list.bullet.clipboard")
+        HStack {
+            Image(systemName: "list.bullet.clipboard")
+            
+            VStack(alignment: .leading) {
+                Text("You have been added to the guest list for")
                 
-                VStack(alignment: .leading) {
-                    Text("You have been added to the guest list for")
-                    
-                    Text(title)
-                        .fontWeight(.semibold)
-                }
-                .lineLimit(1)
+                Text(title)
+                    .fontWeight(.semibold)
             }
-            .notificationContentFrame()
+            .font(.subheadline)
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
         }
+        .notificationContentFrame()
         .notificationBackground()
     }
 }
@@ -31,5 +31,6 @@ struct AddedToGuestlistNotification: View {
 struct AddedToGuestlistNotification_Previews: PreviewProvider {
     static var previews: some View {
         AddedToGuestlistNotification(title: "Neon Party")
+            .preferredColorScheme(.dark)
     }
 }

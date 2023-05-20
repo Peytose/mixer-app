@@ -9,18 +9,15 @@ import SwiftUI
 
 struct FriendRequestSentNotification: View {
     var body: some View {
-        ZStack {
-            HStack {
-                Image(systemName: "person.2.fill")
-                
-                VStack(alignment: .leading) {
-                    Text("Friend request sent")
-                }
+        HStack {
+            Image(systemName: "person.2.fill")
+            
+            Text("Friend request sent")
                 .font(.subheadline)
                 .lineLimit(1)
-            }
-            .notificationContentFrameShort()
+                .minimumScaleFactor(0.8)
         }
+        .notificationContentFrameShort()
         .notificationBackgroundShort()
     }
 }

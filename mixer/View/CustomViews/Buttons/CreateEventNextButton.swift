@@ -18,17 +18,16 @@ struct CreateEventNextButton: View {
         Button(action: action) {
             if isActive {
                 Capsule()
-                    .fill(Color.mixerIndigo.gradient.opacity(0.8))
+                    .fill(Color.mixerIndigo.gradient)
                     .longButtonFrame()
                     .shadow(color: Color.mixerIndigo.opacity(0.05), radius: 20, x: -8, y: -8)
                     .shadow(color: Color.mixerIndigo.opacity(0.05), radius: 20, x: 8, y: 8)
                     .overlay {
                         Text(text)
-                            .font(.body.weight(.medium))
-                            .foregroundColor(.white)
+                            .longButtonFont()
                     }
                     .padding(.bottom, 20)
-
+                
             } else {
                 Capsule()
                     .fill(Color.mixerSecondaryBackground)
@@ -36,10 +35,8 @@ struct CreateEventNextButton: View {
                     .shadow(radius: 10, x: 0, y: 8)
                     .overlay {
                         Text(text)
-                            .font(.body.weight(.medium))
-                            .foregroundColor(.white)
+                            .longButtonFont()
                     }
-                    .contentShape(Rectangle())
                     .padding(.bottom, 20)
             }
         }

@@ -23,7 +23,7 @@ struct HostLinkIcon: View {
                 Image(systemName: icon)
                     .resizable()
                     .scaledToFit()
-                    .foregroundColor(Color.mainFont)
+                    .foregroundColor(Color.white)
                     .frame(width: 24, height: 24)
             }
         }

@@ -12,10 +12,8 @@ struct CreateEventTextField: View {
     @State var isEditing = false
     
     var title: String?
-    var note: String?
     var placeholder: String
     var footnote: String?
-    var textfieldHeader: String?
     var keyboard: UIKeyboardType
     var hasToggle: Bool?
     @Binding var toggleBool: Bool
@@ -39,19 +37,8 @@ struct CreateEventTextField: View {
                 }
                 
             }
-            if let note = note {
-                Text(note)
-                    .textFieldNote()
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.75)
-                    .padding(.bottom)
-                    .padding(.top, -6)
-            }
             
-            if let textfieldHeader = textfieldHeader {
-                Text(textfieldHeader)
-                    .textFieldHeader()
-            }
+            VStack(alignment: .leading, spacing: 8) {
             
             TextField(placeholder, text: $input, onEditingChanged: { (editingChanged) in
                 if editingChanged {
@@ -76,6 +63,7 @@ struct CreateEventTextField: View {
                     .textFieldFootnote()
             }
         }
+        }
         .textFieldFrame()
     }
 }
@@ -84,7 +72,7 @@ struct CreateEventTextField_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color.black
-            CreateEventTextField(input: .constant(""), title: "Peyton, is this a placeholder?", note: "penis", placeholder: "Placeholder", footnote: "This is a footnote placeholder.", textfieldHeader: "Placeholder", keyboard: .default, toggleBool: .constant(false))
+            CreateEventTextField(input: .constant(""), title: "Peyton, is this a placeholder?", placeholder: "Placeholder", footnote: "This is a footnote placeholder.", keyboard: .default, toggleBool: .constant(false))
         }
         .preferredColorScheme(.dark)
     }

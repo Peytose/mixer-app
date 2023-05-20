@@ -42,7 +42,7 @@ struct MoreProfileOptions: View {
                    alignment: .center)
             .offset(y: -80)
             
-            VStack(alignment: .leading, spacing: 30) {
+            VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 10) {
                     Image(systemName: "hand.raised")
                         .font(.title3)
@@ -53,6 +53,7 @@ struct MoreProfileOptions: View {
                         .fontWeight(.medium)
                 }
                 .contentShape(Rectangle())
+                .padding()
                 .onTapGesture {
                     showBlockAlert.toggle()
                 }
@@ -70,13 +71,14 @@ struct MoreProfileOptions: View {
                             Text("Share profile")
                                 .fontWeight(.medium)
                         }
+                        .contentShape(Rectangle())
+                        .padding()
                     }
-                    .contentShape(Rectangle())
-                    .buttonStyle(.plain)
+                                                    .buttonStyle(.plain)
+                    
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-            .padding(.horizontal, 20)
             .padding(.bottom, 180)
         }
         .overlay(alignment: .topTrailing) {

@@ -39,6 +39,6 @@ struct IconBadge: View {
 
 struct IconBadge_Previews: PreviewProvider {
     static var previews: some View {
-        IconBadge(count: 107)
+        IconBadge(count: 99)
     }
 }

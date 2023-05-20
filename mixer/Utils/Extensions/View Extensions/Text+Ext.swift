@@ -99,6 +99,14 @@ extension Text {
             .font(.footnote)
             .foregroundColor(.secondary)
     }
+    
+    //MARK: Button Fonts
+    func longButtonFont() -> some View {
+        self
+            .font(.body)
+            .fontWeight(.medium)
+            .foregroundColor(.white)
+    }
 }
 
 extension Menu {

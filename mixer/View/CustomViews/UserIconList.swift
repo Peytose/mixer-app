@@ -102,7 +102,7 @@ struct UserIconList: View {
 
 struct UserIconList_Previews: PreviewProvider {
     static var previews: some View {
-        UserIconList(users: [])
+        UserIconList(users: [CachedUser(from: Mockdata.user)])
             .preferredColorScheme(.dark)
     }
 }

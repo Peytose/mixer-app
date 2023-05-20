@@ -34,7 +34,7 @@ struct MapSnapshotView: View {
                             .scaledToFit()
                             .foregroundColor(.mixerIndigo)
                             .shadow(radius: 10)
-                            .frame(width: 20)
+                            .frame(width: 16)
                     }
                 }
                 .cornerRadius(16)
