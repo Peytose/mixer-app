@@ -13,7 +13,6 @@ import FirebaseFirestore
 struct HostDetailView: View {
     @ObservedObject var viewModel: HostDetailViewModel
     var namespace: Namespace.ID
-    @State var showUsername = false
     
     init(viewModel: HostDetailViewModel, namespace: Namespace.ID) {
         self.viewModel = viewModel
@@ -21,18 +20,16 @@ struct HostDetailView: View {
     }
     
     var body: some View {
-        ZStack {
-            ScrollView(showsIndicators: false) {
-                VStack {
-                    HostBannerView(host: viewModel.host, namespace: namespace)
-                        .unredacted()
-                    
-                    HostInfoView(namespace: namespace,
-                                 viewModel: viewModel)
-                }
-                .padding(.bottom, 180)
-                .redacted(reason: viewModel.isLoading ? .placeholder : [])
+        ScrollView(showsIndicators: false) {
+            VStack {
+                HostBannerView(host: viewModel.host, namespace: namespace)
+                    .unredacted()
+                
+                HostInfoView(namespace: namespace,
+                             viewModel: viewModel)
             }
+            .padding(.bottom, 180)
+            .redacted(reason: viewModel.isLoading ? .placeholder : [])
         }
         .background(Color.mixerBackground)
         .ignoresSafeArea()

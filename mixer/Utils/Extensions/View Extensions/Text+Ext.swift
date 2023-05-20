@@ -51,6 +51,19 @@ extension Text {
             .foregroundColor(.white.opacity(0.8))
     }
     
+    //Small Text
+    func footnote() -> some View {
+        self
+            .font(.footnote)
+            .foregroundColor(.secondary)
+    }
+//
+    func caption() -> some View {
+        self
+            .font(.caption)
+            .foregroundColor(.secondary)
+    }
+    
     
     //MARK: Textfield Font Modifiers
     // Titles

@@ -24,17 +24,25 @@ struct HostInfoView: View {
             //Host name, links and tagline section
             nameAndTagline
                 .unredacted()
+                .padding(.bottom, 8)
             
-            //Upcoming events section
-            if !viewModel.upcomingEvents.isEmpty {
-                upcomingEvents
+//            Upcoming events section
+            ZStack {
+                if !viewModel.upcomingEvents.isEmpty {
+                    upcomingEvents
+                }
             }
-            
+            .opacity(appear[0] ? 1 : 0)
+
             hostDescription
                 .opacity(appear[1] ? 1 : 0)
             
             //Map section
-            mapSection
+            VStack {
+                mapSection
+            }
+            .opacity(appear[2] ? 1 : 0)
+
         }
         .padding(.horizontal)
         //trigger the staggered fade in animation
@@ -63,10 +71,9 @@ extension HostInfoView {
     
     var upcomingEvents: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Upcoming Events")
                     .heading()
-                    .opacity(appear[1] ? 1 : 0)
                 
                 ForEach(showAllEvents ? viewModel.upcomingEvents : Array(viewModel.upcomingEvents.prefix(1))) { event in
                     NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
@@ -104,7 +111,7 @@ extension HostInfoView {
                         
                         Spacer()
                     }
-                    .padding(.top)
+                    .padding(.top, 8)
                 }
             }
         }
@@ -113,7 +120,7 @@ extension HostInfoView {
     @ViewBuilder
     var hostDescription: some View {
         if let description = viewModel.host.description {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text("About this host")
                     .heading()
                 
@@ -150,15 +157,22 @@ extension HostInfoView {
     @ViewBuilder
     var mapSection: some View {
         if let coordinates = viewModel.coordinates {
-            Text("Located At")
-                .heading()
-            
-            MapSnapshotView(location: coordinates, host: viewModel.host)
-                .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coordinates) }
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Located At")
+                    .heading()
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    MapSnapshotView(location: coordinates, host: viewModel.host)
+                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coordinates) }
+                    
+                    Text("Tap the map for directions to this host!")
+                        .footnote()
+                }
+            }
         }
     }
     
-    //MARK: Fade-in / Fade-out Functions
+    //MARK: Fade-in Functions
     func fadeIn() {
         withAnimation(.easeOut.delay(0.2)) {
             appear[0] = true
@@ -169,12 +183,6 @@ extension HostInfoView {
         withAnimation(.easeOut.delay(0.4)) {
             appear[2] = true
         }
-    }
-    
-    func fadeOut() {
-        appear[0] = false
-        appear[1] = false
-        appear[2] = false
     }
 }
 

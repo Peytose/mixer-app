@@ -42,8 +42,7 @@ struct EventListView<CellView: View>: View {
                     }
                 }
             } else {
-                Text("Nothin' to see here. 🙅‍♂️")
-                    .multilineTextAlignment(.center)
+                Text("Nothin' to see here 🙅‍♂️")
                     .foregroundColor(.secondary)
                     .frame(width: UIScreen.main.bounds.width / 1.3, height: 300, alignment: .center)
             }

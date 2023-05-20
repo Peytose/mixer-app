@@ -163,14 +163,12 @@ struct EventDetailView: View {
                             }
                         } else {
                             if let coords = viewModel.coordinates {
-                                VStack(alignment: .leading, spacing: 5) {
+                                VStack(alignment: .leading, spacing: 4) {
                                     MapSnapshotView(location: coords, event: viewModel.event)
                                         .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
                                     
                                     Text("Tap the map for directions to this event!")
-                                        .font(.footnote)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.secondary)
+                                        .footnote()
                                 }
                             }
                         }

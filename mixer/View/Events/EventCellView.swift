@@ -14,54 +14,40 @@ struct EventCellView: View {
     var namespace: Namespace.ID
     
     var body: some View {
-        VStack(spacing: 15) {
+        VStack(spacing: 16) {
             VStack(alignment: .leading) {
                 Spacer()
                 
-                VStack(alignment: .leading, spacing: 0) {
+                //MARK: Title and host
+                VStack(alignment: .leading, spacing: 2) {
                     Text(event.title)
-                        .font(.title).bold()
-                        .foregroundColor(.white)
+                        .heading()
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                     
                     Text("Hosted by \(event.hostName)")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundColor(.secondary)
+                        .footnote()
+                        .fontWeight(.medium)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 15)
-                .padding(.bottom, 5)
-                .padding(.top, 8)
-                .background(
-                    Rectangle()
-                        .fill(.ultraThinMaterial.opacity(0.98))
-                        .background(Color.mixerBackground.opacity(0.1))
-                        .frame(maxHeight: .infinity, alignment: .bottom)
-                        .padding(-1)
-                        .blur(radius: 9)
-                        .padding(.horizontal, -20)
-                        .padding(.bottom, -10)
-                        .padding(.top, 3)
-                )
+                .padding(8)
+                .padding(.leading, 8)
+                //blur behind text
+                .background { backgroundBlur }
             }
-            .background(
-                KFImage(URL(string: event.eventImageUrl))
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .matchedGeometryEffect(id: event.eventImageUrl, in: namespace)
-            )
+            //image
+            .background { image }
+            //mask to create desired rounded corners
             .mask(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 30)
             )
             
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(spacing: 20) {
+            //More info section
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
                     VStack(alignment: .leading) {
                         Text(hasStarted ? "Ends at \(event.endDate.getTimestampString(format: "h:mm a"))": event.startDate.getTimestampString(format: "EEEE, h:mm a"))
-                            .font(.title3)
-                            .bold()
-                            .foregroundColor(.white)
+                            .subheading2()
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         
@@ -72,36 +58,27 @@ struct EventCellView: View {
                     
                     Spacer()
                     
-                    VStack(spacing: 6) {
+                    VStack(spacing: 4) {
                         if let amenities = event.amenities {
                             if amenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
                                 Image(systemName: "drop.fill")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 18, height: 18)
+                                    .font(.title2)
                                 
                                 Text("Wet Event")
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
-                                    .offset(y: 2)
+                                    .caption()
                             } else {
                                 ZStack {
                                     Image(systemName: "drop.fill")
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 18, height: 18)
+                                        .font(.title2)
                                     
                                     Text("/")
                                         .font(.title)
-//                                        .fontWeight(.semibold)
                                         .foregroundColor(.red)
                                         .rotationEffect(Angle(degrees: 30))
                                 }
                                 
                                 Text("Dry Event")
-                                    .font(.footnote)
-                                    .foregroundColor(.secondary)
-                                    .offset(y: 2)
+                                    .caption()
                             }
                         }
                     }
@@ -109,7 +86,7 @@ struct EventCellView: View {
                 
                 Text(event.description)
                     .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.7))
+                    .foregroundColor(.white.opacity(0.8))
                     .lineLimit(3)
                     .minimumScaleFactor(0.75)
                     .multilineTextAlignment(.leading)
@@ -119,9 +96,31 @@ struct EventCellView: View {
     }
 }
 
-//struct EventCellView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        EventCellView(event: Mockdata.event, hasStarted: false)
-//            .preferredColorScheme(.dark)
-//    }
-//}
+extension EventCellView {
+    var backgroundBlur: some View {
+        Rectangle()
+            .fill(.ultraThinMaterial.opacity(0.98))
+            .background(Color.mixerBackground.opacity(0.1))
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            .padding(-1)
+            .blur(radius: 9)
+            .padding(.horizontal, -20)
+            .padding(.bottom, -10)
+            .padding(.top, 3)
+    }
+    
+    var image: some View {
+        KFImage(URL(string: event.eventImageUrl))
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .matchedGeometryEffect(id: event.eventImageUrl, in: namespace)
+    }
+}
+
+struct EventCellView_Previews: PreviewProvider {
+    @Namespace static var namespace
+    static var previews: some View {
+        EventCellView(event: CachedEvent(from: Mockdata.event), hasStarted: false, namespace: namespace)
+            .preferredColorScheme(.dark)
+    }
+}

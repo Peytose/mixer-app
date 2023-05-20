@@ -30,16 +30,6 @@ struct GuestlistView: View {
                         .foregroundColor(.secondary)
 
                     Spacer()
-
-//                    Menu("Change") {
-//                        ForEach(RelationshipStatus.allCases, id: \.self) { status in
-//                            Button(status.rawValue) {
-//                                viewModel.relationshipStatus = status
-//                                viewModel.save(for: .relationship)
-//                            }
-//                        }
-//                    }
-//                    .accentColor(.mixerIndigo)
                     
                     Menu("Change") {
                         Button("Event 1", action: {})
