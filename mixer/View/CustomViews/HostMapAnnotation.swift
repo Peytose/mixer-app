@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Kingfisher
+import ConfettiSwiftUI
 
 struct HostMapAnnotation: View {
     var host: CachedHost
@@ -14,7 +15,8 @@ struct HostMapAnnotation: View {
     let gradient1 = Gradient(colors: [.purple, .pink])
     let gradient2 = Gradient(colors: [.blue, .purple])
     let defaultGradient = Gradient(colors: [.white, .white])
-    @State private var animateParticles = false
+
+    @State private var counter: Int = 0
 
     var body: some View {
         VStack {
@@ -38,22 +40,25 @@ struct HostMapAnnotation: View {
                         }
                 }
 //                .opacity(host.hasCurrentEvent ?? false ? 1.0 : 0.5)
-//                .particleEffect2(systemImage: "heart.fill", font: .body, status: animateParticles, activeTint: .pink, inActiveTint: .secondary)
-//                .onAppear {
-//                    startParticlesAnimation()
-//                }
             
             Text(host.name)
                 .font(.caption)
                 .fontWeight(.semibold)
         }
-    }
-    private func startParticlesAnimation() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-            animateParticles = true
+        .confettiCannon(counter: $counter, openingAngle: Angle(degrees: 150), radius: 50)
+        .onAppear {
+            if host.hasCurrentEvent ?? false {
+                startAnimatingCounter()
+            }
         }
     }
-}
+    
+    func startAnimatingCounter() {
+        // Start a timer to increment the counter every 1 second
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(Int.random(in: 2...5)), repeats: true) { timer in
+            counter += 1
+        }
+    }}
 
 struct HostMapAnnotation_Previews: PreviewProvider {
     static var previews: some View {

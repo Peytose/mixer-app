@@ -43,7 +43,9 @@ struct ProfileView: View {
                 banner
                 
                 //Name, age, links, school and bio
-                ProfileInfo(user: $viewModel.user, viewModel: viewModel, mutuals: viewModel.mutuals)
+                ProfileInfo(user: $viewModel.user,
+                            viewModel: viewModel,
+                            mutuals: viewModel.mutuals)
                 
                 //Contains user relationship status and major
                 aboutSection
@@ -149,7 +151,6 @@ extension ProfileView {
                                     let impact = UIImpactFeedbackGenerator(style: .light)
                                     impact.impactOccurred()
                                     showOptions.toggle()
-                                    friendRequestSent.toggle()
                                 }
                             }
                             .padding(.trailing)
@@ -231,6 +232,7 @@ fileprivate struct ProfileRelationButtons: View {
                     friendRequestSent = true
                 case .notFriends:
                     viewModel.sendFriendRequest()
+                    friendRequestSent.toggle()
                 case .none:
                     break
                 }

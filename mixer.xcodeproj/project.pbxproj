@@ -122,6 +122,7 @@
 		A62BE1A629CA4FCA0052D34F /* UIScreen+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */; };
 		A62BE1A829CA501F0052D34F /* QRCodeAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */; };
 		A62ED41129DE31A0008D6274 /* ShareProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62ED41029DE31A0008D6274 /* ShareProfileView.swift */; };
+		A64152952A1982F5000B4C97 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = A64152942A1982F5000B4C97 /* ConfettiSwiftUI */; };
 		A6430446294FBDBF0058C0F0 /* CreateEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430445294FBDBF0058C0F0 /* CreateEventView.swift */; };
 		A6430448294FBEC80058C0F0 /* CreateEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430447294FBEC80058C0F0 /* CreateEventViewModel.swift */; };
 		A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */; };
@@ -350,6 +351,7 @@
 				A6B9E6622953A47C009C936E /* CodeScanner in Frameworks */,
 				9C93319B29242A9F0079E039 /* FirebaseDynamicLinks in Frameworks */,
 				9C3BADFD291F5C70009C8043 /* Kingfisher in Frameworks */,
+				A64152952A1982F5000B4C97 /* ConfettiSwiftUI in Frameworks */,
 				A611E6E52A03123200DDFD32 /* PopupView in Frameworks */,
 				9C3BADEE291F59E7009C8043 /* FirebaseFunctions in Frameworks */,
 				9C3E2CA329EBCCA200A74D05 /* Geohash in Frameworks */,
@@ -959,6 +961,7 @@
 				9C99EAE929A674B500D66FEB /* DebouncedOnChange */,
 				9C3E2CA229EBCCA200A74D05 /* Geohash */,
 				A611E6E42A03123200DDFD32 /* PopupView */,
+				A64152942A1982F5000B4C97 /* ConfettiSwiftUI */,
 			);
 			productName = mixer;
 			productReference = 9C3BADB6291F54B4009C8043 /* mixer.app */;
@@ -999,6 +1002,7 @@
 				9C99EAE829A674B500D66FEB /* XCRemoteSwiftPackageReference "DebouncedOnChange" */,
 				9C3E2CA129EBCCA200A74D05 /* XCRemoteSwiftPackageReference "Geohash" */,
 				A611E6E32A03123200DDFD32 /* XCRemoteSwiftPackageReference "PopupView" */,
+				A64152932A1982F5000B4C97 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = 9C3BADB7291F54B4009C8043 /* Products */;
 			projectDirPath = "";
@@ -1453,6 +1457,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		A64152932A1982F5000B4C97 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
 		A68971C8296E7E1900289516 /* XCRemoteSwiftPackageReference "TabBar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onl1ner/TabBar.git";
@@ -1544,6 +1556,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A611E6E32A03123200DDFD32 /* XCRemoteSwiftPackageReference "PopupView" */;
 			productName = PopupView;
+		};
+		A64152942A1982F5000B4C97 /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A64152932A1982F5000B4C97 /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
 		};
 		A68971C9296E7E1900289516 /* TabBar */ = {
 			isa = XCSwiftPackageProductDependency;
