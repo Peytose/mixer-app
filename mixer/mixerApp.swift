@@ -29,16 +29,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return
         }
     }
-    
-    //    func application(_ application: UIApplication,
-    //                     continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-    //        let handled = DynamicLinks.dynamicLinks()
-    //            .handleUniversalLink(userActivity.webpageURL!) { dynamiclink, error in
-    //                dynamiclink.
-    //            }
-    //
-    //        return handled
-    //    }
 }
 
 @main
@@ -58,9 +48,12 @@ struct mixerApp: App {
                         .zIndex(0)
                 }
                 .onOpenURL { url in
-                    print("DEBUG: Handling share profile link...")
-                    // Verify if the link is for a profile
-                    if url.path.contains("profile") {
+                    print("DEBUG: Handling URL...")
+                    // First, try to handle this URL as a Firebase Authentication redirect
+                    if Auth.auth().canHandle(url) {
+                        print("DEBUG: URL handled as Firebase Auth redirect.")
+                        authViewModel.next()
+                    } else if url.path.contains("profile") {
                         print("DEBUG: Dynamic link contained 'profile'!")
                         // Handle the dynamic link. Here you can extract the uid and navigate to the profile screen.
                         if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),

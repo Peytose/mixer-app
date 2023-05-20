@@ -360,7 +360,7 @@ class AuthViewModel: ObservableObject {
     
     
     private func fetchUniversity(completion: @escaping (Bool) -> Void) {
-        if email.isValidEmail {
+        if !email.isValidEmail {
             completion(false)
             return
         }
@@ -386,7 +386,7 @@ class AuthViewModel: ObservableObject {
                 return
             }
 
-            if let universityName = document["name"] as? String, let universityUID = document.documentID as String? {
+            if let universityName = document["shortName"] as? String, let universityUID = document.documentID as String? {
                 self.universityData = ["name": universityName,
                                        "uid": universityUID]
                 // Save the universityData dictionary to the user document
