@@ -10,9 +10,15 @@ import Kingfisher
 
 struct MoreProfileOptions: View {
     let action: () -> Void
-    var link: String = "https://mixer.llc"
     let user: CachedUser
+    @StateObject private var imageLoader: ImageLoader
     @State var showBlockAlert = false
+    
+    init(action: @escaping () -> Void, user: CachedUser) {
+        self.action = action
+        self.user = user
+        _imageLoader = StateObject(wrappedValue: ImageLoader(url: user.profileImageUrl))
+    }
     
     var body: some View {
         ZStack(alignment: .leading) {
@@ -51,21 +57,23 @@ struct MoreProfileOptions: View {
                     showBlockAlert.toggle()
                 }
                 
-                ShareLink(item: URL(string: link)!) {
-                    HStack(spacing: 10)  {
-                        Image(systemName: "square.and.arrow.up")
-                            .font(.title3.weight(.medium))
-                        
-                        Text("Share profile")
-                            .fontWeight(.medium)
+                //MARK: Current issue: share button hard to click
+                if let userId = user.id, let url = URL(string: "https://mixer.page.link/profile?uid=\(userId)") {
+                    ShareLink(item: url,
+                              message: Text("\nCheck out this profile on mixer!"),
+                              preview: SharePreview("\(user.displayName) (@\(user.username))",
+                                                    image: imageLoader.image ?? Image("default-avatar"))) {
+                        HStack(spacing: 10)  {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.title3.weight(.medium))
+                            
+                            Text("Share profile")
+                                .fontWeight(.medium)
+                        }
                     }
+                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
                 }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    let impact = UIImpactFeedbackGenerator(style: .light)
-                    impact.impactOccurred()
-                }
-                .buttonStyle(.plain)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
             .padding(.horizontal, 20)
@@ -81,7 +89,7 @@ struct MoreProfileOptions: View {
             Button("Cancel", role: .cancel, action: {})
             Button("Block", role: .destructive, action: {action()})
         }, message: {
-            Text("\(user.name) will no longer be able to see your profile, activity, or follow you. ")
+            Text("\(user.name) will no longer be able to see your profile, activity, or follow you.")
         })
     }
     
@@ -94,7 +102,7 @@ struct MoreProfileOptions: View {
 
 struct MoreProfileOptions_Previews: PreviewProvider {
     static var previews: some View {
-        MoreProfileOptions(action: {}, link: "https://mixer.llc", user: CachedUser(from: Mockdata.user))
+        MoreProfileOptions(action: {}, user: CachedUser(from: Mockdata.user))
             .preferredColorScheme(.dark)
     }
 }

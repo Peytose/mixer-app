@@ -30,14 +30,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         }
     }
     
-    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
-        print("\(#function)")
-        if Auth.auth().canHandle(url) {
-            return true
-        }
-        return false
-    }
-    
     //    func application(_ application: UIApplication,
     //                     continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     //        let handled = DynamicLinks.dynamicLinks()
@@ -52,12 +44,42 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct mixerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var dynamicLinkManager = DynamicLinkManager.shared
+    @StateObject var authViewModel = AuthViewModel.shared
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.dark)
-                .environmentObject(AuthViewModel.shared)
+                .environmentObject(authViewModel)
+                .environmentObject(dynamicLinkManager)
+                .fullScreenCover(item: $dynamicLinkManager.profileToPresent) { user in
+                    ProfileView(viewModel: ProfileViewModel(user: user))
+                        .zIndex(0)
+                }
+                .onOpenURL { url in
+                    print("DEBUG: Handling share profile link...")
+                    // Verify if the link is for a profile
+                    if url.path.contains("profile") {
+                        print("DEBUG: Dynamic link contained 'profile'!")
+                        // Handle the dynamic link. Here you can extract the uid and navigate to the profile screen.
+                        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+                           let queryItems = components.queryItems,
+                           let uidItem = queryItems.first(where: { $0.name == "uid" }) {
+                            let uid = uidItem.value
+                            Task {
+                                do {
+                                    if let uid = uid {
+                                        DynamicLinkManager.shared.profileToPresent = try await UserCache.shared.getUser(withId: uid)
+                                        print("DEBUG: Uid from dynamic link: \(uid)")
+                                    }
+                                } catch {
+                                    print("DEBUG: Error getting profile from share link. \(error.localizedDescription)")
+                                }
+                            }
+                        }
+                    }
+                }
         }
     }
 }

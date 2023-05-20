@@ -335,7 +335,7 @@ fileprivate struct EasterEggView: View {
             VStack {
                 Text(text)
 
-                Text("🦫🐏")
+                Text("🦫 🐏")
             }
             .font(.body)
             .foregroundColor(.secondary)
