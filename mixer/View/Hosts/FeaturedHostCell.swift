@@ -162,31 +162,6 @@ struct NameAndLinksRow: View {
                 HostLinkIcon(url: website, icon: "globe")
                     .matchedGeometryEffect(id: "website-\(host.username)", in: namespace)
             }
-            
-            //MARK: Follow button (bug report: doesn't update after pressing and redirecting)
-//            Text(isFollowing ? "Following" : "Follow")
-//                .font(.footnote.weight(.semibold))
-//                .foregroundColor(isFollowing ? .white : .black)
-//                .padding(EdgeInsets(top: 7, leading: 16, bottom: 7, trailing: 16))
-//                .background {
-//                    if isFollowing {
-//                        Capsule()
-//                            .stroke()
-//                            .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
-//                    } else {
-//                        Capsule()
-//                            .matchedGeometryEffect(id: "hostFollowButton-\(host.username)", in: namespace)
-//                    }
-//
-//                }
-//                .onTapGesture {
-//                    let impact = UIImpactFeedbackGenerator(style: .light)
-//                    impact.impactOccurred()
-//                    withAnimation(.follow) {
-//                        isFollowing.toggle()
-//                    }
-//                }
-//                .matchedGeometryEffect(id: "follow-button-\(host.username)", in: namespace)
         }
     }
 }

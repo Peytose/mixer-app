@@ -323,29 +323,28 @@ fileprivate struct HostedBySection: View {
                         
                         Spacer()
                         
-                        //MARK: Follow host button on event (debug report: same as other follow button(s))
-                        Button {
-                            withAnimation(.follow) {
-                                viewModel.followHost()
-                            }
-                        } label: {
-                            if let isFollowed = host.isFollowed {
+                        if var isFollowed = host.isFollowed {
+                            Button {
+                                withAnimation(.follow) {
+                                    isFollowed ? viewModel.unfollowHost() : viewModel.followHost()
+                                    isFollowed.toggle()
+                                }
+                            } label: {
                                 Text(isFollowed ? "Following" : "Follow")
                                     .font(.footnote)
                                     .fontWeight(.semibold)
-                                    .foregroundColor(isFollowed ? .white : .black)
+                                    .foregroundColor(.white)
                                     .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
                                     .background {
                                         Capsule()
-                                            .stroke(lineWidth: isFollowed ? 1 : 0)
+                                            .stroke(lineWidth: 1)
                                             .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id ?? "")",
                                                                    in: namespace)
                                     }
                             }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
-                
             }
         }
     }

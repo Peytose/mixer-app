@@ -26,12 +26,14 @@ enum NotificationType: Int, Decodable {
     case requestFriend
     case acceptFriend
     case likedEvent
+    case hostFollow
     
     var notificationMessage: String {
         switch self {
             case .requestFriend: return " wants to be friends!"
             case .acceptFriend: return " is now your friend."
             case .likedEvent: return " liked one of your events."
+            case .hostFollow: return " started following you!"
         }
     }
 }

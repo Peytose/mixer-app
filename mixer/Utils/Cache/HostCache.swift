@@ -66,15 +66,7 @@ class HostCache {
                 let hosts = documents.compactMap { document -> CachedHost? in
                     do {
                         let host = try document.data(as: Host.self)
-                        var cachedHost = CachedHost(from: host)
-                        
-                        if let hostId = host.id {
-                            UserService.checkIfHostIsFollowed(hostUid: hostId) { isFollowed in
-                                cachedHost.isFollowed = isFollowed
-                            }
-                        }
-                        
-                        return cachedHost
+                        return CachedHost(from: host)
                     } catch let error {
                         print("Error decoding host: \(error)")
                         return nil
@@ -83,7 +75,7 @@ class HostCache {
                 
                 let hostIds = hosts.map({ $0.id })
                 try cache.write(codable: hostIds, forKey: key)
-                try await cacheHosts(hosts)
+                cacheHosts(hosts)
                 return hosts
             } else {
                 // If no documents exist, return an empty array
@@ -113,20 +105,27 @@ class HostCache {
         let event = try snapshot.data(as: Host.self)
 
         // Store in cache
-        let cachedHost = CachedHost(from: event)
-        try cacheHost(cachedHost)
+        var cachedHost = CachedHost(from: event)
+        cacheHost(cachedHost)
 
         return cachedHost
     }
     
     // Caching Hosts
-    private func cacheHosts(_ hosts: [CachedHost]) async throws {
-        for host in hosts { try cacheHost(host) }
+    private func cacheHosts(_ hosts: [CachedHost]) {
+        for host in hosts { cacheHost(host) }
     }
 
-    func cacheHost(_ host: CachedHost) throws {
-        guard let id = host.id else { return }
-        try cache.write(codable: host, forKey: id)
+    func cacheHost(_ host: CachedHost) {
+        Task {
+            do {
+                guard let id = host.id else { return }
+                try cache.write(codable: host, forKey: id)
+            } catch {
+                print("DEBUG: ❌ Error caching event. \(error.localizedDescription)")
+                return
+            }
+        }
     }
     
     // Clearing Cache

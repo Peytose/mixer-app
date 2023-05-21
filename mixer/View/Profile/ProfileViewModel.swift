@@ -110,7 +110,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     
-    func acceptFriendRequest() {
+    @MainActor func acceptFriendRequest() {
         guard let uid = user.id else { return }
         UserService.acceptFriendRequest(uid: uid) { _ in
             self.user.relationshiptoUser = .friends
@@ -120,7 +120,7 @@ class ProfileViewModel: ObservableObject {
     }
     
     
-    func cancelFriendRequest() {
+    @MainActor func cancelFriendRequest() {
         guard let uid = user.id else { return }
         
         if self.user.relationshiptoUser != .notFriends {

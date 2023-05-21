@@ -72,12 +72,36 @@ final class EventDetailViewModel: ObservableObject {
     }
     
     
+    private func checkIfHostIsFollowed() {
+        print("DEBUG: Checking if host is followed ... ")
+        
+        if let host = self.host, let hostId = host.id {
+           UserService.checkIfHostIsFollowed(hostUid: hostId) { isFollowed in
+               self.host?.isFollowed = isFollowed
+               print("DEBUG: You do\(isFollowed ? "" : " not") follow this host!")
+               HostCache.shared.cacheHost(host)
+           }
+       }
+    }
+    
+    
     @MainActor func followHost() {
         guard let hostId = host?.id else { return }
         
         UserService.follow(hostUid: hostId) { _ in
             self.host?.isFollowed = true
-//            NotificationsViewModel.uploadNotifications(toUid: uid, type: .follow)
+            HapticManager.playLightImpact()
+//            NotificationsViewModel.uploadNotifications(toUid: , type: .follow)
+        }
+    }
+    
+    
+    @MainActor func unfollowHost() {
+        guard let hostId = host?.id else { return }
+        
+        UserService.unfollow(hostUid: hostId) { _ in
+            self.host?.isFollowed = false
+            HapticManager.playLightImpact()
         }
     }
     
@@ -98,6 +122,7 @@ final class EventDetailViewModel: ObservableObject {
         Task {
             do {
                 self.host = try await HostCache.shared.getHost(from: event.hostUuid)
+                checkIfHostIsFollowed()
             } catch {
                 print("DEBUG: Error fetching event host. \(error.localizedDescription)")
             }

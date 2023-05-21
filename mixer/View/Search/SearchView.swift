@@ -15,24 +15,22 @@ struct SearchView: View {
     
     var body: some View {
         NavigationView {
-            ZStack {
-                VStack {
-                    List {
-                        listContent
-                    }
-                    .scrollContentBackground(.hidden)
+            VStack {
+                List {
+                    listContent
+                        .redacted(reason: viewModel.isLoading ? .placeholder : [])
                 }
-                .background(Color.mixerBackground)
-                .overlay {
-                    Image("Blob 1")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 300, height: 300, alignment: .top)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                        .opacity(0.8)
-                        .offset(x: -40, y: -355)
-                }
-                if viewModel.isLoading { LoadingView() }
+                .scrollContentBackground(.hidden)
+            }
+            .background(Color.mixerBackground)
+            .overlay {
+                Image("Blob 1")
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 300, height: 300, alignment: .top)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .opacity(0.8)
+                    .offset(x: -40, y: -355)
             }
             .navigationTitle("Search")
             .searchable(text: $viewModel.text,
@@ -90,8 +88,9 @@ fileprivate struct UserSearchCell: View {
                             .imageScale(.small)
                             .foregroundColor(.secondary)
                         
-                        Text("\(university)")
-                            .font(.subheadline.weight(.medium))
+                        Text(university)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
                             .foregroundColor(.secondary)
                     }
                 }
@@ -103,9 +102,11 @@ fileprivate struct UserSearchCell: View {
                     
                     Spacer()
                     
-                    Text("Friend")
-                        .font(.subheadline)
-                        .foregroundColor(.mixerIndigo)
+                    if user.relationshiptoUser == .friends {
+                        Text("Friend")
+                            .font(.subheadline)
+                            .foregroundColor(.mixerIndigo)
+                    }
                 }
             }
         }

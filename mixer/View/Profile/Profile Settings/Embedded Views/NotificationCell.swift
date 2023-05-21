@@ -65,6 +65,8 @@ struct NotificationCell: View {
                     }
                 }
                 .padding(.leading, 20)
+            case .hostFollow:
+                Text("")
             }
         }
         .frame(maxHeight: 60)
