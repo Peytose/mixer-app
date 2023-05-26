@@ -84,6 +84,4 @@ struct CachedEvent: Hashable, Identifiable, Codable {
         self.cost                          = event.cost
         self.averageRating                 = event.averageRating
     }
-
 }
-

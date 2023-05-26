@@ -8,7 +8,7 @@
 import SwiftUI
 
 class ImageLoader: ObservableObject {
-    @Published var image: Image? = nil
+    @Published var image: Image?
     
     init(url: String) {
         loadImage(from: url)

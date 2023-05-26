@@ -10,4 +10,5 @@ import SwiftUI
 class DynamicLinkManager: ObservableObject {
     static let shared = DynamicLinkManager()
     @Published var profileToPresent: CachedUser? = nil
+    @Published var eventToPresent: CachedEvent?  = nil
 }

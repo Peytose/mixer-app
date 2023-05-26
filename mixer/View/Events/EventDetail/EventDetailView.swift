@@ -24,8 +24,14 @@ struct EventDetailView: View {
     @State var isLiked                  = false
     @State var addedEvent               = false
     @State var removedEvent             = false
+    @Environment(\.presentationMode) var presentationMode
     
     var namespace: Namespace.ID
+    
+    init(viewModel: EventDetailViewModel, namespace: Namespace.ID) {
+        self.viewModel = viewModel
+        self.namespace = namespace
+    }
     
     var body: some View {
         ZStack {
@@ -104,13 +110,14 @@ struct EventDetailView: View {
                                                     Spacer()
                                                 }
                                                 .foregroundColor(.white)
-                                                
                                             }
                                         }
                                     }
                                 }
+                                
                                 HStack {
                                     Spacer()
+                                    
                                     Button {
                                         withAnimation(.spring(dampingFraction: 0.8)) {
                                             showAllAmenities.toggle()
@@ -130,7 +137,6 @@ struct EventDetailView: View {
                                     }
                                     Spacer()
                                 }
-                                //                                }
                             }
                         }
                     }
@@ -184,6 +190,15 @@ struct EventDetailView: View {
                     .transition(.opacity)
                     .zIndex(1)
             }
+        }
+        .overlay(alignment: .topLeading) {
+            Button(action: {
+                presentationMode.wrappedValue.dismiss()
+            }, label: {
+                BackArrowButton()
+            })
+            .padding(.horizontal)
+            .padding(.top, 70)
         }
         .preferredColorScheme(.dark)
         .ignoresSafeArea()
@@ -372,6 +387,21 @@ extension EventDetailView {
                                          activeTint: .pink,
                                          inActiveTint: .secondary) {
                                 viewModel.updateLike(didLike: !(viewModel.event.didLike ?? false))
+                            }
+                            
+                            if let eventId = viewModel.event.id,
+                               let url = URL(string: "https://mixer.page.link/event?eventId=\(eventId)") {
+                                ShareLink(item: url,
+                                          message: Text("\nCheck out this event on mixer!"),
+                                          preview: SharePreview("\(viewModel.event.title) by \(viewModel.event.hostName)",
+                                                                image: viewModel.imageLoader.image ?? Image("AppIcon")),
+                                          label: {
+                                    Image(systemName: "square.and.arrow.up")
+                                        .font(.title3.weight(.medium))
+                                        .foregroundColor(.secondary)
+                                        .contentShape(Rectangle())
+                                        .padding()
+                                })
                             }
                         }
                         

@@ -20,9 +20,12 @@ final class EventDetailViewModel: ObservableObject {
     @Published var host: CachedHost?
     private (set) var coordinates: CLLocationCoordinate2D?
     @Published var isDataReady: Bool = false
+    @Published private (set) var imageLoader: ImageLoader
 
     init(event: CachedEvent) {
         self.event = event
+        self.imageLoader = ImageLoader(url: event.eventImageUrl)
+        
         Task.init {
             await checkIfUserLikedEvent()
             await fetchEventHost()
@@ -32,6 +35,10 @@ final class EventDetailViewModel: ObservableObject {
                 self.isDataReady = true
             }
         }
+    }
+    
+    private func loadHostImage() -> ImageLoader {
+        return ImageLoader(url: self.host?.hostImageUrl ?? "")
     }
     
     

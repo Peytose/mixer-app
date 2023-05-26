@@ -58,12 +58,12 @@ struct MoreProfileOptions: View {
                     showBlockAlert.toggle()
                 }
                 
-                //MARK: Current issue: share button hard to click
                 if let userId = user.id, let url = URL(string: "https://mixer.page.link/profile?uid=\(userId)") {
                     ShareLink(item: url,
                               message: Text("\nCheck out this profile on mixer!"),
                               preview: SharePreview("\(user.displayName) (@\(user.username))",
-                                                    image: imageLoader.image ?? Image("default-avatar"))) {
+                                                    image: imageLoader.image ?? Image("default-avatar")),
+                              label: {
                         HStack(spacing: 10)  {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.title3.weight(.medium))
@@ -73,9 +73,7 @@ struct MoreProfileOptions: View {
                         }
                         .contentShape(Rectangle())
                         .padding()
-                    }
-                                                    .buttonStyle(.plain)
-                    
+                    })
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
