@@ -54,7 +54,7 @@ struct AuthFlow: View {
             }
             .animation(.easeInOut, value: viewModel.active)
             .tabViewStyle(.page(indexDisplayMode: .never))
-            .padding(.top, 40)
+            .padding(.top, 30)
             
             if viewModel.isLoading { LoadingView() }
         }
