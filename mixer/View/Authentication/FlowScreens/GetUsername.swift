@@ -13,29 +13,23 @@ struct GetUsername: View {
     let action: () -> Void
     
     var body: some View {
-        ZStack {
-            Color.mixerBackground.ignoresSafeArea()
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
-            
-            VStack {
-                SignUpTextField(input: $username, title: "Last thing \(name)! Choose a username", placeholder: "ex. \(name.prefix(Int.random(in: 3...5)).lowercased())_loves_mixer3", footnote: "This will not be changeable in the near future, so choose wisely. Username must be unique.", textfieldHeader: "Your username", keyboard: .default)
-                
-                Spacer()
-            }
-            .padding(.top)
-            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-            .overlay(alignment: .bottom) {
-                if username.isEmpty {
-                    ContinueSignUpButton(text: "Continue", action: action, isActive: false)
-                        .disabled(true)
-                } else {
-                    ContinueSignUpButton(text: "Continue", action: action, isActive: true)
-                        .disabled(false)
-                }
+        OnboardingPageViewContainer {
+            SignUpTextField(input: $username,
+                            title: "Last thing \(name)! Choose a username",
+                            placeholder: "ex. \(name.lowercased())_\(randomNumber())",
+                            footnote: "This will not be changeable in the near future, so choose wisely. Username must be unique.",
+                            textfieldHeader: "Your username",
+                            keyboard: .default)
         }
+        .overlay(alignment: .bottom) {
+            ContinueSignUpButton(text: "Continue", action: action, isActive: !username.isEmpty)
         }
+    }
+    
+    private func randomNumber() -> String {
+        let num = String(Int.random(in: 3...5))
+        let num2 = String(Int.random(in: 3...5))
+        return num + num2
     }
 }
 

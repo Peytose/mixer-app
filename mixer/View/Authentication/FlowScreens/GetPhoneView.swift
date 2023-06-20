@@ -12,32 +12,27 @@ struct GetPhoneView: View {
     @Binding var phoneNumber: String
     @Binding var countryCode: String
     @State private var disableButton = false
-    @State var isEditingNumber: Bool = false
+    @State var isEditingNumber = false
     let action: () -> Void
     
     var body: some View {
-        ZStack {
-            Color.mixerBackground.ignoresSafeArea()
-            
-            VStack {
-                PhoneNumberTextField(title: "My number is",
-                                     footnote: "Message and data rates apply.",
-                                     note: "We'll send you a code, it helps us keep your account secure.",
-                                     textfieldHeader: "Your phone number",
-                                     keyboard: .phonePad,
-                                     input: $phoneNumber,
-                                     countryCode: $countryCode,
-                                     isEditingNumber: $isEditingNumber)
-                
-                Spacer()
-            }
-            .padding(.top)
-            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-            .overlay(alignment: .bottom) {
-                ContinueSignUpButton(text: "Continue", action: action, isActive: !phoneNumber.isEmpty)
-                    .onTapGesture { isEditingNumber = false }
-                    .disabled(phoneNumber.isEmpty)
-            }
+        OnboardingPageViewContainer {
+            PhoneNumberTextField(title: "My number is",
+                                 footnote: "Message and data rates apply.",
+                                 note: "We'll send you a code, it helps us keep your account secure.",
+                                 textfieldHeader: "Your phone number",
+                                 keyboard: .phonePad,
+                                 input: $phoneNumber,
+                                 countryCode: $countryCode,
+                                 isEditingNumber: $isEditingNumber)
+        }
+        .overlay(alignment: .bottom) {
+            ContinueSignUpButton(text: "Continue", message: "Please enter a valid phone number" , action: action, isActive: !phoneNumber.isEmpty)
+                .onTapGesture {
+                    isEditingNumber = false
+                    disableButton = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 7.0) { disableButton = false }
+                }
         }
     }
 }
@@ -63,12 +58,11 @@ fileprivate struct PhoneNumberTextField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .font(.largeTitle)
-                .foregroundColor(.mainFont)
-                .fontWeight(.semibold)
+                .textFieldTitle()
                 .lineLimit(2)
                 .minimumScaleFactor(0.75)
                 .padding(.bottom, 10)
+
 
             Text(note)
                 .font(.body)

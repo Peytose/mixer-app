@@ -16,20 +16,20 @@ struct AuthFlow: View {
         ZStack {
             Color.mixerBackground
                 .ignoresSafeArea()
-
+            
             TabView(selection: $viewModel.active) {
                 GetNameView(name: $viewModel.name) { viewModel.next() }
                     .tag(AuthViewModel.Screen.name)
-
+                
                 GetPhoneView(phoneNumber: $viewModel.phoneNumber,
                              countryCode: $viewModel.countryCode,
                              action: viewModel.sendPhoneVerification)
-                    .tag(AuthViewModel.Screen.phone)
-
+                .tag(AuthViewModel.Screen.phone)
+                
                 GetCode(code: $viewModel.code,
                         phoneNumber: viewModel.phoneNumber) { viewModel.verifyPhoneNumber() }
                     .tag(AuthViewModel.Screen.code)
-
+                
                 GetEmail(name: viewModel.name,
                          email: $viewModel.email) { viewModel.sendEmailLink() }
                     .tag(AuthViewModel.Screen.email)
@@ -60,36 +60,31 @@ struct AuthFlow: View {
         }
         .preferredColorScheme(.dark)
         .overlay(alignment: .topLeading) {
-            VStack(alignment: .leading) {
-                ProgressView(value: Double(viewModel.active.rawValue) / 7.0)
-                    .accentColor(Color.mixerIndigo)
-                
-                HStack {
-                    if showArrow {
-                        if viewModel.active == AuthViewModel.Screen.name {
-                            Button {
-                                withAnimation() {
-                                    viewModel.showAuthFlow.toggle()
-                                }
-                            } label: {
-                                Image(systemName: "xmark")
-                                    .font(.title.weight(.semibold))
-                                    .foregroundColor(.mainFont)
+            HStack {
+                if showArrow {
+                    if viewModel.active == AuthViewModel.Screen.name {
+                        Button {
+                            withAnimation() {
+                                viewModel.showAuthFlow.toggle()
                             }
-                            .frame(width: 50)
-                        } else {
-                            Button(action: viewModel.previous) {
-                                Image(systemName: "chevron.backward")
-                                    .font(.title.weight(.semibold))
-                                    .foregroundColor(.mixerIndigo)
-                            }
-                            .frame(width: 50)
+                        } label: {
+                            Image(systemName: "xmark")
+                                .font(.title.weight(.semibold))
+                                .foregroundColor(.mainFont)
                         }
+                        .frame(width: 50)
+                    } else {
+                        Button(action: viewModel.previous) {
+                            Image(systemName: "chevron.backward")
+                                .font(.title.weight(.semibold))
+                                .foregroundColor(.mixerIndigo)
+                        }
+                        .frame(width: 50)
                     }
                 }
-                .padding(.horizontal, 4)
-                .padding(.top, 5)
             }
+            .padding(.horizontal, 4)
+            .padding(.top, 5)
             .preferredColorScheme(.dark)
         }
         .animation(.easeInOut, value: showArrow)

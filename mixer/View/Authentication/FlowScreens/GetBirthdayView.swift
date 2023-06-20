@@ -17,32 +17,16 @@ struct GetBirthdayView: View {
     let action: () -> Void
     
     var body: some View {
-        ZStack {
-            Color.mixerBackground.ignoresSafeArea()
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
-            
-            VStack {
-                SignUpTextField(input: $birthday,
-                                 title: "When's your birthday?",
-                                 placeholder: "MM / DD / YYYY",
-                                 footnote: "Mixer uses your birthday for research and verification purposes. Your age will be public",
-                                 keyboard: .numberPad)
-                .onChange(of: birthday) { newValue in birthday = newValue.applyPattern() }
-                
-                Spacer()
-            }
-            .padding(.top)
-            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-            .overlay(alignment: .bottom) {
-                if !isValidBirthday {
-                    ContinueSignUpButton(text: "Continue", action: action, isActive: false)
-                        .disabled(true)
-                } else {
-                    ContinueSignUpButton(text: "Continue", action: action, isActive: true)
-                }
-            }
+        OnboardingPageViewContainer {
+            SignUpTextField(input: $birthday,
+                            title: "When's your birthday?",
+                            placeholder: "MM / DD / YYYY",
+                            footnote: "Mixer uses your birthday for research and verification purposes. Your age will be public",
+                            keyboard: .numberPad)
+            .onChange(of: birthday) { newValue in birthday = newValue.applyPattern() }
+        }
+        .overlay(alignment: .bottom) {
+            ContinueSignUpButton(text: "Continue", action: action, isActive: isValidBirthday)
         }
     }
 }

@@ -12,14 +12,9 @@ struct GetGenderView: View {
     @Binding var isGenderPublic: Bool
     
     let action: () -> Void
-        
+    
     var body: some View {
-        ZStack {
-            Color.mixerBackground.ignoresSafeArea()
-                .onTapGesture {
-                    self.hideKeyboard()
-                }
-            
+        OnboardingPageViewContainer {
             VStack(alignment: .leading, spacing: 80) {
                 Text("I am a \(gender.lowercased())")
                     .font(.largeTitle)
@@ -50,22 +45,20 @@ struct GetGenderView: View {
                             self.gender = "Other"
                         }
                 }
-
+                
                 Spacer()
             }
-            .padding(.top)
-            .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
-            .overlay(alignment: .bottom) {
-                Toggle(isOn: $isGenderPublic) {
-                    Text("Show my gender on my profile")
-                    
-                }
-                .toggleStyle(iOSCheckboxToggleStyle())
-                .buttonStyle(.plain)
-                .offset(y: -100)
+        }
+        .overlay(alignment: .bottom) {
+            Toggle(isOn: $isGenderPublic) {
+                Text("Show my gender on my profile")
                 
-                ContinueSignUpButton(text: "Continue", action: action, isActive: true)
             }
+            .toggleStyle(iOSCheckboxToggleStyle())
+            .buttonStyle(.plain)
+            .offset(y: -100)
+            
+            ContinueSignUpButton(text: "Continue", action: action, isActive: true)
         }
     }
 }

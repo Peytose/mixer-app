@@ -166,6 +166,7 @@
 		A6BF681F2A0074EC000FF54B /* EventPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF681E2A0074EC000FF54B /* EventPreviewView.swift */; };
 		A6BF68212A02255F000FF54B /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF68202A02255F000FF54B /* LaunchScreenView.swift */; };
 		A6BF68232A023912000FF54B /* SmallEventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF68222A023912000FF54B /* SmallEventCell.swift */; };
+		A6C32A0F2A40403F006EEE77 /* OnboardingPageViewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C32A0E2A40403F006EEE77 /* OnboardingPageViewContainer.swift */; };
 		A6C99FC029DA5BA00046D61B /* GetBirthdayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */; };
 		A6C99FC229DA5BFF0046D61B /* GetGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */; };
 		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
@@ -326,6 +327,7 @@
 		A6BF681E2A0074EC000FF54B /* EventPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPreviewView.swift; sourceTree = "<group>"; };
 		A6BF68202A02255F000FF54B /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
 		A6BF68222A023912000FF54B /* SmallEventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallEventCell.swift; sourceTree = "<group>"; };
+		A6C32A0E2A40403F006EEE77 /* OnboardingPageViewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewContainer.swift; sourceTree = "<group>"; };
 		A6C99FBF29DA5BA00046D61B /* GetBirthdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetBirthdayView.swift; sourceTree = "<group>"; };
 		A6C99FC129DA5BFF0046D61B /* GetGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetGenderView.swift; sourceTree = "<group>"; };
 		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
@@ -651,6 +653,7 @@
 				9C9331A32925B7540079E039 /* FlowScreens */,
 				A62BE19929C821F60052D34F /* LaunchScreen */,
 				A62BE1A029CA4E820052D34F /* QRCodeAnimation */,
+				A6C32A0E2A40403F006EEE77 /* OnboardingPageViewContainer.swift */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -1164,6 +1167,7 @@
 				9C50D23329FB4F65002FAE76 /* EventMapAnnotation.swift in Sources */,
 				A62BE1A629CA4FCA0052D34F /* UIScreen+Ext.swift in Sources */,
 				A61D12B429B42D3D00AE0EED /* HostInfoView.swift in Sources */,
+				A6C32A0F2A40403F006EEE77 /* OnboardingPageViewContainer.swift in Sources */,
 				A6BF681329FC6D9E000FF54B /* GuestlistChartsView.swift in Sources */,
 				9C58B3C129C8EB270024CB7E /* BackArrowButton.swift in Sources */,
 				A644FB502A03402B0028688E /* FriendRequestSentNotification.swift in Sources */,

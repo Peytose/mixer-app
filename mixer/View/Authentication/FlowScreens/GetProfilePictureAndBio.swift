@@ -13,42 +13,37 @@ struct GetProfilePictureAndBio: View {
     let action: () -> Void
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            ZStack {
-                Color.mixerBackground.ignoresSafeArea()
-                    .onTapGesture {
-                        self.hideKeyboard()
-                    }
-                
+        OnboardingPageViewContainer {
+            ScrollView {
                 VStack(spacing: 50) {
                     SignUpPictureView(title: "Choose a profile picture.",
                                       selectedImage: $selectedImage)
-                    
+
                     Divider().padding(.horizontal)
-                    
+
                     BioTextField(bio: $bio,
                                  title: "Write a bio.",
                                  placeholder: "bio",
                                  keyboard: .default)
-                    
+
                     Spacer()
                 }
             }
         }
-        .padding(.top)
-        .onAppear { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil) }
         .overlay(alignment: .bottom) {
             ContinueSignUpButton(text: "Continue", action: action, isActive: true)
         }
     }
 }
 
-//struct GetProfilePictureAndBio_Previews: PreviewProvider {
-//    static var previews: some View {
-//        GetProfilePictureAndBio(bio: .constant(""), selectedImage: .constant(""), action: {  })
-//            .preferredColorScheme(.dark)
-//    }
-//}
+struct GetProfilePictureAndBio_Previews: PreviewProvider {
+    @State static var selectedImage: UIImage?
+
+    static var previews: some View {
+        GetProfilePictureAndBio(bio: .constant(""), selectedImage: $selectedImage, action: {  })
+            .preferredColorScheme(.dark)
+    }
+}
 
 fileprivate struct BioTextField: View {
     @Binding var bio: String
