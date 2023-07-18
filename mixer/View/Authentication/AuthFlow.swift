@@ -68,9 +68,7 @@ struct AuthFlow: View {
                                 viewModel.showAuthFlow.toggle()
                             }
                         } label: {
-                            Image(systemName: "xmark")
-                                .font(.title.weight(.semibold))
-                                .foregroundColor(.mainFont)
+                            XDismissButton()
                         }
                         .frame(width: 50)
                     } else {

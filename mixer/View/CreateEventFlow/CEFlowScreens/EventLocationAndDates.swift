@@ -24,7 +24,7 @@ struct EventLocationAndDates: View {
             VStack(alignment: .leading, spacing: 35) {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("When")
-                        .textFieldSmallTitle()
+                        .primaryHeading()
                     
                     VStack(spacing: 13) {
                         // Start Date Selection : now - 3 months
@@ -102,7 +102,7 @@ struct AddressPickerView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Where")
-                .textFieldSmallTitle()
+                .primaryHeading()
             
             Text(selectedMapItem?.placemark.title ?? "Tap to choose address")
                 .foregroundColor(Color.mainFont)
@@ -121,7 +121,7 @@ struct AddressPickerView: View {
                 }
             
             Text("Shown only to approved guests")
-                .textFieldFootnote()
+                .footnote()
             
             Toggle("Set public address", isOn: $hasPublicAddress.animation())
                 .font(.body)
@@ -130,7 +130,12 @@ struct AddressPickerView: View {
                 .padding(.bottom, 4)
             
             if hasPublicAddress {
-                CreateEventTextField(input: $publicAddress, title: "Public Address", placeholder: "e.g., Back Bay, Boston", footnote: "Loosely describe the area. Shown to all users", keyboard: .default, toggleBool: .constant(false))
+                CreateEventTextField(input: $publicAddress,
+                                     title: "Public Address",
+                                     placeholder: "e.g., Back Bay, Boston",
+                                     footnote: "Loosely describe the area. Shown to all users",
+                                     keyboard: .default,
+                                     toggleBool: .constant(false))
                     .zIndex(2)
             }
             

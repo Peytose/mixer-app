@@ -76,9 +76,7 @@ struct ShareProfileView: View {
         }
         .overlay(alignment: .topLeading) {
             Button(action: { mode.wrappedValue.dismiss() }) {
-                Image(systemName: "xmark")
-                    .font(.title.weight(.semibold))
-                    .foregroundColor(.mainFont)
+                XDismissButton()
             }
             .padding()
     }

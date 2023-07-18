@@ -8,17 +8,17 @@
 import SwiftUI
 
 struct AddToGuestlistView: View {
-    @ObservedObject var viewModel: GuestlistViewModel
-    @Binding var showAddGuestView: Bool
-    @State var name: String = ""
-    @State var university: UniversityExamples = .mit
-    @State var universityName: String = "" // New state variable to hold the user's input for the university name
-    @State var status: GuestStatus = .invited
-    @State var gender: Gender      = .preferNot
-    @State var age: Int            = 17
+    @EnvironmentObject var guestlistViewModel: GuestlistViewModel
     @Environment(\.presentationMode) var mode
-
-
+    @Binding var isShowingAddGuestView: Bool
+    @State var guestUsername: String          = ""
+    @State var guestName: String              = ""
+    @State var university: UniversityExamples = .mit
+    @State var customUniversityName: String   = ""
+    @State var guestStatus: GuestStatus       = .invited
+    @State var guestGender: Gender            = .preferNot
+    @State var guestAge: Int = 17
+    
     enum UniversityExamples: String, CaseIterable {
         case mit = "MIT"
         case neu = "NEU"
@@ -46,86 +46,33 @@ struct AddToGuestlistView: View {
             }
         }
     }
-    
+
     var body: some View {
         NavigationView {
-            ZStack {
-                List {
-                    Section {
-                        TextField("Name", text: $name)
-                            .foregroundColor(Color.mainFont)
-                            .autocorrectionDisabled()
-                        
-                        HStack {
-                            Text(university == UniversityExamples.other ? universityName : university.rawValue)
-
-                            Spacer()
-
-                            Menu("Select School") {
-                                ForEach(UniversityExamples.allCases, id: \.self) { university in
-                                    Button(university.rawValue) {
-                                        self.university = university
-                                    }
-                                }
-                            }
-                            .accentColor(.mixerIndigo)
-                        }
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                        
-                        if university == .other {
-                            TextField("School Name", text: $universityName, axis: .vertical)
-                                .foregroundColor(Color.mainFont)
-                                .autocorrectionDisabled()
-                        }
-                        
-                        HStack {
-                            Text(gender.rawValue)
-                            
-                            Spacer()
-                            
-                            Menu("Select Gender") {
-                                ForEach(Gender.allCases, id: \.self) { gender in
-                                    Button(gender.rawValue) {
-                                        self.gender = gender
-                                    }
-                                }
-                            }
-                            .accentColor(.mixerIndigo)
-                        }
-                    } header: {
-                        Text("Guest Details")
-                            .fontWeight(.semibold)
-                    }
-                    .listRowBackground(Color.mixerSecondaryBackground)
-                    
-                    Section {
-                        Stepper("Age: \(age == 17 ? "N/A" : String(age))", value: $age, in: 17...100)
-                    } header: {
-                        Text("Optional Details")
-                            .fontWeight(.semibold)
-                    }
-                    .listRowBackground(Color.mixerSecondaryBackground)
-                    
-                    Section {
-                        // Section to separate button
-                        Section{}.listRowBackground(Color.clear)
-                    }
-                }
-                .scrollContentBackground(.hidden)
+            List {
+                statusPicker
+                
+                userSearchSection
+                
+                guestDetailsSection
+                
+                optionalDetailsSection
+                
+                Section{}.listRowBackground(Color.clear)
             }
-            .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
-            .navigationTitle("Add Guest")
-            .navigationBarTitleDisplayMode(.inline)
+            .configureList()
+            .navigationBar(title: "Add Guest", displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        viewModel.createGuest(name: name,
-                                              university: university == .other ? universityName : university.rawValue, // Update university based on user input
-                                              status: status,
-                                              age: age,
-                                              gender: gender.rawValue)
+                        guestlistViewModel.createGuest(username: guestUsername,
+                                                       name: guestName,
+                                                       university: university == .other ? customUniversityName : university.rawValue,
+                                                       status: guestStatus,
+                                                       age: guestAge,
+                                                       gender: guestGender.rawValue)
                         
-                        showAddGuestView.toggle()
+                        isShowingAddGuestView.toggle()
                     }, label: {
                         Text("Submit")
                             .foregroundColor(.blue)
@@ -146,5 +93,117 @@ struct AddToGuestlistView: View {
             }
             .preferredColorScheme(.dark)
         }
+    }
+}
+
+extension AddToGuestlistView {
+    var userSearchSection: some View {
+        Section {
+            TextField("Enter a user's username ...", text: $guestUsername)
+                .foregroundColor(Color.mainFont)
+                .autocorrectionDisabled()
+                .disabled(guestName != "")
+        } header: {
+            Text("Username")
+                .fontWeight(.semibold)
+        } footer: {
+            Text("If user doesn't have a mixer account, continue below")
+        }
+        .listRowBackground(Color.mixerSecondaryBackground)
+    }
+    
+    var guestDetailsSection: some View {
+        Section {
+            guestNameField
+            
+            universityField
+            
+            if university == .other {
+                customUniversityField
+            }
+            
+            genderField
+        } header: {
+            Text("Guest Details")
+                .fontWeight(.semibold)
+        }
+        .listRowBackground(Color.mixerSecondaryBackground)
+    }
+    
+    var optionalDetailsSection: some View {
+        Section {
+            Stepper("Age: \(guestAge == 17 ? "N/A" : String(guestAge))", value: $guestAge, in: 17...100)
+                .disabled(guestUsername != "")
+        } header: {
+            Text("Optional Details")
+                .fontWeight(.semibold)
+        }
+        .listRowBackground(Color.mixerSecondaryBackground)
+    }
+
+    var guestNameField: some View {
+        TextField("Name", text: $guestName)
+            .foregroundColor(Color.mainFont)
+            .autocorrectionDisabled()
+            .disabled(guestUsername != "")
+    }
+    
+    var universityField: some View {
+        HStack {
+            Text(university == UniversityExamples.other ? customUniversityName : university.rawValue)
+
+            Spacer()
+
+            Menu("Select School") {
+                ForEach(UniversityExamples.allCases, id: \.self) { university in
+                    Button(university.rawValue) {
+                        self.university = university
+                    }
+                }
+            }
+            .accentColor(.mixerIndigo)
+            .disabled(guestUsername != "")
+        }
+    }
+    
+    var customUniversityField: some View {
+        TextField("School Name", text: $customUniversityName, axis: .vertical)
+            .foregroundColor(Color.mainFont)
+            .autocorrectionDisabled()
+            .disabled(guestUsername != "")
+    }
+    
+    var genderField: some View {
+        HStack {
+            Text(guestGender.rawValue)
+            
+            Spacer()
+            
+            Menu("Select Gender") {
+                ForEach(Gender.allCases, id: \.self) { gender in
+                    Button(gender.rawValue) {
+                        self.guestGender = gender
+                    }
+                }
+            }
+            .accentColor(.mixerIndigo)
+            .disabled(guestUsername != "")
+        }
+    }
+    
+    var statusPicker: some View {
+        Section {
+            Picker("", selection: $guestStatus) {
+                ForEach(GuestStatus.allCases, id: \.self) { status in
+                    Text(status.stringVal)
+                        .tag(status)
+                }
+            }
+            .pickerStyle(.segmented)
+        } header: {
+            Text("Status")
+                .fontWeight(.semibold)
+        }
+        .listRowBackground(Color.mixerSecondaryBackground)
     }
 }

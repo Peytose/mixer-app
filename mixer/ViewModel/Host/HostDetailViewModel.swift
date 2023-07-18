@@ -45,10 +45,9 @@ final class HostDetailViewModel: ObservableObject {
             isLoading = false
             return
         }
-        if let longitude = host.location?.longitude, let latitude = host.location?.latitude {
-            self.coordinates = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-            isLoading = false
-        }
+        
+        self.coordinates = CLLocationCoordinate2D(latitude: host.location.longitude, longitude: host.location.latitude)
+        isLoading = false
     }
     
     

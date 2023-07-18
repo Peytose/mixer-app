@@ -11,6 +11,10 @@ import DataCache
 import CryptoKit
 
 class UserCache {
+    enum UserCacheError: Error {
+        case invalidUser
+    }
+
     static let shared = UserCache()
     private init() { configureCache() }
     private let cache = DataCache(name: "UserCache")
@@ -66,6 +70,23 @@ class UserCache {
         let snapshot = try await COLLECTION_USERS.document(id).getDocument()
         let user = try snapshot.data(as: User.self)
         print("DEBUG: getUser() executed. host: \(user)")
+        // Store in cache
+        let cachedUser = CachedUser(from: user)
+        try cacheUser(cachedUser)
+        
+        return cachedUser
+    }
+    
+    
+    func getUser(from username: String) async throws -> CachedUser {
+        // Check cache for user
+        
+        // If user not found in cache, fetch from Firebase
+        let snapshot = try await COLLECTION_USERS.whereField("username", isEqualTo: username).getDocuments()
+        guard let user = try snapshot.documents.first?.data(as: User.self) else {
+            throw UserCacheError.invalidUser
+        }
+        print("DEBUG: getUser() executed. host: \(String(describing: user))")
         // Store in cache
         let cachedUser = CachedUser(from: user)
         try cacheUser(cachedUser)

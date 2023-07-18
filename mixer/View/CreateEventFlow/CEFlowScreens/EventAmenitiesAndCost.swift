@@ -23,7 +23,7 @@ struct EventAmenitiesAndCost: View {
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
                     Text("Choose Amenities")
-                        .heading()
+                        .primaryHeading()
                     
                     InfoButton(action: { showAlert.toggle() })
                         .alert("Amenities", isPresented: $showAlert, actions: {}, message: { Text("Let your guests know what to expect before coming to your event. List important amenities like bathrooms, DJ, beer, water, etc...")})
@@ -33,7 +33,7 @@ struct EventAmenitiesAndCost: View {
                     ForEach(AmenityCategory.allCases, id: \.self) { category in
                         VStack(alignment: .leading, spacing: 8) {
                             Text(category.rawValue.capitalized)
-                                .subheading2()
+                                .secondarySubheading()
                             
                             VStack(spacing: 0) {
                                 ForEach(EventAmenities.allCases.filter { $0.category == category }, id: \.self) { amenity in
@@ -75,9 +75,7 @@ struct EventAmenitiesAndCost: View {
                                             }
                                             
                                             Text(amenity.rawValue)
-                                                .font(.body)
-                                                .fontWeight(.medium)
-                                                .foregroundColor(.white)
+                                                .primaryActionButtonFont()
                                             
                                             Spacer()
                                             

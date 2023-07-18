@@ -136,7 +136,7 @@ struct EventPreviewView: View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Description")
-                    .heading()
+                    .primaryHeading()
                 
                 Text(viewModel.description)
                     .foregroundColor(.secondary)
@@ -145,7 +145,7 @@ struct EventPreviewView: View {
             if viewModel.hasNote && !viewModel.notes.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Notes for guest")
-                        .heading()
+                        .primaryHeading()
                     
                     Text(viewModel.notes)
                         .foregroundColor(.secondary)
@@ -154,7 +154,7 @@ struct EventPreviewView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Text("Event details")
-                    .heading()
+                    .primaryHeading()
                 
                 HStack {
                     if viewModel.selectedAmenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {

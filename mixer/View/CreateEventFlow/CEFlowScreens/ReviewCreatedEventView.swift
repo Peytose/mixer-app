@@ -22,20 +22,20 @@ struct ReviewCreatedEventView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     VStack(alignment: .leading, spacing: 2.5) {
                         Text(viewModel.title)
-                            .heading()
+                            .primaryHeading()
                         
                         eventTypeAndPreview
                     }
                     
                     Text("Basic Info")
-                        .heading()
+                        .primaryHeading()
                     
                     VStack(alignment: .leading, spacing: 4) {
                         EventDetailRow(title: "Event Type", value: viewModel.type.rawValue)
                         
                         VStack(alignment: .leading, spacing: 2.5) {
                             Text("Description:")
-                                .subheading2()
+                                .secondarySubheading()
                             
                             Text(viewModel.description)
                                 .foregroundColor(.secondary)
@@ -44,7 +44,7 @@ struct ReviewCreatedEventView: View {
                         if viewModel.hasNote {
                             VStack(alignment: .leading, spacing: 2.5) {
                                 Text("Note")
-                                    .subheading2()
+                                    .secondarySubheading()
                                 
                                 Text(viewModel.notes)
                                     .foregroundColor(.secondary)
@@ -57,7 +57,8 @@ struct ReviewCreatedEventView: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Event Settings")
-                        .heading()
+                        .primaryHeading()
+                    
                     VStack(alignment: .leading, spacing: 4) {
                         HStack {
                             EventDetailRow(title: "Visibility",
@@ -88,7 +89,7 @@ struct ReviewCreatedEventView: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Location & Dates")
-                        .heading()
+                        .primaryHeading()
                     VStack (alignment: .leading, spacing: 4) {
                         EventDetailRow(title: "Starts",
                                        value: "\(Timestamp(date: viewModel.startDate).getTimestampString(format: "EEEE, MMM d + h:mm a").replacingOccurrences(of: "+", with: "at"))")
@@ -114,7 +115,8 @@ struct ReviewCreatedEventView: View {
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Other")
-                        .heading()
+                        .primaryHeading()
+                    
                     VStack (alignment: .leading, spacing: 4) {
                         if let cost = viewModel.cost {
                             EventOptionRow(icon: "dollarsign.circle.fill",
@@ -160,7 +162,8 @@ struct ReviewCreatedEventView: View {
                 }
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Flyer")
-                        .heading()
+                        .primaryHeading()
+                    
                     if let image = viewModel.image {
                         Image(uiImage: image)
                             .resizable()
@@ -171,7 +174,7 @@ struct ReviewCreatedEventView: View {
                     } else {
                         VStack {
                             Text("Event Flyer")
-                                .subheading()
+                                .primarySubheading()
                             
                         }
                         .frame(maxWidth: DeviceTypes.ScreenSize.width,
@@ -343,7 +346,7 @@ fileprivate struct EventDetailRow: View {
     var body: some View {
         HStack(alignment: alignment) {
             Text("\(title):")
-                .subheading2()
+                .secondarySubheading()
             
             Spacer()
             

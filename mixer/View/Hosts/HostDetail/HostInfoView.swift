@@ -21,12 +21,12 @@ struct HostInfoView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            //Host name, links and tagline section
+            // Host name, links and tagline section
             nameAndTagline
                 .unredacted()
                 .padding(.bottom, 8)
             
-//            Upcoming events section
+            // Upcoming events section
             ZStack {
                 if !viewModel.upcomingEvents.isEmpty {
                     upcomingEvents
@@ -37,7 +37,7 @@ struct HostInfoView: View {
             hostDescription
                 .opacity(appear[1] ? 1 : 0)
             
-            //Map section
+            // Map section
             VStack {
                 mapSection
             }
@@ -45,7 +45,7 @@ struct HostInfoView: View {
 
         }
         .padding(.horizontal)
-        //trigger the staggered fade in animation
+        // Trigger the staggered fade in animation
         .onAppear {
             fadeIn()
         }
@@ -61,7 +61,7 @@ extension HostInfoView {
             // MARK: Tagline
             if let tagline = viewModel.host.tagline {
                 Text(tagline)
-                    .tagline()
+                    .subheadline(color: .white.opacity(0.8))
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
                     .matchedGeometryEffect(id: "bio-\(viewModel.host.username)", in: namespace)
@@ -73,7 +73,7 @@ extension HostInfoView {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Upcoming Events")
-                    .heading()
+                    .primaryHeading()
                 
                 ForEach(showAllEvents ? viewModel.upcomingEvents : Array(viewModel.upcomingEvents.prefix(1))) { event in
                     NavigationLink(destination: EventDetailView(viewModel: EventDetailViewModel(event: event),
@@ -122,7 +122,7 @@ extension HostInfoView {
         if let description = viewModel.host.description {
             VStack(alignment: .leading, spacing: 4) {
                 Text("About this host")
-                    .heading()
+                    .primaryHeading()
                 
                 ScrollView {
                     Text(description)
@@ -159,7 +159,7 @@ extension HostInfoView {
         if let coordinates = viewModel.coordinates {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Located At")
-                    .heading()
+                    .primaryHeading()
                 
                 VStack(alignment: .leading, spacing: 4) {
                     MapSnapshotView(location: coordinates, host: viewModel.host)

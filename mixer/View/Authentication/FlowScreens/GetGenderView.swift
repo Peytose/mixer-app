@@ -17,9 +17,7 @@ struct GetGenderView: View {
         OnboardingPageViewContainer {
             VStack(alignment: .leading, spacing: 80) {
                 Text("I am a \(gender.lowercased())")
-                    .font(.largeTitle)
-                    .foregroundColor(.mainFont)
-                    .fontWeight(.semibold)
+                    .largeTitle(weight: .semibold)
                     .lineLimit(2)
                     .minimumScaleFactor(0.75)
                     .padding(.bottom, 10)

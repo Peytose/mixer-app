@@ -38,6 +38,24 @@ extension String {
         }
     }
     
+    
+    func generateQRCode() -> UIImage? {
+        let data = self.data(using: String.Encoding.ascii)
+
+        if let filter = CIFilter(name: "CIQRCodeGenerator") {
+            filter.setValue(data, forKey: "inputMessage")
+            let transform = CGAffineTransform(scaleX: 9, y: 9)
+
+            if let output = filter.outputImage?.transformed(by: transform),
+               let cgImage = CIContext().createCGImage(output, from: output.extent) {
+                return UIImage(cgImage: cgImage)
+            }
+        }
+
+        return nil
+    }
+    
+    
     var formattedAsCurrency: String {
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .currency

@@ -22,14 +22,14 @@ struct SignUpTextField: View {
         VStack(alignment: .leading, spacing: 16) {
             if let title = title {
                 Text(title)
-                    .textFieldTitle()
+                    .largeTitle(weight: .semibold)
                     .lineLimit(2)
                     .minimumScaleFactor(0.75)
             }
             
             if let note = note {
                 Text(note)
-                    .textFieldNote()
+                    .body()
                     .lineLimit(2)
                     .minimumScaleFactor(0.75)
             }
@@ -37,7 +37,7 @@ struct SignUpTextField: View {
             VStack(alignment: .leading, spacing: 8) {
                 if let textfieldHeader = textfieldHeader {
                     Text(textfieldHeader)
-                        .textFieldHeader()
+                        .subheadline()
                 }
                 
                 TextField(placeholder, text: $input, onEditingChanged: { (editingChanged) in
@@ -54,7 +54,7 @@ struct SignUpTextField: View {
                 
                 if let footnote = footnote {
                     Text(footnote)
-                        .textFieldFootnote()
+                        .footnote()
                 }
             }
         }

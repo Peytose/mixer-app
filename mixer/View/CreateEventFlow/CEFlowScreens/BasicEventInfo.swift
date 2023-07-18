@@ -74,7 +74,7 @@ extension BasicEventInfo {
     var eventTypeRow: some View {
         HStack(spacing: 10) {
             Text(selectedType.rawValue)
-                .heading()
+                .primaryHeading()
             
             Spacer()
             

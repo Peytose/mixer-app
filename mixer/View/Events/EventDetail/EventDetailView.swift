@@ -51,7 +51,7 @@ struct EventDetailView: View {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("What this event offers")
-                                    .heading()
+                                    .primaryHeading()
                                 
                                 //MARK: ERROR: Amenities outside first category don't display.
                                 ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
@@ -135,6 +135,7 @@ struct EventDetailView: View {
                                                 }
                                         }
                                     }
+                                    
                                     Spacer()
                                 }
                             }
@@ -144,8 +145,7 @@ struct EventDetailView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Text("Where you'll be")
-                                .heading()
-                                .foregroundColor(.white)
+                                .primaryHeading(color: .white)
                             
                             InfoButton(action: { showInfoAlert2.toggle() })
                                 .alert("Location Details", isPresented: $showInfoAlert2, actions: {}, message: {Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location")})
@@ -185,6 +185,7 @@ struct EventDetailView: View {
             }
             .background(Color.mixerBackground)
             .coordinateSpace(name: "scroll")
+            
             if isShowingModal {
                 EventImageModalView(imageUrl: viewModel.event.eventImageUrl, isShowingModal: $isShowingModal)
                     .transition(.opacity)
@@ -231,7 +232,7 @@ struct EventDetailView: View {
         VStack(alignment: .leading, spacing: 20) {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Description")
-                    .heading()
+                    .primaryHeading()
                 
                 Text(viewModel.event.description)
                     .foregroundColor(.secondary)
@@ -240,7 +241,7 @@ struct EventDetailView: View {
             if let notes = viewModel.event.notes {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Notes for guest")
-                        .heading()
+                        .primaryHeading()
                     
                     Text(notes)
                         .foregroundColor(.secondary)
@@ -249,7 +250,7 @@ struct EventDetailView: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 Text("Event details")
-                    .heading()
+                    .primaryHeading()
                 
                 HStack {
                     if let amenities = viewModel.event.amenities {

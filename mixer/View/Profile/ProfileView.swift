@@ -62,47 +62,29 @@ struct ProfileView: View {
             .ignoresSafeArea(.all)
             .navigationBarHidden(true)
             .statusBar(hidden: true)
-            .sheet(isPresented: $showEditProfile) { ProfileSettingsView(viewModel: viewModel) }
-            .sheet(isPresented: $showNotifications) {
+            .fullScreenCover(isPresented: $showEditProfile) {
                 NavigationView {
-                    NotificationFeedView(notifications: $notificationsViewModel.notifications)
-                        .navigationTitle("Notifications")
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button { showNotifications = false  } label: { XDismissButton().frame(width: 20, height: 20) }
-                            }
-                        }
+                    ProfileSettingsView(viewModel: viewModel)
                 }
             }
             
-            Color.mixerSecondaryBackground.opacity(0.6)
-                .backgroundBlur(radius: 5, opaque: true)
-                .padding(-20)
-                .blur(radius: 20)
-                .ignoresSafeArea()
-                .opacity(showOptions ? 1 : 0)
-            
             if showOptions {
+                Color.mixerSecondaryBackground.opacity(0.6)
+                    .backgroundBlur(radius: 5, opaque: true)
+                    .padding(-20)
+                    .blur(radius: 20)
+                    .ignoresSafeArea()
+                
                 MoreProfileOptions(action: {
                     withAnimation() {
                         showOptions.toggle()
                     }
                 }, user: viewModel.user)
                 .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
-                .zIndex(3)
             }
         }
         .task {
             viewModel.getProfileEvents()
-        }
-        .popup(isPresented: $friendRequestSent) {
-            FriendRequestSentNotification()
-        } customize: {
-            $0
-                .type(.floater())
-                .position(.top)
-                .animation(.spring())
-                .autohideIn(2)
         }
     }
 }
@@ -113,11 +95,6 @@ extension ProfileView {
             .overlay(alignment: .topTrailing) {
                 HStack(spacing: viewModel.user.isCurrentUser ? 5 : 10) {
                     if viewModel.user.isCurrentUser {
-                        ProfileCornerButton(isOn: $showNotifications, icon: "bell")
-                            .overlay(alignment: .topTrailing) {
-                                IconBadge(count: notificationsViewModel.notifications.filter({ !$0.hasBeenSeen }).count)
-                            }
-                        
                         ProfileCornerButton(isOn: $showEditProfile,
                                             icon: "gearshape")
                         .padding(.trailing)
@@ -163,7 +140,7 @@ extension ProfileView {
     var aboutSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("About")
-                .heading()
+                .primaryHeading()
             
             VStack(alignment: .leading) {
                 HStack {
@@ -311,7 +288,7 @@ fileprivate struct ProfileInfo: View {
                     HStack {
                         HStack(alignment: .center, spacing: 15) {
                             Text(showUsername ? "@\(user.username)" : user.displayName)
-                                .title()
+                                .largeTitle()
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                                 .textSelection(.enabled)
@@ -449,7 +426,7 @@ fileprivate struct EventsSection: View {
     }
 }
 
-private struct PaddedImage: View {
+fileprivate struct PaddedImage: View {
     var image: String
     var body: some View {
         HStack {
@@ -461,6 +438,25 @@ private struct PaddedImage: View {
                 .background(.ultraThinMaterial)
                 .backgroundStyle(cornerRadius: 10, opacity: 0.5)
                 .cornerRadius(10)
+        }
+    }
+}
+
+fileprivate struct ActionButton: View {
+    let text: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(color)
+                .frame(width: 70, height: 30)
+                .overlay {
+                    Text(text)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.white)
+                }
         }
     }
 }

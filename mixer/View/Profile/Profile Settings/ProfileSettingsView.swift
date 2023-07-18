@@ -15,110 +15,110 @@ struct ProfileSettingsView: View {
     @State var isShowingMailView1: Bool     = false
     @State var isShowingMailView2: Bool     = false
     @State var isShowingMailView3: Bool     = false
-    @State var showAlert: Bool             = false
-    @State var imagePickerPresented: Bool  = false
+    @State var showAlert: Bool              = false
+    @State var imagePickerPresented: Bool   = false
+    @State var isShowingQRCode: Bool        = false
     
     var body: some View {
-        NavigationView {
-            VStack(alignment: .leading) {
-                List {
-                    VStack(alignment: .center) {
-                        Button { imagePickerPresented = true } label: {
-                            KFImage(URL(string: viewModel.user.profileImageUrl))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 150, height: 150)
-                                .clipShape(Circle())
-                                .padding(2)
-                                .background(Color.mainFont, in: Circle())
-                                .overlay(alignment: .bottomTrailing) {
-                                    Image(systemName: "pencil")
-                                        .imageScale(.large)
-                                        .foregroundColor(.white)
-                                        .padding(5)
-                                        .background(Color.mixerSecondaryBackground, in: Circle())
-                                        .background(Color.mainFont, in: Circle().stroke(lineWidth: 2))
-                                        .offset(x: -4, y: -4)
-                                }
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
-                    .listRowBackground(Color.clear)
-
-                    Section(header: Text("Profile").fontWeight(.semibold),
-                            footer: Text("Right now, you can only edit your name and bio.")) {
-                        EditableRow(viewModel: viewModel,
-                                    rowTitle: "Display Name",
-                                    rowContent: viewModel.user.displayName,
-                                    alertTitle: "Display Name Change",
-                                    alertMessage: "Please enter your preferred name.",
-                                    alertPlaceholder: "Preferred name",
-                                    icon: "person",
-                                    value: $viewModel.displayName,
-                                    saveType: .displayName)
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                        
-                        EditableRow(viewModel: viewModel,
-                                    rowTitle: "Bio",
-                                    rowContent: viewModel.user.bio ?? "",
-                                    alertTitle: "Bio Change",
-                                    alertMessage: "Please enter your new bio.",
-                                    alertPlaceholder: "New Bio",
-                                    icon: "signature",
-                                    value: $viewModel.bio,
-                                    saveType: .bio)
-                        .listRowBackground(Color.mixerSecondaryBackground)
-
-                        EditableRow(viewModel: viewModel,
-                                    rowTitle: "Instagram",
-                                    rowContent: viewModel.user.instagramHandle ?? "",
-                                    alertTitle: "Instagram Change",
-                                    alertMessage: "Please enter your new instagram username.",
-                                    alertPlaceholder: "Your handle",
-                                    icon: "instagram",
-                                    value: $viewModel.instagramHandle,
-                                    saveType: .instagram)
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                        
-                        SettingRow(title: "Name",
-                                   content: viewModel.user.name,
-                                   icon: "person")
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                        
-                        SettingRow(title: "Username",
-                                   content: viewModel.user.username,
-                                   icon: "a.magnify")
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                        
-                        SettingRow(title: "Email",
-                                   content: viewModel.user.email,
-                                   icon: "envelope")
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                        
-                        SettingRow(title: "Phone",
-                                   content: viewModel.phoneNumber,
-                                   icon: "flipphone")
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                        
-                    }
-                    
-                    Section {
-                        Toggle("Show age on profile?", isOn: $viewModel.showAgeOnProfile.animation())
-                            .font(.body)
-                            .fontWeight(.medium)
-                            .foregroundColor(.white)
-                            .listRowBackground(Color.mixerSecondaryBackground)
-                            .onChange(of: viewModel.showAgeOnProfile) { newValue in
-                                viewModel.showAgeOnProfile = newValue
-                                viewModel.save(for: .ageToggle)
+        VStack(alignment: .leading) {
+            List {
+                VStack(alignment: .center) {
+                    Button { imagePickerPresented = true } label: {
+                        KFImage(URL(string: viewModel.user.profileImageUrl))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: 150, height: 150)
+                            .clipShape(Circle())
+                            .padding(2)
+                            .background(Color.mainFont, in: Circle())
+                            .overlay(alignment: .bottomTrailing) {
+                                Image(systemName: "pencil")
+                                    .imageScale(.large)
+                                    .foregroundColor(.white)
+                                    .padding(5)
+                                    .background(Color.mixerSecondaryBackground, in: Circle())
+                                    .background(Color.mainFont, in: Circle().stroke(lineWidth: 2))
+                                    .offset(x: -4, y: -4)
                             }
-                    } header: {
-                        Text("Privacy")
-                            .fontWeight(.semibold)
                     }
+                }
+                .frame(maxWidth: .infinity)
+                .listRowBackground(Color.clear)
+                
+                Section(header: Text("Profile").fontWeight(.semibold),
+                        footer: Text("Right now, you can only edit your name and bio.")) {
+                    EditableRow(viewModel: viewModel,
+                                rowTitle: "Display Name",
+                                rowContent: viewModel.user.displayName,
+                                alertTitle: "Display Name Change",
+                                alertMessage: "Please enter your preferred name.",
+                                alertPlaceholder: "Preferred name",
+                                icon: "person",
+                                value: $viewModel.displayName,
+                                saveType: .displayName)
+                    .listRowBackground(Color.mixerSecondaryBackground)
                     
-                    Section {
-                        MailRow(title: "Request a feature", icon: "wand.and.stars", rightIcon: "chevron.right")
+                    EditableRow(viewModel: viewModel,
+                                rowTitle: "Bio",
+                                rowContent: viewModel.user.bio ?? "",
+                                alertTitle: "Bio Change",
+                                alertMessage: "Please enter your new bio.",
+                                alertPlaceholder: "New Bio",
+                                icon: "signature",
+                                value: $viewModel.bio,
+                                saveType: .bio)
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    EditableRow(viewModel: viewModel,
+                                rowTitle: "Instagram",
+                                rowContent: viewModel.user.instagramHandle ?? "",
+                                alertTitle: "Instagram Change",
+                                alertMessage: "Please enter your new instagram username.",
+                                alertPlaceholder: "Your handle",
+                                icon: "instagram",
+                                value: $viewModel.instagramHandle,
+                                saveType: .instagram)
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    SettingRow(title: "Name",
+                               content: viewModel.user.name,
+                               icon: "person")
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    SettingRow(title: "Username",
+                               content: viewModel.user.username,
+                               icon: "a.magnify")
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    SettingRow(title: "Email",
+                               content: viewModel.user.email,
+                               icon: "envelope")
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    SettingRow(title: "Phone",
+                               content: viewModel.phoneNumber,
+                               icon: "flipphone")
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                }
+                
+                Section {
+                    Toggle("Show age on profile?", isOn: $viewModel.showAgeOnProfile.animation())
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .foregroundColor(.white)
+                        .listRowBackground(Color.mixerSecondaryBackground)
+                        .onChange(of: viewModel.showAgeOnProfile) { newValue in
+                            viewModel.showAgeOnProfile = newValue
+                            viewModel.save(for: .ageToggle)
+                        }
+                } header: {
+                    Text("Privacy")
+                        .fontWeight(.semibold)
+                }
+                
+                Section {
+                    MailRow(title: "Request a feature", icon: "wand.and.stars", rightIcon: "chevron.right")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -127,8 +127,8 @@ struct ProfileSettingsView: View {
                         .sheet(isPresented: $isShowingMailView1) {
                             MailView(isShowing: self.$isShowingMailView1, subject: "Feature Request")
                         }
-                        
-                        MailRow(title: "Report a Bug", icon: "ant", rightIcon: "chevron.right")
+                    
+                    MailRow(title: "Report a Bug", icon: "ant", rightIcon: "chevron.right")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -137,8 +137,8 @@ struct ProfileSettingsView: View {
                         .sheet(isPresented: $isShowingMailView2) {
                             MailView(isShowing: self.$isShowingMailView2, subject: "Bug Report")
                         }
-
-                        MailRow(title: "Questions", icon: "questionmark.circle", rightIcon: "chevron.right")
+                    
+                    MailRow(title: "Questions", icon: "questionmark.circle", rightIcon: "chevron.right")
                         .listRowBackground(Color.mixerSecondaryBackground)
                         .contentShape(Rectangle())
                         .onTapGesture {
@@ -147,54 +147,73 @@ struct ProfileSettingsView: View {
                         .sheet(isPresented: $isShowingMailView3) {
                             MailView(isShowing: self.$isShowingMailView3, subject: "Question")
                         }
-                    } header: {
-                        Text("Feedback & Support")
-                            .fontWeight(.semibold)
-                    } footer: {
-                        Text("We would like nothing more than to hear from you!")
-                    }
-
-                    Section {
-                        LinkRow(linkUrl: viewModel.privacyLink,
-                                title: "Privacy Policy",
-                                icon: "lock.doc")
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                        
-                        
-                        LinkRow(linkUrl: viewModel.privacyLink,
-                                title: "Terms of Service",
-                                icon: "doc.plaintext")
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                    } header: {
-                        Text("Legal & Policies")
-                            .fontWeight(.semibold)
-                    }
-                    
-                    Section {
-                        SettingRow(title: "Version",
-                                   content: viewModel.getVersion(),
-                                   icon: "info.circle")
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                    }
-                    
-                    Section {
-                        Button { AuthViewModel.shared.signOut() } label: {
-                            Text("Logout").foregroundColor(.blue)
-                        }
-                        .listRowBackground(Color.mixerSecondaryBackground)
-                    }
-                    
-                    Section(footer: EasterEggView(text: viewModel.getDateJoined())) { }
+                } header: {
+                    Text("Feedback & Support")
+                        .fontWeight(.semibold)
+                } footer: {
+                    Text("We would like nothing more than to hear from you!")
                 }
-                .scrollContentBackground(.hidden)
-                .listStyle(.insetGrouped)
+                
+                Section {
+                    LinkRow(linkUrl: viewModel.privacyLink,
+                            title: "Privacy Policy",
+                            icon: "lock.doc")
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                    
+                    
+                    LinkRow(linkUrl: viewModel.privacyLink,
+                            title: "Terms of Service",
+                            icon: "doc.plaintext")
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                } header: {
+                    Text("Legal & Policies")
+                        .fontWeight(.semibold)
+                }
+                
+                Section {
+                    SettingRow(title: "Version",
+                               content: viewModel.getVersion(),
+                               icon: "info.circle")
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                }
+                
+                Section {
+                    Button { AuthViewModel.shared.signOut() } label: {
+                        Text("Logout").foregroundColor(.blue)
+                    }
+                    .listRowBackground(Color.mixerSecondaryBackground)
+                }
+                
+                Section(footer: EasterEggView(text: viewModel.getDateJoined())) { }
             }
-            .navigationTitle("Settings")
-            .cropImagePicker(show: $imagePickerPresented, croppedImage: $viewModel.selectedImage)
-            .onChange(of: viewModel.selectedImage) { _ in viewModel.save(for: .image) }
-            .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
+            .scrollContentBackground(.hidden)
+            .listStyle(.insetGrouped)
         }
+        .cropImagePicker(show: $imagePickerPresented, croppedImage: $viewModel.selectedImage)
+        .onChange(of: viewModel.selectedImage) { _ in viewModel.save(for: .image) }
+        .background(Color.mixerBackground.edgesIgnoringSafeArea(.all))
         .preferredColorScheme(.dark)
+        .sheet(isPresented: $isShowingQRCode) {
+            if let image = viewModel.user.id?.generateQRCode() {
+                UserQRCodeView(image: Image(uiImage: image))
+                    .presentationDetents([.medium])
+            }
+        }
+        .navigationBar(title: "Settings", displayMode: .inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button { mode.wrappedValue.dismiss()  } label: { XDismissButton() }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button { isShowingQRCode = true } label: {
+                    Image(systemName: "qrcode")
+                        .font(.title3)
+                        .foregroundColor(.mixerIndigo)
+                }
+
+            }
+        }
     }
 }
 

@@ -22,7 +22,7 @@ struct ExploreView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Featured Hosts Section
                     Text("Featured Hosts")
-                        .font(.largeTitle.weight(.bold))
+                        .largeTitle()
                         .padding(.leading)
                         .padding(.top, 70)
                         .opacity(showHostView ? 0 : 1)

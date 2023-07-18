@@ -16,7 +16,14 @@ struct HostMapAnnotation: View {
     let gradient2 = Gradient(colors: [.blue, .purple])
     let defaultGradient = Gradient(colors: [.white, .white])
 
+    @State private var timer: Timer? = nil
     @State private var counter: Int = 0
+    
+    func startAnimatingCounter() {
+        timer = Timer.scheduledTimer(withTimeInterval: TimeInterval(Int.random(in: 2...5)), repeats: true) { _ in
+            counter += 1
+        }
+    }
 
     var body: some View {
         VStack {
@@ -33,11 +40,6 @@ struct HostMapAnnotation: View {
                         .frame(width: 40, height: 40)
                         .clipShape(Circle().stroke(lineWidth: 5))
                         .shadow(radius: 10)
-                        .onAppear {
-                            withAnimation(.linear(duration: 5.0).repeatForever(autoreverses: true)) {
-                                self.progress = 1.0
-                            }
-                        }
                 }
                 .confettiCannon(counter: $counter,
                                 num: 30,
@@ -55,12 +57,9 @@ struct HostMapAnnotation: View {
                 startAnimatingCounter()
             }
         }
-    }
-    
-    func startAnimatingCounter() {
-        // Start a timer to increment the counter every 1 second
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(Int.random(in: 2...5)), repeats: true) { timer in
-            counter += 1
+        .onDisappear {
+            timer?.invalidate()
+            timer = nil
         }
     }
 }

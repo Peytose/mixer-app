@@ -41,7 +41,7 @@ struct EventGuestsAndInvitations: View {
                     Text("\(!isPrivate ? "Everyone" : "Only invited users") can see this event, and " +
                          "\(!isInviteOnly ? "anyone" : "only users on the guest list") can check in to this event and see its details." +
                          "\(selectedCheckInMethod == .qrCode ? "Check-in will be handled via QR Code." : (selectedCheckInMethod == .manual ? "Check-in will be handled manually by the host." : "You will handle check-in outside the app."))")
-                    .subheading2()
+                    .secondarySubheading()
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal)
@@ -106,7 +106,7 @@ extension EventGuestsAndInvitations {
     var eventPresetRow: some View {
         HStack(spacing: 10) {
             Text(isPrivate ? "Private Event" : "Open Event")
-                .heading()
+                .primaryHeading()
             
             Image(systemName: selectedCheckInMethod.icon)
                 .resizable()

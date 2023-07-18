@@ -11,6 +11,13 @@ import SwiftUI
 enum GuestStatus: String, Codable, CaseIterable {
     case invited   = "isInvited"
     case checkedIn = "isCheckedIn"
+    
+    var stringVal: String {
+        switch self {
+            case .invited: return "Invite"
+            case .checkedIn: return "Check-in"
+        }
+    }
 }
 
 struct EventLists {

@@ -24,7 +24,7 @@ struct CreateEventNextButton: View {
                     .shadow(color: Color.mixerIndigo.opacity(0.05), radius: 20, x: 8, y: 8)
                     .overlay {
                         Text(text)
-                            .longButtonFont()
+                            .primaryActionButtonFont()
                     }
                     .padding(.bottom, 20)
                 
@@ -35,7 +35,7 @@ struct CreateEventNextButton: View {
                     .shadow(radius: 10, x: 0, y: 8)
                     .overlay {
                         Text(text)
-                            .longButtonFont()
+                            .primaryActionButtonFont()
                     }
                     .padding(.bottom, 20)
             }

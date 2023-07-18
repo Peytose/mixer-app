@@ -52,7 +52,7 @@ struct CachedHost: Hashable, Identifiable, Codable {
     var isFollowed: Bool?      = false
     
     // Location
-    var location: Coordinate?
+    var location: Coordinate   = Coordinate(CLLocationCoordinate2D(latitude: 42.3598, longitude: 71.0921))
     
     // Members
     var memberUUIDs: [String]
@@ -85,7 +85,8 @@ struct CachedHost: Hashable, Identifiable, Codable {
 
 extension CachedHost {
     func generateGeohash() -> String? {
-        guard let _ = address, let latitude = location?.latitude, let longitude = location?.longitude else { return nil }
+        guard let _ = address else { return nil }
+        let latitude = location.latitude, longitude = location.longitude
         return Geohash.encode(latitude: latitude, longitude: longitude, length: 7)
     }
 }

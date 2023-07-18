@@ -63,22 +63,22 @@ class DynamicLinkManager: ObservableObject {
         }
 
         Task {
-            switch pathComponents[0] {
-            case "profile":
-                await fetchItem(with: uid,
-                                    fetchFunction: UserCache.shared.getUser,
-                                    displayFunction: DisplayItem.user)
-            case "event":
-                await fetchItem(with: uid,
-                                    fetchFunction: EventCache.shared.getEvent,
-                                    displayFunction: DisplayItem.event)
-            case "host":
-                await fetchItem(with: uid,
-                                    fetchFunction: HostCache.shared.getHost,
-                                    displayFunction: DisplayItem.host)
-            default:
-                print("Unknown dynamic link")
-            }
+//            switch pathComponents[0] {
+//            case "profile":
+//                await fetchItem(with: uid,
+//                                    fetchFunction: UserCache.shared.getUser(withId: uid),
+//                                    displayFunction: DisplayItem.user)
+//            case "event":
+//                await fetchItem(with: uid,
+//                                    fetchFunction: EventCache.shared.getEvent,
+//                                    displayFunction: DisplayItem.event)
+//            case "host":
+//                await fetchItem(with: uid,
+//                                    fetchFunction: HostCache.shared.getHost,
+//                                    displayFunction: DisplayItem.host)
+//            default:
+//                print("Unknown dynamic link")
+//            }
         }
     }
     

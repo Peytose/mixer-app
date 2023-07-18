@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseFirestoreSwift
 import Firebase
 
-struct EventGuest: Identifiable, Codable {
+struct EventGuest: Identifiable, Codable, Hashable {
     @DocumentID var id: String?
     let name: String
     let university: String
@@ -21,40 +21,59 @@ struct EventGuest: Identifiable, Codable {
     var checkedInBy: String?
     var timestamp: Timestamp?
     
-    init(from user: CachedUser) {
-        self.id              = user.id
+    init(from user: CachedUser, invitedBy: String? = nil, checkedInBy: String? = nil) {
         self.name            = user.name
+        self.university      = user.universityData["name"] ?? ""
         self.profileImageUrl = user.profileImageUrl
         
-        if let age = Calendar.current.dateComponents([.year], from: user.birthday.dateValue(), to: Date()).year {
-            self.age         = age
-        }
+        let age = Calendar.current.dateComponents([.year], from: user.birthday.dateValue(), to: Date()).year
+        self.age         = age ?? 18 // defaulting to 18 if age isn't available
         
-        self.university      = user.universityData["name"] ?? ""
+        self.status          = .invited
+        self.invitedBy       = invitedBy
+        self.checkedInBy     = checkedInBy
+        self.timestamp       = Timestamp()
     }
     
     init(name: String, university: String, age: Int?, gender: String?, status: GuestStatus?, invitedBy: String?, timestamp: Timestamp?) {
-        self.name = name
+        self.name       = name
         self.university = university
-        self.age = age
-        self.gender = gender
-        self.status = status
-        self.invitedBy = invitedBy
-        self.timestamp = timestamp
+        self.age        = age
+        self.gender     = gender
+        self.status     = status
+        self.invitedBy  = invitedBy
+        self.timestamp  = timestamp
     }
     
     func toDictionary() -> [String: Any] {
-        return [
-            "id": id as String? ?? "",
-            "name": name as String,
-            "university": university as String,
-            "profileImageUrl": profileImageUrl as String? ?? "",
-            "age": age as Int? ?? 1,
-            "gender": gender as String? ?? "",
-            "status": status as GuestStatus? ?? "",
-            "invitedBy": invitedBy as String? ?? "",
-            "checkedInBy": checkedInBy as String? ?? "",
-            "timestamp": timestamp as Timestamp? ?? Timestamp(),
+        var dictionary: [String: Any] = [
+            "name": name,
+            "university": university,
+            "age": age ?? 1,
+            "status": status?.rawValue ?? GuestStatus.invited.rawValue,
+            "timestamp": timestamp ?? Timestamp(),
         ]
+        
+        if let profileImageUrl = profileImageUrl {
+            dictionary["profileImageUrl"] = profileImageUrl
+        }
+        
+        if let gender = gender {
+            dictionary["gender"] = gender
+        }
+        
+        if let invitedBy = invitedBy {
+            dictionary["invitedBy"] = invitedBy
+        }
+        
+        if let checkedInBy = checkedInBy {
+            dictionary["checkedInBy"] = checkedInBy
+        }
+
+        return dictionary
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

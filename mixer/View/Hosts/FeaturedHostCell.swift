@@ -24,7 +24,7 @@ struct FeaturedHostCell: View {
                 //MARK: Tagline
                 if let tagline = host.tagline {
                     Text(tagline)
-                        .tagline()
+                        .subheadline(color: .white.opacity(0.8))
                         .lineLimit(2)
                         .minimumScaleFactor(0.7)
                         .matchedGeometryEffect(id: "bio-\(host.username)", in: namespace)
@@ -120,7 +120,6 @@ struct PlaceholderHostCard: View {
 
 struct NameAndLinksRow: View {
     let host: CachedHost
-//    @Binding var isFollowing: Bool
     @State var showUsername = false
     @State private var timer: AnyCancellable?
     var namespace: Namespace.ID
@@ -128,7 +127,7 @@ struct NameAndLinksRow: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10) {
             Text(showUsername ? "@\(host.username)" : "\(host.name)")
-                .title()
+                .largeTitle()
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
                 .textSelection(.enabled)

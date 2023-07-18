@@ -95,6 +95,10 @@ struct AlertContext {
                                                               message: Text("Unable to get map items.\nPlease try again later."),
                                                               dismissButton: .default(Text("Ok")))
     
+    static let unableToGetGuestlistEvents         = AlertItem(title: Text("Error"),
+                                                              message: Text("Unable to get host events.\nPlease try again later."),
+                                                              dismissButton: .default(Text("Ok")))
+    
     //MARK: - CreateEvent Errors/Messages
     static let eventVisiblityInfo                 = AlertItem(title: Text("Event Visibility"),
                                                               message: Text("Public events are visible to all users. Private events are only visible to invited users and users on the guest list."),
@@ -188,6 +192,11 @@ struct AlertContext {
                                                               dismissButton: .default(Text("Ok")))
     
     //MARK: - Guestlist Errors/Messages
+    static let unableToAddGuest                   = AlertItem(title: Text("Failed to Add Guest"),
+                                                              message: Text("We were unable to add the guest at this time.\nPlease try again later. If this persists, go to Profile > Settings > Feedback & Support > Report a Bug."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    
     static func guestAlreadyCheckedIn(confirmAction: @escaping () -> Void) -> AlertItemTwo {
         AlertItemTwo(title: Text("Remove guest?"),
                      message: Text("The guest you are trying to remove has already checked in to the event. Are you sure you meant to remove them?"),

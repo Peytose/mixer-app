@@ -10,19 +10,19 @@ import FirebaseFirestoreSwift
 import Firebase
 
 struct HostService {
-    static func inviteUser(eventUid: String, uid: String, currentUid: String, completion: FirestoreCompletion) {
+    static func inviteUser(eventUid: String, uid: String, invitedBy: String, completion: FirestoreCompletion) {
         let data = ["status": GuestStatus.invited.rawValue,
-                    "invitedBy": currentUid,
-                    "timestamp": Timestamp(date: Date())] as [String: Any]
+                    "invitedBy": invitedBy,
+                    "timestamp": Timestamp()] as [String: Any]
         
         COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(uid)
             .updateData(data, completion: completion)
     }
     
-    static func checkInUser(eventUid: String, uid: String, currentUserName: String, completion: FirestoreCompletion) {
+    static func checkInUser(eventUid: String, uid: String, checkedInBy: String, completion: FirestoreCompletion) {
         let data = ["status": GuestStatus.checkedIn.rawValue,
-                    "checkedInBy": currentUserName,
-                    "timestamp": Timestamp(date: Date())] as [String: Any]
+                    "checkedInBy": checkedInBy,
+                    "timestamp": Timestamp()] as [String: Any]
         
         COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(uid).updateData(data, completion: completion)
         
@@ -31,5 +31,14 @@ struct HostService {
 //            COLLECTION_USERS.document(uid).collection("events-attended").document(eventUid)
 //                .setData([:], completion: completion)
 //        }
+    }
+    
+    static func addUserToGuestlist(eventUid: String, user: CachedUser, invitedBy: String? = nil, checkedInBy: String? = nil, completion: FirestoreCompletion) {
+        guard let userId = user.id else { return }
+        
+        let guest = EventGuest(from: user, invitedBy: invitedBy, checkedInBy: checkedInBy).toDictionary()
+        
+        COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(userId)
+            .setData(guest, completion: completion)
     }
 }

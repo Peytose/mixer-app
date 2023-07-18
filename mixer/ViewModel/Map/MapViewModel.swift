@@ -18,9 +18,10 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     @Published var alertItem: AlertItem?
     @Published var isLoading = false
     @Published var userLocation: CLLocation?
-    @Published var hostEvents: [CachedHost: CachedEvent] = [:]
+    @Published var hostEventsDict: [CachedHost: [CachedEvent]] = [:]
     @Published var hostDetailViewModel: HostDetailViewModel?
     @Published var eventDetailViewModel: EventDetailViewModel?
+    @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     
     let deviceLocationManager = CLLocationManager()
     
@@ -28,21 +29,39 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     override init() {
         super.init()
         deviceLocationManager.delegate = self
+        deviceLocationManager.desiredAccuracy = kCLLocationAccuracyBest
+        deviceLocationManager.startUpdatingLocation()
     }
     
-    // Request always-on location permission
     func requestAlwaysOnLocationPermission() {
-        deviceLocationManager.requestAlwaysAuthorization()
+        if deviceLocationManager.authorizationStatus == .notDetermined {
+            deviceLocationManager.requestAlwaysAuthorization()
+        } else if deviceLocationManager.authorizationStatus == .authorizedWhenInUse || deviceLocationManager.authorizationStatus == .authorizedAlways {
+            recenterMap()
+        }
         HapticManager.playLightImpact()
     }
     
+    func recenterMap() {
+        guard let currentLocation = deviceLocationManager.location else { return }
+        let newRegion = MKCoordinateRegion(center: currentLocation.coordinate,
+                                           span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+        DispatchQueue.main.async {
+            self.region = newRegion
+        }
+    }
+    
     // Update the user's location when it changes
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    @MainActor func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let currentLocation = locations.last else { return }
-        userLocation = currentLocation
-        withAnimation {
-            region = MKCoordinateRegion(center: currentLocation.coordinate,
-                                        span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
+        DispatchQueue.main.async {
+            self.userLocation = currentLocation
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        DispatchQueue.main.async {
+            self.authorizationStatus = status
         }
     }
     
@@ -77,9 +96,9 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                         try HostCache.shared.cacheHost(host)
                         try await updateHostCoordinates(for: &host, with: currentEvent)
 
-                        mapItems.updateValue(currentEvent, forKey: host)
+                        updateMapItem(for: host, with: currentEvent)
                     } else {
-                        mapItems.updateValue(nil, forKey: host)
+                        updateMapItem(for: host)
                     }
                 }
                 
@@ -101,7 +120,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
     }
     
     
-    @MainActor func getEventForGuestlist() {
+    @MainActor func getEventsForGuestlist() {
         Task {
             do {
                 guard let privileges = AuthViewModel.shared.currentUser?.hostPrivileges else { return }
@@ -114,15 +133,20 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                 
                 for host in hosts {
                     guard let hostId = host.id else { return }
-                    guard let event = try await EventCache.shared.fetchEvents(filter: .hostEvents(uid: hostId)).first else { return }
-                    print("DEBUG: EVENT \(event)")
                     
+                    // Get all events for this host
+                    let events = try await EventCache.shared.fetchEvents(filter: .hostEvents(uid: hostId))
+                    print("DEBUG: EVENTS \(events)")
                     
-                    self.hostEvents.updateValue(event, forKey: host)
-                    print("DEBUG: Host event for guest list updated. \(self.hostEvents)")
+                    let sortedEvents = events.sortedByStartDate()
+                    
+                    DispatchQueue.main.async {
+                        self.hostEventsDict.updateValue(sortedEvents, forKey: host)
+                        print("DEBUG: Host event for guest list updated. \(self.hostEventsDict)")
+                    }
                 }
             } catch {
-                alertItem = AlertContext.unableToGetMapItems
+                alertItem = AlertContext.unableToGetGuestlistEvents
                 print("DEBUG: Error getting event. \(error)")
             }
         }
@@ -135,7 +159,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
                 if let coords = try await event.address.coordinates() {
                     host.location = Coordinate(CLLocationCoordinate2D(latitude: coords.latitude, longitude: coords.longitude))
                     print("DEBUG: Host coords are changed to the event coords.")
-                    try HostCache.shared.cacheHost(host)
+                    HostCache.shared.cacheHost(host)
                     updateMapItem(for: host, with: event)
                 }
             }
@@ -143,7 +167,7 @@ final class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate 
             if let coords = try await event.address.coordinates() {
                 host.location = Coordinate(CLLocationCoordinate2D(latitude: coords.latitude, longitude: coords.longitude))
                 print("DEBUG: Host did not have coords so changed to event coords.")
-                try HostCache.shared.cacheHost(host)
+                HostCache.shared.cacheHost(host)
                 updateMapItem(for: host, with: event)
             }
         }

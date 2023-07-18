@@ -23,7 +23,7 @@ struct CreateEventTextField: View {
             HStack {
                 if let title = title {
                     Text(title)
-                        .textFieldSmallTitle()
+                        .primaryHeading()
                     
                     Spacer()
                     
@@ -60,7 +60,7 @@ struct CreateEventTextField: View {
             
             if let footnote = footnote {
                 Text(footnote)
-                    .textFieldFootnote()
+                    .footnote()
             }
         }
         }

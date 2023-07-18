@@ -31,7 +31,7 @@ struct MoreProfileOptions: View {
                 
                 VStack {
                     Text(user.name)
-                        .subheading2()
+                        .secondarySubheading()
                     
                     Text("@\(user.username)")
                         .foregroundColor(.secondary)
@@ -81,7 +81,7 @@ struct MoreProfileOptions: View {
         }
         .overlay(alignment: .topTrailing) {
             Button(action: buttonAction, label: {
-                Image(systemName: "xmark")
+                XDismissButton()
             })
             .buttonStyle(SmallButtonStyle())
         }

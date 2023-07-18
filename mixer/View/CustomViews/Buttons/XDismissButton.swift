@@ -10,12 +10,9 @@ import SwiftUI
 struct XDismissButton: View {
     var body: some View {
         Image(systemName: "xmark")
-            .font(.system(size: 17, weight: .bold))
-            .foregroundColor(.white)
-            .padding(8)
-            .background(.ultraThinMaterial)
-            .backgroundColor(opacity: 0.2)
-            .clipShape(Circle())
+            .font(.title3)
+            .fontWeight(.semibold)
+            .foregroundColor(.secondary)
             .padding(10)
             .contentShape(Rectangle())
     }

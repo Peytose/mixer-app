@@ -44,8 +44,9 @@ struct MapView: View {
             ZStack(alignment: .top) {
                 Map(coordinateRegion: $viewModel.region,
                     showsUserLocation: true,
-                    annotationItems: viewModel.mapItems.keys.compactMap { $0 }) { host in
-                    MapAnnotation(coordinate: host.location?.locationCoordinate ?? CLLocationCoordinate2D(latitude: 42.3598, longitude: 71.0921),
+                    annotationItems: viewModel.mapItems.keys.compactMap { $0.self }) { host in
+                    
+                    MapAnnotation(coordinate: host.location.locationCoordinate,
                                   anchorPoint: CGPoint(x: 0.75, y: 0.75)) {
                         HostMapAnnotation(host: host)
                             .onTapGesture {
@@ -98,8 +99,9 @@ struct MapView: View {
             }
         }
         .fullScreenCover(isPresented: $isShowingGuestlistView) {
-            if let event = viewModel.hostEvents.first?.value, !viewModel.hostEvents.isEmpty {
-                GuestlistView(viewModel: GuestlistViewModel(event: event), isShowingGuestlistView: $isShowingGuestlistView)
+            if !viewModel.hostEventsDict.isEmpty {
+                GuestlistView(isShowingGuestlistView: $isShowingGuestlistView)
+                    .environmentObject(GuestlistViewModel(hostEventsDict: viewModel.hostEventsDict))
                     .zIndex(2)
             }
         }
@@ -114,33 +116,38 @@ struct MapView: View {
             }
         }
         .overlay(alignment: .bottom) {
-            if AuthViewModel.shared.currentUser?.isHost ?? false {
-                GuestlistButton { isShowingGuestlistView.toggle() }
-                    .padding(.bottom, 100)
+            VStack(alignment: .center) {
+                HStack {
+                    Spacer()
+                    Button {
+                        viewModel.requestAlwaysOnLocationPermission()
+                    } label: {
+                        Image("recenter-button")
+                            .renderingMode(.template)
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .foregroundColor(Color.mainFont)
+                            .frame(width: 25, height: 25)
+                            .padding(10)
+                            .background(Color.mixerSecondaryBackground)
+                            .clipShape(Circle())
+                            .shadow(radius: 5, y: 8)
+                    }
+                    .padding(.trailing)
+                    .padding(.bottom, 40)
+                }
+                
+                if viewModel.hostEventsDict.values.contains(where: { !$0.isEmpty }) && AuthViewModel.shared.currentUser?.isHost ?? false {
+                    GuestlistButton { isShowingGuestlistView.toggle() }
+                }
             }
-        }
-        .overlay(alignment: .bottomTrailing) {
-            Button {
-                viewModel.requestAlwaysOnLocationPermission()
-            } label: {
-                Image("recenter-button")
-                    .renderingMode(.template)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .foregroundColor(Color.mainFont)
-                    .frame(width: 25, height: 25)
-                    .padding(10)
-                    .background(Color.mixerSecondaryBackground)
-                    .clipShape(Circle())
-                    .shadow(radius: 5, y: 8)
-            }
-            .padding(.trailing)
-            .padding(.bottom, 180)
+            .frame(maxWidth: .infinity)
+            .padding(.bottom, 100)
         }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .task {
             viewModel.getMapItems()
-            viewModel.getEventForGuestlist()
+            viewModel.getEventsForGuestlist()
         }
     }
 }

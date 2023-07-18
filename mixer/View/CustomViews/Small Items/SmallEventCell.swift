@@ -37,13 +37,12 @@ struct SmallEventCell: View {
                 .fontWeight(.medium)
                 
                 Text(title)
-                    .subheading2()
+                    .secondarySubheading()
                     .lineLimit(2)
                     .minimumScaleFactor(0.80)
                 
                 Text(visibility)
                     .footnote()
-                    .fontWeight(.medium)
             }
             .padding(.horizontal, 10)
         }

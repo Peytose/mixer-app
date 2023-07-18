@@ -76,7 +76,7 @@ struct CreateEventFlow: View {
                 Spacer()
                 
                 Text(viewModel.active.ScreenTitle)
-                    .heading2()
+                    .secondaryHeading()
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
                 

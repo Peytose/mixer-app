@@ -58,7 +58,7 @@ fileprivate struct PhoneNumberTextField: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(title)
-                .textFieldTitle()
+                .largeTitle(weight: .semibold)
                 .lineLimit(2)
                 .minimumScaleFactor(0.75)
                 .padding(.bottom, 10)

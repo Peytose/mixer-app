@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "courier-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/trycourier/courier-ios",
+      "state" : {
+        "revision" : "16dd6c35984b3ad753337de24061552c06a18401",
+        "version" : "2.0.21"
+      }
+    },
+    {
       "identity" : "datacache",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/huynguyencong/DataCache",
@@ -169,6 +178,24 @@
       "state" : {
         "revision" : "ec957ccddbcc710ccc64c9dcbd4c7006fcf8b73a",
         "version" : "2.2.0"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "9dcaa4b333db437b0fbfaf453fad29069044a8b4",
+        "version" : "6.6.0"
+      }
+    },
+    {
+      "identity" : "screenshotpreventing-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yoxisem544/ScreenshotPreventing-iOS",
+      "state" : {
+        "revision" : "10d868c738ec1debba944388c5941dac957e9a8d",
+        "version" : "1.4.0"
       }
     },
     {

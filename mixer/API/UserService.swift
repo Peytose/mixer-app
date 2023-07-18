@@ -65,7 +65,7 @@ struct UserService {
         COLLECTION_FOLLOWING.document(currentUid)
             .collection("user-following").document(hostUid).setData([:]) { _ in
                 COLLECTION_FOLLOWERS.document(hostUid).collection("host-followers")
-                    .document(currentUid).setData(["timestamp":Timestamp()], completion: completion)
+                    .document(currentUid).setData(["timestamp": Timestamp()], completion: completion)
             }
     }
     

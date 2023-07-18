@@ -50,8 +50,7 @@ class EventCache {
             case .hostEvents(uid: let uid):
                 return COLLECTION_EVENTS
                     .whereField("hostUuid", isEqualTo: uid)
-                    .whereField("startDate", isGreaterThan: Timestamp())
-                    .order(by: "startDate", descending: true)
+                    .whereField("endDate", isGreaterThan: Timestamp())
             case .unfinished:
                 return COLLECTION_EVENTS
                     .whereField("endDate", isGreaterThan: Timestamp())

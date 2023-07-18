@@ -21,13 +21,12 @@ struct EventCellView: View {
                 //MARK: Title and host
                 VStack(alignment: .leading, spacing: 2) {
                     Text(event.title)
-                        .heading()
+                        .primaryHeading()
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                     
                     Text("Hosted by \(event.hostName)")
                         .footnote()
-                        .fontWeight(.medium)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(8)
@@ -47,13 +46,12 @@ struct EventCellView: View {
                 HStack {
                     VStack(alignment: .leading) {
                         Text(hasStarted ? "Ends at \(event.endDate.getTimestampString(format: "h:mm a"))": event.startDate.getTimestampString(format: "EEEE, h:mm a"))
-                            .subheading2()
+                            .secondarySubheading()
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         
                         Text("\(event.type.rawValue)")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .subheadline()
                     }
                     
                     Spacer()
@@ -85,8 +83,7 @@ struct EventCellView: View {
                 }
                 
                 Text(event.description)
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.8))
+                    .subheadline(color: .white.opacity(0.8))
                     .lineLimit(3)
                     .minimumScaleFactor(0.75)
                     .multilineTextAlignment(.leading)
