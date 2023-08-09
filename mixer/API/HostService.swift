@@ -33,7 +33,7 @@ struct HostService {
 //        }
     }
     
-    static func addUserToGuestlist(eventUid: String, user: CachedUser, invitedBy: String? = nil, checkedInBy: String? = nil, completion: FirestoreCompletion) {
+    static func addUserToGuestlist(eventUid: String, user: User, invitedBy: String? = nil, checkedInBy: String? = nil, completion: FirestoreCompletion) {
         guard let userId = user.id else { return }
         
         let guest = EventGuest(from: user, invitedBy: invitedBy, checkedInBy: checkedInBy).toDictionary()

@@ -7,6 +7,18 @@
 
 import SwiftUI
 
+enum AlertType: Identifiable {
+    case regular(AlertItem?)
+    case confirmation(ConfirmationAlertItem?)
+    
+    var id: Int {
+        switch self {
+        case .regular: return 1
+        case .confirmation: return 2
+        }
+    }
+}
+
 struct AlertItem: Identifiable {
     let id = UUID()
     let title: Text
@@ -18,7 +30,7 @@ struct AlertItem: Identifiable {
     }
 }
 
-struct AlertItemTwo: Identifiable {
+struct ConfirmationAlertItem: Identifiable {
     let id = UUID()
     let title: Text
     let message: Text
@@ -32,13 +44,11 @@ struct AlertItemTwo: Identifiable {
 
 struct AlertContext {
     //MARK: - Authentication Errors/Messages
-    static func existingCountryCode(code: String, confirmAction: @escaping () -> Void, denyAction: @escaping () -> Void) -> AlertItemTwo {
-        AlertItemTwo(title: Text("Confirm Phone Number"),
-                     message: Text("We detected the country code \(code) in your phone number. Is this correct?"),
-                     primaryButton: .default(Text("Yes").bold(),
-                                             action: confirmAction),
-                     secondaryButton: .default(Text("Nope"),
-                                               action: denyAction))
+    static func existingCountryCode(code: String, denyAction: @escaping () -> Void) -> ConfirmationAlertItem {
+        ConfirmationAlertItem(title: Text("Confirm Phone Number"),
+                              message: Text("We detected the country code \(code) in your phone number. Is this correct?"),
+                              primaryButton: .default(Text("Yes").bold()),
+                              secondaryButton: .default(Text("Nope"), action: denyAction))
     }
     
     static let sentEmailLink                      = AlertItem(title: Text("Email Verification Link Sent"),
@@ -99,7 +109,7 @@ struct AlertContext {
                                                               message: Text("Unable to get host events.\nPlease try again later."),
                                                               dismissButton: .default(Text("Ok")))
     
-    //MARK: - CreateEvent Errors/Messages
+    //MARK: - EventFlow Errors/Messages
     static let eventVisiblityInfo                 = AlertItem(title: Text("Event Visibility"),
                                                               message: Text("Public events are visible to all users. Private events are only visible to invited users and users on the guest list."),
                                                               dismissButton: .default(Text("Ok")))
@@ -197,8 +207,8 @@ struct AlertContext {
                                                               dismissButton: .default(Text("Ok")))
     
     
-    static func guestAlreadyCheckedIn(confirmAction: @escaping () -> Void) -> AlertItemTwo {
-        AlertItemTwo(title: Text("Remove guest?"),
+    static func guestAlreadyCheckedIn(confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {
+        ConfirmationAlertItem(title: Text("Remove guest?"),
                      message: Text("The guest you are trying to remove has already checked in to the event. Are you sure you meant to remove them?"),
                      primaryButton: .default(Text("Remove").bold(),
                                              action: confirmAction),
@@ -206,8 +216,8 @@ struct AlertContext {
     }
     
     //MARK: - ProfileSettings Errors/Messages
-    static func confirmChangesToProfile(confirmAction: @escaping () -> Void) -> AlertItemTwo {
-        AlertItemTwo(title: Text("Comfirm changes"),
+    static func confirmChangesToProfile(confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {
+        ConfirmationAlertItem(title: Text("Comfirm changes"),
                      message: Text("It seems that you've changed details about your profile. Apply these changes?"),
                      primaryButton: .default(Text("Yes!").bold(),
                                              action: confirmAction),

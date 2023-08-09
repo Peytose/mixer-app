@@ -1,0 +1,149 @@
+[
+    {
+        "id": 1001,
+        "header": "Profile",
+        "footer": "Right now, you can only edit your name and bio.",
+        "rows": [
+            {
+                "id": 1002,
+                "type": "editable",
+                "title": "Display Name",
+                "icon": "person.fill",
+                "alertTitle": "Display Name Change",
+                "alertMessage": "Please enter your preferred name.",
+                "alertPlaceholder": "Preferred name"
+            },
+            {
+                "id": 1003,
+                "type": "editable",
+                "title": "Bio",
+                "icon": "signature",
+                "alertTitle": "Bio Change",
+                "alertMessage": "Please enter your new bio.",
+                "alertPlaceholder": "New Bio"
+            },
+            {
+                "id": 1004,
+                "type": "editable",
+                "title": "Instagram",
+                "icon": "instagram",
+                "alertTitle": "Instagram Change",
+                "alertMessage": "Please enter your new instagram username.",
+                "alertPlaceholder": "Your handle"
+            },
+            {
+                "id": 1005,
+                "type": "menu",
+                "title": "Gender",
+                "icon": "figure.arms.open"
+            },
+            {
+                "id": 1006,
+                "type": "menu",
+                "title": "Relationship Status",
+                "icon": "relationship"
+            },
+            {
+                "id": 1007,
+                "type": "menu",
+                "title": "Major",
+                "icon": "diploma"
+            },
+            {
+                "id": 1008,
+                "type": "readOnly",
+                "title": "Name",
+                "icon": "person.fill"
+            },
+            {
+                "id": 1009,
+                "type": "readOnly",
+                "title": "Username",
+                "icon": "a.magnify"
+            },
+            {
+                "id": 1010,
+                "type": "readOnly",
+                "title": "Email",
+                "icon": "envelope.fill"
+            },
+            {
+                "id": 1011,
+                "type": "readOnly",
+                "title": "Phone",
+                "icon": "flipphone"
+            }
+        ]
+    },
+    {
+        "id": 2001,
+        "header": "Privacy",
+        "rows": [
+            {
+                "id": 2002,
+                "type": "toggle",
+                "title": "Show age on profile?"
+            }
+        ]
+    },
+    {
+        "id": 3001,
+        "header": "Feedback & Support",
+        "footer": "We would like nothing more than to hear from you!",
+        "rows": [
+            {
+                "id": 3002,
+                "type": "mail",
+                "title": "Request a feature",
+                "icon": "wand.and.stars",
+                "subject": "Feature Request"
+            },
+            {
+                "id": 3003,
+                "type": "mail",
+                "title": "Report a Bug",
+                "icon": "ant.fill",
+                "subject": "Bug Report"
+            },
+            {
+                "id": 3004,
+                "type": "mail",
+                "title": "Questions",
+                "icon": "questionmark.bubble.fill",
+                "subject": "Question"
+            }
+        ]
+    },
+    {
+        "id": 4001,
+        "header": "Legal & Policies",
+        "rows": [
+            {
+                "id": 4002,
+                "type": "link",
+                "title": "Privacy Policy",
+                "icon": "lock.doc.fill",
+                "url": ""
+            },
+            {
+                "id": 4003,
+                "type": "link",
+                "title": "Terms of Service",
+                "icon": "doc.plaintext.fill",
+                "url": ""
+            }
+        ]
+    },
+    {
+        "id": 5001,
+        "header": "Version",
+        "rows": [
+            {
+                "id": 5002,
+                "type": "readOnly",
+                "title": "Version",
+                "icon": "info.circle.fill"
+            }
+        ]
+    }
+]
