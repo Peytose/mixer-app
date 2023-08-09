@@ -29,6 +29,12 @@ struct HostDetailView: View {
             }
             .padding(.bottom, 180)
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                BackArrowButton()
+            }
+        }
         .background(Color.theme.backgroundColor)
         .ignoresSafeArea()
         .preferredColorScheme(.dark)

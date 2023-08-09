@@ -1,5 +1,5 @@
 //
-//  RideRequestView.swift
+//  LocationDetailsCardView.swift
 //  mixer
 //
 //  Created by Peyton Lyons on 8/1/23.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct RideRequestView: View {
+struct LocationDetailsCardView: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     @Namespace var namespace
     
@@ -95,15 +95,18 @@ struct RideRequestView: View {
                         .environmentObject(EventViewModel(event: event))
                 }
                 case .host:
-                    Text("Hosts")
+                if let host = homeViewModel.selectedHost {
+                    HostDetailView(namespace: namespace)
+                        .environmentObject(HostViewModel(host: host))
+                }
             }
         }
     }
 }
 
-struct RideRequestView_Previews: PreviewProvider {
+struct LocationDetailsCardView_Previews: PreviewProvider {
     static var previews: some View {
-        RideRequestView()
+        LocationDetailsCardView()
             .environmentObject(HomeViewModel())
     }
 }

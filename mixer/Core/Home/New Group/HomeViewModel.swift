@@ -53,7 +53,7 @@ class HomeViewModel: NSObject, ObservableObject {
     }
     
     // MARK: - Helpers
-    func reverseFetchLocation(from location: MixerLocation?) {
+    private func reverseFetchLocation(from location: MixerLocation?) {
         guard let location = location else { return }
         
         switch location.state {
@@ -123,7 +123,7 @@ class HomeViewModel: NSObject, ObservableObject {
         case .discovering:
             return AnyView(Text(""))
         case .routeEventPreview, .routeHostPreview, .polylineAdded:
-            return AnyView(RideRequestView())
+            return AnyView(LocationDetailsCardView())
         default:
             break
         }
@@ -224,6 +224,7 @@ extension HomeViewModel {
     // DEBUG: Func extracted for potential expansion
     func selectLocation(_ location: MixerLocation) {
         self.selectedMixerLocation = location
+        self.reverseFetchLocation(from: location)
     }
     
     

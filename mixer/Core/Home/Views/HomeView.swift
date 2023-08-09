@@ -93,12 +93,12 @@ extension HomeView {
             }
         }
         .onReceive(homeViewModel.$selectedHost) { output in
-            if let _ = output {
+            if let _ = output, homeViewModel.selectedMixerLocation == nil {
                     self.mapState = .hostDetail
             }
         }
         .onReceive(homeViewModel.$selectedEvent) { output in
-            if let _ = output {
+            if let _ = output, homeViewModel.selectedMixerLocation == nil {
                 self.mapState = .eventDetail
             }
         }

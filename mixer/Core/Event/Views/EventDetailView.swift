@@ -233,6 +233,12 @@ struct EventDetailView: View {
                 .zIndex(1)
             }
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                BackArrowButton()
+            }
+        }
         .preferredColorScheme(.dark)
         .ignoresSafeArea()
     }
