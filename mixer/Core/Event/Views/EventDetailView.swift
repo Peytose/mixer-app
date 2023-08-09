@@ -12,21 +12,17 @@ import Kingfisher
 import PopupView
 
 struct EventDetailView: View {
-    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var viewModel: EventViewModel
+    var namespace: Namespace.ID
     @State private var isShowingModal   = false
     @State private var currentAmount    = 0.0
     @State private var finalAmount      = 1.0
     @State private var showHost         = false
     @State private var showAllAmenities = false
+    @State var showBackArrow            = false
     @State var showInfoAlert1           = false
     @State var showInfoAlert2           = false
     @State var showInfoAlert3           = false
-    var namespace: Namespace.ID
-    
-    init(namespace: Namespace.ID) {
-        self.namespace = namespace
-    }
     
     var body: some View {
         ZStack {
@@ -235,8 +231,10 @@ struct EventDetailView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                BackArrowButton()
+            if showBackArrow {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    BackArrowButton()
+                }
             }
         }
         .preferredColorScheme(.dark)

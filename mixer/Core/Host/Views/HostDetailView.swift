@@ -13,10 +13,7 @@ import FirebaseFirestore
 struct HostDetailView: View {
     @EnvironmentObject var viewModel: HostViewModel
     var namespace: Namespace.ID
-    
-    init(namespace: Namespace.ID) {
-        self.namespace = namespace
-    }
+    @State var showBackArrow = false
     
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -31,8 +28,10 @@ struct HostDetailView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                BackArrowButton()
+            if showBackArrow {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    BackArrowButton()
+                }
             }
         }
         .background(Color.theme.backgroundColor)

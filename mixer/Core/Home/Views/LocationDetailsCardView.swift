@@ -91,12 +91,12 @@ struct LocationDetailsCardView: View {
             switch state {
                 case .event:
                 if let event = homeViewModel.selectedEvent {
-                    EventDetailView(namespace: namespace)
+                    EventDetailView(namespace: namespace, showBackArrow: true)
                         .environmentObject(EventViewModel(event: event))
                 }
                 case .host:
                 if let host = homeViewModel.selectedHost {
-                    HostDetailView(namespace: namespace)
+                    HostDetailView(namespace: namespace, showBackArrow: true)
                         .environmentObject(HostViewModel(host: host))
                 }
             }
