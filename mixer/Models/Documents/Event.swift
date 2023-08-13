@@ -149,7 +149,7 @@ enum EventAmenities: String, Codable, CaseIterable {
 struct Event: Hashable, Identifiable, Codable {
     // MARK: - Metadata
     @DocumentID var id: String?
-    var hostUuid: String
+    var hostId: String
     var hostName: String
     var timePosted: Timestamp
     var eventImageUrl: String

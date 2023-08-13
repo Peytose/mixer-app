@@ -182,33 +182,3 @@
 //        .buttonStyle(.plain)
 //    }
 //}
-//
-//fileprivate struct GuestlistButton: View {
-//    let action: () -> Void
-//    
-//    var body: some View {
-//        Button {
-//            let impact = UIImpactFeedbackGenerator(style: .light)
-//            impact.impactOccurred()
-//            action()
-//        } label: {
-//            Capsule()
-//                .fill(Color.theme.secondaryBackgroundColor)
-//                .longButtonFrame()
-//                 .shadow(radius: 20, x: -8, y: -8)
-//                .shadow(radius: 20, x: 8, y: 8)
-//                .overlay {
-//                    HStack {
-//                        Image(systemName: "list.clipboard")
-//                            .imageScale(.large)
-//                            .foregroundColor(.white)
-//                        
-//                        Text("Guestlist")
-//                            .font(.body.weight(.medium))
-//                            .foregroundColor(.white)
-//                    }
-//                }
-//                .shadow(radius: 5, y: 10)
-//        }
-//    }
-//}

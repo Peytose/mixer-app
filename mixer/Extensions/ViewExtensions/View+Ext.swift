@@ -14,12 +14,6 @@ extension View {
         let renderer = ImageRenderer(content: self)
         return renderer.uiImage ?? UIImage()
     }
-
-    
-    func configureList() -> some View {
-        self.background { Color.theme.backgroundColor.ignoresSafeArea() }
-            .scrollContentBackground(.hidden)
-    }
     
     
     func navigationBar(title: String, displayMode: NavigationBarItem.TitleDisplayMode) -> some View {
@@ -34,31 +28,6 @@ extension View {
 //            .onChange(of: text.wrappedValue) { searchText in
 //                viewModel.filterGuests(with: searchText)
 //            }
-//    }
-//    
-//    
-//    func configureToolbar(isShowingQRCodeScanView: Binding<Bool>, isShowingAddGuestView: Binding<Bool>, isShowingGuestlistView: Binding<Bool>) -> some View {
-//        self.toolbar {
-//            ToolbarItem(placement: .navigationBarTrailing) {
-//                HStack {
-//                    Button { isShowingQRCodeScanView.wrappedValue.toggle() } label: {
-//                        Image(systemName: "qrcode.viewfinder")
-//                            .font(.title3)
-//                            .foregroundColor(Color.theme.mixerIndigo)
-//                    }
-//                    
-//                    Button("Add Guest") { isShowingAddGuestView.wrappedValue.toggle() }
-//                        .foregroundColor(.white)
-//                }
-//            }
-//            
-//            ToolbarItem(placement: .navigationBarLeading) {
-//                Button { isShowingGuestlistView.wrappedValue = false } label: {
-//                    @Environment(\.presentationMode) var mode
-//                    XDismissButton { mode.wrappedValue.dismiss() }
-//                }
-//            }
-//        }
 //    }
     
     

@@ -57,15 +57,31 @@ extension HomeView {
                     .ignoresSafeArea()
                 
                 if mapState == .noInput {
-                    LocationSearchActivationView()
-                        .padding(.top, 72)
-                        .onTapGesture {
-                            if !showSideMenu {
-                                withAnimation(.spring()) {
-                                    mapState = .discovering
+                    VStack {
+                        LocationSearchActivationView()
+                            .padding(.top, 72)
+                            .onTapGesture {
+                                if !showSideMenu {
+                                    withAnimation(.spring()) {
+                                        mapState = .discovering
+                                    }
                                 }
                             }
+                        
+                        Spacer()
+                        
+                        if !homeViewModel.guestlistEvents.isEmpty {
+                            MapGuestlistButton {
+                                withAnimation(.spring()) {
+                                    mapState = .guestlist
+                                }
+                            }
+                            .padding(.bottom, 50)
                         }
+                    }
+                } else if mapState == .guestlist {
+                    GuestlistView()
+                        .environmentObject(GuestlistViewModel(events: Array(homeViewModel.guestlistEvents)))
                 } else if mapState == .discovering {
                     LocationSearchView()
                 } else if mapState == .eventDetail, let event = homeViewModel.selectedEvent {

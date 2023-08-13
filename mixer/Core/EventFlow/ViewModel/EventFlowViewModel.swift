@@ -100,7 +100,7 @@
 //                let geoPoint       = GeoPoint(latitude: location.coordinate.latitude,
 //                                              longitude: location.coordinate.longitude)
 //                
-//                let event          = Event(hostUuid: hostUid,
+//                let event          = Event(hostId: hostUid,
 //                                           hostName: host.name,
 //                                           timePosted: Timestamp(),
 //                                           eventImageUrl: imageUrl,

@@ -35,6 +35,8 @@ struct MapViewActionButton: View {
         switch state {
             case .noInput:
                 showSideMenu.toggle()
+            case .guestlist:
+                mapState = .noInput
             case .discovering:
                 mapState = .noInput
                 homeViewModel.clearInput()
@@ -56,7 +58,8 @@ struct MapViewActionButton: View {
         switch state {
             case .noInput:
                 return showSideMenu ? "chevron.right" : "line.3.horizontal"
-            case .discovering,
+            case .guestlist,
+                .discovering,
                 .polylineAdded,
                 .routeEventPreview,
                 .routeHostPreview,

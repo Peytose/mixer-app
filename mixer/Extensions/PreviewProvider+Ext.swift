@@ -33,11 +33,10 @@ class DeveloperPreview {
                         instagramHandle: "mixerpartyapp",
                         bio: "This is an example bio. Here it is. I'm making it purposely long, so I can see how it looks on a profile.",
                         showAgeOnProfile: false,
-                        isHost: true,
                         associatedHosts: [])
     
     let mockEvent = Event(id: NSUUID().uuidString,
-                          hostUuid: "",
+                          hostId: "",
                           hostName: "Theta Chi",
                           timePosted: Timestamp(),
                           eventImageUrl: "https://www.instagram.com/p/CqBwaJ3gcyU/media?size=l",

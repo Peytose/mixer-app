@@ -38,12 +38,6 @@ struct MixerMapViewRepresentable: UIViewRepresentable {
                     context.coordinator.configurePolyline(withDestinationCoordinate: coordinate)
                 }
                 break
-//            case .tripAccepted:
-//                guard let trip = homeViewModel.trip else { return }
-//                guard let driver = homeViewModel.currentUser, driver.accountType == .driver else { return }
-//                guard let route  = homeViewModel.routeToPickupLocation else { return }
-//                context.coordinator.configurePolylineToPickupLocation(withRoute: route)
-//                context.coordinator.addAndSelectAnnotation(withCoordinate: trip.pickupLocation.toCoordinate())
             default:
                 break
         }

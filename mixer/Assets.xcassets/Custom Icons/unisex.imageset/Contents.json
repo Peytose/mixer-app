@@ -1,11 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "human-male.svg",
+      "filename" : "unisex@1x.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "unisex@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

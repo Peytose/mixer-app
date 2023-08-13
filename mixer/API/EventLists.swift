@@ -24,7 +24,7 @@ struct EventLists {
     static func loadUsers(eventUid: String, completion: @escaping ([EventGuest]) -> Void) {
         var users = [EventGuest]()
         
-        COLLECTION_EVENTS.document(eventUid).collection("attendance-list").getDocuments() { snapshot, error in
+        COLLECTION_EVENTS.document(eventUid).collection("guestlist").getDocuments() { snapshot, error in
             if let error = error {
                 print("DEBUG: Error getting users from event list: \(error.localizedDescription)")
                 completion(users)

@@ -11,7 +11,7 @@ import Firebase
 struct Feedback: Identifiable, Decodable {
     @DocumentID var id: String?
     let eventUuid: String
-    let hostUuid: String
+    let hostId: String
     let rating: Int
     let comment: String
     let eventType: EventType

@@ -62,11 +62,6 @@ class AuthViewModel: ObservableObject {
     }
     
     
-    private func hasShownOnboardingScreens() -> Bool {
-        return UserDefaults.standard.bool(forKey: "hasShownOnboardingScreens")
-    }
-    
-    
     @MainActor
     func completeOnboarding() {
         setOnboardingScreensShown(true)
@@ -156,22 +151,9 @@ class AuthViewModel: ObservableObject {
         service.$user
             .sink { user in
                 self.currentUser = user
+                guard let user = user else { return }
             }
             .store(in: &cancellable)
-    }
-    
-    
-    private func fetchHost(uid: String) {
-        COLLECTION_HOSTS.document(uid).getDocument { snapshot, error in
-            if let error = error {
-                print("DEBUG: Error fetching host. \(error.localizedDescription)")
-                return
-            }
-            
-            guard let host = try? snapshot?.data(as: Host.self) else { return }
-            self.currentUser?.associatedHosts?.append(host)
-            print("DEBUG: Host fetched from user: \(host)")
-        }
     }
     
     
@@ -183,6 +165,48 @@ class AuthViewModel: ObservableObject {
                 self.isLoading = false
                 completion(result)
             }
+        }
+    }
+}
+
+// MARK: - Firebase Query Functions
+extension AuthViewModel {
+    private func fetchUniversity(completion: @escaping (Bool) -> Void) {
+        if !email.isValidEmail {
+            completion(false)
+            return
+        }
+        
+        let emailComponents = email.split(separator: "@")
+        if emailComponents.count != 2 {
+            completion(false)
+            return
+        }
+        
+        let domain = String(emailComponents[1])
+        print("DEBUG: Domain from email: \(domain)")
+        
+        COLLECTION_UNIVERSITIES.whereField("domain", isEqualTo: domain).getDocuments { snapshot, error in
+            if let error = error {
+                print("DEBUG: Error getting domain from email. \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            guard let documents = snapshot?.documents, let document = documents.first else {
+                completion(false)
+                return
+            }
+            
+            if let universityName = document["shortName"] as? String, let universityUID = document.documentID as String? {
+                self.universityData = ["name": universityName,
+                                       "uid": universityUID]
+                // Save the universityData dictionary to the user document
+                completion(true)
+                return
+            }
+            
+            completion(false)
         }
     }
     
@@ -215,12 +239,6 @@ class AuthViewModel: ObservableObject {
                     self.fetchUser()
                 }
         }
-    }
-    
-    
-    func updateCurrentUser(user: User) {
-        self.currentUser = user
-        print("DEBUG: Current user updated.")
     }
 }
 
@@ -323,6 +341,17 @@ extension AuthViewModel {
 
 // MARK: - Helper Functions
 extension AuthViewModel {
+    func updateCurrentUser(user: User) {
+        self.currentUser = user
+        print("DEBUG: Current user updated.")
+    }
+    
+    
+    private func hasShownOnboardingScreens() -> Bool {
+        return UserDefaults.standard.bool(forKey: "hasShownOnboardingScreens")
+    }
+    
+    
     func next(_ state: Binding<AuthFlowViewState>) {
         let nextIndex = min(state.wrappedValue.rawValue + 1, AuthFlowViewState.allCases.last!.rawValue)
         
@@ -391,46 +420,6 @@ extension AuthViewModel {
             isValidBirthday = false
         } else {
             self.convertStringToDate()
-        }
-    }
-    
-    
-    private func fetchUniversity(completion: @escaping (Bool) -> Void) {
-        if !email.isValidEmail {
-            completion(false)
-            return
-        }
-        
-        let emailComponents = email.split(separator: "@")
-        if emailComponents.count != 2 {
-            completion(false)
-            return
-        }
-        
-        let domain = String(emailComponents[1])
-        print("DEBUG: Domain from email: \(domain)")
-        
-        COLLECTION_UNIVERSITIES.whereField("domain", isEqualTo: domain).getDocuments { snapshot, error in
-            if let error = error {
-                print("DEBUG: Error getting domain from email. \(error.localizedDescription)")
-                completion(false)
-                return
-            }
-            
-            guard let documents = snapshot?.documents, let document = documents.first else {
-                completion(false)
-                return
-            }
-            
-            if let universityName = document["shortName"] as? String, let universityUID = document.documentID as String? {
-                self.universityData = ["name": universityName,
-                                       "uid": universityUID]
-                // Save the universityData dictionary to the user document
-                completion(true)
-                return
-            }
-            
-            completion(false)
         }
     }
     

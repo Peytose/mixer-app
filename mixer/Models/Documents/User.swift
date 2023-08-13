@@ -40,7 +40,6 @@ struct User: Hashable, Identifiable, Codable {
     // MARK: - Flags and Computed Properties
     var age: Int?
     var friendshipState: FriendshipState?
-    var isHost: Bool? = false
     var isCurrentUser: Bool {
         return AuthViewModel.shared.userSession?.uid == id
     }

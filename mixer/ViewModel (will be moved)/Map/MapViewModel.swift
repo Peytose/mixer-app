@@ -90,7 +90,7 @@
 //                        return
 //                    }
 //                    
-//                    if let currentEvent = currentEvents.first(where: { $0.hostUuid == hostId }) {
+//                    if let currentEvent = currentEvents.first(where: { $0.hostId == hostId }) {
 //                        host.hasCurrentEvent = true
 //                        
 //                        try HostCache.shared.cacheHost(host)

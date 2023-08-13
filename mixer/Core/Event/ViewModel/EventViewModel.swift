@@ -30,7 +30,7 @@ final class EventViewModel: ObservableObject {
     
     func fetchHost(from event: Event) {
         COLLECTION_HOSTS
-            .document(event.hostUuid)
+            .document(event.hostId)
             .getDocument { snapshot, _ in
                 guard let host = try? snapshot?.data(as: Host.self) else { return }
                 self.host = host
@@ -100,7 +100,7 @@ final class EventViewModel: ObservableObject {
     
     @MainActor func fetchEventHost() {
         COLLECTION_HOSTS
-            .document(event.hostUuid)
+            .document(event.hostId)
             .getDocument { snapshot, _ in
                 guard let snapshot = snapshot else { return }
                 guard let host = try? snapshot.data(as: Host.self) else { return }

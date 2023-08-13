@@ -12,7 +12,7 @@
 //struct Event: Hashable, Identifiable, Codable {
 //    // Metadata
 //    var id: String?
-//    var hostUuid: String
+//    var hostId: String
 //    var hostName: String
 //    let timePosted: Timestamp
 //    
@@ -60,7 +60,7 @@
 //    
 //    init(from event: Event) {
 //        self.id                            = event.id
-//        self.hostUuid                      = event.hostUuid
+//        self.hostId                      = event.hostId
 //        self.hostName                      = event.hostName
 //        self.timePosted                    = event.timePosted
 //        self.title                         = event.title

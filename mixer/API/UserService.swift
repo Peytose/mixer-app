@@ -20,11 +20,34 @@ class UserService: ObservableObject {
     func fetchUser() {
         guard let uid = Auth.auth().currentUser?.uid else { return }
         
-        COLLECTION_USERS.document(uid).getDocument { snapshot, _ in
+        COLLECTION_USERS.document(uid).getDocument { snapshot, error in
             print("DEBUG: Did fetch user from firestore.")
             guard let user = try? snapshot?.data(as: User.self) else { return }
             self.user = user
+            
+            if user.accountType == .host || user.accountType == .member {
+                self.fetchAssociatedHosts()
+            }
         }
+    }
+
+    
+    private func fetchAssociatedHosts() {
+        guard let userId = user?.id else { return }
+        
+        COLLECTION_HOSTS
+            .whereField("memberIds", arrayContains: userId)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching host. \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else { return }
+                let hosts = documents.compactMap({ try? $0.data(as: Host.self) })
+                print("DEBUG: Hosts associated with user: \(hosts)")
+                self.user?.associatedHosts = hosts
+            }
     }
     
     
@@ -77,7 +100,7 @@ class UserService: ObservableObject {
 //
 //        let guest = EventGuest(from: user).toDictionary()
 //
-//        COLLECTION_EVENTS.document(eventUid).collection("attendance-list").document(currentUid)
+//        COLLECTION_EVENTS.document(eventUid).collection("guestlist").document(currentUid)
 //            .setData(guest, completion: completion)
 //    }
 //

@@ -21,4 +21,13 @@ enum Gender: Int, Codable, CustomStringConvertible, CaseIterable {
             case .preferNotToSay: return "Prefer not to say"
         }
     }
+    
+    var icon: String {
+        switch self {
+            case .woman: return "woman"
+            case .man: return "man"
+            case .other: return "unisex"
+            case .preferNotToSay: return ""
+        }
+    }
 }

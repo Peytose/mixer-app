@@ -18,24 +18,26 @@ enum MapSearchType: String, CaseIterable {
 
 class HomeViewModel: NSObject, ObservableObject {
     // MARK: - Properties
-    @Published var hosts    = Set<Host>()
-    @Published var events   = Set<Event>()
-    @Published var mapType  = MapSearchType.host
-    private let service     = UserService.shared
-    private var cancellable = Set<AnyCancellable>()
+    @Published var hosts           = Set<Host>()
+    @Published var events          = Set<Event>()
+    @Published var guestlistEvents = Set<Event>()
+    @Published var mapType         = MapSearchType.host
+    private let service            = UserService.shared
+    private var cancellable        = Set<AnyCancellable>()
     var currentUser: User?
     
     @Published var shownMapTypes = [MapSearchType.event]
     @Published var mapItems      = Set<MixerLocation>()
     @Published var results       = Set<MixerLocation>()
+    @Published var searchText    = ""
     @Published var selectedMixerLocation: MixerLocation?
     @Published var selectedEvent: Event?
     @Published var selectedHost: Host?
     @Published var pickupTime: String?
     @Published var dropOffTime: String?
-    var userLocation: CLLocationCoordinate2D?
-    @Published var searchText: String = ""
+    @Published var alertItem: AlertItem?
     
+    var userLocation: CLLocationCoordinate2D?
     var cancellables = Set<AnyCancellable>()
     
     // MARK: - Lifecycle
@@ -47,7 +49,7 @@ class HomeViewModel: NSObject, ObservableObject {
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .removeDuplicates()
             .sink { [self] _ in
-                performSearch(forType: mapType, search: searchText)
+                performSearch()
             }
             .store(in: &cancellables)
     }
@@ -77,7 +79,7 @@ class HomeViewModel: NSObject, ObservableObject {
     }
     
     
-    func performSearch(forType type: MapSearchType, search: String) {
+    func performSearch() {
         if !searchText.isEmpty {
             // Search from preloaded locations first
             let items = mapItems.search(using: searchText)
@@ -87,31 +89,6 @@ class HomeViewModel: NSObject, ObservableObject {
                 self.results = items
             } else {
                 print("DEBUG: NO items from preloaded locations.")
-                if shownMapTypes.count == 1, let type = shownMapTypes.first {
-                    switch type {
-                    case .event:
-                        COLLECTION_HOSTS
-                            .getDocuments { snapshot, _ in
-                                guard let documents = snapshot?.documents else { return }
-                                let hosts = documents
-                                    .compactMap({ try? $0.data(as: Host.self) })
-                                    .map({ MixerLocation(host: $0) })
-                                
-                                self.results = Set(hosts).search(using: self.searchText)
-                            }
-                    case .host:
-                        COLLECTION_EVENTS
-                            .whereField("endDate", isGreaterThanOrEqualTo: Timestamp())
-                            .getDocuments { snapshot, _ in
-                                guard let documents = snapshot?.documents else { return }
-                                let events = documents
-                                    .compactMap({ try? $0.data(as: Event.self) })
-                                    .map({ MixerLocation(event: $0) })
-                                
-                                self.results = Set(events).search(using: self.searchText)
-                            }
-                    }
-                }
             }
         }
     }
@@ -144,16 +121,22 @@ class HomeViewModel: NSObject, ObservableObject {
         service.$user
             .sink { user in
                 self.currentUser = user
+                guard let user = user else { return }
                 
                 for type in self.shownMapTypes {
                     switch type {
-                    case .event:
-                        self.fetchEvents()
-                        print("DEBUG: Fetched events for map")
-                    case .host:
-                        self.fetchHosts()
-                        print("DEBUG: Fetched hosts for map")
+                        case .event:
+                            self.fetchEvents()
+                        case .host:
+                            self.fetchHosts()
                     }
+                }
+                
+                if let associatedHosts = user.associatedHosts, !associatedHosts.isEmpty {
+                    print("DEBUG: executed func.")
+                    self.fetchEventsForGuestlist(from: associatedHosts)
+                } else {
+                    print("DEBUG: did not execute func.")
                 }
             }
             .store(in: &cancellable)
@@ -168,6 +151,7 @@ extension HomeViewModel {
                 guard let documents = snapshot?.documents else { return }
                 let hosts = documents.compactMap({ try? $0.data(as: Host.self) })
                 self.hosts.formUnion(hosts)
+                
                 let locations = self.hosts.compactMap({ MixerLocation(host: $0) })
                 self.mapItems.formUnion(locations)
             }
@@ -181,9 +165,36 @@ extension HomeViewModel {
                 guard let documents = snapshot?.documents else { return }
                 let events = documents.compactMap({ try? $0.data(as: Event.self) })
                 self.events.formUnion(events)
+                
                 let locations = events.compactMap({ MixerLocation(event: $0) })
                 self.mapItems.formUnion(locations)
             }
+    }
+}
+
+// MARK: - Hosts API
+extension HomeViewModel {
+    private func fetchEventsForGuestlist(from hosts: [Host]) {
+        guard let hosts = currentUser?.associatedHosts else { return }
+        
+        for host in hosts {
+            guard let hostId = host.id else { return }
+            
+            COLLECTION_EVENTS
+                .whereField("hostId", isEqualTo: hostId)
+                .whereField("startDate", isGreaterThan: Timestamp())
+                .getDocuments { snapshot, error in
+                    if let _ = error {
+                        self.alertItem = AlertContext.unableToGetGuestlistEvents
+                        return
+                    }
+                    
+                    guard let documents = snapshot?.documents else { return }
+                    let events = documents.compactMap({ try? $0.data(as: Event.self) }).sortedByStartDate()
+                    self.guestlistEvents.formUnion(events)
+                    print("DEBUG: Guestlist events. \(self.guestlistEvents)")
+                }
+        }
     }
 }
 

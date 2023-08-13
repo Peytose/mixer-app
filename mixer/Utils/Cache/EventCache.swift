@@ -49,7 +49,7 @@
 //                    .order(by: "startDate", descending: true)
 //            case .hostEvents(uid: let uid):
 //                return COLLECTION_EVENTS
-//                    .whereField("hostUuid", isEqualTo: uid)
+//                    .whereField("hostId", isEqualTo: uid)
 //                    .whereField("endDate", isGreaterThan: Timestamp())
 //            case .unfinished:
 //                return COLLECTION_EVENTS
