@@ -38,7 +38,6 @@
 		9C2B898B299D8C200011FC56 /* UserCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B898A299D8C200011FC56 /* UserCache.swift */; };
 		9C2B898F29A179A20011FC56 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B898E29A179A20011FC56 /* LoadingView.swift */; };
 		9C2B899129A2DB2C0011FC56 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B899029A2DB2C0011FC56 /* QRCodeView.swift */; };
-		9C2DC25F2A735CA600494D7C /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2DC25D2A735CA600494D7C /* SettingsViewModel.swift */; };
 		9C2DC2612A735CC300494D7C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2DC2602A735CC300494D7C /* SettingsView.swift */; };
 		9C3BADBA291F54B4009C8043 /* mixerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BADB9291F54B4009C8043 /* mixerApp.swift */; };
 		9C3BADBE291F54B5009C8043 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C3BADBD291F54B5009C8043 /* Assets.xcassets */; };
@@ -91,6 +90,7 @@
 		9C58B3C829CA69C70024CB7E /* EventAmenitiesAndCost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B3C729CA69C70024CB7E /* EventAmenitiesAndCost.swift */; };
 		9C58B3CA29CAD4D50024CB7E /* Binding+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B3C929CAD4D50024CB7E /* Binding+Ext.swift */; };
 		9C79585A2A880EBC00590E1A /* GuestlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7958592A880EBC00590E1A /* GuestlistView.swift */; };
+		9C79585F2A8C147500590E1A /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C79585E2A8C147500590E1A /* SettingsViewModel.swift */; };
 		9C849A432A5367BF006FDCDB /* EventArray+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C849A422A5367BF006FDCDB /* EventArray+Ext.swift */; };
 		9C849A452A54823B006FDCDB /* View+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C849A442A54823B006FDCDB /* View+Ext.swift */; };
 		9C849A482A551CC3006FDCDB /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C849A472A551CC3006FDCDB /* AvatarView.swift */; };
@@ -244,7 +244,6 @@
 		9C2B898A299D8C200011FC56 /* UserCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCache.swift; sourceTree = "<group>"; };
 		9C2B898E29A179A20011FC56 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		9C2B899029A2DB2C0011FC56 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
-		9C2DC25D2A735CA600494D7C /* SettingsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsViewModel.swift; path = mixer/Core/SideMenu/Settings/ViewModel/SettingsViewModel.swift; sourceTree = SOURCE_ROOT; };
 		9C2DC2602A735CC300494D7C /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		9C3BADB6291F54B4009C8043 /* mixer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mixer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C3BADB9291F54B4009C8043 /* mixerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mixerApp.swift; sourceTree = "<group>"; };
@@ -289,6 +288,7 @@
 		9C58B3C729CA69C70024CB7E /* EventAmenitiesAndCost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventAmenitiesAndCost.swift; sourceTree = "<group>"; };
 		9C58B3C929CAD4D50024CB7E /* Binding+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Ext.swift"; sourceTree = "<group>"; };
 		9C7958592A880EBC00590E1A /* GuestlistView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestlistView.swift; sourceTree = "<group>"; };
+		9C79585E2A8C147500590E1A /* SettingsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		9C849A422A5367BF006FDCDB /* EventArray+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventArray+Ext.swift"; sourceTree = "<group>"; };
 		9C849A442A54823B006FDCDB /* View+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Ext.swift"; sourceTree = "<group>"; };
 		9C849A472A551CC3006FDCDB /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
@@ -582,7 +582,7 @@
 		9C2DC25B2A735C8B00494D7C /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				9CDFA5AA2A81842900EE0370 /* ViewModel */,
+				9C79585B2A8C144900590E1A /* ViewModel */,
 				9CDFA5A92A81842500EE0370 /* Views */,
 			);
 			path = Settings;
@@ -855,6 +855,14 @@
 			path = AddressSearch;
 			sourceTree = "<group>";
 		};
+		9C79585B2A8C144900590E1A /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				9C79585E2A8C147500590E1A /* SettingsViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		9C93319929242A9F0079E039 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1029,14 +1037,6 @@
 				9C2DC2602A735CC300494D7C /* SettingsView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		9CDFA5AA2A81842900EE0370 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				9C2DC25D2A735CA600494D7C /* SettingsViewModel.swift */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		9CDFA5B02A82B9C300EE0370 /* Favorites */ = {
@@ -1343,7 +1343,6 @@
 				9C58B3A929C8E5250024CB7E /* Event.swift in Sources */,
 				9C20AF222A74892700F057BD /* ProfileView.swift in Sources */,
 				A62ED41129DE31A0008D6274 /* ShareProfileView.swift in Sources */,
-				9C2DC25F2A735CA600494D7C /* SettingsViewModel.swift in Sources */,
 				9C2B8968298F53510011FC56 /* MapViewModel.swift in Sources */,
 				9CDFA5D12A880C9F00EE0370 /* GuestlistRow.swift in Sources */,
 				A68971CF296E7E8D00289516 /* CustomTabItemView.swift in Sources */,
@@ -1386,6 +1385,7 @@
 				9C58B3A429C8E5250024CB7E /* Host.swift in Sources */,
 				9CDFA5782A76FCCA00EE0370 /* MixerLocation.swift in Sources */,
 				9C20AF162A735E4A00F057BD /* MapTemp.swift in Sources */,
+				9C79585F2A8C147500590E1A /* SettingsViewModel.swift in Sources */,
 				9C9331B729272D7F0079E039 /* EnterEmailView.swift in Sources */,
 				9C99EAE629A56EB700D66FEB /* UserService.swift in Sources */,
 				9CF84C9929AAA38A005BE430 /* EnterNameView.swift in Sources */,
