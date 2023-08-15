@@ -163,7 +163,7 @@ fileprivate struct AddToGuestlistButton: View {
 
     var body: some View {
         NavigationLink {
-            AddToGuestlistView()
+            GuestlistEntryForm()
                 .environmentObject(viewModel)
         } label: {
             Image(systemName: "plus")

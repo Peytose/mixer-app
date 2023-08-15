@@ -18,7 +18,7 @@ struct SideMenuView: View {
             // MARK: - Header view
             VStack(alignment: .leading, spacing: 32) {
                 // user info
-                HStack {
+                HStack(alignment: .center, spacing: 15) {
                     if let user = user {
                         KFImage(URL(string: user.profileImageUrl))
                             .resizable()
@@ -26,12 +26,13 @@ struct SideMenuView: View {
                             .clipShape(Circle())
                             .frame(width: 64, height: 64)
                         
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 5) {
                             Text(user.displayName)
-                                .font(.system(size: 16, weight: .semibold))
+                                .font(.title3)
+                                .fontWeight(.semibold)
                             
-                            Text(user.email)
-                                .font(.system(size: 14))
+                            Text("@\(user.username)")
+                                .font(.subheadline)
                                 .foregroundColor(.white)
                                 .opacity(0.77)
                         }
@@ -40,7 +41,7 @@ struct SideMenuView: View {
                 
                 // Become a host
                 Button { openHostFormLink() } label: {
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 12) {
                         Text("Promote your own events!")
                             .font(.footnote)
                             .fontWeight(.semibold)
@@ -51,8 +52,7 @@ struct SideMenuView: View {
                                 .imageScale(.medium)
                             
                             Text("Become A Host")
-                                .font(.system(size: 16, weight: .semibold))
-                                .padding(6)
+                                .font(.headline)
                         }
                     }
                     .foregroundColor(.white)
@@ -68,7 +68,7 @@ struct SideMenuView: View {
             .padding(.leading, 16)
             
             // option list
-            VStack {
+            VStack(alignment: .leading) {
                 ForEach(SideMenuOption.allCases) { option in
                     NavigationLink(value: option) {
                         SideMenuOptionView(option: option)

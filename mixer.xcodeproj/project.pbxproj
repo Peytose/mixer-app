@@ -15,9 +15,8 @@
 		9C05C1CA29847FE500841100 /* UserIconList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C05C1C929847FE500841100 /* UserIconList.swift */; };
 		9C05C1CC2985C04E00841100 /* GeometryProxy+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C05C1CB2985C04E00841100 /* GeometryProxy+Ext.swift */; };
 		9C20AF0D2A735E4A00F057BD /* GuestlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF002A735E4A00F057BD /* GuestlistViewModel.swift */; };
-		9C20AF0F2A735E4A00F057BD /* AddToGuestlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF022A735E4A00F057BD /* AddToGuestlistView.swift */; };
+		9C20AF0F2A735E4A00F057BD /* GuestlistEntryForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF022A735E4A00F057BD /* GuestlistEntryForm.swift */; };
 		9C20AF102A735E4A00F057BD /* GuestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF032A735E4A00F057BD /* GuestDetailView.swift */; };
-		9C20AF112A735E4A00F057BD /* GuestlistChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF042A735E4A00F057BD /* GuestlistChartsView.swift */; };
 		9C20AF132A735E4A00F057BD /* EventLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF072A735E4A00F057BD /* EventLocationView.swift */; };
 		9C20AF142A735E4A00F057BD /* EventVisibilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF082A735E4A00F057BD /* EventVisibilityView.swift */; };
 		9C20AF152A735E4A00F057BD /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF092A735E4A00F057BD /* MapView.swift */; };
@@ -223,9 +222,8 @@
 		9C05C1C929847FE500841100 /* UserIconList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserIconList.swift; sourceTree = "<group>"; };
 		9C05C1CB2985C04E00841100 /* GeometryProxy+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GeometryProxy+Ext.swift"; sourceTree = "<group>"; };
 		9C20AF002A735E4A00F057BD /* GuestlistViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestlistViewModel.swift; sourceTree = "<group>"; };
-		9C20AF022A735E4A00F057BD /* AddToGuestlistView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddToGuestlistView.swift; sourceTree = "<group>"; };
+		9C20AF022A735E4A00F057BD /* GuestlistEntryForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestlistEntryForm.swift; sourceTree = "<group>"; };
 		9C20AF032A735E4A00F057BD /* GuestDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestDetailView.swift; sourceTree = "<group>"; };
-		9C20AF042A735E4A00F057BD /* GuestlistChartsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestlistChartsView.swift; sourceTree = "<group>"; };
 		9C20AF072A735E4A00F057BD /* EventLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventLocationView.swift; sourceTree = "<group>"; };
 		9C20AF082A735E4A00F057BD /* EventVisibilityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventVisibilityView.swift; sourceTree = "<group>"; };
 		9C20AF092A735E4A00F057BD /* MapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -1094,9 +1092,8 @@
 		9CDFA5CD2A85C2FC00EE0370 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				9C20AF022A735E4A00F057BD /* AddToGuestlistView.swift */,
+				9C20AF022A735E4A00F057BD /* GuestlistEntryForm.swift */,
 				9C20AF032A735E4A00F057BD /* GuestDetailView.swift */,
-				9C20AF042A735E4A00F057BD /* GuestlistChartsView.swift */,
 				9CDFA5CE2A8711D700EE0370 /* QRCodeScannerView.swift */,
 				9CDFA5D02A880C9F00EE0370 /* GuestlistRow.swift */,
 				9C7958592A880EBC00590E1A /* GuestlistView.swift */,
@@ -1400,7 +1397,7 @@
 				A682CC562970915B008EA546 /* DetailRowView.swift in Sources */,
 				9CDFA5C32A83764A00EE0370 /* Gender.swift in Sources */,
 				9C50D23529FB54A6002FAE76 /* HapticManager.swift in Sources */,
-				9C20AF0F2A735E4A00F057BD /* AddToGuestlistView.swift in Sources */,
+				9C20AF0F2A735E4A00F057BD /* GuestlistEntryForm.swift in Sources */,
 				9C58B39A29C7F8190024CB7E /* BasicEventInfo.swift in Sources */,
 				9C3E2CA529EE602A00A74D05 /* EventGuest.swift in Sources */,
 				9C20AF142A735E4A00F057BD /* EventVisibilityView.swift in Sources */,
@@ -1437,7 +1434,6 @@
 				A6B9E6782953B8A3009C936E /* MapSnapshotView.swift in Sources */,
 				A6B9E65929518AB2009C936E /* CustomStickyHeader.swift in Sources */,
 				9C01918729DE9A8B000F3D1F /* SelectionPicker.swift in Sources */,
-				9C20AF112A735E4A00F057BD /* GuestlistChartsView.swift in Sources */,
 				9C3BADD7291F55D1009C8043 /* Constants.swift in Sources */,
 				A66E672029DF7ED500AB355E /* EventFlowActionButton.swift in Sources */,
 				A6C99FC029DA5BA00046D61B /* EnterBirthdayView.swift in Sources */,
