@@ -91,6 +91,7 @@
 		9C58B3CA29CAD4D50024CB7E /* Binding+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B3C929CAD4D50024CB7E /* Binding+Ext.swift */; };
 		9C79585A2A880EBC00590E1A /* GuestlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7958592A880EBC00590E1A /* GuestlistView.swift */; };
 		9C79585F2A8C147500590E1A /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C79585E2A8C147500590E1A /* SettingsViewModel.swift */; };
+		9C7958682A8C577800590E1A /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7958672A8C577800590E1A /* HomeViewModel.swift */; };
 		9C849A432A5367BF006FDCDB /* EventArray+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C849A422A5367BF006FDCDB /* EventArray+Ext.swift */; };
 		9C849A452A54823B006FDCDB /* View+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C849A442A54823B006FDCDB /* View+Ext.swift */; };
 		9C849A482A551CC3006FDCDB /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C849A472A551CC3006FDCDB /* AvatarView.swift */; };
@@ -125,7 +126,6 @@
 		9CDFA5682A76F3BE00EE0370 /* MixerMapViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5672A76F3BE00EE0370 /* MixerMapViewRepresentable.swift */; };
 		9CDFA56B2A76F3F800EE0370 /* MapViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA56A2A76F3F800EE0370 /* MapViewState.swift */; };
 		9CDFA56F2A76F68F00EE0370 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA56E2A76F68F00EE0370 /* HomeView.swift */; };
-		9CDFA5742A76F7F400EE0370 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5732A76F7F400EE0370 /* HomeViewModel.swift */; };
 		9CDFA5782A76FCCA00EE0370 /* MixerLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5772A76FCCA00EE0370 /* MixerLocation.swift */; };
 		9CDFA57B2A77067A00EE0370 /* MapViewActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA57A2A77067A00EE0370 /* MapViewActionButton.swift */; };
 		9CDFA57D2A77076E00EE0370 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA57C2A77076E00EE0370 /* LocationManager.swift */; };
@@ -289,6 +289,7 @@
 		9C58B3C929CAD4D50024CB7E /* Binding+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Ext.swift"; sourceTree = "<group>"; };
 		9C7958592A880EBC00590E1A /* GuestlistView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestlistView.swift; sourceTree = "<group>"; };
 		9C79585E2A8C147500590E1A /* SettingsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		9C7958672A8C577800590E1A /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		9C849A422A5367BF006FDCDB /* EventArray+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EventArray+Ext.swift"; sourceTree = "<group>"; };
 		9C849A442A54823B006FDCDB /* View+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Ext.swift"; sourceTree = "<group>"; };
 		9C849A472A551CC3006FDCDB /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
@@ -321,7 +322,6 @@
 		9CDFA5672A76F3BE00EE0370 /* MixerMapViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixerMapViewRepresentable.swift; sourceTree = "<group>"; };
 		9CDFA56A2A76F3F800EE0370 /* MapViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewState.swift; sourceTree = "<group>"; };
 		9CDFA56E2A76F68F00EE0370 /* HomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		9CDFA5732A76F7F400EE0370 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomeViewModel.swift; path = "../New Group/HomeViewModel.swift"; sourceTree = "<group>"; };
 		9CDFA5772A76FCCA00EE0370 /* MixerLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixerLocation.swift; sourceTree = "<group>"; };
 		9CDFA57A2A77067A00EE0370 /* MapViewActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewActionButton.swift; sourceTree = "<group>"; };
 		9CDFA57C2A77076E00EE0370 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -798,7 +798,7 @@
 		9C3BADD9291F5676009C8043 /* Home */ = {
 			isa = PBXGroup;
 			children = (
-				9CDFA5752A76F80300EE0370 /* ViewModel */,
+				9C7958622A8C572200590E1A /* ViewModel */,
 				9CDFA5652A76F38D00EE0370 /* Views */,
 				A68971CB296E7E2E00289516 /* Tab Bar */,
 			);
@@ -859,6 +859,14 @@
 			isa = PBXGroup;
 			children = (
 				9C79585E2A8C147500590E1A /* SettingsViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		9C7958622A8C572200590E1A /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				9C7958672A8C577800590E1A /* HomeViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -935,14 +943,6 @@
 				9CDFA5902A7955C500EE0370 /* LocationDetailsCardView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		9CDFA5752A76F80300EE0370 /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				9CDFA5732A76F7F400EE0370 /* HomeViewModel.swift */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		9CDFA5852A7876F000EE0370 /* Views */ = {
@@ -1354,7 +1354,6 @@
 				9C4B0E45298241AE00A9D963 /* CheckInViewModel.swift in Sources */,
 				9C9331AB2925D2ED0079E039 /* Color+Ext.swift in Sources */,
 				9C58B3C429C8EB270024CB7E /* XDismissButton.swift in Sources */,
-				9CDFA5742A76F7F400EE0370 /* HomeViewModel.swift in Sources */,
 				A62BE1A429CA4F250052D34F /* QRCodeRoundedCornerView.swift in Sources */,
 				9C93319D29255D8D0079E039 /* AlertItem.swift in Sources */,
 				A68DAA032A12DFDB0069A5E7 /* Button+Ext.swift in Sources */,
@@ -1393,6 +1392,7 @@
 				9C99EAF429A6B33600D66FEB /* EventDetailView.swift in Sources */,
 				9C99EAE729A56EB700D66FEB /* ImageUploader.swift in Sources */,
 				9C9331BC292739700079E039 /* EnterVerificationCodeView.swift in Sources */,
+				9C7958682A8C577800590E1A /* HomeViewModel.swift in Sources */,
 				A62BE1A829CA501F0052D34F /* QRCodeAnimationView.swift in Sources */,
 				A682CC562970915B008EA546 /* DetailRowView.swift in Sources */,
 				9CDFA5C32A83764A00EE0370 /* Gender.swift in Sources */,

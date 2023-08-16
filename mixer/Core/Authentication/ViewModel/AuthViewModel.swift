@@ -151,6 +151,7 @@ class AuthViewModel: ObservableObject {
         service.$user
             .sink { user in
                 self.currentUser = user
+                self.userSession = user
                 guard let user = user else { return }
             }
             .store(in: &cancellable)
