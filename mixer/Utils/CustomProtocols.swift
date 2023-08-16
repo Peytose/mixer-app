@@ -10,3 +10,8 @@ import Foundation
 protocol CustomStringConvertible {
     var stringVal: String { get }
 }
+
+protocol MenuOption {
+    var title: String { get }
+    var imageName: String { get }
+}

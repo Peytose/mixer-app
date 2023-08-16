@@ -150,9 +150,9 @@ class AuthViewModel: ObservableObject {
     func fetchUser() {
         service.$user
             .sink { user in
-                self.currentUser = user
-                self.userSession = user
                 guard let user = user else { return }
+                self.currentUser = user
+                self.userSession = Auth.auth().currentUser
             }
             .store(in: &cancellable)
     }

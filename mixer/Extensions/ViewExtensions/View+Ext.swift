@@ -16,6 +16,11 @@ extension View {
     }
     
     
+    func autoDismissView(duration: TimeInterval) -> some View {
+        self.modifier(AutoDismissView(duration: duration))
+    }
+    
+    
     func navigationBar(title: String, displayMode: NavigationBarItem.TitleDisplayMode) -> some View {
         self.navigationTitle(title)
             .navigationBarTitleDisplayMode(displayMode)

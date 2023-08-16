@@ -89,67 +89,32 @@ struct EventDetailView: View {
                                 Text("What this event offers")
                                     .primaryHeading()
                                 
-                                //MARK: ERROR: Amenities outside first category don't display.
-                                //                                ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
-                                //                                    let amenitiesInCategory = amenities.filter({ $0.category == category })
-                                //                                    if !amenitiesInCategory.isEmpty {
-                                //                                        Section(header: Text(category.rawValue).font(.title3.weight(.semibold)).padding(.top, 10).padding(.bottom, 2)) {
-                                //                                            ForEach(amenitiesInCategory, id: \.self) { amenity in
-                                //                                                HStack {
-                                //                                                    if amenity == .beer {
-                                //                                                        Text("🍺")
-                                //                                                            .font(.system(size: 15))
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    } else if amenity == .water {
-                                //                                                        Text("💦")
-                                //                                                            .font(.system(size: 15))
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    } else if amenity == .smokingArea {
-                                //                                                        Text("🚬")
-                                //                                                            .font(.system(size: 15))
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    } else if amenity == .dj {
-                                //                                                        Text("🎧")
-                                //                                                    } else if amenity == .coatCheck {
-                                //                                                        Text("🧥")
-                                //                                                            .font(.system(size: 15))
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    } else if amenity == .nonAlcohol {
-                                //                                                        Text("🧃")
-                                //                                                            .font(.system(size: 15))
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    } else if amenity == .food {
-                                //                                                        Text("🍕")
-                                //                                                            .font(.system(size: 15))
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    } else if amenity == .danceFloor {
-                                //                                                        Text("🕺")
-                                //                                                            .font(.system(size: 15))
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    } else if amenity == .snacks {
-                                //                                                        Text("🍪")
-                                //                                                    } else if amenity == . drinkingGames{
-                                //                                                        Text("🏓")
-                                //                                                            .font(.system(size: 15))
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    } else {
-                                //                                                        Image(systemName: amenity.icon)
-                                //                                                            .resizable()
-                                //                                                            .scaledToFill()
-                                //                                                            .frame(width: 15, height: 15)
-                                //                                                            .padding(.trailing, 5)
-                                //                                                    }
-                                //
-                                //                                                    Text(amenity.rawValue)
-                                //                                                        .font(.body)
-                                //
-                                //                                                    Spacer()
-                                //                                                }
-                                //                                                .foregroundColor(.white)
-                                //                                            }
-                                //                                        }
-                                //                                    }
-                                //                                }
+                                ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
+                                    let amenitiesInCategory = amenities.filter({ $0.category == category })
+                                    if !amenitiesInCategory.isEmpty {
+                                        Section {
+                                            ForEach(amenitiesInCategory, id: \.self) { amenity in
+                                                HStack {
+                                                    amenity.displayIcon
+                                                        .font(.body)
+                                                        .padding(.trailing, 5)
+
+                                                    Text(amenity.rawValue)
+                                                        .font(.body)
+
+                                                    Spacer()
+                                                }
+                                                .foregroundColor(.white)
+                                            }
+                                        } header: {
+                                            Text(category.rawValue)
+                                                .font(.title3)
+                                                .fontWeight(.semibold)
+                                                .padding(.top, 10)
+                                                .padding(.bottom, 2)
+                                        }
+                                    }
+                                }
                                 
                                 HStack {
                                     Spacer()
@@ -187,33 +152,33 @@ struct EventDetailView: View {
                                 .alert("Location Details", isPresented: $showInfoAlert2, actions: {}, message: {Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location")})
                         }
                         
-                        //                        if viewModel.event.isInviteOnly {
-                        //                            if let altAddress = viewModel.event.altAddress {
-                        //                                DetailRow(image: "mappin.and.ellipse", text: altAddress)
-                        //                            } else if let coords = viewModel.coordinates {
-                        //                                VStack(alignment: .leading, spacing: 5) {
-                        //                                    MapSnapshotView(location: coords, event: viewModel.event)
-                        //                                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
-                        //
-                        //                                    Text("Tap the map for directions to this event!")
-                        //                                        .font(.footnote)
-                        //                                        .fontWeight(.semibold)
-                        //                                        .foregroundColor(.secondary)
-                        //                                }
-                        //                            } else {
-                        //                                DetailRow(image: "mappin.and.ellipse", text: "Available when you are on the guest list")
-                        //                            }
-                        //                        } else {
-                        //                            if let coords = viewModel.coordinates {
-                        //                                VStack(alignment: .leading, spacing: 4) {
-                        //                                    MapSnapshotView(location: coords, event: viewModel.event)
-                        //                                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
-                        //
-                        //                                    Text("Tap the map for directions to this event!")
-                        //                                        .footnote()
-                        //                                }
-                        //                            }
-                        //                        }
+//                        if viewModel.event.isInviteOnly {
+//                            if let altAddress = viewModel.event.altAddress {
+//                                DetailRow(image: "mappin.and.ellipse", text: altAddress)
+//                            } else if let coords = viewModel.coordinates {
+//                                VStack(alignment: .leading, spacing: 5) {
+//                                    MapSnapshotView(location: coords, event: viewModel.event)
+//                                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
+//                                    
+//                                    Text("Tap the map for directions to this event!")
+//                                        .font(.footnote)
+//                                        .fontWeight(.semibold)
+//                                        .foregroundColor(.secondary)
+//                                }
+//                            } else {
+//                                DetailRow(image: "mappin.and.ellipse", text: "Available when you are on the guest list")
+//                            }
+//                        } else {
+//                            if let coords = viewModel.coordinates {
+//                                VStack(alignment: .leading, spacing: 4) {
+//                                    MapSnapshotView(location: coords, event: viewModel.event)
+//                                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
+//                                    
+//                                    Text("Tap the map for directions to this event!")
+//                                        .footnote()
+//                                }
+//                            }
+//                        }
                     }
                 }
                 .padding()

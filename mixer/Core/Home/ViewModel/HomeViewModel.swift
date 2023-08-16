@@ -26,10 +26,11 @@ class HomeViewModel: NSObject, ObservableObject {
     private var cancellable        = Set<AnyCancellable>()
     var currentUser: User?
     
-    @Published var shownMapTypes = [MapSearchType.event]
-    @Published var mapItems      = Set<MixerLocation>()
-    @Published var results       = Set<MixerLocation>()
-    @Published var searchText    = ""
+    @Published var shownMapTypes           = [MapSearchType.event]
+    @Published var mapItems                = Set<MixerLocation>()
+    @Published var results                 = Set<MixerLocation>()
+    @Published var searchText              = ""
+    @Published var showLocationDetailsCard = false
     @Published var selectedMixerLocation: MixerLocation?
     @Published var selectedEvent: Event?
     @Published var selectedHost: Host?
@@ -94,18 +95,9 @@ class HomeViewModel: NSObject, ObservableObject {
     }
     
     
-    // DEBUG: Func includes user for basing certain views on acc type
-    func viewForState(_ state: MapViewState, user: User) -> some View {
-        switch state {
-        case .discovering:
-            return AnyView(Text(""))
-        case .routeEventPreview, .routeHostPreview, .polylineAdded:
-            return AnyView(LocationDetailsCardView())
-        default:
-            break
-        }
+    // DEBUG: Not implementated as of yet
+    func onDismiss() {
         
-        return AnyView(Text(""))
     }
     
     

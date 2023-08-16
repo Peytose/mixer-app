@@ -40,9 +40,7 @@ struct MapViewActionButton: View {
             case .discovering:
                 mapState = .noInput
                 homeViewModel.clearInput()
-            case .polylineAdded,
-                .routeEventPreview,
-                .routeHostPreview:
+            case .polylineAdded:
                 mapState = .noInput
                 homeViewModel.selectedMixerLocation = nil
                 homeViewModel.clearInput()
@@ -50,6 +48,7 @@ struct MapViewActionButton: View {
                 mapState = .discovering
                 homeViewModel.selectedEvent = nil
                 homeViewModel.selectedHost = nil
+            default: break
         }
     }
     

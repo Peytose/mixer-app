@@ -67,13 +67,32 @@ struct SideMenuView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 16)
             
-            // option list
+            // MARK: - Side menu options
             VStack(alignment: .leading) {
+                if user?.accountType == .member || user?.accountType == .host {
+                    ForEach(HostSideMenuOption.allCases) { option in
+                        NavigationLink(value: option) {
+                            SideMenuOptionView(option: option)
+                                .padding()
+                        }
+                    }
+                }
+                
                 ForEach(SideMenuOption.allCases) { option in
                     NavigationLink(value: option) {
                         SideMenuOptionView(option: option)
                             .padding()
                     }
+                }
+            }
+            .navigationDestination(for: HostSideMenuOption.self) { option in
+                switch option {
+                    case .createEvent:
+                        Text(option.title)
+                    case .manageGuestlists:
+                        Text(option.title)
+                    case .manageMembers:
+                        Text(option.title)
                 }
             }
             .navigationDestination(for: SideMenuOption.self) { option in

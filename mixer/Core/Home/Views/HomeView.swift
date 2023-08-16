@@ -95,14 +95,14 @@ extension HomeView {
                 MapViewActionButton(mapState: $mapState, showSideMenu: $showSideMenu)
                     .padding(.leading)
                     .padding(.top, 4)
-            }
-            
-            if let user = authViewModel.currentUser {
-                homeViewModel.viewForState(mapState, user: user)
-                    .transition(.move(edge: .bottom))
+                    .opacity(homeViewModel.showLocationDetailsCard ? 0 : 1)
             }
         }
         .edgesIgnoringSafeArea(.bottom)
+        .sheet(isPresented: $homeViewModel.showLocationDetailsCard, onDismiss: onLocationDetailsCardDismiss) {
+            LocationDetailsCardView()
+                .presentationDetents([.medium])
+        }
         .onReceive(LocationManager.shared.$userLocation) { location in
             if let location = location {
                 homeViewModel.userLocation = location
@@ -138,25 +138,10 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
-struct AutoDismissView: ViewModifier {
-    let duration: TimeInterval
-    @State private var show = true
-    
-    func body(content: Content) -> some View {
-        content
-            .opacity(show ? 1 : 0)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
-                    withAnimation {
-                        self.show = false
-                    }
-                }
-            }
-    }
-}
-
-extension View {
-    func autoDismissView(duration: TimeInterval) -> some View {
-        self.modifier(AutoDismissView(duration: duration))
+extension HomeView {
+    private func onLocationDetailsCardDismiss() {
+        mapState = .noInput
+        homeViewModel.selectedMixerLocation = nil
+        homeViewModel.clearInput()
     }
 }

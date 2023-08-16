@@ -30,8 +30,6 @@ struct MixerMapViewRepresentable: UIViewRepresentable {
                 context.coordinator.clearMapViewAndRecenterOnUserLocation()
                 context.coordinator.addAnnotationsToMap(Array(homeViewModel.mapItems))
                 break
-            case .discovering:
-                break
             case .routeEventPreview, .routeHostPreview:
                 if let coordinate = homeViewModel.selectedMixerLocation?.coordinate {
                     context.coordinator.addAndSelectAnnotation(withCoordinate: coordinate)
@@ -149,6 +147,7 @@ extension MixerMapViewRepresentable {
                                                                edgePadding: .init(top: 64, left: 32, bottom: 500, right: 32))
                 
                 self.parent.mapView.setRegion(MKCoordinateRegion(rect), animated: true)
+                self.parent.homeViewModel.showLocationDetailsCard = true
             }
         }
         

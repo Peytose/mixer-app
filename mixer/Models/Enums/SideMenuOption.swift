@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum SideMenuOption: Int, CaseIterable, Identifiable {
+enum SideMenuOption: Int, CaseIterable, Identifiable, MenuOption {
     case favorites
     case mixerId
     case settings

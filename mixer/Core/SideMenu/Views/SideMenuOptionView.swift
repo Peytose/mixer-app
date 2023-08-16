@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct SideMenuOptionView: View {
-    let option: SideMenuOption
+struct SideMenuOptionView<Option: MenuOption>: View {
+    let option: Option
     
     var body: some View {
         HStack(spacing: 16) {
@@ -27,6 +27,6 @@ struct SideMenuOptionView: View {
 
 struct SideMenuOptionView_Previews: PreviewProvider {
     static var previews: some View {
-        SideMenuOptionView(option: .settings)
+        SideMenuOptionView(option: SideMenuOption.settings)
     }
 }
