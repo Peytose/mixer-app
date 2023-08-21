@@ -10,7 +10,7 @@
 //import MapItemPicker
 //
 //struct EventLocationView: View {
-//    @StateObject var viewModel = EventFlowViewModel()
+//    @StateObject var viewModel = EventCreationViewModel()
 //    @Environment(\.presentationMode) var presentationMode
 //    
 //    @State var showAddressPicker = false

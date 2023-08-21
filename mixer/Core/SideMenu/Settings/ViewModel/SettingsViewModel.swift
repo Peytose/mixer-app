@@ -41,21 +41,20 @@ class SettingsViewModel: ObservableObject {
         self.bio                   = user.bio ?? ""
         self.instagramHandle       = user.instagramHandle ?? ""
         self.showAgeOnProfile      = user.showAgeOnProfile
-        self.genderStr             = user.gender.stringVal
-        self.relationshipStatusStr = user.relationshipStatus?.stringVal ?? RelationshipStatus.preferNotToSay.stringVal
-        self.majorStr              = user.major?.stringVal ?? StudentMajor.other.stringVal
+        self.genderStr             = user.gender.description
+        self.relationshipStatusStr = user.relationshipStatus?.description ?? RelationshipStatus.preferNotToSay.description
+        self.majorStr              = user.major?.description ?? StudentMajor.other.description
     }
     
     
     func save(for type: ProfileSaveType) {
         self.save(for: type) {
             HapticManager.playSuccess()
-            AuthViewModel.shared.updateCurrentUser(user: self.user)
         }
     }
     
     private func save(for type: ProfileSaveType, completion: @escaping () -> Void) {
-        guard let uid = AuthViewModel.shared.currentUser?.id else { return }
+        guard let uid = UserService.shared.user?.id else { return }
         
         switch type {
         case .displayName:
@@ -97,7 +96,7 @@ class SettingsViewModel: ObservableObject {
             }
             
         case .gender:
-            guard self.genderStr != user.gender.stringVal else { return }
+            guard self.genderStr != user.gender.description else { return }
             guard let gender = Gender.enumCase(from: genderStr) else { return }
             
             COLLECTION_USERS.document(uid).updateData(["gender": gender.rawValue]) { _ in
@@ -106,7 +105,7 @@ class SettingsViewModel: ObservableObject {
             }
             
         case .relationship:
-            guard relationshipStatusStr != user.relationshipStatus?.stringVal else { return }
+            guard relationshipStatusStr != user.relationshipStatus?.description else { return }
             guard let relationshipStatus = RelationshipStatus.enumCase(from: relationshipStatusStr) else { return }
             
             COLLECTION_USERS.document(uid).updateData(["relationshipStatus": relationshipStatus.rawValue]) { _ in
@@ -115,7 +114,7 @@ class SettingsViewModel: ObservableObject {
             }
             
         case .major:
-            guard majorStr != user.major?.stringVal else { return }
+            guard majorStr != user.major?.description else { return }
             guard let major = StudentMajor.enumCase(from: majorStr) else { return }
             
             COLLECTION_USERS.document(uid).updateData(["major": major.rawValue]) { _ in

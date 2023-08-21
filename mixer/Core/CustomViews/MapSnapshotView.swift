@@ -8,46 +8,53 @@
 import SwiftUI
 import MapKit
 
-struct MapSnapshotView: View {
-    let locationCoordinates: CLLocationCoordinate2D
+struct MapSnapshotView<CoordinateItem: CoordinateRepresentable>: View {
+    @Binding var location: CoordinateItem?
     var regionSpan: CLLocationDegrees = 0.001
     var loadingDelay: CGFloat = 0.3
     var snapshotWidth: CGFloat = 350
     var snapshotHeight: CGFloat = 220
-
+    
     @State private var mapPreviewImage: Image?
-
+    
     var body: some View {
-        Group {
+        ZStack {
             if let image = mapPreviewImage {
                 ZStack(alignment: .center) {
                     image
-
-                    Image(systemName: "mappin")
+                    
+                    Image(systemName: "pin.fill")
                         .resizable()
                         .scaledToFit()
-                        .foregroundColor(Color.theme.mixerIndigo)
+                        .foregroundColor(.white)
                         .shadow(radius: 10)
                         .frame(width: 16)
                 }
                 .cornerRadius(16)
-            } else {
-                LoadingView()
+            } 
+        }
+        .onChange(of: location) { newValue in
+            // Regenerate the snapshot when coordinates change
+            if let coordinate = newValue?.coordinate {
+                generateSnapshot(coordinate: coordinate, width: snapshotWidth, height: snapshotHeight)
             }
         }
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + loadingDelay) {
-                generateSnapshot(width: snapshotWidth, height: snapshotHeight)
+            if let coordinate = location?.coordinate {
+                print("DEBUG: genering snapshot ...")
+                generateSnapshot(coordinate: coordinate, width: snapshotWidth, height: snapshotHeight)
+            } else {
+                print("DEBUG: did not generate snapshot ...")
             }
         }
     }
+}
 
-    
-    private func generateSnapshot(width: CGFloat, height: CGFloat) {
-        let region = MKCoordinateRegion(
-            center: locationCoordinates,
-            span: MKCoordinateSpan(latitudeDelta: regionSpan, longitudeDelta: regionSpan)
-        )
+extension MapSnapshotView {
+    private func generateSnapshot(coordinate: CLLocationCoordinate2D, width: CGFloat, height: CGFloat) {
+        let region = MKCoordinateRegion(center: coordinate,
+                                        span: MKCoordinateSpan(latitudeDelta: regionSpan,
+                                                               longitudeDelta: regionSpan))
 
         let snapshotOptions = MKMapSnapshotter.Options()
         snapshotOptions.region = region
@@ -68,18 +75,3 @@ struct MapSnapshotView: View {
         }
     }
 }
-
-struct MapSnapshotPreview: View {
-    let coordinates = CLLocationCoordinate2D(latitude: 37.332077, longitude: -122.02962) // Apple Park, California
-
-    var body: some View {
-        VStack { MapSnapshotView(locationCoordinates: coordinates) }
-    }
-}
-
-struct MapSnapshotPreview_Previews: PreviewProvider {
-    static var previews: some View {
-        MapSnapshotPreview()
-    }
-}
-

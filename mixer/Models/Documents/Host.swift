@@ -43,8 +43,9 @@ struct Host: Hashable, Identifiable, Codable {
     // MARK: - Basic Information
     let name: String
     let username: String
+    var description: String
     let hostImageUrl: String
-    let university: String
+    let universityId: String
 
     // MARK: - Host Type & Types of Events Held
     let type: HostType
@@ -54,7 +55,6 @@ struct Host: Hashable, Identifiable, Codable {
     var instagramHandle: String?
     var website: String?
     var tagline: String?
-    var description: String?
 
     // MARK: - Location
     var address: String?
@@ -66,4 +66,7 @@ struct Host: Hashable, Identifiable, Codable {
     // MARK: - Flags
     var hasCurrentEvent: Bool? = false
     var isFollowed: Bool?      = false
+    
+    // MARK: - Associated Data
+    var university: University?
 }

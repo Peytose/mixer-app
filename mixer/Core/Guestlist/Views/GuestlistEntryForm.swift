@@ -48,7 +48,7 @@ struct GuestlistEntryForm: View {
         Section(header: Text("Status").fontWeight(.semibold)) {
             Picker("", selection: $viewModel.status) {
                 ForEach(GuestStatus.allCases, id: \.self) { status in
-                    Text(status.stringVal)
+                    Text(status.description)
                 }
             }
             .pickerStyle(.segmented)
@@ -110,11 +110,11 @@ struct GuestlistEntryForm: View {
 
     private var genderField: some View {
         HStack {
-            Text(viewModel.gender.stringVal)
+            Text(viewModel.gender.description)
             Spacer()
             Menu("Select Gender") {
                 ForEach(Gender.allCases, id: \.self) { gender in
-                    Button(gender.stringVal) {
+                    Button(gender.description) {
                         viewModel.gender = gender
                     }
                 }

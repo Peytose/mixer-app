@@ -12,14 +12,3 @@ extension Array where Element: Comparable {
         return self.count == other.count && self.sorted() == other.sorted()
     }
 }
-
-extension Set where Element == MixerLocation {
-    func search(using text: String) -> Set<MixerLocation> {
-        self
-            .filter {
-                $0.title.lowercased().contains(text.lowercased()) ||
-                $0.subtitle.lowercased().contains(text.lowercased())
-            }
-        
-    }
-}

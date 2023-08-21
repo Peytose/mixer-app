@@ -1,5 +1,5 @@
 //
-//  MixerLocationAnnotationView.swift
+//  MixerMapAnnotationView.swift
 //  mixer
 //
 //  Created by Peyton Lyons on 7/31/23.
@@ -10,8 +10,8 @@ import CoreLocation
 import Kingfisher
 import MapKit
 
-struct MixerLocationAnnotationView: View {
-    let annotation: MixerLocationAnnotation
+struct MixerMapAnnotationView: View {
+    let annotation: MixerMapAnnotation
     
     var body: some View {
         VStack {
@@ -38,8 +38,8 @@ struct MixerLocationAnnotationView: View {
     }
 }
 
-struct MixerLocationAnnotationView_Previews: PreviewProvider {
+struct MixerMapAnnotationView_Previews: PreviewProvider {
     static var previews: some View {
-        MixerLocationAnnotationView(annotation: MixerLocationAnnotation(location: MixerLocation(host: dev.mockHost)))
+        MixerMapAnnotationView(annotation: MixerMapAnnotation(location: MixerMapItem(host: dev.mockHost)))
     }
 }

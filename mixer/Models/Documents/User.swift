@@ -26,7 +26,7 @@ struct User: Hashable, Identifiable, Codable {
     let email: String
     var profileImageUrl: String
     var birthday: Timestamp
-    var university: String
+    var universityId: String
     var gender: Gender
     var accountType: AccountType
 
@@ -41,9 +41,10 @@ struct User: Hashable, Identifiable, Codable {
     var age: Int?
     var friendshipState: FriendshipState?
     var isCurrentUser: Bool {
-        return AuthViewModel.shared.userSession?.uid == id
+        return UserService.shared.user?.id == id
     }
 
     // MARK: - Associated Data
-    var associatedHosts: [Host]? = []
+    var associatedHosts: [Host]?
+    var university: University?
 }

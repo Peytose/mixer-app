@@ -20,7 +20,7 @@ enum StudentMajor: Int, Codable, CustomStringConvertible, CaseIterable {
     case undecided
     case other
     
-    var stringVal: String {
+    var description: String {
         switch self {
         case .sciences : return "Sciences"
         case .business : return "Business"

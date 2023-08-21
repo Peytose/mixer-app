@@ -21,7 +21,7 @@ struct InfoButton: View {
 
 struct InfoButton_Previews: PreviewProvider {
     static var previews: some View {
-        InfoButton(action: {})
+        InfoButton() {}
             .preferredColorScheme(.dark)
     }
 }

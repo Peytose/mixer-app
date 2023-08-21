@@ -55,36 +55,31 @@ struct HostInfoView: View {
             }
             
             // Host description
-            if let description = viewModel.host.description {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("About this host")
-                        .primaryHeading()
-                    
-                    Text(description)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("About this host")
+                    .primaryHeading()
+                
+                Text(viewModel.host.description)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
             
             // Map section
-//            if let geoPoint = viewModel.host.location {
-//                let location = CLLocationCoordinate2D(latitude: geoPoint.latitude,
-//                                                      longitude: geoPoint.longitude)
-//
-//                VStack(alignment: .leading, spacing: 8) {
-//                    Text("Located At")
-//                        .primaryHeading()
-//
-//                    VStack(alignment: .leading, spacing: 4) {
-//                        MapSnapshotView(location: location,
-//                                        host: viewModel.host)
-//                            .onTapGesture { viewModel.getDirectionsToLocation(coordinates: location) }
-//
-//                        Text("Tap the map for directions to this host!")
-//                            .footnote()
-//                    }
-//                }
-//            }
+            let location = CLLocationCoordinate2D(latitude: viewModel.host.location.latitude,
+                                                  longitude: viewModel.host.location.longitude)
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Located At")
+                    .primaryHeading()
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    MapSnapshotView(location: .constant(location))
+                    .onTapGesture { viewModel.getDirectionsToLocation(coordinates: location) }
+                    
+                    Text("Tap the map for directions to this host!")
+                        .footnote()
+                }
+            }
         }
         .padding(.horizontal)
     }

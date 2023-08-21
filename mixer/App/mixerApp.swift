@@ -8,6 +8,7 @@
 import SwiftUI
 import Firebase
 import FirebaseDynamicLinks
+import AlgoliaSearchClient
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -43,8 +44,11 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct mixerApp: App {
-    @StateObject var authViewModel = AuthViewModel.shared
-    @StateObject var homeViewModel = HomeViewModel()
+    @StateObject var authViewModel  = AuthViewModel.shared
+    @StateObject var homeViewModel  = HomeViewModel()
+    @StateObject var hostManager    = HostManager.shared
+    @StateObject var eventManager   = EventManager.shared
+    @StateObject var algoliaManager = AlgoliaManager.shared
     @Namespace var namespace
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -54,6 +58,9 @@ struct mixerApp: App {
                 .preferredColorScheme(.dark)
                 .environmentObject(authViewModel)
                 .environmentObject(homeViewModel)
+                .environmentObject(hostManager)
+                .environmentObject(eventManager)
+                .environmentObject(algoliaManager)
         }
     }
 }

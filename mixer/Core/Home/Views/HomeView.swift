@@ -7,39 +7,83 @@
 
 import SwiftUI
 import MapKit
+import TabBar
 
 struct HomeView: View {
-    @State private var mapState     = MapViewState.noInput
-    @State private var showSideMenu = false
+    @State private var mapState: MapViewState = .noInput
+    @ObservedObject var userService = UserService.shared
+    @EnvironmentObject var eventManager: EventManager
+    @EnvironmentObject var hostManager: HostManager
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
     @Namespace var namespace
+    let gradient = LinearGradient(gradient: Gradient(colors: [Color.black, Color.black.opacity(1), Color.black.opacity(1), Color.black.opacity(0.975), Color.black.opacity(0.85), Color.black.opacity(0.3), Color.black.opacity(0)]), startPoint: .bottom, endPoint: .top)
     
     var body: some View {
         Group {
             ZStack {
-                if authViewModel.userSession == nil {
+                if userService.user == nil {
                     AuthFlow()
-                } else if let _ = authViewModel.currentUser {
+                } else {
                     NavigationStack {
                         ZStack {
-                            if showSideMenu {
-                                SideMenuView(user: $authViewModel.currentUser)
+                            if homeViewModel.showSideMenu {
+                                SideMenuView(user: $userService.user)
                             }
                             
-                            mapView
-                                .offset(x: showSideMenu ? DeviceTypes.ScreenSize.width * 0.8 : 0)
-                                .shadow(color: showSideMenu ? .black : .clear, radius: 10)
-                                .onTapGesture {
-                                    if showSideMenu {
-                                        withAnimation(.spring()) {
-                                            showSideMenu = false
-                                        }
+                            ZStack {
+                                ZStack {
+                                    switch homeViewModel.currentTab {
+                                    case .map:
+                                        MapView(mapState: $mapState)
+                                            .environmentObject(MapViewModel())
+                                    case .explore:
+                                        ExploreView()
+                                            .environmentObject(ExploreViewModel())
+                                    case .search:
+                                        SearchView()
+                                            .environmentObject(SearchViewModel())
+                                    }
+                                    
+                                    eventDetailView()
+                                    
+                                    hostDetailView()
+                                }
+                                .shadow(color: homeViewModel.showSideMenu ? .black : .clear, radius: 10)
+                                
+                                VStack {
+                                    Spacer()
+                                    
+                                    ZStack {
+                                        CircleView(tabSelection: $homeViewModel.currentTab)
+                                        
+                                        TabBarItems(tabSelection: $homeViewModel.currentTab)
+                                    }
+                                    .opacity(homeViewModel.showSideMenu ? 0 : 1)
+                                    .frame(height: 80)
+                                    .background(Color.theme.backgroundColor.opacity(0.01))
+                                    .background {
+                                        Rectangle()
+                                            .fill(Color.theme.backgroundColor)
+                                            .mask(gradient)
+                                            .frame(height: 370)
+                                            .allowsHitTesting(false)
                                     }
                                 }
+                            }
+                            .offset(x: homeViewModel.showSideMenu ? DeviceTypes.ScreenSize.width * 0.8 : 0)
+                            .onTapGesture {
+                                if homeViewModel.showSideMenu {
+                                    withAnimation(.spring()) {
+                                        homeViewModel.showSideMenu = false
+                                    }
+                                }
+                            }
+                            
+                            HomeViewActionButton()
                         }
                     }
-                    .onAppear { showSideMenu = false }
+                    .onAppear { homeViewModel.showSideMenu = false }
                 }
                 
                 LaunchScreenView()
@@ -49,86 +93,23 @@ struct HomeView: View {
     }
 }
 
-extension HomeView {
-    var mapView: some View {
-        ZStack(alignment: .bottom) {
-            ZStack(alignment: .top) {
-                MixerMapViewRepresentable(mapState: $mapState)
-                    .ignoresSafeArea()
-                
-                if mapState == .noInput {
-                    VStack {
-                        LocationSearchActivationView()
-                            .padding(.top, 72)
-                            .onTapGesture {
-                                if !showSideMenu {
-                                    withAnimation(.spring()) {
-                                        mapState = .discovering
-                                    }
-                                }
-                            }
-                        
-                        Spacer()
-                        
-                        if !homeViewModel.guestlistEvents.isEmpty {
-                            MapGuestlistButton {
-                                withAnimation(.spring()) {
-                                    mapState = .guestlist
-                                }
-                            }
-                            .padding(.bottom, 50)
-                        }
-                    }
-                } else if mapState == .guestlist {
-                    GuestlistView()
-                        .environmentObject(GuestlistViewModel(events: Array(homeViewModel.guestlistEvents)))
-                } else if mapState == .discovering {
-                    LocationSearchView()
-                } else if mapState == .eventDetail, let event = homeViewModel.selectedEvent {
-                    EventDetailView(namespace: namespace)
-                        .environmentObject(EventViewModel(event: event))
-                } else if mapState == .hostDetail, let host = homeViewModel.selectedHost {
-                    HostDetailView(namespace: namespace)
-                        .environmentObject(HostViewModel(host: host))
-                }
-                
-                MapViewActionButton(mapState: $mapState, showSideMenu: $showSideMenu)
-                    .padding(.leading)
-                    .padding(.top, 4)
-                    .opacity(homeViewModel.showLocationDetailsCard ? 0 : 1)
-            }
-        }
-        .edgesIgnoringSafeArea(.bottom)
-        .sheet(isPresented: $homeViewModel.showLocationDetailsCard, onDismiss: onLocationDetailsCardDismiss) {
-            LocationDetailsCardView()
-                .presentationDetents([.medium])
-        }
-        .onReceive(LocationManager.shared.$userLocation) { location in
-            if let location = location {
-                homeViewModel.userLocation = location
-            }
-        }
-        .onReceive(homeViewModel.$selectedHost) { output in
-            if let _ = output, homeViewModel.selectedMixerLocation == nil {
-                    self.mapState = .hostDetail
-            }
-        }
-        .onReceive(homeViewModel.$selectedEvent) { output in
-            if let _ = output, homeViewModel.selectedMixerLocation == nil {
-                self.mapState = .eventDetail
-            }
-        }
-        .onReceive(homeViewModel.$selectedMixerLocation) { location in
-            if location != nil {
-                switch location!.state {
-                case .event:
-                    self.mapState = .routeEventPreview
-                case .host:
-                    self.mapState = .routeHostPreview
-                }
-                print("DEBUG: Map state is \(self.mapState)")
-            }
-        }
+struct CircleView: View {
+    @Binding var tabSelection: TabItem
+    
+    var body: some View {
+        Circle()
+            .foregroundColor(Color.theme.mixerIndigo)
+            .frame(width: 60, height: 60)
+            .offset(x: getOffset(), y: 0)
+            .animation(.spring(response: 0.4, dampingFraction: 0.7, blendDuration: 0))
+    }
+    
+    private func getOffset() -> CGFloat {
+        let width = DeviceTypes.ScreenSize.width
+        let totalTabs = CGFloat(TabItem.allCases.count)
+        let tabWidth = width / totalTabs
+        let selectedIndex = CGFloat(tabSelection.rawValue)
+        return (tabWidth * selectedIndex) - (width / 2) + (tabWidth / 2)
     }
 }
 
@@ -138,10 +119,46 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
+struct TabBarItems: View {
+    @Binding var tabSelection: TabItem
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(TabItem.allCases, id: \.self) { item in
+                Spacer()
+                
+                Image(systemName: (tabSelection == item && tabSelection != TabItem.search) ? item.icon + ".fill" : item.icon)
+                    .foregroundColor(tabSelection == item ? .white : .secondary)
+                    .frame(width: 35, height: 35)
+                    .scaleEffect(tabSelection == item ? 1.3 : 1)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        self.tabSelection = item
+                    }
+                
+                Spacer()
+            }
+        }
+        .frame(width: DeviceTypes.ScreenSize.width)
+    }
+}
+
 extension HomeView {
-    private func onLocationDetailsCardDismiss() {
-        mapState = .noInput
-        homeViewModel.selectedMixerLocation = nil
-        homeViewModel.clearInput()
+    @ViewBuilder
+    func eventDetailView() -> some View {
+        if let event = eventManager.selectedEvent,
+           homeViewModel.currentState == .embeddedEventDetailView || homeViewModel.currentState == .eventDetailView {
+            EventDetailView()
+                .environmentObject(EventViewModel(event: event))
+        }
+    }
+
+    @ViewBuilder
+    func hostDetailView() -> some View {
+        if let host = hostManager.selectedHost,
+           homeViewModel.currentState == .embeddedHostDetailView || homeViewModel.currentState == .hostDetailView {
+            HostDetailView(namespace: namespace)
+                .environmentObject(HostViewModel(host: host))
+        }
     }
 }

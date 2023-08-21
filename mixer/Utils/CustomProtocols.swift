@@ -6,12 +6,13 @@
 //
 
 import Foundation
-
-protocol CustomStringConvertible {
-    var stringVal: String { get }
-}
+import CoreLocation
 
 protocol MenuOption {
     var title: String { get }
     var imageName: String { get }
+}
+
+protocol CoordinateRepresentable: Equatable {
+    var coordinate: CLLocationCoordinate2D { get }
 }

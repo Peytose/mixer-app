@@ -9,7 +9,7 @@
 //import SwiftUI
 //
 //struct EventVisibilityView: View {
-//    @StateObject var viewModel = EventFlowViewModel()
+//    @StateObject var viewModel = EventCreationViewModel()
 //    @Environment(\.presentationMode) var presentationMode
 //        
 //    var body: some View {

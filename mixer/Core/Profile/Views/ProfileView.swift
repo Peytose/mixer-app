@@ -115,18 +115,20 @@ extension ProfileView {
                         }
                     }
                     
-                    HStack {
-                        Image(systemName: "graduationcap.fill")
-                            .resizable()
-                            .scaledToFill()
-                            .foregroundColor(.white)
-                            .frame(width: 15, height: 15)
-                        
-                        Text(viewModel.user.university)
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
+                    if let university = viewModel.user.university {
+                        HStack {
+                            Image(systemName: "graduationcap.fill")
+                                .resizable()
+                                .scaledToFill()
+                                .foregroundColor(.white)
+                                .frame(width: 15, height: 15)
+                            
+                            Text(university.shortName ?? university.name)
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.75)
+                        }
                     }
                     
                     if let memberHosts = viewModel.user.associatedHosts {
@@ -175,7 +177,7 @@ extension ProfileView {
             VStack(alignment: .leading) {
                 HStack {
                     if let status = viewModel.user.relationshipStatus {
-                        DetailRow(image: status.icon, text: status.stringVal)
+                        DetailRow(image: status.icon, text: status.description)
                     }
                     
                     Spacer()
@@ -183,7 +185,7 @@ extension ProfileView {
                 
                 HStack {
                     if let major = viewModel.user.major {
-                        DetailRow(image: major.icon, text: major.stringVal)
+                        DetailRow(image: major.icon, text: major.description)
                     }
                     
                     Spacer()

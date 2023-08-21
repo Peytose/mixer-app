@@ -29,7 +29,7 @@ class HostService: ObservableObject {
     
     
     func checkInUser(eventUid: String, uid: String, completion: FirestoreCompletion) {
-        guard let currentUserName = AuthViewModel.shared.currentUser?.name else { return }
+        guard let currentUserName = UserService.shared.user?.name else { return }
         
         let data = ["status": GuestStatus.checkedIn.rawValue,
                     "checkedInBy": currentUserName,

@@ -30,9 +30,9 @@ enum HostSideMenuOption: Int, CaseIterable, Identifiable, MenuOption {
     
     var imageName: String {
         switch self {
-            case .manageGuestlists: return "list.bullet.rectangle"
+            case .manageGuestlists: return "list.bullet.rectangle.fill"
             case .createEvent: return "calendar.badge.plus"
-            case .manageMembers: return "person.2"
+            case .manageMembers: return "person.2.badge.gearshape.fill"
 //            case .analytics: return "chart.bar.xaxis"
 //            case .settings: return "gearshape"
         }

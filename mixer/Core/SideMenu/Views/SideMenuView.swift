@@ -88,7 +88,8 @@ struct SideMenuView: View {
             .navigationDestination(for: HostSideMenuOption.self) { option in
                 switch option {
                     case .createEvent:
-                        Text(option.title)
+                    EventCreationFlowView()
+                        .environmentObject(EventCreationViewModel())
                     case .manageGuestlists:
                         Text(option.title)
                     case .manageMembers:

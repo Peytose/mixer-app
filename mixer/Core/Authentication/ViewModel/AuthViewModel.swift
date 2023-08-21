@@ -1,6 +1,6 @@
 //
 //  AuthViewModel.swift
-//  InstagramClone
+//  mixer
 //
 //  Created by Peyton Lyons on 11/8/22.
 //
@@ -13,8 +13,6 @@ import Combine
 
 class AuthViewModel: ObservableObject {
     // User-Related Variables
-    @Published var userSession: FirebaseAuth.User?
-    @Published var currentUser: User?
     @Published var name            = ""
     @Published var displayName     = ""
     @Published var email           = ""
@@ -27,7 +25,7 @@ class AuthViewModel: ObservableObject {
     @Published var birthday        = Date.now { didSet { isValidBirthday = true } }
     @Published var gender          = Gender.woman
     @Published var username        = ""
-    @Published var universityData  = [String: String]()
+    @Published var universityId    = ""
     @Published var isValidBirthday = false
     
     // UI State Variables
@@ -48,13 +46,9 @@ class AuthViewModel: ObservableObject {
     
     // Other Properties
     private let service     = UserService.shared
-    private var cancellable = Set<AnyCancellable>()
     static let shared       = AuthViewModel()
     
     init() {
-        userSession = Auth.auth().currentUser
-        fetchUser()
-        
         DispatchQueue.main.async {
             self.isOnboardingScreensVisible = !self.hasShownOnboardingScreens()
             print("DEBUG: \(self.isOnboardingScreensVisible)")
@@ -101,11 +95,7 @@ class AuthViewModel: ObservableObject {
             }
         case .enterEmail:
             self.sendVerificationEmail()
-        case .uploadProfilePicAndBio:
-            self.next(state)
-        case .enterBirthday:
-            self.next(state)
-        case .selectGender:
+        case .uploadProfilePicAndBio, .enterBirthday, .selectGender:
             self.next(state)
         case .chooseUsername:
             self.register()
@@ -134,36 +124,24 @@ class AuthViewModel: ObservableObject {
     
     func signOut() {
         DispatchQueue.main.async {
-            self.isLoggedOut = true
-            self.name        = ""
-            self.displayName = ""
-            self.phoneNumber = ""
-            self.countryCode = ""
-            self.code        = ""
-            self.userSession = nil
-            self.currentUser = nil
+            self.isLoggedOut  = true
+            self.name         = ""
+            self.displayName  = ""
+            self.phoneNumber  = ""
+            self.countryCode  = ""
+            self.code         = ""
+            self.service.user = nil
             try? Auth.auth().signOut()
         }
     }
     
     
-    func fetchUser() {
-        service.$user
-            .sink { user in
-                guard let user = user else { return }
-                self.currentUser = user
-                self.userSession = Auth.auth().currentUser
-            }
-            .store(in: &cancellable)
-    }
-    
-    
     func startPhoneVerification(completion: @escaping (Bool) -> Void) {
-        isLoading = true
+        showLoadingView()
         
         formatPhoneNumber { formattedPhoneNumber in
             self.verifyPhoneNumber(with: formattedPhoneNumber) { result in
-                self.isLoading = false
+                self.hideLoadingView()
                 completion(result)
             }
         }
@@ -199,15 +177,8 @@ extension AuthViewModel {
                 return
             }
             
-            if let universityName = document["shortName"] as? String, let universityUID = document.documentID as String? {
-                self.universityData = ["name": universityName,
-                                       "uid": universityUID]
-                // Save the universityData dictionary to the user document
-                completion(true)
-                return
-            }
-            
-            completion(false)
+            self.universityId = document.documentID
+            completion(true)
         }
     }
     
@@ -216,17 +187,16 @@ extension AuthViewModel {
         guard let image = image else { return }
         
         ImageUploader.uploadImage(image: image, type: .profile) { imageUrl in
-            guard let uid = self.userSession?.uid else { return }
+            guard let uid = Auth.auth().currentUser?.uid else { return }
             
-            let user = User(id: uid,
-                            dateJoined: Timestamp(),
+            let user = User(dateJoined: Timestamp(),
                             name: self.name,
                             displayName: self.name,
                             username: self.username.lowercased(),
                             email: self.email.lowercased(),
                             profileImageUrl: imageUrl,
                             birthday: Timestamp(date: self.birthday),
-                            university: self.universityData["name"] ?? "",
+                            universityId: self.universityId,
                             gender: self.gender,
                             accountType: .user,
                             bio: self.bio,
@@ -237,7 +207,7 @@ extension AuthViewModel {
             COLLECTION_USERS
                 .document(uid)
                 .setData(encodedUser) { _ in
-                    self.fetchUser()
+                    self.service.fetchUser()
                 }
         }
     }
@@ -260,7 +230,7 @@ extension AuthViewModel {
     
     
     private func verifyCode(completion: @escaping(Bool) -> Void) {
-        self.isLoading = true
+        showLoadingView()
         guard let verificationID = UserDefaults.standard.string(forKey: "authVerificationID") else { return }
         let credential = PhoneAuthProvider.provider().credential(withVerificationID: verificationID, verificationCode: code)
         
@@ -271,21 +241,21 @@ extension AuthViewModel {
                 return
             }
             
-            guard let user = result?.user else { return }
-            self.userSession = user
-            self.fetchUser()
-            self.isLoading = false
+            guard let _ = result?.user else { return }
+            self.service.fetchUser()
+            self.hideLoadingView()
             completion(true)
         }
     }
     
     
     private func sendVerificationEmail() {
-        self.isLoading = true
+        showLoadingView()
         
         fetchUniversity { success in
             guard success else {
-                self.isLoading = false
+                self.hideLoadingView()
+                self.alertItem = AlertContext.unableToSendEmailLink
                 return
             }
             
@@ -299,7 +269,7 @@ extension AuthViewModel {
                     return
                 }
                 
-                self.isLoading = false
+                self.hideLoadingView()
                 self.alertItem = AlertContext.sentEmailLink
             }
         }
@@ -307,7 +277,7 @@ extension AuthViewModel {
     
     
     func handleVerificationEmail(_ url: URL, completion: @escaping(Bool) -> Void) {
-        self.isLoading = true
+        showLoadingView()
         
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let queryItems = components.queryItems,
@@ -318,7 +288,7 @@ extension AuthViewModel {
               let continueUrl = linkQueryItems.first(where: { $0.name == "continueUrl" })?.value,
               let emailQueryItem = URLComponents(string: continueUrl)?.queryItems?.first(where: { $0.name == "email" }),
               emailQueryItem.value == email else {
-            self.isLoading = false
+            hideLoadingView()
             completion(false)
             return
         }
@@ -326,15 +296,14 @@ extension AuthViewModel {
         let link = url.absoluteString
         let credential = EmailAuthProvider.credential(withEmail: email, link: link)
         
-        userSession?.link(with: credential) { authResult, error in
+        Auth.auth().currentUser?.link(with: credential) { authResult, error in
             if let error = error {
                 self.handleAuthError(error as NSError)
                 completion(false)
                 return
             }
             
-            self.userSession = authResult?.user
-            self.isLoading = false
+            self.hideLoadingView()
             completion(true)
         }
     }
@@ -342,12 +311,6 @@ extension AuthViewModel {
 
 // MARK: - Helper Functions
 extension AuthViewModel {
-    func updateCurrentUser(user: User) {
-        self.currentUser = user
-        print("DEBUG: Current user updated.")
-    }
-    
-    
     private func hasShownOnboardingScreens() -> Bool {
         return UserDefaults.standard.bool(forKey: "hasShownOnboardingScreens")
     }
@@ -431,7 +394,7 @@ extension AuthViewModel {
     
     
     private func handleAuthError(_ error: NSError) {
-        self.isLoading = false
+        hideLoadingView()
         let errorCode = AuthErrorCode(_nsError: error)
         print("DEBUG: Auth Error: \(error.localizedDescription)")
         print("DEBUG: Auth Error: \(error)")
@@ -458,4 +421,8 @@ extension AuthViewModel {
             print("DEBUG: Unspecified Auth Error: \(error.localizedDescription)")
         }
     }
+    
+    
+    private func showLoadingView() { isLoading = true }
+    private func hideLoadingView() { isLoading = false }
 }

@@ -142,7 +142,7 @@ extension GuestlistViewModel {
 extension GuestlistViewModel {
     @MainActor
     func createGuest() {
-        guard let eventId = currentEvent?.id, let currentUserName = AuthViewModel.shared.currentUser?.name else { return }
+        guard let eventId = currentEvent?.id, let currentUserName = UserService.shared.user?.name else { return }
         
         if username != "" {
             self.fetchUserAndAddToGuestlist(eventId: eventId, invitedBy: currentUserName)

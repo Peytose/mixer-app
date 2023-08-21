@@ -43,6 +43,16 @@ struct ConfirmationAlertItem: Identifiable {
 }
 
 struct AlertContext {
+    // MARK: - EventDetailView Messages
+    static let locationDetailsInfo                = AlertItem(title: Text("Location Details"),
+                                                              message: Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location"),
+                                                              dismissButton: .default(Text("Got it!")))
+    static let wetAndDryEventsInfo                = AlertItem(title: Text("Wet and Dry Events"),
+                                                              message: Text("Wet events offer beer/alcohol. Dry events do not offer alcohol."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let openAndInviteOnlyEventsInfo        = AlertItem(title: Text("Open and Invite Only Events"),
+                                                              message: Text("You can only see the exact location and start time of an Invite Only Event if you are on its guestlist. On the other hand, you can always see all the details of an Open Event"), dismissButton: .default(Text("Ok")))
     //MARK: - Authentication Errors/Messages
     static func existingCountryCode(code: String, denyAction: @escaping () -> Void) -> ConfirmationAlertItem {
         ConfirmationAlertItem(title: Text("Confirm Phone Number"),
@@ -56,7 +66,7 @@ struct AlertContext {
                                                               dismissButton: .default(Text("Okie dokie")))
     
     static let unableToSendEmailLink              = AlertItem(title: Text("Authentication Error"),
-                                                              message: Text("Unable to send link to verify email."),
+                                                              message: Text("Unable to send link to verify email. It could be that your school is not in our records.\nContact us at www.partywithmixer.com/helppage"),
                                                               dismissButton: .default(Text("That sucks.")))
     
     static let invalidCredential                  = AlertItem(title: Text(("Credential Error")),
@@ -160,10 +170,6 @@ struct AlertContext {
                                                               message: Text("All fields are required as well as a profile photo. Your bio must be < 100 characters.\nPlease try again."),
                                                               dismissButton: .default(Text("Ok")))
     
-    static let noUserRecord                       = AlertItem(title: Text("No User Record"),
-                                                              message: Text("You must log into iCloud on your phone in order to utilize Dub Dub Grub's Profile. Please log in on your phone's settings screen."),
-                                                              dismissButton: .default(Text("Ok")))
-    
     static let createProfileSuccess               = AlertItem(title: Text("Profile Created Successfully!"),
                                                               message: Text("Your profile has successfully been created."),
                                                               dismissButton: .default(Text("Ok")))
@@ -176,19 +182,11 @@ struct AlertContext {
                                                               message: Text("We were unable to retrieve your profile at this time. Please check your internet connection and try again later or contact customer support if this persists."),
                                                               dismissButton: .default(Text("Ok")))
     
-    static let updateProfileSuccess               = AlertItem(title: Text("Profile Update Success!"),
-                                                              message: Text("Your Dub Dub Grub profile was updated successfully."),
-                                                              dismissButton: .default(Text("Sweet!")))
-    
     static let updateProfileFailure               = AlertItem(title: Text("Profile Update Failed"),
                                                               message: Text("We were unable to update your profile at this time.\nPlease try again later."),
                                                               dismissButton: .default(Text("Shucks!")))
     
     //MARK: - LocationDetailView Errors
-    static let invalidPhoneNumber                 = AlertItem(title: Text("Invalid Phone Number"),
-                                                              message: Text("The phone number for the location is invalid. Please look up the phone number yourself."),
-                                                              dismissButton: .default(Text("Shucks!")))
-    
     static let unableToGetCheckInStatus           = AlertItem(title: Text("Server Error"),
                                                               message: Text("Unable to retrieve checked in status of the current user.\nPlease try again."),
                                                               dismissButton: .default(Text("Ok")))

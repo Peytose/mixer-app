@@ -9,7 +9,7 @@
 //import UIKit
 //
 //struct AmenityListView: View {
-//    let amenities: [EventAmenities]
+//    let amenities: [EventAmenity]
 //    @Environment(\.presentationMode) var mode
 //    
 //    var body: some View {

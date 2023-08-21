@@ -11,13 +11,15 @@ struct SideMenuOptionView<Option: MenuOption>: View {
     let option: Option
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 20) {
             Image(systemName: option.imageName)
                 .font(.title2)
                 .imageScale(.medium)
+                .frame(width: 24)
             
             Text(option.title)
                 .font(.headline)
+                .frame(alignment: .leading)
             
             Spacer()
         }

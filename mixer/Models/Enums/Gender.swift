@@ -13,7 +13,7 @@ enum Gender: Int, Codable, CustomStringConvertible, CaseIterable {
     case other
     case preferNotToSay
 
-    var stringVal: String {
+    var description: String {
         switch self {
             case .woman: return "Woman"
             case .man: return "Man"

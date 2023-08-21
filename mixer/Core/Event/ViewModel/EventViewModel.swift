@@ -15,6 +15,7 @@ final class EventViewModel: ObservableObject {
     @Published var event: Event
     @Published var host: Host?
     @Published private (set) var imageLoader: ImageLoader
+    @Published var alertItem: AlertItem?
 
     init(event: Event) {
         self.event = event
@@ -47,11 +48,14 @@ final class EventViewModel: ObservableObject {
     }
 
     
-    @MainActor func updateFavorite(_ isFavorited: Bool) {
+    @MainActor func updateFavorite() {
         guard let eventId = event.id else { return }
         
-        UserService.shared.updateFavoriteStatus(didFavorite: isFavorited, eventUid: eventId) { _ in
-            self.event.didFavorite = isFavorited
+        // Negate the current favorite status to toggle it
+        let newFavoriteStatus = !(event.isFavorited ?? false)
+        
+        UserService.shared.updateFavoriteStatus(isFavorited: newFavoriteStatus, eventId: eventId) { _ in
+            self.event.isFavorited = newFavoriteStatus
             HapticManager.playLightImpact()
         }
     }
@@ -69,7 +73,7 @@ final class EventViewModel: ObservableObject {
     
 //    @MainActor func joinGuestlist() {
 //        guard let eventId = event.id else { return }
-//        guard let currentUser = AuthViewModel.shared.currentUser else { return }
+//        guard let currentUser = UserService.shared.user else { return }
 //
 //        UserService.joinGuestlist(eventUid: eventId, user: currentUser) { _ in
 //            self.event.didGuestlist = true
@@ -79,7 +83,7 @@ final class EventViewModel: ObservableObject {
     
     @MainActor func checkIfHostIsFollowed() {
         guard let hostId = host?.id else { return }
-        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let currentUid = UserService.shared.user?.id else { return }
         
         UserService.shared.checkIfHostIsFollowed(forId: hostId) { isFollowed in
             self.host?.isFollowed = isFollowed
@@ -88,13 +92,28 @@ final class EventViewModel: ObservableObject {
     
     
     @MainActor func checkIfUserFavoritedEvent() {
-        guard let uid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let uid = UserService.shared.user?.id else { return }
         guard let eventId = event.id else { return }
         
         COLLECTION_USERS.document(uid).collection("user-favorites").document(eventId).getDocument { snapshot, _ in
-            guard let didFavorite = snapshot?.exists else { return }
-            self.event.didFavorite = didFavorite
+            guard let isFavorited = snapshot?.exists else { return }
+            self.event.isFavorited = isFavorited
         }
+    }
+    
+    
+    @MainActor func checkIfUserIsOnGuestlist() {
+        guard let uid = UserService.shared.user?.id else { return }
+        guard let eventId = event.id else { return }
+        
+        COLLECTION_EVENTS
+            .document(eventId)
+            .collection("gueslist")
+            .document(uid)
+            .getDocument { snapshot, _ in
+                guard let didGuestlist = snapshot?.exists else { return }
+                self.event.didGuestlist = didGuestlist
+            }
     }
     
     

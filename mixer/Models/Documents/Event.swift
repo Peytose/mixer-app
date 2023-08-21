@@ -42,7 +42,7 @@ enum EventType: Int, Codable, CaseIterable {
     case darty
     case kickback
     
-    var text: String {
+    var description: String {
         switch self {
             case .school: return "School event"
             case .club: return "Club event"
@@ -75,7 +75,7 @@ struct Event: Hashable, Identifiable, Codable {
     var geoPoint: GeoPoint
 
     // MARK: - Event Details
-    var amenities: [EventAmenities]?
+    var amenities: [EventAmenity]?
     var checkInMethods: [CheckInMethod]?
     var containsAlcohol: Bool
 
@@ -101,7 +101,7 @@ struct Event: Hashable, Identifiable, Codable {
 
     // MARK: - Flags
     var didGuestlist: Bool? = false
-    var didFavorite: Bool?  = false
+    var isFavorited: Bool?  = false
     var didAttend: Bool?    = false
     var isFull: Bool?       = false
 }

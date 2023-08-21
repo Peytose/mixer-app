@@ -25,7 +25,7 @@ struct EventGuest: Identifiable, Codable {
          invitedBy: String? = nil,
          checkedInBy: String? = nil) {
         self.name            = user.name
-        self.university      = user.university
+        self.university      = (user.university?.shortName ?? user.university?.name) ?? "n/a"
         self.profileImageUrl = user.profileImageUrl
         self.age             = Calendar.current.dateComponents([.year], from: user.birthday.dateValue(), to: Date()).year ?? 18
         self.gender          = user.gender

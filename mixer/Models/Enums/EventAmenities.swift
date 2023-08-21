@@ -1,5 +1,5 @@
 //
-//  EventAmenities.swift
+//  EventAmenity.swift
 //  mixer
 //
 //  Created by Peyton Lyons on 8/15/23.
@@ -17,7 +17,7 @@ enum AmenityCategory: String, CaseIterable {
     case convenientFeatures = "Convenient Features"
 }
 
-enum EventAmenities: String, Codable, CaseIterable {
+enum EventAmenity: String, Codable, CaseIterable {
     case alcohol       = "Alcoholic Drinks"
     case nonAlcohol    = "Non-Alcoholic Drinks"
     case beer          = "Beer"

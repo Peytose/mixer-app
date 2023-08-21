@@ -31,7 +31,6 @@ struct EventCellView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(8)
                 .padding(.leading, 8)
-                //blur behind text
                 .background { backgroundBlur }
             }
             //image

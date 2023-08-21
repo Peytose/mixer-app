@@ -18,7 +18,10 @@ class UserService: ObservableObject {
     }
     
     func fetchUser() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard let uid = Auth.auth().currentUser?.uid else {
+            print("DEBUG: No authenticated user.")
+            return
+        }
         
         COLLECTION_USERS.document(uid).getDocument { snapshot, error in
             print("DEBUG: Did fetch user from firestore.")
@@ -27,6 +30,10 @@ class UserService: ObservableObject {
             
             if user.accountType == .host || user.accountType == .member {
                 self.fetchAssociatedHosts()
+            }
+            
+            if user.university == nil {
+                self.fetchUniversity(with: user.universityId)
             }
         }
     }
@@ -51,30 +58,46 @@ class UserService: ObservableObject {
     }
     
     
-    func updateFavoriteStatus(didFavorite: Bool, eventUid: String, completion: FirestoreCompletion) {
-        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+    private func fetchUniversity(with id: String) {
+        COLLECTION_UNIVERSITIES
+            .document(id)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching university. \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let university = try? snapshot?.data(as: University.self) else { return }
+                print("DEBUG: University associated with user: \(university)")
+                self.user?.university = university
+            }
+    }
+    
+    
+    func updateFavoriteStatus(isFavorited: Bool, eventId: String, completion: FirestoreCompletion) {
+        guard let currentUserId = self.user?.id else { return }
 
-        let eventFavoritesRef = COLLECTION_EVENTS.document(eventUid).collection("event-favorites").document(currentUid)
-        let userFavoritesRef = COLLECTION_USERS.document(currentUid).collection("user-favorites").document(eventUid)
+        let eventFavoritesReference = COLLECTION_EVENTS.document(eventId).collection("event-favorites").document(currentUserId)
+        let userFavoritesReference = COLLECTION_USERS.document(currentUserId).collection("user-favorites").document(eventId)
 
-        let batch = Firestore.firestore().batch()
+        let batchUpdate = Firestore.firestore().batch()
 
-        if didFavorite {
-            let data = ["timestamp": Timestamp()] as [String: Any]
+        if isFavorited {
+            let favoriteData = ["timestamp": Timestamp()] as [String: Any]
 
-            batch.setData(data, forDocument: eventFavoritesRef)
-            batch.setData(data, forDocument: userFavoritesRef)
+            batchUpdate.setData(favoriteData, forDocument: eventFavoritesReference)
+            batchUpdate.setData(favoriteData, forDocument: userFavoritesReference)
         } else {
-            batch.deleteDocument(eventFavoritesRef)
-            batch.deleteDocument(userFavoritesRef)
+            batchUpdate.deleteDocument(eventFavoritesReference)
+            batchUpdate.deleteDocument(userFavoritesReference)
         }
 
-        batch.commit(completion: completion)
+        batchUpdate.commit(completion: completion)
     }
     
     
     func updateFollowStatus(didFollow: Bool, hostUid: String, completion: FirestoreCompletion) {
-        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let currentUid = self.user?.id else { return }
 
         let userFollowingRef = COLLECTION_FOLLOWING.document(currentUid).collection("user-following").document(hostUid)
         let hostFollowerRef = COLLECTION_FOLLOWERS.document(hostUid).collection("host-followers").document(currentUid)
@@ -125,7 +148,7 @@ class UserService: ObservableObject {
 
 
     func checkIfHostIsFollowed(forId hostId: String, completion: @escaping (Bool) -> Void) {
-        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let currentUid = self.user?.id else { return }
 
         COLLECTION_FOLLOWING.document(currentUid).collection("user-following")
             .document(hostId).getDocument { snapshot, _ in
@@ -136,7 +159,7 @@ class UserService: ObservableObject {
 
 
     func sendFriendRequest(username: String, uid: String, completion: FirestoreCompletion) {
-        guard let currentUser = AuthViewModel.shared.currentUser else { return }
+        guard let currentUser = self.user else { return }
         guard let currentUid = currentUser.id else { return }
         
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
@@ -155,7 +178,7 @@ class UserService: ObservableObject {
 
 
     func cancelRequestOrRemoveFriend(uid: String, completion: FirestoreCompletion) {
-        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
 
         COLLECTION_FRIENDSHIPS.document(path).delete(completion: completion)
@@ -163,7 +186,7 @@ class UserService: ObservableObject {
 
 
     func acceptFriendRequest(uid: String, notificationId: String? = "", completion: FirestoreCompletion) {
-        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
 
         let data: [String: Any] = ["state": FriendshipState.friends,
@@ -174,7 +197,7 @@ class UserService: ObservableObject {
 
 
     func getUserRelationship(uid: String, completion: @escaping (FriendshipState) -> Void) {
-        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+        guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
 
         COLLECTION_FRIENDSHIPS.document(path).getDocument { snapshot, _ in

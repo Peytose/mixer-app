@@ -135,13 +135,13 @@ struct MenuSettingsRow: View {
                 let enumCases = selectEnumCases(for: row.title)
                 ForEach(enumCases.indices, id: \.self) { index in
                     Button {
-                        content = enumCases[index].stringVal
+                        content = enumCases[index].description
                         viewModel.save(for: saveType)
                     } label: {
                         HStack {
-                            Text(enumCases[index].stringVal)
+                            Text(enumCases[index].description)
                             
-                            if enumCases[index].stringVal == content {
+                            if enumCases[index].description == content {
                                 Image(systemName: "checkmark")
                             }
                         }

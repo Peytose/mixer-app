@@ -18,7 +18,7 @@ class FavoritesViewModel: ObservableObject {
 
     @MainActor
     func startListeningForFavorites() {
-        guard let uid = AuthViewModel.shared.currentUser?.id else { return }
+        guard let uid = UserService.shared.user?.id else { return }
 
         listener = COLLECTION_USERS
             .document(uid)
@@ -36,7 +36,7 @@ class FavoritesViewModel: ObservableObject {
     
     @MainActor
     private func fetchFavorites() {
-        guard let uid = AuthViewModel.shared.currentUser?.id else { return }
+        guard let uid = UserService.shared.user?.id else { return }
 
         COLLECTION_USERS
             .document(uid)

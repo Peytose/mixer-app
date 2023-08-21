@@ -8,9 +8,9 @@
 import Foundation
 
 extension CustomStringConvertible where Self: CaseIterable & Codable {
-    static func enumCase(from stringValue: String) -> Self? {
+    static func enumCase(from descriptionue: String) -> Self? {
         for item in Self.allCases {
-            if item.stringVal == stringValue {
+            if item.description == descriptionue {
                 return item
             }
         }

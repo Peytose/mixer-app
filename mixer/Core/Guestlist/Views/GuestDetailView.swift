@@ -60,7 +60,7 @@ private extension GuestDetailView {
                         .foregroundColor(.secondary)
                 }
                 
-                Text("Gender: \(guest.gender.stringVal)")
+                Text("Gender: \(guest.gender.description)")
                     .font(.headline)
                     .foregroundColor(.secondary)
             }

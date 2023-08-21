@@ -13,7 +13,7 @@ enum RelationshipStatus: Int, Codable, CustomStringConvertible, CaseIterable {
     case complicated
     case preferNotToSay
 
-    var stringVal: String {
+    var description: String {
         switch self {
             case .single: return "Single"
             case .taken: return "Taken"

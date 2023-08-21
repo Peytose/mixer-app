@@ -13,197 +13,45 @@ import PopupView
 
 struct EventDetailView: View {
     @EnvironmentObject var viewModel: EventViewModel
-    var namespace: Namespace.ID
-    @State private var isShowingModal   = false
-    @State private var currentAmount    = 0.0
-    @State private var finalAmount      = 1.0
-    @State private var showHost         = false
-    @State private var showAllAmenities = false
-    @State var showBackArrow            = false
-    @State var showInfoAlert1           = false
-    @State var showInfoAlert2           = false
-    @State var showInfoAlert3           = false
+    var namespace: Namespace.ID?
+    @State private var isShowingModal = false
     
     var body: some View {
         ZStack {
+            Color.theme.backgroundColor
+                .ignoresSafeArea()
+            
             ScrollView(showsIndicators: false) {
-                EventFlyerHeader
+                EventFlyerHeader(isShowingModal: $isShowingModal)
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    HStack(spacing: 12) {
-                        if let host = viewModel.host {
-                            KFImage(URL(string: host.hostImageUrl))
-                                .resizable()
-                                .scaledToFill()
-                                .clipShape(Circle())
-                                .frame(width: 45, height: 45)
-                            
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text("\(viewModel.event.type.rawValue) hosted by ")
-                                        .font(.subheadline.weight(.medium))
-                                        .foregroundColor(.secondary)
-                                    
-                                    Text("\(host.name)")
-                                        .font(.title3)
-                                        .bold()
-                                        .foregroundColor(Color.theme.mixerIndigo)
-                                        .lineLimit(1)
-                                        .minimumScaleFactor(0.8)
-                                }
-                                
-                                Spacer()
-                                
-                                if var isFollowed = host.isFollowed {
-                                    Button {
-                                        withAnimation(.follow) {
-                                            viewModel.updateFollow(isFollowed)
-                                        }
-                                    } label: {
-                                        Text(isFollowed ? "Following" : "Follow")
-                                            .font(.footnote)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(.white)
-                                            .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
-                                            .background {
-                                                Capsule()
-                                                    .stroke(lineWidth: 1)
-                                                    .matchedGeometryEffect(id: "eventFollowButton-\(viewModel.event.id ?? "")",
-                                                                           in: namespace)
-                                            }
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                        }
-                    }
-                    .onTapGesture {
-                        showHost.toggle()
-                    }
+                    HostSection()
                     
-                    content
+                    EventDetails()
                     
                     if let amenities = viewModel.event.amenities {
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("What this event offers")
-                                    .primaryHeading()
-                                
-                                ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
-                                    let amenitiesInCategory = amenities.filter({ $0.category == category })
-                                    if !amenitiesInCategory.isEmpty {
-                                        Section {
-                                            ForEach(amenitiesInCategory, id: \.self) { amenity in
-                                                HStack {
-                                                    amenity.displayIcon
-                                                        .font(.body)
-                                                        .padding(.trailing, 5)
-
-                                                    Text(amenity.rawValue)
-                                                        .font(.body)
-
-                                                    Spacer()
-                                                }
-                                                .foregroundColor(.white)
-                                            }
-                                        } header: {
-                                            Text(category.rawValue)
-                                                .font(.title3)
-                                                .fontWeight(.semibold)
-                                                .padding(.top, 10)
-                                                .padding(.bottom, 2)
-                                        }
-                                    }
-                                }
-                                
-                                HStack {
-                                    Spacer()
-                                    
-                                    Button {
-                                        withAnimation(.spring(dampingFraction: 0.8)) {
-                                            showAllAmenities.toggle()
-                                        }
-                                    } label: {
-                                        ZStack {
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .foregroundColor(.white)
-                                                .frame(width: 350, height: 45)
-                                                .overlay {
-                                                    Text(showAllAmenities ? "Show less" : "Show all \(amenities.count) amenities")
-                                                        .font(.body)
-                                                        .fontWeight(.medium)
-                                                        .foregroundColor(.black)
-                                                }
-                                        }
-                                    }
-                                    
-                                    Spacer()
-                                }
-                            }
-                        }
+                        AmenitiesView(amenities: amenities)
                     }
                     
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Where you'll be")
-                                .primaryHeading(color: .white)
-                            
-                            InfoButton(action: { showInfoAlert2.toggle() })
-                                .alert("Location Details", isPresented: $showInfoAlert2, actions: {}, message: {Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location")})
-                        }
-                        
-//                        if viewModel.event.isInviteOnly {
-//                            if let altAddress = viewModel.event.altAddress {
-//                                DetailRow(image: "mappin.and.ellipse", text: altAddress)
-//                            } else if let coords = viewModel.coordinates {
-//                                VStack(alignment: .leading, spacing: 5) {
-//                                    MapSnapshotView(location: coords, event: viewModel.event)
-//                                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
-//                                    
-//                                    Text("Tap the map for directions to this event!")
-//                                        .font(.footnote)
-//                                        .fontWeight(.semibold)
-//                                        .foregroundColor(.secondary)
-//                                }
-//                            } else {
-//                                DetailRow(image: "mappin.and.ellipse", text: "Available when you are on the guest list")
-//                            }
-//                        } else {
-//                            if let coords = viewModel.coordinates {
-//                                VStack(alignment: .leading, spacing: 4) {
-//                                    MapSnapshotView(location: coords, event: viewModel.event)
-//                                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: coords) }
-//                                    
-//                                    Text("Tap the map for directions to this event!")
-//                                        .footnote()
-//                                }
-//                            }
-//                        }
-                    }
+                    LocationSection()
                 }
                 .padding()
                 .padding(EdgeInsets(top: 100, leading: 0, bottom: 120, trailing: 0))
             }
-            .background(Color.theme.backgroundColor)
             .coordinateSpace(name: "scroll")
             
             if isShowingModal {
-                EventImageModalView(imageUrl: viewModel.event.eventImageUrl,
-                                    isShowingModal: $isShowingModal)
-                .transition(.opacity)
-                .zIndex(1)
+                EventImageModalView(imageUrl: viewModel.event.eventImageUrl, isShowingModal: $isShowingModal)
+                    .transition(.opacity)
+                    .zIndex(1)
             }
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            if showBackArrow {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    BackArrowButton()
-                }
-            }
+        .task {
+            viewModel.checkIfUserFavoritedEvent()
+            viewModel.checkIfUserIsOnGuestlist()
         }
-        .preferredColorScheme(.dark)
-        .ignoresSafeArea()
+        .alert(item: $viewModel.alertItem, content: { $0.alert })
     }
 }
 
@@ -216,85 +64,16 @@ struct EventDetailView_Previews: PreviewProvider {
     }
 }
 
-
-extension EventDetailView {
-    var content: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Description")
-                    .primaryHeading()
-                
-                Text(viewModel.event.description)
-                    .foregroundColor(.secondary)
-            }
-            
-            if let note = viewModel.event.note {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Notes for guest")
-                        .primaryHeading()
-                    
-                    Text(note)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Event details")
-                    .primaryHeading()
-                
-                HStack {
-                    if let amenities = viewModel.event.amenities {
-                        if amenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
-                            DetailRow(image: "drop.fill", text: "Wet Event")
-                        } else {
-                            DetailRow(image: "drop.fill", text: "Dry Event")
-                        }
-                    }
-                    
-                    InfoButton(action: { showInfoAlert1.toggle() })
-                        .alert("Wet and Dry Events", isPresented: $showInfoAlert1, actions: {}, message: {Text("Wet events offer beer/alcohol. Dry events do not offer alcohol.")})
-                }
-                
-                HStack {
-                    if viewModel.event.isInviteOnly {
-                        DetailRow(image: "list.clipboard.fill", text: "Invite Only Event")
-                    } else {
-                        DetailRow(image: "list.clipboard.fill", text: "Open Event")
-                    }
-                    
-                    InfoButton(action: { showInfoAlert3.toggle() })
-                        .alert("Open and Invite Only Events", isPresented: $showInfoAlert3, actions: {}, message: {Text("You can only see the exact location and start time of an Invite Only Event if you are on its guestlist. On the other hand, you can always see all the details of an Open Event")})
-                }
-            }
-        }
-    }
-}
-
-fileprivate struct EventImageModalView: View {
-    let imageUrl: String
+struct EventFlyerHeader: View {
+    @EnvironmentObject var viewModel: EventViewModel
     @Binding var isShowingModal: Bool
+    @State private var currentAmount = 0.0
+    @State private var finalAmount = 1.0
     
     var body: some View {
-        ZStack(alignment: .center) {
-            Rectangle()
-                .fill(Color.clear)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .backgroundBlur(radius: 10, opaque: true)
-                .ignoresSafeArea()
-                .onTapGesture { withAnimation { isShowingModal = false } }
-            
-            KFImage(URL(string: imageUrl))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: UIScreen.main.bounds.size.width / 1.2)
-        }
-    }
-}
-
-extension EventDetailView {
-    var EventFlyerHeader: some View {
         GeometryReader { proxy in
             let scrollY = proxy.frame(in: .named("scroll")).minY
+            
             VStack {
                 ZStack {
                     VStack(alignment: .center, spacing: 2) {
@@ -308,12 +87,12 @@ extension EventDetailView {
                             
                             Spacer()
                             
-                            if let isFavorited = viewModel.event.didFavorite {
+                            if let isFavorited = viewModel.event.isFavorited {
                                 CustomButton(systemImage: "heart.fill",
                                              status: isFavorited,
                                              activeTint: .pink,
                                              inActiveTint: .secondary) {
-                                    viewModel.updateFavorite(isFavorited)
+                                    viewModel.updateFavorite()
                                 }
                             }
                             
@@ -335,7 +114,7 @@ extension EventDetailView {
                         
                         Divider()
                             .foregroundColor(.secondary)
-                            .padding(.vertical, 6)
+                            .padding(.vertical)
                         
                         HStack {
                             VStack(alignment: .leading) {
@@ -424,12 +203,243 @@ extension EventDetailView {
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: scrollY > 0 ? 500 + scrollY : 500)  //MARK: Change Flyer Height
+            .frame(height: scrollY > 0 ? 500 + scrollY : 500)
         }
         .frame(height: 500)
     }
 }
 
+struct HostSection: View {
+    @EnvironmentObject var viewModel: EventViewModel
+    @EnvironmentObject var homeViewModel: HomeViewModel
+    @EnvironmentObject var hostManager: HostManager
+    
+    var body: some View {
+        if let host = viewModel.host {
+            HStack(spacing: 12) {
+                KFImage(URL(string: host.hostImageUrl))
+                    .resizable()
+                    .scaledToFill()
+                    .clipShape(Circle())
+                    .frame(width: 45, height: 45)
+                
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("\(viewModel.event.type.description) hosted by ")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.secondary)
+                        
+                        Text("\(host.name)")
+                            .font(.title3)
+                            .bold()
+                            .foregroundColor(Color.theme.mixerIndigo)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.8)
+                    }
+                    
+                    Spacer()
+                    
+                    if let isFollowed = host.isFollowed {
+                        Button {
+                            withAnimation(.follow) {
+                                viewModel.updateFollow(isFollowed)
+                            }
+                        } label: {
+                            Text(isFollowed ? "Following" : "Follow")
+                                .font(.footnote)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
+                                .background {
+                                    Capsule()
+                                        .stroke(lineWidth: 1)
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .onTapGesture {
+                homeViewModel.handleTap(to: .embeddedHostDetailView,
+                                        host: host,
+                                        hostManager: hostManager)
+            }
+        }
+    }
+}
+
+struct EventDetails: View {
+    @EnvironmentObject var viewModel: EventViewModel
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Description")
+                    .primaryHeading()
+                
+                Text(viewModel.event.description)
+                    .foregroundColor(.secondary)
+            }
+            
+            if let note = viewModel.event.note {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Notes for guest")
+                        .primaryHeading()
+                    
+                    Text(note)
+                        .foregroundColor(.secondary)
+                }
+            }
+            
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Event details")
+                    .primaryHeading()
+                
+                HStack {
+                    if let amenities = viewModel.event.amenities {
+                        if amenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
+                            DetailRow(image: "drop.fill", text: "Wet Event")
+                        } else {
+                            DetailRow(image: "drop.fill", text: "Dry Event")
+                        }
+                    }
+                    
+                    InfoButton { viewModel.alertItem = AlertContext.wetAndDryEventsInfo }
+                }
+                
+                HStack {
+                    if viewModel.event.isInviteOnly {
+                        DetailRow(image: "list.clipboard.fill", text: "Invite Only Event")
+                    } else {
+                        DetailRow(image: "list.clipboard.fill", text: "Open Event")
+                    }
+                    
+                    InfoButton { viewModel.alertItem = AlertContext.openAndInviteOnlyEventsInfo }
+                }
+            }
+        }
+    }
+}
+
+struct AmenitiesView: View {
+    let amenities: [EventAmenity]
+    @State private var showAllAmenities = false
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("What this event offers")
+                .primaryHeading()
+            
+            ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
+                let amenitiesInCategory = amenities.filter({ $0.category == category })
+                if !amenitiesInCategory.isEmpty {
+                    Section {
+                        ForEach(amenitiesInCategory, id: \.self) { amenity in
+                            HStack {
+                                amenity.displayIcon
+                                    .font(.body)
+                                    .padding(.trailing, 5)
+                                
+                                Text(amenity.rawValue)
+                                    .font(.body)
+                                
+                                Spacer()
+                            }
+                            .foregroundColor(.white)
+                        }
+                    } header: {
+                        Text(category.rawValue)
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .padding(.top, 10)
+                            .padding(.bottom, 2)
+                    }
+                }
+            }
+            
+            HStack {
+                Spacer()
+                
+                Button {
+                    withAnimation(.spring(dampingFraction: 0.8)) {
+                        showAllAmenities.toggle()
+                    }
+                } label: {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12)
+                            .foregroundColor(.white)
+                            .frame(width: 350, height: 45)
+                            .overlay {
+                                Text(showAllAmenities ? "Show less" : "Show all \(amenities.count) amenities")
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.black)
+                            }
+                    }
+                }
+                
+                Spacer()
+            }
+        }
+    }
+}
+
+struct LocationSection: View {
+    @EnvironmentObject var viewModel: EventViewModel
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("Where you'll be")
+                    .primaryHeading(color: .white)
+                
+                InfoButton { viewModel.alertItem = AlertContext.locationDetailsInfo }
+            }
+            
+            if viewModel.event.isInviteOnly && (viewModel.event.didGuestlist ?? false) {
+                if let altAddress = viewModel.event.altAddress {
+                    DetailRow(image: "mappin.and.ellipse", text: altAddress)
+                } else {
+                    DetailRow(image: "mappin.and.ellipse", text: "Available when you are on the guest list")
+                }
+            } else {
+                let location = CLLocationCoordinate2D(latitude: viewModel.event.geoPoint.latitude,
+                                                      longitude: viewModel.event.geoPoint.longitude)
+                VStack(alignment: .leading, spacing: 5) {
+                    MapSnapshotView(location: .constant(location))
+                        .onTapGesture { /* Add code to get directions to location */ }
+                    
+                    Text("Tap the map for directions to this event!")
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }
+    }
+}
+
+fileprivate struct EventImageModalView: View {
+    let imageUrl: String
+    @Binding var isShowingModal: Bool
+    
+    var body: some View {
+        ZStack(alignment: .center) {
+            Rectangle()
+                .fill(Color.clear)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .backgroundBlur(radius: 10, opaque: true)
+                .ignoresSafeArea()
+                .onTapGesture { withAnimation { isShowingModal = false } }
+            
+            KFImage(URL(string: imageUrl))
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: UIScreen.main.bounds.size.width / 1.2)
+        }
+    }
+}
 
 fileprivate struct JoinGuestlistButton: View {
     let action: () -> Void

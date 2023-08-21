@@ -9,20 +9,20 @@ import SwiftUI
 import TabBar
 
 struct CustomTabBarStyle: TabBarStyle {
-    let gradient = LinearGradient(gradient: Gradient(colors: [Color.black, Color.black.opacity(1), Color.black.opacity(1), Color.black.opacity(0.975), Color.black.opacity(0.85), Color.black.opacity(0.3), Color.black.opacity(0)]), startPoint: .bottom, endPoint: .top)
-    var height: CGFloat = 370
+    
+    
+//    public func tabBar(with geometry: GeometryProxy, itemsContainer: @escaping () -> AnyView) -> some View {
+//        itemsContainer()
+//            .background(Color.theme.secondaryBackgroundColor)
+//            .cornerRadius(25.0)
+//            .frame(height: 60.0)
+//            .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .center)
+//            .padding(.horizontal, 50)
+//            .padding(.bottom, 16.0 + geometry.safeAreaInsets.bottom)
+//    }
     
     public func tabBar(with geometry: GeometryProxy, itemsContainer: @escaping () -> AnyView) -> some View {
         itemsContainer()
-            .frame(height: 80)
-            .background(Color.theme.backgroundColor.opacity(0.01))
-            .background(content: {
-                Rectangle()
-                    .fill(Color.theme.backgroundColor)
-                    .mask(gradient)
-                    .frame(height: height)
-                    .allowsHitTesting(false)
-            })
+            
     }
-    
 }
