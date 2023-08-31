@@ -22,11 +22,16 @@ class AuthViewModel: ObservableObject {
     @Published var image: UIImage?
     @Published var bio             = ""
     @Published var birthdayStr     = "" { didSet { checkValidBirthday() } }
-    @Published var birthday        = Date.now { didSet { isValidBirthday = true } }
+    @Published var birthday        = Date.now { didSet { isBirthdayValid = true } }
     @Published var gender          = Gender.woman
-    @Published var username        = ""
+    @Published var username        = "" {
+        didSet {
+            checkUsernameValidity(username: username)
+        }
+    }
     @Published var universityId    = ""
-    @Published var isValidBirthday = false
+    @Published var isBirthdayValid = false
+    @Published var isUsernameValid = false
     
     // UI State Variables
     @Published var isLoading                  = false
@@ -45,8 +50,10 @@ class AuthViewModel: ObservableObject {
     }
     
     // Other Properties
-    private let service     = UserService.shared
-    static let shared       = AuthViewModel()
+    private let algoliaManager = AlgoliaManager.shared
+    private let service        = UserService.shared
+    static let shared          = AuthViewModel()
+    
     
     init() {
         DispatchQueue.main.async {
@@ -106,7 +113,7 @@ class AuthViewModel: ObservableObject {
     func isButtonActiveForState(_ state: AuthFlowViewState) -> Bool {
         switch state {
         case .enterName:
-            return !name.isEmpty
+            return !name.isEmpty && name.contains(" ")
         case .enterPhone:
             return !phoneNumber.isEmpty
         case .verifyCode:
@@ -114,7 +121,7 @@ class AuthViewModel: ObservableObject {
         case .enterEmail:
             return !email.isEmpty
         case .enterBirthday:
-            return isValidBirthday
+            return isBirthdayValid
         case .chooseUsername:
             return !username.isEmpty
         default: return true
@@ -166,7 +173,7 @@ extension AuthViewModel {
         print("DEBUG: Domain from email: \(domain)")
         
         if domain.contains(".com") {
-            self.universityId = ".com"
+            self.universityId = "com"
             completion(true)
         }
         
@@ -382,11 +389,25 @@ extension AuthViewModel {
     }
     
     
+    func checkUsernameValidity(username: String) {
+        guard self.username.count >= 4 else {
+            self.isUsernameValid = false
+            return
+        }
+        
+        algoliaManager.validateUsername(username) { isValid in
+            DispatchQueue.main.async {
+                self.isUsernameValid = isValid
+            }
+        }
+    }
+    
+    
     private func checkValidBirthday() {
         if birthdayStr.count > 12 {
             birthdayStr = String(birthdayStr.prefix(12))
         } else if birthdayStr.count < 12 {
-            isValidBirthday = false
+            isBirthdayValid = false
         } else {
             self.convertStringToDate()
         }

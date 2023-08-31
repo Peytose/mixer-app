@@ -29,10 +29,9 @@ struct SelectGenderView: View {
                 
                 VStack {
                     ForEach(Gender.allCases, id: \.self) { genderOption in
-                        GenderButton(title: genderOption.description)
-                            .onTapGesture {
-                                viewModel.gender = genderOption
-                            }
+                        GenderButton(isSelected: viewModel.gender == genderOption, gender: genderOption) {
+                            viewModel.gender = genderOption
+                        }
                     }
                 }
                 
@@ -50,21 +49,25 @@ struct SelectGenderView_Previews: PreviewProvider {
 }
 
 fileprivate struct GenderButton: View {
-    let title: String
+    var isSelected: Bool
+    var gender: Gender
+    let action: () -> Void
         
     var body: some View {
-        Capsule()
-            .stroke(lineWidth: 2)
-            .fill(Color.theme.mixerIndigo.opacity(0.8))
-            .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
-            .shadow(radius: 20, x: -8, y: -8)
-            .shadow(radius: 20, x: 8, y: 8)
-            .overlay {
-                Text(title)
-                    .font(.body.weight(.medium))
-                    .foregroundColor(.white)
-            }
-            .contentShape(Rectangle())
-            .padding(.bottom, 20)
+        Button(action: action) {
+            Capsule()
+                .fill(isSelected ? Color.theme.mixerIndigo : Color.clear)
+                .overlay(Capsule().stroke(Color.theme.mixerIndigo.opacity(0.8), lineWidth: 2))
+                .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
+                .shadow(radius: 20, x: -8, y: -8)
+                .shadow(radius: 20, x: 8, y: 8)
+                .overlay {
+                    Text(gender.description)
+                        .font(.body.weight(.medium))
+                        .foregroundColor(.white)
+                }
+                .contentShape(Rectangle())
+                .padding(.bottom, 20)
+        }
     }
 }

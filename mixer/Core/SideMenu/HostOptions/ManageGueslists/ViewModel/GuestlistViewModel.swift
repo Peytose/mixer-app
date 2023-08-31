@@ -259,7 +259,6 @@ extension GuestlistViewModel {
                 
                 guard let user = try? snapshot?.documents.first?.data(as: User.self),
                       let userId = user.id else { return }
-                print("DEBUG: Got user! \(user)")
                 
                 self.service.addUserToGuestlist(eventUid: eventId,
                                                 user: user,
@@ -364,42 +363,32 @@ extension GuestlistViewModel {
                 guard let documents = snapshot?.documents else { return }
                 let guests = documents.compactMap({ try? $0.data(as: EventGuest.self) })
                 
+                print("DEBUG: Guests \(guests)")
                 self.fetchAndAssignUniversities(to: guests) { updatedGuests in
                     DispatchQueue.main.async {
                         self.guests = updatedGuests
                         self.refreshViewState()
-                        print("DEBUG: Guests updated: \(self.guests)")
                     }
                 }
             }
     }
     
     
-    private func fetchAndAssignUniversities(to guests: [EventGuest], completion: @escaping ([EventGuest]) -> Void) {
-        var guestsByUniversityId: [String: [Int]] = [:]
-        for (index, guest) in guests.enumerated() {
-            if guest.universityId != "" {
-                guestsByUniversityId[guest.universityId, default: []].append(index)
-            }
-        }
-
+    private func fetchAndAssignUniversities(to guests: [EventGuest],
+                                            completion: @escaping ([EventGuest]) -> Void) {
         var updatedGuests = guests
-        let uniqueUniversityIds = Set(guests.compactMap { $0.universityId })
-        let group = DispatchGroup()
+        let uniqueUniversityIds = Set(guests.compactMap { $0.universityId }).filter { !$0.isEmpty }
 
-        for universityId in uniqueUniversityIds {
-            group.enter()
-            UserService.shared.fetchUniversity(with: universityId) { university in
-                if let guestIndices = guestsByUniversityId[universityId] {
-                    for index in guestIndices {
+        UserService.shared.fetchUniversities(with: Array(uniqueUniversityIds)) { universities in
+            for university in universities {
+                print("DEBUG: university \(university.name)")
+                for (index, guest) in updatedGuests.enumerated() {
+                    if guest.universityId == university.id {
                         updatedGuests[index].university = university
+                        print("DEBUG: updated guest \(updatedGuests[index])")
                     }
                 }
-                group.leave()
             }
-        }
-
-        group.notify(queue: .main) {
             completion(updatedGuests)
         }
     }

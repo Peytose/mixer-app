@@ -39,5 +39,23 @@ class AlgoliaManager: ObservableObject {
                 usersIndex.search(query: query, completion: completion)
         }
     }
+    
+    
+    func validateUsername(_ username: String, completion: @escaping (Bool) -> Void) {
+        var query = Query(username)
+            .set(\.typoTolerance, to: .false)
+            .set(\.queryType, to: .prefixNone)
+        
+        usersIndex.search(query: query) { result in
+            switch result {
+            case .success(let response):
+                let isUsernameValid = response.hits.isEmpty
+                completion(isUsernameValid)
+            case .failure(let error):
+                print("DEBUG: Error searching for username \(username): \(error.localizedDescription)")
+                completion(false)
+            }
+        }
+    }
 }
 

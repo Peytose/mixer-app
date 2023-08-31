@@ -16,7 +16,8 @@ struct EnterUsernameView: View {
                             title: "Last thing \(viewModel.name)! Choose a username",
                             placeholder: "ex. \(viewModel.name.lowercased() + randomNumber())",
                             footnote: "This will not be changeable in the near future, so choose wisely. It must be unique.",
-                            keyboard: .default)
+                            keyboard: .default,
+                            isValidUsername: viewModel.isUsernameValid)
         }
     }
     

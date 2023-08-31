@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 
 class NotificationsViewModel: ObservableObject {
     @Published var notifications = [Notification]()
@@ -175,5 +176,28 @@ extension NotificationsViewModel {
             }
         }
     }
+}
 
+// MARK: - Metadata Functions
+extension NotificationsViewModel {
+    func numberOfNewNotifications() -> Int {
+        guard let lastCheckTimestamp = getLastNotificationCheckTimestamp() else { return self.notifications.count }
+        
+        let newNotifications = self.notifications.filter { notification in
+            let notificationTimestamp = notification.timestamp.dateValue()
+            return notificationTimestamp > lastCheckTimestamp
+        }
+        
+        return newNotifications.count
+    }
+
+    func saveCurrentTimestamp() {
+        let timestamp = Date()
+        UserDefaults.standard.setValue(timestamp, forKey: "LastNotificationCheckTimestamp")
+    }
+    
+    
+    private func getLastNotificationCheckTimestamp() -> Date? {
+        return UserDefaults.standard.value(forKey: "LastNotificationCheckTimestamp") as? Date
+    }
 }

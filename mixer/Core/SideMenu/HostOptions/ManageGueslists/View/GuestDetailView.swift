@@ -51,9 +51,9 @@ private extension GuestDetailView {
                         .foregroundColor(.secondary)
                 }
                 
-                if let university = guest.university {
+                if let university = guest.university, let icon = university.icon {
                     HStack {
-                        Image(systemName: "graduationcap.fill")
+                        Image(systemName: icon)
                             .imageScale(.small)
                         
                         Text(university.shortName ?? university.name)

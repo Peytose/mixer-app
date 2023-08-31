@@ -15,6 +15,8 @@ struct SignUpTextField: View {
     let placeholder: String
     var footnote: String?
     let keyboard: UIKeyboardType
+    var disableAutocorrection: Bool = true
+    var isValidUsername: Bool?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -33,12 +35,24 @@ struct SignUpTextField: View {
             }
             
             VStack(alignment: .leading, spacing: 8) {
-                TextField(placeholder, text: $input, onEditingChanged: { (editingChanged) in
-                    withAnimation(.easeIn(duration: 0.02)) {
-                        isEditing = editingChanged
+                HStack {
+                    TextField(placeholder, text: $input, onEditingChanged: { (editingChanged) in
+                        withAnimation(.easeIn(duration: 0.02)) {
+                            isEditing = editingChanged
+                        }
+                    })
+                    .textFieldStyle(keyboardType: keyboard,
+                                    disableAutocorrection: disableAutocorrection)
+                    
+                    if let isValidUsername = isValidUsername, !isValidUsername {
+                        Image(systemName: "exclamationmark.octagon.fill")
+                            .resizable()
+                            .scaledToFill()
+                            .foregroundColor(.red)
+                            .frame(width: 30, height: 30)
                     }
-                })
-                .textFieldStyle(keyboardType: keyboard, disableAutocorrection: true)
+                }
+                .padding(.trailing)
                 .background {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(lineWidth: isEditing ? 3 : 1)

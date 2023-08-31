@@ -50,13 +50,14 @@ struct NotificationsView: View {
                 
                 Spacer()
             }
-            .navigationBar(title: "Notifications", displayMode: .inline)
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationBackArrowButton(path: $path)
-                }
+        }
+        .navigationBar(title: "Notifications", displayMode: .inline)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                NavigationBackArrowButton(path: $path)
             }
         }
+        .onAppear { viewModel.saveCurrentTimestamp() }
     }
 }

@@ -106,7 +106,6 @@ struct EditableSettingsRow: View {
         }
         .alert(row.alertTitle ?? "", isPresented: $showAlert) {
             TextField(row.alertPlaceholder ?? "", text: $content)
-                .foregroundColor(.primary)
                     
             if #available(iOS 16.0, *) {
                 Button("Save") {

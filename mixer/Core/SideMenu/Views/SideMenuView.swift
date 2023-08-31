@@ -85,7 +85,7 @@ struct SideMenuView: View {
                         if option == .notifications {
                             SideMenuOptionView(option: option)
                                 .overlay {
-                                    CustomBadgeModifier(value: .constant(notificationsViewModel.notifications.count))
+                                    CustomBadgeModifier(value: .constant(notificationsViewModel.numberOfNewNotifications()))
                                 }
                                 .padding()
                         } else {

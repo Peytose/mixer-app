@@ -140,7 +140,6 @@ final class SearchViewModel: ObservableObject {
                 }
         }
     }
-
     
     
     // DEBUG: Func extracted for potential expansion

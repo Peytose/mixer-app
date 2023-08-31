@@ -85,8 +85,6 @@ class UserService: ObservableObject {
     
     func fetchUniversity(with id: String,
                          completion: @escaping (University) -> Void) {
-        guard id != "com" else { return }
-        
         COLLECTION_UNIVERSITIES
             .document(id)
             .getDocument { snapshot, error in
@@ -99,6 +97,27 @@ class UserService: ObservableObject {
                 print("DEBUG: University associated with user: \(university)")
                 completion(university)
             }
+    }
+    
+    
+    func fetchUniversities(with ids: [String] = [],
+                           completion: @escaping ([University]) -> Void) {
+        let chunks = ids.chunked(into: 10)
+        
+        for chunk in chunks {
+            COLLECTION_UNIVERSITIES
+                .whereField(FieldPath.documentID(), in: chunk)
+                .getDocuments { snapshot, error in
+                    if let error = error {
+                        print("DEBUG: Error fetching university. \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    guard let documents = snapshot?.documents else { return }
+                    let universities = documents.compactMap({ try? $0.data(as: University.self) })
+                    completion(universities)
+                }
+        }
     }
     
     

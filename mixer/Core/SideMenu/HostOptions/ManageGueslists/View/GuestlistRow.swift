@@ -40,8 +40,8 @@ struct GuestlistRow: View {
 
             Spacer()
             
-            if let university = guest.university {
-                Image(systemName: "graduationcap.fill")
+            if let university = guest.university, let icon = university.icon {
+                Image(systemName: icon)
                     .foregroundColor(.secondary)
                     .frame(width: 20, height: 20)
                 

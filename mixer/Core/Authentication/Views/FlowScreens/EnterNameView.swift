@@ -14,7 +14,7 @@ struct EnterNameView: View {
     var body: some View {
         FlowContainerView {
             SignUpTextField(input: $viewModel.name,
-                            title: "My name is",
+                            title: "My full name is",
                             placeholder: "John Doe",
                             footnote: "We ask for your full name for verification purposes. It is unchangable in-app. Don't worry, you can alter your display name in your settings.",
                             keyboard: .default)

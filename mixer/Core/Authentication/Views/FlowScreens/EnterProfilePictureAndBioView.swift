@@ -107,7 +107,7 @@ fileprivate struct SignUpPictureView: View {
                             .frame(width: 140, height: 140)
                             .clipShape(Circle())
                     } else {
-                        Image(systemName: "person.circle")
+                        Image(systemName: "person.crop.circle.badge.plus")
                             .resizable()
                             .scaledToFill()
                             .frame(width: 140, height: 140)

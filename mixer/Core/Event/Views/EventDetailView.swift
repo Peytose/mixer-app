@@ -14,7 +14,11 @@ import PopupView
 struct EventDetailView: View {
     @StateObject private var viewModel: EventViewModel
     var namespace: Namespace.ID?
-    @State private var isShowingModal = false
+    @State private var isShowingModal: Bool = false
+    @State private var doubleTapLocation: CGPoint = CGPoint.zero
+    @State private var showHeart = false
+    @State private var heartRotation: Double = 0
+    @State private var heartOpacity: Double = 1
     @Binding var path: NavigationPath
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
@@ -25,72 +29,107 @@ struct EventDetailView: View {
     }
     
     var body: some View {
-        ZStack {
-            Color.theme.backgroundColor
-                .ignoresSafeArea()
-            
-            ScrollView(showsIndicators: false) {
-                EventFlyer(imageUrl: $viewModel.event.eventImageUrl,
-                           isShowingModal: $isShowingModal)
+        GeometryReader { geometryProxy in
+            ZStack {
+                Color.theme.backgroundColor
+                    .ignoresSafeArea()
                 
-                VStack(alignment: .leading, spacing: 20) {
-                    EventHeader(viewModel: viewModel)
+                ScrollView(showsIndicators: false) {
+                    EventFlyer(imageUrl: $viewModel.event.eventImageUrl,
+                               isShowingModal: $isShowingModal)
                     
-                    if let host = viewModel.host {
-                        if let action = action {
-                            HostSection(viewModel: viewModel,
-                                        path: $path)
-                            .onTapGesture {
-                                action(.back, nil, host, nil)
-                            }
-                        } else {
-                            NavigationLink {
-                                HostDetailView(host: host,
-                                               path: $path)
-                            } label: {
+                    VStack(alignment: .leading, spacing: 20) {
+                        EventHeader(viewModel: viewModel)
+                        
+                        if let host = viewModel.host {
+                            if let action = action {
                                 HostSection(viewModel: viewModel,
                                             path: $path)
+                                .onTapGesture {
+                                    action(.back, nil, host, nil)
+                                }
+                            } else {
+                                NavigationLink {
+                                    HostDetailView(host: host,
+                                                   path: $path)
+                                } label: {
+                                    HostSection(viewModel: viewModel,
+                                                path: $path)
+                                }
                             }
                         }
-                    }
-                    
-                    EventDetails()
-                        .environmentObject(viewModel)
-                    
-                    if let amenities = viewModel.event.amenities {
-                        AmenitiesView(amenities: amenities)
+                        
+                        EventDetails()
+                            .environmentObject(viewModel)
+                        
+                        if let amenities = viewModel.event.amenities {
+                            AmenitiesView(amenities: amenities)
+                                .environmentObject(viewModel)
+                        }
+                        
+                        LocationSection()
                             .environmentObject(viewModel)
                     }
+                    .padding()
+                    .padding(.bottom, 120)
+                }
+                .ignoresSafeArea()
+                .onTapGesture(count: 2) { location in
+                    let wasFavorited = viewModel.event.isFavorited
+                    viewModel.updateFavorite()
                     
-                    LocationSection()
-                        .environmentObject(viewModel)
+                    if wasFavorited == false { // If the event was not favorited before and is now favorited
+                        self.doubleTapLocation = location
+                        self.heartRotation = Double.random(in: 0..<360)
+                        self.showHeart = true
+                        self.heartOpacity = 1
+                        withAnimation(Animation.easeOut(duration: 1.5)) {
+                            self.heartOpacity = 0
+                        }
+                    }
                 }
-                .padding()
-                .padding(.bottom, 120)
-            }
-            .ignoresSafeArea()
-            
-            if isShowingModal {
-                EventImageModalView(imageUrl: viewModel.event.eventImageUrl,
-                                    isShowingModal: $isShowingModal)
+                
+                if self.showHeart {
+                    HeartView()
+                        .rotationEffect(Angle(degrees: self.heartRotation))
+                        .opacity(self.heartOpacity)
+                        .position(x: doubleTapLocation.x,
+                                  y: doubleTapLocation.y - 35) // Adjust the y position to center the heart on the tap
+                        .zIndex(1)
+                        .id(UUID())
+                }
+                
+                if isShowingModal {
+                    EventImageModalView(imageUrl: viewModel.event.eventImageUrl,
+                                        isShowingModal: $isShowingModal)
                     .transition(.opacity)
-                    .zIndex(1)
-            }
-        }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            if path.count > 0 {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationBackArrowButton(path: $path)
                 }
             }
-        }
-        .task {
-            if viewModel.event.isFavorited == nil {
-                viewModel.checkIfUserFavoritedEvent()
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                if path.count > 0 {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        NavigationBackArrowButton(path: $path)
+                    }
+                }
             }
+            .task {
+                if viewModel.event.isFavorited == nil {
+                    viewModel.checkIfUserFavoritedEvent()
+                }
+            }
+            .alert(item: $viewModel.alertItem, content: { $0.alert })
+            
         }
-        .alert(item: $viewModel.alertItem, content: { $0.alert })
+    }
+}
+
+struct HeartView: View {
+    var body: some View {
+        Image(systemName: "heart.fill")
+            .resizable()
+            .foregroundColor(.pink)
+            .frame(width: 70, height: 70)
     }
 }
 
