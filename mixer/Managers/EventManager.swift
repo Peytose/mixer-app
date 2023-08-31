@@ -20,16 +20,32 @@ class EventManager: ObservableObject {
     
     
     func fetchEvents() {
-        COLLECTION_EVENTS.getDocuments { snapshot, error in
-            if let error = error {
-                print("DEBUG: Error getting events: \(error.localizedDescription)")
-                return
+        COLLECTION_EVENTS
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error getting events: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else { return }
+                let events = documents.compactMap({ try? $0.data(as: Event.self) })
+                self.events = events
             }
-            
-            guard let documents = snapshot?.documents else { return }
-            let events = documents.compactMap({ try? $0.data(as: Event.self) })
-            self.events = events
-        }
+    }
+    
+    
+    func checkIfUserIsOnGuestlist(for event: Event, completion: @escaping (Bool) -> Void) {
+        guard let uid = UserService.shared.user?.id else { return }
+        guard let eventId = event.id else { return }
+        
+        COLLECTION_EVENTS
+            .document(eventId)
+            .collection("guestlist")
+            .document(uid)
+            .getDocument { snapshot, _ in
+                guard let didGuestlist = snapshot?.exists else { return }
+                completion(didGuestlist)
+            }
     }
 
     

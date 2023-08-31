@@ -8,7 +8,7 @@
 import Firebase
 import SwiftUI
 
-enum GuestStatus: String, Codable, CaseIterable {
+enum GuestStatus: String, Codable, CustomStringConvertible, CaseIterable {
     case invited   = "isInvited"
     case checkedIn = "isCheckedIn"
     

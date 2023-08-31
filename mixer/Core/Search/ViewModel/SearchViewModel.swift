@@ -80,9 +80,36 @@ final class SearchViewModel: ObservableObject {
 
     
     
-    // DEBUG: Func extracted for potential expansion
-    func selectResult(_ item: SearchItem) {
-        self.selectedSearchItem = item
+    func fetchDetails(for item: SearchItem,
+                      completion: @escaping (NavigationState, Event?, Host?, User?) -> Void) {
+        guard let objectId = item.objectId else { return }
+        
+        switch selectedSearchType {
+        case .events:
+            COLLECTION_EVENTS
+                .document(objectId)
+                .getDocument { document, _ in
+                    if let event = try? document?.data(as: Event.self) {
+                        completion(.close, event, nil, nil)
+                    }
+                }
+        case .hosts:
+            COLLECTION_HOSTS
+                .document(objectId)
+                .getDocument { document, _ in
+                    if let host = try? document?.data(as: Host.self) {
+                        completion(.close, nil, host, nil)
+                    }
+                }
+        case .users:
+            COLLECTION_USERS
+                .document(objectId)
+                .getDocument { document, _ in
+                    if let user = try? document?.data(as: User.self) {
+                        completion(.close, nil, nil, user)
+                    }
+                }
+        }
     }
     
     

@@ -8,6 +8,7 @@
 import UIKit
 import SwiftUI
 import Firebase
+import Combine
 
 enum ProfileSaveType {
     case displayName
@@ -22,28 +23,43 @@ enum ProfileSaveType {
 }
 
 class SettingsViewModel: ObservableObject {
-    @Published var user: User
-    @Published var displayName: String
-    @Published var bio: String
-    @Published var instagramHandle: String
-    @Published var showAgeOnProfile: Bool
-    @Published var genderStr: String
-    @Published var relationshipStatusStr: String
-    @Published var majorStr: String
+    @Published var user: User?
+    @Published var displayName: String           = ""
+    @Published var bio: String                   = ""
+    @Published var instagramHandle: String       = ""
+    @Published var showAgeOnProfile: Bool        = false
+    @Published var genderStr: String             = ""
+    @Published var relationshipStatusStr: String = ""
+    @Published var majorStr: String              = ""
     @Published var selectedImage: UIImage?
     private var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
+    
     let privacyLink = "https://mixer.llc/privacy-policy/"
     let termsOfServiceLink = "https://mixer.llc/privacy-policy/"
     
-    init(user: User) {
-        self.user                  = user
-        self.displayName           = user.displayName
-        self.bio                   = user.bio ?? ""
-        self.instagramHandle       = user.instagramHandle ?? ""
-        self.showAgeOnProfile      = user.showAgeOnProfile
-        self.genderStr             = user.gender.description
-        self.relationshipStatusStr = user.relationshipStatus?.description ?? RelationshipStatus.preferNotToSay.description
-        self.majorStr              = user.major?.description ?? StudentMajor.other.description
+    private let service = UserService.shared
+    private var cancellable = Set<AnyCancellable>()
+    
+    init() {
+        self.fetchUser()
+    }
+    
+    
+    // MARK: - User API
+    func fetchUser() {
+        service.$user
+            .sink { user in
+                self.user = user
+                guard let user = user else { return }
+                
+                self.displayName = user.displayName
+                self.bio = user.bio ?? ""
+                self.instagramHandle = user.instagramHandle ?? ""
+                self.showAgeOnProfile = user.showAgeOnProfile
+                self.genderStr = user.gender.description
+                self.relationshipStatusStr = user.relationshipStatus?.description ?? ""
+            }
+            .store(in: &cancellable)
     }
     
     
@@ -61,7 +77,6 @@ class SettingsViewModel: ObservableObject {
             guard self.displayName != "" else { return }
             
             COLLECTION_USERS.document(uid).updateData(["displayName": self.displayName]) { _ in
-                self.user.displayName = self.displayName
                 completion()
             }
             
@@ -72,9 +87,10 @@ class SettingsViewModel: ObservableObject {
             }
             
             ImageUploader.uploadImage(image: image, type: .profile) { imageUrl in
-                COLLECTION_USERS.document(uid).updateData(["profileImageUrl": imageUrl]) { _ in
+                COLLECTION_USERS
+                    .document(uid)
+                    .updateData(["profileImageUrl": imageUrl]) { _ in
                     print("DEBUG: ✅ Succesfully updated profile image ...")
-                    self.user.profileImageUrl = imageUrl
                     completion()
                 }
             }
@@ -82,49 +98,43 @@ class SettingsViewModel: ObservableObject {
         case .bio:
             guard self.bio != "" else { return }
             
-            COLLECTION_USERS.document(uid).updateData(["bio": self.bio]) { _ in
-                self.user.bio = self.bio
+            COLLECTION_USERS.document(uid).updateData(["bio": bio]) { _ in
                 completion()
             }
             
         case .instagram:
             guard self.instagramHandle != "" else { return }
             
-            COLLECTION_USERS.document(uid).updateData(["instagramHandle": self.instagramHandle]) { _ in
-                self.user.instagramHandle = self.instagramHandle
+            COLLECTION_USERS.document(uid).updateData(["instagramHandle": instagramHandle]) { _ in
                 completion()
             }
             
         case .gender:
-            guard self.genderStr != user.gender.description else { return }
+            guard self.genderStr != user?.gender.description else { return }
             guard let gender = Gender.enumCase(from: genderStr) else { return }
             
             COLLECTION_USERS.document(uid).updateData(["gender": gender.rawValue]) { _ in
-                self.user.gender = gender
                 completion()
             }
             
         case .relationship:
-            guard relationshipStatusStr != user.relationshipStatus?.description else { return }
+            guard self.relationshipStatusStr != user?.relationshipStatus?.description else { return }
             guard let relationshipStatus = RelationshipStatus.enumCase(from: relationshipStatusStr) else { return }
             
             COLLECTION_USERS.document(uid).updateData(["relationshipStatus": relationshipStatus.rawValue]) { _ in
-                self.user.relationshipStatus = relationshipStatus
                 completion()
             }
             
         case .major:
-            guard majorStr != user.major?.description else { return }
+            guard self.majorStr != user?.major?.description else { return }
             guard let major = StudentMajor.enumCase(from: majorStr) else { return }
             
             COLLECTION_USERS.document(uid).updateData(["major": major.rawValue]) { _ in
-                self.user.major = major
                 completion()
             }
             
         case .ageToggle:
             COLLECTION_USERS.document(uid).updateData(["showAgeOnProfile": showAgeOnProfile]) { _ in
-                self.user.showAgeOnProfile = self.showAgeOnProfile
                 completion()
             }
             
@@ -147,6 +157,8 @@ class SettingsViewModel: ObservableObject {
         formatter.allowedUnits = [.second, .minute, .hour, .day]
         formatter.maximumUnitCount = 1
         formatter.unitsStyle = .full
+        
+        guard let user = self.user else { return "" }
         let days = formatter.string(from: user.dateJoined.dateValue(), to: Date()) ?? ""
         let date = user.dateJoined.getTimestampString(format: "MMMM d, yyyy")
         
@@ -158,6 +170,8 @@ class SettingsViewModel: ObservableObject {
 extension SettingsViewModel {
     // Mapping content based on the row title
     func content(for title: String) -> Binding<String> {
+        guard let user = self.user else { return .constant("") }
+        
         switch title {
         case "Display Name":
             return Binding<String>(get: { self.displayName }, set: { self.displayName = $0 })

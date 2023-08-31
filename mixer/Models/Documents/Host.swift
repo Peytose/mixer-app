@@ -59,9 +59,6 @@ struct Host: Hashable, Identifiable, Codable {
     // MARK: - Location
     var address: String?
     var location: GeoPoint
-
-    // MARK: - Members
-    var memberIds: [String]?
     
     // MARK: - Flags
     var hasCurrentEvent: Bool? = false

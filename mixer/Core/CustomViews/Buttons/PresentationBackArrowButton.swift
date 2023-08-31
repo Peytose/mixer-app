@@ -1,5 +1,5 @@
 //
-//  BackArrowButton.swift
+//  PresentationBackArrowButton.swift
 //  mixer
 //
 //  Created by Jose Martinez on 12/22/22.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct BackArrowButton: View {
+struct PresentationBackArrowButton: View {
     @Environment (\.dismiss) private var dismiss
     
     var body: some View {
@@ -22,9 +22,9 @@ struct BackArrowButton: View {
     }
 }
 
-struct BackArrowButton_Previews: PreviewProvider {
+struct PresentationBackArrowButton_Previews: PreviewProvider {
     static var previews: some View {
-        BackArrowButton()
+        PresentationBackArrowButton()
             .preferredColorScheme(.dark)
     }
 }

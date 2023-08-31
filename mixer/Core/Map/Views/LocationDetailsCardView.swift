@@ -91,13 +91,13 @@ struct LocationDetailsCardView: View {
             switch state {
                 case .event:
                 if let event = EventManager.shared.selectedEvent {
-                    EventDetailView(namespace: namespace)
-                        .environmentObject(EventViewModel(event: event))
+//                    EventDetailView(namespace: namespace)
+//                        .environmentObject(EventViewModel(event: event))
                 }
                 case .host:
                 if let host = HostManager.shared.selectedHost {
-                    HostDetailView(namespace: namespace)
-                        .environmentObject(HostViewModel(host: host))
+//                    HostDetailView(namespace: namespace)
+//                        .environmentObject(HostViewModel(host: host))
                 }
             }
         }

@@ -37,6 +37,7 @@ class DeveloperPreview {
     
     let mockEvent = Event(id: NSUUID().uuidString,
                           hostId: "",
+                          postedByUserId: "",
                           hostName: "Theta Chi",
                           timePosted: Timestamp(),
                           eventImageUrl: "https://www.instagram.com/p/CqBwaJ3gcyU/media?size=l",
@@ -84,6 +85,5 @@ class DeveloperPreview {
                         tagline: "The best frat in the greater Boston area",
                         address: "528 Beacon St, Boston, MA 02215",
                         location: GeoPoint(latitude: 42.35071,
-                                           longitude: -71.09097),
-                        memberIds: [])
+                                           longitude: -71.09097))
 }

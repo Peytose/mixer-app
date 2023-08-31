@@ -10,8 +10,10 @@ import SwiftUI
 import Kingfisher
 
 struct SideMenuView: View {
-    @Binding var user: User?
+    @StateObject private var settingsViewModel      = SettingsViewModel()
+    @StateObject private var notificationsViewModel = NotificationsViewModel()
     private let hostFormLink = "https://forms.gle/S3jmgEGSa3VU1Vi56"
+    @Binding var path: NavigationPath
     
     var body: some View {
         VStack(spacing: 40) {
@@ -19,7 +21,7 @@ struct SideMenuView: View {
             VStack(alignment: .leading, spacing: 32) {
                 // user info
                 HStack(alignment: .center, spacing: 15) {
-                    if let user = user {
+                    if let user = settingsViewModel.user {
                         KFImage(URL(string: user.profileImageUrl))
                             .resizable()
                             .scaledToFill()
@@ -69,7 +71,7 @@ struct SideMenuView: View {
             
             // MARK: - Side menu options
             VStack(alignment: .leading) {
-                if user?.accountType == .member || user?.accountType == .host {
+                if settingsViewModel.user?.accountType == .member || settingsViewModel.user?.accountType == .host {
                     ForEach(HostSideMenuOption.allCases) { option in
                         NavigationLink(value: option) {
                             SideMenuOptionView(option: option)
@@ -80,35 +82,43 @@ struct SideMenuView: View {
                 
                 ForEach(SideMenuOption.allCases) { option in
                     NavigationLink(value: option) {
-                        SideMenuOptionView(option: option)
-                            .padding()
+                        if option == .notifications {
+                            SideMenuOptionView(option: option)
+                                .overlay {
+                                    CustomBadgeModifier(value: .constant(notificationsViewModel.notifications.count))
+                                }
+                                .padding()
+                        } else {
+                            SideMenuOptionView(option: option)
+                                .padding()
+                        }
                     }
                 }
             }
             .navigationDestination(for: HostSideMenuOption.self) { option in
                 switch option {
-                    case .createEvent:
+                case .createEvent:
                     EventCreationFlowView()
                         .environmentObject(EventCreationViewModel())
-                    case .manageGuestlists:
-                        Text(option.title)
-                    case .manageMembers:
-                        Text(option.title)
+                case .manageGuestlists:
+                    GuestlistView(hosts: settingsViewModel.user?.associatedHosts ?? [])
+                case .manageMembers:
+                    ManageMembersView(hosts: settingsViewModel.user?.associatedHosts ?? [])
                 }
             }
             .navigationDestination(for: SideMenuOption.self) { option in
                 switch option {
+                case .notifications:
+                    NotificationsView(viewModel: notificationsViewModel, path: $path)
                 case .favorites:
-                    FavoritesView()
+                    FavoritesView(path: $path)
                 case .mixerId:
-                    if let user = user, let image = user.id?.generateQRCode() {
+                    if let user = settingsViewModel.user, let image = user.id?.generateQRCode() {
                         MixerIdView(user: user,
                                     image: Image(uiImage: image))
                     }
                 case .settings:
-                    if let user = user {
-                        SettingsView(user: user)
-                    }
+                    SettingsView(viewModel: settingsViewModel)
                 }
             }
             
@@ -116,14 +126,6 @@ struct SideMenuView: View {
         }
         .padding(.top, 32)
         .background(Color.theme.backgroundColor)
-    }
-}
-
-struct SideMenuView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationStack {
-            SideMenuView(user: .constant(dev.mockUser))
-        }
     }
 }
 

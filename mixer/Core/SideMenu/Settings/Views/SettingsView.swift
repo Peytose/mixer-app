@@ -14,10 +14,6 @@ struct SettingsView: View {
     @State var imagePickerPresented      = false
     let settings: [SettingsSectionModel] = DataLoader.load("profile_settings.json")
     
-    init(user: User) {
-        self.viewModel = SettingsViewModel(user: user)
-    }
-    
     var body: some View {
         ZStack {
             Color.theme.backgroundColor
@@ -25,8 +21,10 @@ struct SettingsView: View {
             
             VStack(alignment: .leading) {
                 List {
-                    UserProfileImageButton(imagePickerPresented: $imagePickerPresented,
-                                           profileImageUrl: URL(string: viewModel.user.profileImageUrl))
+                    if let imageUrl = viewModel.user?.profileImageUrl {
+                        UserProfileImageButton(imagePickerPresented: $imagePickerPresented,
+                                               profileImageUrl: URL(string: imageUrl))
+                    }
                     
                     ForEach(settings) { setting in
                         SettingsSection(setting: setting)
@@ -47,7 +45,7 @@ struct SettingsView: View {
         .onChange(of: viewModel.selectedImage) { _ in viewModel.save(for: .image) }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                BackArrowButton()
+                PresentationBackArrowButton()
             }
         }
     }

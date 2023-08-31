@@ -30,7 +30,7 @@ struct GuestlistRow: View {
                             .frame(width: 20, height: 20)
                     }
 
-                    if let status = guest.status, status == .checkedIn {
+                    if guest.status == .checkedIn {
                         Image(systemName: "checkmark")
                             .foregroundColor(Color.theme.mixerIndigo)
                             .frame(width: 20, height: 20)
@@ -39,18 +39,19 @@ struct GuestlistRow: View {
             }
 
             Spacer()
-
-            Image(systemName: "graduationcap.fill")
-                .foregroundColor(.secondary)
-                .frame(width: 20, height: 20)
-
-            Text(guest.university)
-                .subheadline()
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
+            
+            if let university = guest.university {
+                Image(systemName: "graduationcap.fill")
+                    .foregroundColor(.secondary)
+                    .frame(width: 20, height: 20)
+                
+                Text(university.shortName ?? university.name)
+                    .subheadline()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)
-        .contentShape(Rectangle())
         .onTapGesture {
             withAnimation() {
                 viewModel.isShowingUserInfoModal = true
@@ -75,11 +76,5 @@ struct GuestlistRow: View {
                 }
             }
         }
-    }
-}
-
-struct GuestlistRow_Previews: PreviewProvider {
-    static var previews: some View {
-        GuestlistRow(guest: EventGuest(from: dev.mockUser))
     }
 }

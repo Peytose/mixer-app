@@ -28,7 +28,7 @@ struct GuestlistEntryForm: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                BackArrowButton()
+                PresentationBackArrowButton()
             }
             
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -72,16 +72,16 @@ struct GuestlistEntryForm: View {
             TextField("Name", text: $viewModel.name)
                 .disabled(viewModel.username != "")
             
-            HStack {
-                Text(viewModel.university == .other ? viewModel.customUniversity : viewModel.university.rawValue)
-                Spacer()
-                universityMenu
-            }
-            
-            if viewModel.university == .other {
-                TextField("School Name", text: $viewModel.customUniversity)
-                    .disabled(viewModel.username != "")
-            }
+//            HStack {
+//                Text(viewModel.university == .other ? viewModel.customUniversity : viewModel.university.rawValue)
+//                Spacer()
+//                universityMenu
+//            }
+//            
+//            if viewModel.university == .other {
+//                TextField("School Name", text: $viewModel.customUniversity)
+//                    .disabled(viewModel.username != "")
+//            }
             
             genderField
         }
@@ -98,11 +98,11 @@ struct GuestlistEntryForm: View {
 
     private var universityMenu: some View {
         Menu("Select School") {
-            ForEach(UniversityExamples.allCases, id: \.self) { university in
-                Button(university.rawValue) {
-                    viewModel.university = university
-                }
-            }
+//            ForEach(UniversityExamples.allCases, id: \.self) { university in
+//                Button(university.rawValue) {
+//                    viewModel.university = university
+//                }
+//            }
         }
         .menuTextStyle()
         .disabled(viewModel.username != "")

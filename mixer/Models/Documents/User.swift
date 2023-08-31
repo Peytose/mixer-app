@@ -5,13 +5,23 @@
 //  Created by Peyton Lyons on 11/11/22.
 //
 
-import FirebaseFirestoreSwift
 import Firebase
+import FirebaseFirestoreSwift
+import FirebaseFirestore
+import SwiftUI
 
-enum AccountType: Int, Codable {
+enum AccountType: Int, CustomStringConvertible, Codable {
     case user
     case host
     case member
+    
+    var description: String {
+        switch self {
+            case .user: return "User"
+            case .host: return "Host"
+            case .member: return "Member"
+        }
+    }
 }
 
 struct User: Hashable, Identifiable, Codable {
@@ -19,7 +29,7 @@ struct User: Hashable, Identifiable, Codable {
     @DocumentID var id: String?
     var dateJoined: Timestamp
 
-    // MARK: - Basic Information
+    // MARK: - Basic Informationr
     var name: String
     var displayName: String
     let username: String
@@ -45,6 +55,7 @@ struct User: Hashable, Identifiable, Codable {
     }
 
     // MARK: - Associated Data
+    var associatedHostIds: [String]?
     var associatedHosts: [Host]?
     var university: University?
 }

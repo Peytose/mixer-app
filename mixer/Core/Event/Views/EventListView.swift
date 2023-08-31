@@ -10,17 +10,13 @@ import SwiftUI
 struct EventListView<CellView: View>: View {
     @EnvironmentObject var eventManager: EventManager
     var events: [Event] = []
-    let hasStarted: Bool
     var namespace: Namespace.ID
-    let cellView: (Event, Bool, Namespace.ID) -> CellView
+    let cellView: (Event, Namespace.ID) -> CellView
     
     init(events: [Event],
-         hasStarted: Bool,
          namespace: Namespace.ID,
-         showEventView: Binding<Bool>,
-         cellView: @escaping (Event, Bool, Namespace.ID) -> CellView) {
+         cellView: @escaping (Event, Namespace.ID) -> CellView) {
         self.events = events
-        self.hasStarted = hasStarted
         self.namespace = namespace
         self.cellView = cellView
     }
@@ -30,9 +26,9 @@ struct EventListView<CellView: View>: View {
             if !events.isEmpty {
                 ForEach(events) { event in
                     StickyDateHeader(headerView: {
-                        CellDateView(event: event, hasStarted: hasStarted)
+                        CellDateView(event: event, hasStarted: event.isEventCurrentlyHappening())
                     }, contentView: {
-                        cellView(event, hasStarted, namespace)
+                        cellView(event, namespace)
                     })
                     .frame(height: 380)
                     .onTapGesture {

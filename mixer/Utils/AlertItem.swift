@@ -43,16 +43,52 @@ struct ConfirmationAlertItem: Identifiable {
 }
 
 struct AlertContext {
+    // MARK: - ManageMembersViewModel Errors/Messages
+    static let cannotInviteSelf               = AlertItem(title: Text("Error"),
+                                                          message: Text("You are already apart of this organization."),
+                                                          dismissButton: .default(Text("Ok")))
+    
+    static let duplicateMemberInvite          = AlertItem(title: Text("Duplicate Invite"),
+                                                          message: Text("This user has already been invited."),
+                                                          dismissButton: .default(Text("Ok")))
+    
+    static let memberAlreadyJoined            = AlertItem(title: Text("Cannot Invite User"),
+                                                          message: Text("This user is already a member."),
+                                                          dismissButton: .default(Text("Ok")))
+    
+    static func confirmRemoveMember(confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {
+        ConfirmationAlertItem(title: Text("Confirmation Required"),
+                     message: Text("Are you sure you want to remove this member?"),
+                     primaryButton: .default(Text("Remove").bold(), action: confirmAction),
+                     secondaryButton: .default(Text("Oops nvm")))
+    }
+    
+    static let unableToRemoveMember               = AlertItem(title: Text("Error"),
+                                                              message: Text("We were unable to remove this member.\nPlease try again."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let unableToGetUserFromUsername        = AlertItem(title: Text("Unable to Find User"),
+                                                              message: Text("We were unable to find a user from this username.\nPlease try again."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    static let unableToAddMember                  = AlertItem(title: Text("Failed to Add Member"),
+                                                              message: Text("We were unable to add a member at this time.\nPlease try again later. If this persists, go to Profile > Settings > Feedback & Support > Report a Bug."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    
     // MARK: - EventDetailView Messages
     static let locationDetailsInfo                = AlertItem(title: Text("Location Details"),
                                                               message: Text("For invite only parties that you have not been invited, you can only see the general location. Once you are on the guest list, you will be able to see the exact location"),
                                                               dismissButton: .default(Text("Got it!")))
+    
     static let wetAndDryEventsInfo                = AlertItem(title: Text("Wet and Dry Events"),
                                                               message: Text("Wet events offer beer/alcohol. Dry events do not offer alcohol."),
                                                               dismissButton: .default(Text("Ok")))
     
     static let openAndInviteOnlyEventsInfo        = AlertItem(title: Text("Open and Invite Only Events"),
                                                               message: Text("You can only see the exact location and start time of an Invite Only Event if you are on its guestlist. On the other hand, you can always see all the details of an Open Event"), dismissButton: .default(Text("Ok")))
+    
+    
     //MARK: - Authentication Errors/Messages
     static func existingCountryCode(code: String, denyAction: @escaping () -> Void) -> ConfirmationAlertItem {
         ConfirmationAlertItem(title: Text("Confirm Phone Number"),
@@ -119,6 +155,7 @@ struct AlertContext {
                                                               message: Text("Unable to get host events.\nPlease try again later."),
                                                               dismissButton: .default(Text("Ok")))
     
+    
     //MARK: - EventFlow Errors/Messages
     static let eventVisiblityInfo                 = AlertItem(title: Text("Event Visibility"),
                                                               message: Text("Public events are visible to all users. Private events are only visible to invited users and users on the guest list."),
@@ -160,10 +197,12 @@ struct AlertContext {
                                                               message: Text("N/A"),
                                                               dismissButton: .default(Text("Ok")))
     
+    
     //MARK: - LocationListView Errors
     static let unableToGetAllCheckedInProfiles    = AlertItem(title: Text("Server"),
                                                               message: Text("We are unable get users checked in at this time.\nPlease try again."),
                                                               dismissButton: .default(Text("Ok")))
+    
     
     //MARK: - ProfileView Errors
     static let invalidProfile                     = AlertItem(title: Text("Invalid Profile"),
@@ -186,6 +225,7 @@ struct AlertContext {
                                                               message: Text("We were unable to update your profile at this time.\nPlease try again later."),
                                                               dismissButton: .default(Text("Shucks!")))
     
+    
     //MARK: - LocationDetailView Errors
     static let unableToGetCheckInStatus           = AlertItem(title: Text("Server Error"),
                                                               message: Text("Unable to retrieve checked in status of the current user.\nPlease try again."),
@@ -199,7 +239,18 @@ struct AlertContext {
                                                               message: Text("We are unable get users checked into this location at this time.\nPlease try again."),
                                                               dismissButton: .default(Text("Ok")))
     
+    
     //MARK: - Guestlist Errors/Messages
+    static let duplicateGuestInvite               = AlertItem(title: Text("Duplicate Invite"),
+                                                              message: Text("This user has already been invited."),
+                                                              dismissButton: .default(Text("Ok")))
+                                                              
+                                                              
+    static let guestAlreadyJoined                 = AlertItem(title: Text("Cannot Re-invite User"),
+                                                              message: Text("This user has already checked in!"),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    
     static let unableToAddGuest                   = AlertItem(title: Text("Failed to Add Guest"),
                                                               message: Text("We were unable to add the guest at this time.\nPlease try again later. If this persists, go to Profile > Settings > Feedback & Support > Report a Bug."),
                                                               dismissButton: .default(Text("Ok")))
@@ -212,6 +263,7 @@ struct AlertContext {
                                              action: confirmAction),
                      secondaryButton: .default(Text("Oops nvm")))
     }
+    
     
     //MARK: - ProfileSettings Errors/Messages
     static func confirmChangesToProfile(confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {

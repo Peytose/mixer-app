@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FavoritesView: View {
     @StateObject private var viewModel = FavoritesViewModel()
+    @Binding var path: NavigationPath
     @Namespace var namespace
     
     var body: some View {
@@ -16,31 +17,31 @@ struct FavoritesView: View {
             Color.theme.backgroundColor
                 .ignoresSafeArea()
             
-            List {
-                ForEach(Array(viewModel.favorites)) { event in
-                    EventCellView(event: event, hasStarted: false, namespace: namespace)
+            VStack {
+                LazyVStack(alignment: .center) {
+                    ForEach(Array(viewModel.favoritedEvents)) { event in
+                        FavoriteCell(event: event)
+                            .environmentObject(viewModel)
+                            .navigationDestination(for: Event.self) { event in
+                                EventDetailView(event: event, path: $path)
+                            }
+                    }
                 }
+             
+                Spacer()
             }
-            .scrollContentBackground(.hidden)
-            .listStyle(.insetGrouped)
         }
         .navigationBar(title: "Favorites", displayMode: .inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                BackArrowButton()
+                PresentationBackArrowButton()
             }
         }
         .onAppear {
-            if viewModel.favorites.isEmpty {
+            if viewModel.favoritedEvents.isEmpty {
                 viewModel.startListeningForFavorites()
             }
         }
-    }
-}
-
-struct FavoritesView_Previews: PreviewProvider {
-    static var previews: some View {
-        FavoritesView()
     }
 }

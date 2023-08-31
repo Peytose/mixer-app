@@ -23,8 +23,7 @@ class HostService: ObservableObject {
             .document(eventUid)
             .collection("guestlist")
             .document(uid)
-            .updateData(data,
-                        completion: completion)
+            .updateData(data, completion: completion)
     }
     
     
@@ -50,17 +49,58 @@ class HostService: ObservableObject {
     }
     
     
-    func addUserToGuestlist(eventUid: String, user: User, invitedBy: String? = nil, checkedInBy: String? = nil, completion: FirestoreCompletion) {
+    func addUserToGuestlist(eventUid: String,
+                            user: User,
+                            status: GuestStatus,
+                            invitedBy: String? = nil,
+                            checkedInBy: String? = nil,
+                            completion: FirestoreCompletion) {
         guard let userId = user.id else { return }
         
-        let guest = EventGuest(from: user, invitedBy: invitedBy, checkedInBy: checkedInBy)
+        let guest = EventGuest(name: user.name,
+                               universityId: user.universityId,
+                               email: user.email,
+                               username: user.username,
+                               profileImageUrl: user.profileImageUrl,
+                               age: user.age,
+                               gender: user.gender,
+                               status: status,
+                               invitedBy: invitedBy,
+                               checkedInBy: checkedInBy,
+                               timestamp: Timestamp())
+        
         guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
         
         COLLECTION_EVENTS
             .document(eventUid)
             .collection("guestlist")
             .document(userId)
-            .setData(encodedGuest,
-                     completion: completion)
+            .setData(encodedGuest, completion: completion)
+    }
+    
+    
+    func removeUserFromGuestlist(with id: String,
+                                 eventId: String,
+                                 completion: FirestoreCompletion) {
+        // Delete the user from the guestlist
+        COLLECTION_EVENTS
+            .document(eventId)
+            .collection("guestlist")
+            .document(id)
+            .delete { error in
+                if let error = error {
+                    completion?(error)
+                    return
+                }
+                
+                // Delete the notifications
+                COLLECTION_NOTIFICATIONS
+                
+                    .deleteNotifications(forUserID: id,
+                                         ofTypes: [.guestlistAdded,
+                                                   .guestlistJoined],
+                                         eventId: eventId,
+                                         completion: completion)
+            }
     }
 }

@@ -12,9 +12,17 @@ import Kingfisher
 import PopupView
 
 struct EventDetailView: View {
-    @EnvironmentObject var viewModel: EventViewModel
+    @StateObject private var viewModel: EventViewModel
     var namespace: Namespace.ID?
     @State private var isShowingModal = false
+    @Binding var path: NavigationPath
+    var action: ((NavigationState, Event?, Host?, User?) -> Void)?
+    
+    init(event: Event, path: Binding<NavigationPath>, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
+        self._viewModel = StateObject(wrappedValue: EventViewModel(event: event))
+        self._path      = path
+        self.action     = action
+    }
     
     var body: some View {
         ZStack {
@@ -22,197 +30,172 @@ struct EventDetailView: View {
                 .ignoresSafeArea()
             
             ScrollView(showsIndicators: false) {
-                EventFlyerHeader(isShowingModal: $isShowingModal)
+                EventFlyer(imageUrl: $viewModel.event.eventImageUrl,
+                           isShowingModal: $isShowingModal)
                 
                 VStack(alignment: .leading, spacing: 20) {
-                    HostSection()
+                    EventHeader(viewModel: viewModel)
+                    
+                    if let host = viewModel.host {
+                        if let action = action {
+                            HostSection(viewModel: viewModel,
+                                        path: $path)
+                            .onTapGesture {
+                                action(.back, nil, host, nil)
+                            }
+                        } else {
+                            NavigationLink {
+                                HostDetailView(host: host,
+                                               path: $path)
+                            } label: {
+                                HostSection(viewModel: viewModel,
+                                            path: $path)
+                            }
+                        }
+                    }
                     
                     EventDetails()
+                        .environmentObject(viewModel)
                     
                     if let amenities = viewModel.event.amenities {
                         AmenitiesView(amenities: amenities)
+                            .environmentObject(viewModel)
                     }
                     
                     LocationSection()
+                        .environmentObject(viewModel)
                 }
                 .padding()
-                .padding(EdgeInsets(top: 100, leading: 0, bottom: 120, trailing: 0))
+                .padding(.bottom, 120)
             }
-            .coordinateSpace(name: "scroll")
+            .ignoresSafeArea()
             
             if isShowingModal {
-                EventImageModalView(imageUrl: viewModel.event.eventImageUrl, isShowingModal: $isShowingModal)
+                EventImageModalView(imageUrl: viewModel.event.eventImageUrl,
+                                    isShowingModal: $isShowingModal)
                     .transition(.opacity)
                     .zIndex(1)
             }
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar {
+            if path.count > 0 {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationBackArrowButton(path: $path)
+                }
+            }
+        }
         .task {
-            viewModel.checkIfUserFavoritedEvent()
-            viewModel.checkIfUserIsOnGuestlist()
+            if viewModel.event.isFavorited == nil {
+                viewModel.checkIfUserFavoritedEvent()
+            }
         }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
     }
 }
 
-struct EventDetailView_Previews: PreviewProvider {
-    @Namespace static var namespace
+struct EventHeader: View {
+    @ObservedObject var viewModel: EventViewModel
     
-    static var previews: some View {
-        EventDetailView(namespace: namespace)
-            .environmentObject(EventViewModel(event: dev.mockEvent))
+    var body: some View {
+        VStack(alignment: .center, spacing: 2) {
+            HStack {
+                Text(viewModel.event.title)
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.65)
+                
+                Spacer()
+                
+                if let isFavorited = viewModel.event.isFavorited {
+                    ParticleEffectButton(systemImage: "heart.fill",
+                                         status: isFavorited,
+                                         activeTint: .pink,
+                                         inActiveTint: .secondary,
+                                         frameSize: 45) {
+                        viewModel.updateFavorite()
+                    }
+                }
+                
+                if let eventId = viewModel.event.id,
+                   let url = URL(string: "https://mixer.page.link/event?eventId=\(eventId)") {
+                    ShareLink(item: url,
+                              message: Text("\nCheck out this event on mixer!"),
+                              preview: SharePreview("\(viewModel.event.title) by \(viewModel.event.hostName)",
+                                                    image: viewModel.imageLoader.image ?? Image("AppIcon")),
+                              label: {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.title3.weight(.medium))
+                            .foregroundColor(.secondary)
+                            .contentShape(Rectangle())
+                            .padding()
+                    })
+                }
+            }
+            
+            Divider()
+                .foregroundColor(.secondary)
+                .padding(.vertical)
+            
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(viewModel.event.startDate.getTimestampString(format: "EEEE, MMMM d"))
+                        .font(.headline)
+                    
+                    Text("\(viewModel.event.startDate.getTimestampString(format: "h:mm a")) - \(viewModel.event.endDate.getTimestampString(format: "h:mm a"))")
+                        .foregroundColor(.secondary)
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                
+                Spacer()
+                
+                VStack(alignment: .center, spacing: 4) {
+                    Image(systemName: viewModel.event.isInviteOnly ? "lock.fill" : "globe")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 20, height: 20)
+                    
+                    Text(viewModel.event.isInviteOnly ? "Private" : "Public")
+                        .foregroundColor(.secondary)
+                    
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+            }
+            .font(.callout.weight(.semibold))
+        }
+        .padding(EdgeInsets(top: 14, leading: 14, bottom: 14, trailing: 14))
+        .background {
+            Rectangle()
+                .fill(Color.theme.secondaryBackgroundColor)
+                .opacity(0.8)
+                .cornerRadius(30)
+        }
     }
 }
 
-struct EventFlyerHeader: View {
-    @EnvironmentObject var viewModel: EventViewModel
+struct EventFlyer: View {
+    @Binding var imageUrl: String
     @Binding var isShowingModal: Bool
-    @State private var currentAmount = 0.0
-    @State private var finalAmount = 1.0
     
     var body: some View {
-        GeometryReader { proxy in
-            let scrollY = proxy.frame(in: .named("scroll")).minY
-            
-            VStack {
-                ZStack {
-                    VStack(alignment: .center, spacing: 2) {
-                        HStack {
-                            Text(viewModel.event.title)
-                                .font(.title)
-                                .bold()
-                                .foregroundColor(.primary)
-                                .lineLimit(2)
-                                .minimumScaleFactor(0.65)
-                            
-                            Spacer()
-                            
-                            if let isFavorited = viewModel.event.isFavorited {
-                                CustomButton(systemImage: "heart.fill",
-                                             status: isFavorited,
-                                             activeTint: .pink,
-                                             inActiveTint: .secondary) {
-                                    viewModel.updateFavorite()
-                                }
-                            }
-                            
-                            if let eventId = viewModel.event.id,
-                               let url = URL(string: "https://mixer.page.link/event?eventId=\(eventId)") {
-                                ShareLink(item: url,
-                                          message: Text("\nCheck out this event on mixer!"),
-                                          preview: SharePreview("\(viewModel.event.title) by \(viewModel.event.hostName)",
-                                                                image: viewModel.imageLoader.image ?? Image("AppIcon")),
-                                          label: {
-                                    Image(systemName: "square.and.arrow.up")
-                                        .font(.title3.weight(.medium))
-                                        .foregroundColor(.secondary)
-                                        .contentShape(Rectangle())
-                                        .padding()
-                                })
-                            }
-                        }
-                        
-                        Divider()
-                            .foregroundColor(.secondary)
-                            .padding(.vertical)
-                        
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(viewModel.event.startDate.getTimestampString(format: "EEEE, MMMM d"))
-                                    .font(.headline)
-                                
-                                Text("\(viewModel.event.startDate.getTimestampString(format: "h:mm a")) - \(viewModel.event.endDate.getTimestampString(format: "h:mm a"))")
-                                    .foregroundColor(.secondary)
-                            }
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
-                            
-                            Spacer()
-                            
-                            VStack(alignment: .center, spacing: 4) {
-                                Image(systemName: viewModel.event.isInviteOnly ? "lock.fill" : "globe")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 20, height: 20)
-                                
-                                Text(viewModel.event.isInviteOnly ? "Private" : "Public")
-                                    .foregroundColor(.secondary)
-                                
-                            }
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
-                        }
-                        .font(.callout.weight(.semibold))
-                    }
-                    .padding(EdgeInsets(top: 14, leading: 14, bottom: 14, trailing: 14))
-                    .background(
-                        Rectangle()
-                            .fill(.ultraThinMaterial)
-                            .backgroundStyle(cornerRadius: 30)
-                    )
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .offset(y: 120)
-                    .background(
-                        ZStack {
-                            KFImage(URL(string: viewModel.event.eventImageUrl))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(maxHeight: 550)
-                                .offset(y: scrollY > 0 ? -scrollY : 0)
-                                .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
-                                .blur(radius: scrollY > 0 ? scrollY / 20 : 0)
-                                .opacity(0.9)
-                                .mask(
-                                    RoundedRectangle(cornerRadius: 20)
-                                )
-                            
-                            Rectangle()
-                                .fill(Color.clear)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                                .backgroundBlur(radius: 10, opaque: true)
-                                .mask(
-                                    RoundedRectangle(cornerRadius: 20)
-                                )
-                            
-                            KFImage(URL(string: viewModel.event.eventImageUrl))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .cornerRadius(20)
-                                .frame(width: proxy.size.width - 60, height: proxy.size.height - 60)
-                                .mask(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .frame(width: proxy.size.width - 50, height: proxy.size.height - 50)
-                                )
-                                .offset(y: scrollY > 0 ? -scrollY : 0)
-                                .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
-                                .modifier(ImageModifier(contentSize: CGSize(width: proxy.size.width, height: proxy.size.height)))
-                                .scaleEffect(finalAmount + currentAmount)
-                                .onLongPressGesture(minimumDuration: 0.1) {
-                                    let impact = UIImpactFeedbackGenerator(style: .heavy)
-                                    impact.impactOccurred()
-                                    withAnimation() {
-                                        isShowingModal.toggle()
-                                    }
-                                }
-                                .zIndex(2)
-                        }
-                    )
-                    .offset(y: scrollY > 0 ? -scrollY * 1.8 : 0)
+        StretchablePhotoBanner(imageUrl: imageUrl)
+            .onLongPressGesture(minimumDuration: 0.1) {
+                let impact = UIImpactFeedbackGenerator(style: .heavy)
+                impact.impactOccurred()
+                withAnimation() {
+                    isShowingModal.toggle()
                 }
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: scrollY > 0 ? 500 + scrollY : 500)
-        }
-        .frame(height: 500)
     }
 }
 
 struct HostSection: View {
-    @EnvironmentObject var viewModel: EventViewModel
-    @EnvironmentObject var homeViewModel: HomeViewModel
-    @EnvironmentObject var hostManager: HostManager
+    @ObservedObject var viewModel: EventViewModel
+    @Binding var path: NavigationPath
     
     var body: some View {
         if let host = viewModel.host {
@@ -259,11 +242,6 @@ struct HostSection: View {
                         .buttonStyle(.plain)
                     }
                 }
-            }
-            .onTapGesture {
-                homeViewModel.handleTap(to: .embeddedHostDetailView,
-                                        host: host,
-                                        hostManager: hostManager)
             }
         }
     }
@@ -465,22 +443,5 @@ fileprivate struct JoinGuestlistButton: View {
                     .fill(Color.theme.mixerPurpleGradient)
             }
         }
-    }
-}
-
-
-@ViewBuilder
-func CustomButton(systemImage: String, status: Bool, activeTint: Color, inActiveTint: Color, onTap: @escaping () -> ()) -> some View {
-    Button(action: onTap) {
-        Image(systemName: systemImage)
-            .font(.title2)
-            .particleEffect(
-                systemImage: systemImage,
-                font: .body,
-                status: status,
-                activeTint: activeTint,
-                inActiveTint: inActiveTint
-            )
-            .foregroundColor(status ? activeTint : inActiveTint)
     }
 }

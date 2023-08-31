@@ -11,10 +11,11 @@ import FirebaseFirestoreSwift
 import CoreLocation
 import MapKit
 
+@MainActor
 final class HostViewModel: ObservableObject {
     @Published var recentEvents           = [Event]()
     @Published var currentAndFutureEvents = [Event]()
-    let host: Host
+    @Published var host: Host
     
     init(host: Host) {
         self.host = host
@@ -42,14 +43,12 @@ final class HostViewModel: ObservableObject {
         
         COLLECTION_EVENTS
             .whereField("hostUid", isEqualTo: hostUid)
-            .whereField("endDate", isGreaterThan: Timestamp())
-            .whereField("endDate", isLessThan: thirtyDaysBefore)
+            .whereField("endDate", isLessThan: Timestamp())
+            .whereField("endDate", isGreaterThan: thirtyDaysBefore)
             .getDocuments { snapshot, _ in
                 guard let documents = snapshot?.documents else { return }
-                let events = documents
-                    .compactMap({ try? $0.data(as: Event.self) })
-                    .sortedByStartDate()
-                
+                let events = documents.compactMap({ try? $0.data(as: Event.self) })
+                self.recentEvents = events.sortedByStartDate(true)
             }
     }
     
@@ -57,14 +56,11 @@ final class HostViewModel: ObservableObject {
     func fetchCurrentAndUpcomingEvents() {
         guard let hostUid = host.id else { return }
         
-        COLLECTION_EVENTS
-            .whereField("hostUid", isEqualTo: hostUid)
-            .whereField("endDate", isLessThan: Timestamp())
-            .getDocuments { snapshot, _ in
-                guard let documents = snapshot?.documents else { return }
-                let events = documents
-                    .compactMap({ try? $0.data(as: Event.self) })
-                    .sortedByStartDate()
-            }
+        let events = EventManager.shared.events.filter({
+            $0.hostId == hostUid &&
+            $0.endDate > Timestamp()
+        })
+        
+        self.currentAndFutureEvents = events.sortedByStartDate()
     }
 }

@@ -12,73 +12,86 @@ import Combine
 import MapKit
 
 class HomeViewModel: ObservableObject {
-    @Published var navigationStack: [NavigationContext] = []
-    @Published var currentTab: TabItem = .map
-    @Published var currentState: NavigationState?
+    @Published var path = NavigationPath()
+    @Published var currentTab: TabItem = .map {
+        didSet {
+            selectedNavigationStack = navigationStackTabMap[currentTab] ?? []
+        }
+    }
+    @Published var navigationStackTabMap: [TabItem: [NavigationContext]] = [:] {
+        didSet {
+            selectedNavigationStack = navigationStackTabMap[currentTab] ?? []
+            print("DEBUG: Updated navigation stack: \(selectedNavigationStack)")
+        }
+    }
+    @Published var selectedNavigationStack: [NavigationContext] = []
+    var currentState: NavigationState {
+        return selectedNavigationStack.last?.state ?? .menu
+    }
     @Published var showSideMenu: Bool = false
-    @Published var selectedEvent: Event? = nil
-    @Published var selectedHost: Host? = nil
     
+    init() {
+        for tab in TabItem.allCases {
+            navigationStackTabMap[tab] = [NavigationContext(state: .menu)]
+        }
+    }
 
     func iconForState() -> String {
-        if let state = self.currentState {
-            switch state {
-            case .embeddedEventDetailView, .embeddedHostDetailView:
-                return "arrow.left"
-            case .eventDetailView, .hostDetailView:
-                return "xmark"
-            default: return ""
-            }
-        } else {
-            return "line.3.horizontal"
+        switch currentState {
+        case .menu:
+            return showSideMenu ? "chevron.right" : "line.3.horizontal"
+        case .back:
+            return "arrow.left"
+        case .close:
+            return "xmark"
         }
     }
     
-    
     func actionForState() {
-        if let state = self.currentState {
-            switch state {
-            case .embeddedEventDetailView, .embeddedHostDetailView:
-                navigateBack()
-            case .eventDetailView, .hostDetailView:
-                currentState = nil
-            default: break
-            }
-        } else {
+        switch currentState {
+        case .menu:
             showSideMenu.toggle()
+        case .back, .close:
+            navigateBack()
         }
     }
 }
 
 // MARK: - Helper functions
 extension HomeViewModel {
-    func handleTap(to state: NavigationState, event: Event? = nil, host: Host? = nil, eventManager: EventManager? = nil, hostManager: HostManager? = nil) {
-        if let selectedEvent = event {
-            // Update the selected event in the EventManager and navigate accordingly
-            eventManager?.selectedEvent = selectedEvent
-            navigate(to: state, withEvent: selectedEvent)
-        } else if let selectedHost = host {
-            // Update the selected host in the HostManager and navigate accordingly
-            hostManager?.selectedHost = selectedHost
-            navigate(to: state, withHost: selectedHost)
-        }
+    func pushContext(_ context: NavigationContext) {
+        navigationStackTabMap[currentTab]?.append(context)
+        selectedNavigationStack = navigationStackTabMap[currentTab] ?? [NavigationContext(state: .menu)]
+        print("DEBUG: Pushed context: \(navigationStackTabMap)")
     }
+    
+    
+    func popContext() -> NavigationContext {
+        // Pop the last context if there's more than one
+        if navigationStackTabMap[currentTab]?.count ?? 0 > 1 {
+            return navigationStackTabMap[currentTab]?.popLast() ?? NavigationContext(state: .menu)
+        }
+        
+        // If there's only one context, return it without popping
+        return navigationStackTabMap[currentTab]?.last ?? NavigationContext(state: .menu)
+    }
+
 
     
-    func navigate(to state: NavigationState, withEvent event: Event? = nil, withHost host: Host? = nil) {
-        let currentContext = NavigationContext(state: currentState, selectedEvent: event, selectedHost: host)
-        navigationStack.append(currentContext)
-        currentState = state
-        selectedEvent = event
-        selectedHost = host
+    func navigate(to state: NavigationState,
+                  withEvent event: Event? = nil,
+                  withHost host: Host? = nil,
+                  withUser user: User? = nil) {
+        let currentContext = NavigationContext(state: state,
+                                               selectedEvent: event,
+                                               selectedHost: host)
+        pushContext(currentContext)
+        print("DEBUG: Navigated to new context: \(navigationStackTabMap)")
     }
-
+    
     
     private func navigateBack() {
-        if let previousContext = navigationStack.popLast() {
-            currentState = previousContext.state
-            selectedEvent = previousContext.selectedEvent
-            selectedHost = previousContext.selectedHost
-        }
+        let _ = popContext() // Pop the current context
+        print("DEBUG: Popped context: \(navigationStackTabMap)")
     }
 }

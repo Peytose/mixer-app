@@ -13,14 +13,17 @@ import Combine
 struct HostInfoView: View {
     @State private var bioHeight: CGFloat = 65
     @State private var contentHeight: CGFloat = 0
-    var namespace: Namespace.ID
+    var namespace: Namespace.ID?
     @State private var showMoreEvents = false
-    @EnvironmentObject var viewModel: HostViewModel
+    @Binding var path: NavigationPath
+    @ObservedObject var viewModel: HostViewModel
+    var action: ((NavigationState, Event?, Host?, User?) -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Host name, links and tagline section
-            NameAndTaglineView(namespace: namespace)
+            NameAndTaglineView(namespace: namespace,
+                               host: $viewModel.host)
 //                .padding(.bottom, 8)
             
             // Upcoming events section
@@ -31,16 +34,28 @@ struct HostInfoView: View {
                             .primaryHeading()
                         
                         ForEach(showMoreEvents ? viewModel.currentAndFutureEvents : Array(viewModel.currentAndFutureEvents.prefix(1))) { event in
-                            NavigationLink {
-                                EventDetailView(namespace: namespace)
-                                .environmentObject(EventViewModel(event: event))
-                            } label: {
+                            if let action = action {
                                 SmallEventCell(title: event.title,
                                                duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
                                                visibility: "\(event.isInviteOnly ? "Closed" : "Open") Event",
                                                dateMonth: event.startDate.getTimestampString(format: "MMM"),
                                                dateNumber: event.startDate.getTimestampString(format: "d"),
                                                imageURL: event.eventImageUrl)
+                                .onTapGesture {
+                                    action(.back, event, nil, nil)
+                                }
+                            } else  {
+                                NavigationLink {
+                                    EventDetailView(event: event,
+                                                    path: $path)
+                                } label: {
+                                    SmallEventCell(title: event.title,
+                                                   duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
+                                                   visibility: "\(event.isInviteOnly ? "Closed" : "Open") Event",
+                                                   dateMonth: event.startDate.getTimestampString(format: "MMM"),
+                                                   dateNumber: event.startDate.getTimestampString(format: "d"),
+                                                   imageURL: event.eventImageUrl)
+                                }
                             }
                         }
                         
@@ -86,19 +101,21 @@ struct HostInfoView: View {
 }
 
 fileprivate struct NameAndTaglineView: View {
-    var namespace: Namespace.ID
-    @EnvironmentObject var viewModel: HostViewModel
+    var namespace: Namespace.ID?
+    @Binding var host: Host
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            NameAndLinksRow(host: viewModel.host, namespace: namespace)
+            NameAndLinksRow(host: host,
+                            namespace: namespace)
             
-            if let tagline = viewModel.host.tagline {
+            if let tagline = host.tagline {
                 Text(tagline)
                     .subheadline(color: .white.opacity(0.8))
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
-                    .matchedGeometryEffect(id: "tagline-\(viewModel.host.username)", in: namespace)
+                    .matchedGeometryEffect(id: "tagline-\(host.username)",
+                                           in: namespace ?? Namespace().wrappedValue)
             }
         }
     }
@@ -142,12 +159,3 @@ struct ViewHeightKey: PreferenceKey { // Define a custom preference key to track
         value = max(value, nextValue())
     }
 }
-
-//struct HostInfoView_Previews: PreviewProvider {
-//    @Namespace static var namespace
-//
-//    static var previews: some View {
-//        HostInfoView(namespace: namespace, viewModel: HostDetailViewModel(host: Host(from: Mockdata.host)))
-//            .preferredColorScheme(.dark)
-//    }
-//}

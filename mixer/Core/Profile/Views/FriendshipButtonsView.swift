@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FriendshipButtonsView: View {
-    @EnvironmentObject var viewModel: ProfileViewModel
+    @ObservedObject var viewModel: ProfileViewModel
     
     var body: some View {
         HStack(alignment: .center, spacing: 5) {
@@ -72,12 +72,5 @@ extension FriendshipButtonsView {
                 }
         }
         .buttonStyle(.plain)
-    }
-}
-
-struct FriendshipButtonsView_Previews: PreviewProvider {
-    static var previews: some View {
-        FriendshipButtonsView()
-            .environmentObject(ProfileViewModel(user: dev.mockUser))
     }
 }

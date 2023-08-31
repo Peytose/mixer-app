@@ -8,8 +8,7 @@
 import Foundation
 
 enum NavigationState: Int, CaseIterable {
-    case embeddedEventDetailView
-    case embeddedHostDetailView
-    case eventDetailView
-    case hostDetailView
+    case menu
+    case back
+    case close
 }

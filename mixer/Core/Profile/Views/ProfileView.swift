@@ -12,9 +12,17 @@ import TabBar
 import PopupView
 
 struct ProfileView: View {
-    @EnvironmentObject var viewModel: ProfileViewModel
+    @StateObject private var viewModel: ProfileViewModel
     @State private var showOptions  = false
     @State private var showUsername = false
+    @Binding var path: NavigationPath
+    var action: ((NavigationState, Event?, Host?, User?) -> Void)?
+    
+    init(user: User, path: Binding<NavigationPath>, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
+        self._viewModel = StateObject(wrappedValue: ProfileViewModel(user: user))
+        self._path      = path
+        self.action     = action
+    }
     
     @Namespace var namespace: Namespace.ID
     
@@ -33,7 +41,6 @@ struct ProfileView: View {
             .background(Color.theme.backgroundColor)
             .preferredColorScheme(.dark)
             .ignoresSafeArea(.all)
-            .navigationBarHidden(true)
             .statusBar(hidden: true)
             
             if showOptions {
@@ -49,7 +56,7 @@ struct ProfileView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                BackArrowButton()
+                PresentationBackArrowButton()
             }
         }
     }
@@ -153,7 +160,7 @@ extension ProfileView {
                 Spacer()
             }
             
-            FriendshipButtonsView()
+            FriendshipButtonsView(viewModel: viewModel)
             
             if let bio = viewModel.user.bio {
                 Text(bio)
@@ -196,13 +203,6 @@ extension ProfileView {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
         .padding(.top, 16)
-    }
-}
-
-struct UserProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileView()
-            .environmentObject(ProfileViewModel(user: dev.mockUser))
     }
 }
 

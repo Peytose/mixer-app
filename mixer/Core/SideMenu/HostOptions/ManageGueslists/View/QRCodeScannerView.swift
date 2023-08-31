@@ -16,7 +16,7 @@ struct QRCodeScannerView: View {
     var body: some View {
         ZStack {
             CodeScannerView(codeTypes: [.qr],
-                            scanMode: .oncePerCode,
+                            scanMode: .once,
                             manualSelect: false,
                             showViewfinder: true,
                             shouldVibrateOnSuccess: true,

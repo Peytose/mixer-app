@@ -10,7 +10,7 @@ import Combine
 
 struct NameAndLinksRow: View {
     let host: Host
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID?
     @State private var timer: AnyCancellable?
     @State private var showUsername = false
     
@@ -21,7 +21,8 @@ struct NameAndLinksRow: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
                 .textSelection(.enabled)
-                .matchedGeometryEffect(id: "name-\(host.username)", in: namespace)
+                .matchedGeometryEffect(id: "name-\(host.username)",
+                                       in: namespace ?? Namespace().wrappedValue)
                 .onAppear {
                     timer = Timer.publish(every: Double.random(in: 3...7), on: .main, in: .common)
                         .autoconnect()
@@ -46,13 +47,15 @@ struct NameAndLinksRow: View {
                 HostLinkIcon(url: "https://instagram.com/\(handle)",
                              icon: "instagram",
                              isAsset: true)
-                    .matchedGeometryEffect(id: "insta-\(host.username)", in: namespace)
+                    .matchedGeometryEffect(id: "insta-\(host.username)",
+                                           in: namespace ?? Namespace().wrappedValue)
             }
             
             if let website = host.website {
                 HostLinkIcon(url: website,
                              icon: "globe")
-                    .matchedGeometryEffect(id: "website-\(host.username)", in: namespace)
+                    .matchedGeometryEffect(id: "website-\(host.username)",
+                                           in: namespace ?? Namespace().wrappedValue)
             }
         }
     }

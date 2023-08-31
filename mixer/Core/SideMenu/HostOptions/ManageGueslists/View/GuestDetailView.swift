@@ -51,13 +51,15 @@ private extension GuestDetailView {
                         .foregroundColor(.secondary)
                 }
                 
-                HStack {
-                    Image(systemName: "graduationcap.fill")
-                        .imageScale(.small)
-                    
-                    Text(guest.university)
-                        .font(.headline)
-                        .foregroundColor(.secondary)
+                if let university = guest.university {
+                    HStack {
+                        Image(systemName: "graduationcap.fill")
+                            .imageScale(.small)
+                        
+                        Text(university.shortName ?? university.name)
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 
                 Text("Gender: \(guest.gender.description)")

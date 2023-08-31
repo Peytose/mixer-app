@@ -7,8 +7,28 @@
 
 import SwiftUI
 import Firebase
+import CoreGraphics
 
 extension View {
+    @MainActor
+    func renderPDF(title: String) -> URL {
+        let renderer = ImageRenderer(content: self)
+        let url = URL.documentsDirectory.appending(path: "\(title).pdf")
+        
+        renderer.render { size, context in
+            var box = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+            guard let pdf = CGContext(url as CFURL, mediaBox: &box, nil) else {
+                return
+            }
+            pdf.beginPDFPage(nil)
+            context(pdf)
+            pdf.endPDFPage()
+            pdf.closePDF()
+        }
+        return url
+    }
+    
+    
     @MainActor
     func generateSnapshot() -> UIImage {
         let renderer = ImageRenderer(content: self)

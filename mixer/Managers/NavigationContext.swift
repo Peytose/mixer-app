@@ -9,6 +9,7 @@ import Foundation
 
 struct NavigationContext {
     let state: NavigationState?
-    let selectedEvent: Event?
-    let selectedHost: Host?
+    var selectedEvent: Event?
+    var selectedHost: Host?
+    var selectedUser: User?
 }

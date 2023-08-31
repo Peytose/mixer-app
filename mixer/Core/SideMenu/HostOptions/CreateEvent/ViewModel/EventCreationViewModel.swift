@@ -112,6 +112,7 @@ class EventCreationViewModel: NSObject, ObservableObject {
                                     longitude: location.coordinate.longitude)
             
             let event = Event(hostId: hostId,
+                              postedByUserId: uid,
                               hostName: host.name,
                               timePosted: Timestamp(),
                               eventImageUrl: imageUrl,

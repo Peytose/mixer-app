@@ -16,26 +16,21 @@ final class EventViewModel: ObservableObject {
     @Published var host: Host?
     @Published private (set) var imageLoader: ImageLoader
     @Published var alertItem: AlertItem?
+    
+    private var service = UserService.shared
 
     init(event: Event) {
         self.event = event
         self.imageLoader = ImageLoader(url: event.eventImageUrl)
-        self.fetchHost(from: event)
+        
+        service.fetchHost(from: event) { host in
+            self.host = host
+        }
     }
     
     
     private func loadHostImage() -> ImageLoader {
         return ImageLoader(url: self.host?.hostImageUrl ?? "")
-    }
-    
-    
-    func fetchHost(from event: Event) {
-        COLLECTION_HOSTS
-            .document(event.hostId)
-            .getDocument { snapshot, _ in
-                guard let host = try? snapshot?.data(as: Host.self) else { return }
-                self.host = host
-            }
     }
     
     
@@ -49,12 +44,11 @@ final class EventViewModel: ObservableObject {
 
     
     @MainActor func updateFavorite() {
-        guard let eventId = event.id else { return }
-        
         // Negate the current favorite status to toggle it
         let newFavoriteStatus = !(event.isFavorited ?? false)
         
-        UserService.shared.updateFavoriteStatus(isFavorited: newFavoriteStatus, eventId: eventId) { _ in
+        UserService.shared.updateFavoriteStatus(isFavorited: newFavoriteStatus,
+                                                event: event) { _ in
             self.event.isFavorited = newFavoriteStatus
             HapticManager.playLightImpact()
         }
@@ -103,17 +97,9 @@ final class EventViewModel: ObservableObject {
     
     
     @MainActor func checkIfUserIsOnGuestlist() {
-        guard let uid = UserService.shared.user?.id else { return }
-        guard let eventId = event.id else { return }
-        
-        COLLECTION_EVENTS
-            .document(eventId)
-            .collection("gueslist")
-            .document(uid)
-            .getDocument { snapshot, _ in
-                guard let didGuestlist = snapshot?.exists else { return }
-                self.event.didGuestlist = didGuestlist
-            }
+        EventManager.shared.checkIfUserIsOnGuestlist(for: event) { didGuestlist in
+            self.event.didGuestlist = didGuestlist
+        }
     }
     
     

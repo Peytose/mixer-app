@@ -10,7 +10,7 @@ import Kingfisher
 
 struct StretchablePhotoBanner: View {
     let imageUrl: String
-    let namespace: Namespace.ID
+    var namespace: Namespace.ID?
     
     var body: some View {
         GeometryReader { proxy in
@@ -30,7 +30,7 @@ struct StretchablePhotoBanner: View {
 
 struct HostBannerView: View {
     let host: Host
-    var namespace: Namespace.ID
+    var namespace: Namespace.ID?
     
     var body: some View {
         GeometryReader { proxy in
@@ -44,10 +44,12 @@ struct HostBannerView: View {
                 .offset(y: scrollY > 0 ? -scrollY : 0)
                 .scaleEffect(scrollY > 0 ? scrollY / 500 + 1 : 1)
                 .blur(radius: scrollY > 0 ? scrollY / 40 : 0)
-                .matchedGeometryEffect(id: "image-\(host.username)", in: namespace)
+                .matchedGeometryEffect(id: "image-\(host.username)",
+                                       in: namespace ?? Namespace().wrappedValue)
                 .mask {
                     RoundedRectangle(cornerRadius: 30, style: .continuous)
-                        .matchedGeometryEffect(id: "corner-mask-\(host.username)", in: namespace)
+                        .matchedGeometryEffect(id: "corner-mask-\(host.username)",
+                                               in: namespace ?? Namespace().wrappedValue)
                 }
         }
         .frame(width: DeviceTypes.ScreenSize.width, height: DeviceTypes.ScreenSize.height / 2.5)

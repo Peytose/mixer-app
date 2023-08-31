@@ -5,13 +5,29 @@
 //  Created by Peyton Lyons on 1/27/23.
 //
 //
+
 import SwiftUI
+import FirebaseFirestore
 import Kingfisher
 
 struct EventCellView: View {
     let event: Event
-    let hasStarted: Bool
     var namespace: Namespace.ID
+
+    var dateInfoString: String {
+        let currentTimestamp = Timestamp(date: Date())
+        let oneWeekBefore = Timestamp(date: Calendar.current.date(byAdding: .day, value: -7, to: event.startDate.dateValue())!)
+        
+        if oneWeekBefore > currentTimestamp {
+            return event.startDate.getTimestampString(format: "EEEE, MMM d, h:mm a")
+        } else if event.startDate > currentTimestamp {
+            return event.startDate.getTimestampString(format: "EEEE h:mm a")
+        } else if event.endDate > currentTimestamp {
+            return "Ends at \(event.endDate.getTimestampString(format: "h:mm a"))"
+        } else {
+            return "Happened back on \(event.startDate.getTimestampString(format: "MMM d"))"
+        }
+    }
     
     var body: some View {
         VStack(spacing: 16) {
@@ -33,23 +49,19 @@ struct EventCellView: View {
                 .padding(.leading, 8)
                 .background { backgroundBlur }
             }
-            //image
             .background { image }
-            //mask to create desired rounded corners
-            .mask(
-                RoundedRectangle(cornerRadius: 30)
-            )
+            .mask(RoundedRectangle(cornerRadius: 30))
             
             //More info section
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(hasStarted ? "Ends at \(event.endDate.getTimestampString(format: "h:mm a"))": event.startDate.getTimestampString(format: "EEEE, h:mm a"))
+                        Text(dateInfoString)
                             .secondarySubheading()
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         
-                        Text("\(event.type.rawValue)")
+                        Text("\(event.type.description)")
                             .subheadline()
                     }
                     
@@ -116,7 +128,7 @@ extension EventCellView {
 struct EventCellView_Previews: PreviewProvider {
     @Namespace static var namespace
     static var previews: some View {
-        EventCellView(event: dev.mockEvent, hasStarted: false, namespace: namespace)
+        EventCellView(event: dev.mockEvent, namespace: namespace)
             .preferredColorScheme(.dark)
     }
 }

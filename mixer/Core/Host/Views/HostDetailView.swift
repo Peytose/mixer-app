@@ -11,40 +11,42 @@ import CoreLocation
 import FirebaseFirestore
 
 struct HostDetailView: View {
-    @EnvironmentObject var viewModel: HostViewModel
-    var namespace: Namespace.ID
+    @StateObject private var viewModel: HostViewModel
+    var namespace: Namespace.ID?
+    @Binding var path: NavigationPath
     @State var showBackArrow = false
+    var action: ((NavigationState, Event?, Host?, User?) -> Void)?
+    
+    init(host: Host, path: Binding<NavigationPath>, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
+        self._viewModel = StateObject(wrappedValue: HostViewModel(host: host))
+        self._path      = path
+        self.action     = action
+    }
     
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
                 HostBannerView(host: viewModel.host,
                                namespace: namespace)
-                    .unredacted()
+                .unredacted()
                 
-                HostInfoView(namespace: namespace)
+                HostInfoView(namespace: namespace,
+                             path: $path,
+                             viewModel: viewModel,
+                             action: action)
             }
             .padding(.bottom, 180)
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            if showBackArrow {
+            if path.count > 1 {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    BackArrowButton()
+                    NavigationBackArrowButton(path: $path)
                 }
             }
         }
         .background(Color.theme.backgroundColor)
         .ignoresSafeArea()
         .preferredColorScheme(.dark)
-    }
-}
-
-struct HostDetailView_Previews: PreviewProvider {
-    @Namespace static var namespace
-    
-    static var previews: some View {
-        HostDetailView(namespace: namespace)
-            .environmentObject(HostViewModel(host: dev.mockHost))
     }
 }

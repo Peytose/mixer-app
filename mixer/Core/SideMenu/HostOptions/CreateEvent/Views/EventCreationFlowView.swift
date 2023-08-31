@@ -33,7 +33,7 @@ struct EventCreationFlowView: View {
                 if eventCreationState != .basicInfo {
                     backArrowButton
                 } else {
-                    BackArrowButton()
+                    PresentationBackArrowButton()
                 }
             }
         }

@@ -11,9 +11,8 @@ import TabBar
 
 struct HomeView: View {
     @State private var mapState: MapViewState = .noInput
-    @ObservedObject var userService = UserService.shared
-    @EnvironmentObject var eventManager: EventManager
-    @EnvironmentObject var hostManager: HostManager
+    @StateObject var userService = UserService.shared
+    @StateObject var exploreViewModel = ExploreViewModel()
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
     @Namespace var namespace
@@ -25,10 +24,10 @@ struct HomeView: View {
                 if userService.user == nil {
                     AuthFlow()
                 } else {
-                    NavigationStack {
+                    NavigationStack(path: $homeViewModel.path) {
                         ZStack {
                             if homeViewModel.showSideMenu {
-                                SideMenuView(user: $userService.user)
+                                SideMenuView(path: $homeViewModel.path)
                             }
                             
                             ZStack {
@@ -38,16 +37,12 @@ struct HomeView: View {
                                         MapView(mapState: $mapState)
                                             .environmentObject(MapViewModel())
                                     case .explore:
-                                        ExploreView()
-                                            .environmentObject(ExploreViewModel())
+                                        ExploreView(context: $homeViewModel.selectedNavigationStack)
+                                            .environmentObject(exploreViewModel)
                                     case .search:
-                                        SearchView()
+                                        SearchView(context: $homeViewModel.selectedNavigationStack)
                                             .environmentObject(SearchViewModel())
                                     }
-                                    
-                                    eventDetailView()
-                                    
-                                    hostDetailView()
                                 }
                                 .shadow(color: homeViewModel.showSideMenu ? .black : .clear, radius: 10)
                                 
@@ -81,6 +76,9 @@ struct HomeView: View {
                             }
                             
                             HomeViewActionButton()
+                                .onChange(of: homeViewModel.showSideMenu) { _ in
+                                    hideKeyboard()
+                                }
                         }
                     }
                     .onAppear { homeViewModel.showSideMenu = false }
@@ -113,12 +111,6 @@ struct CircleView: View {
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
-    }
-}
-
 struct TabBarItems: View {
     @Binding var tabSelection: TabItem
     
@@ -140,25 +132,5 @@ struct TabBarItems: View {
             }
         }
         .frame(width: DeviceTypes.ScreenSize.width)
-    }
-}
-
-extension HomeView {
-    @ViewBuilder
-    func eventDetailView() -> some View {
-        if let event = eventManager.selectedEvent,
-           homeViewModel.currentState == .embeddedEventDetailView || homeViewModel.currentState == .eventDetailView {
-            EventDetailView()
-                .environmentObject(EventViewModel(event: event))
-        }
-    }
-
-    @ViewBuilder
-    func hostDetailView() -> some View {
-        if let host = hostManager.selectedHost,
-           homeViewModel.currentState == .embeddedHostDetailView || homeViewModel.currentState == .hostDetailView {
-            HostDetailView(namespace: namespace)
-                .environmentObject(HostViewModel(host: host))
-        }
     }
 }

@@ -46,8 +46,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 struct mixerApp: App {
     @StateObject var authViewModel  = AuthViewModel.shared
     @StateObject var homeViewModel  = HomeViewModel()
-    @StateObject var hostManager    = HostManager.shared
-    @StateObject var eventManager   = EventManager.shared
     @StateObject var algoliaManager = AlgoliaManager.shared
     @Namespace var namespace
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
@@ -58,8 +56,6 @@ struct mixerApp: App {
                 .preferredColorScheme(.dark)
                 .environmentObject(authViewModel)
                 .environmentObject(homeViewModel)
-                .environmentObject(hostManager)
-                .environmentObject(eventManager)
                 .environmentObject(algoliaManager)
         }
     }
