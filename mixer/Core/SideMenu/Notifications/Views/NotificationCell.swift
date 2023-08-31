@@ -22,6 +22,13 @@ struct NotificationCell: View {
     
     var body: some View {
         HStack {
+            Button {
+                cellViewModel.deleteNotification()
+            } label: {
+                Image(systemName: "trash.fill")
+                    .foregroundColor(.red)
+            }
+            
             ZStack {
                 KFImage(URL(string: cellViewModel.notification.imageUrl))
                     .resizable()
@@ -89,13 +96,7 @@ struct NotificationCell: View {
                 }
             }
         }
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive) {
-                cellViewModel.deleteNotification()
-            } label: {
-                Label("Delete", systemImage: "trash.fill")
-            }
-        }
+        .padding(.horizontal)
     }
 }
 

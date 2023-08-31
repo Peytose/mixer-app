@@ -82,35 +82,65 @@ final class SearchViewModel: ObservableObject {
     
     func fetchDetails(for item: SearchItem,
                       completion: @escaping (NavigationState, Event?, Host?, User?) -> Void) {
-        guard let objectId = item.objectId else { return }
+        guard let objectId = item.objectId else {
+            print("DEBUG: ObjectId is nil.")
+            return
+        }
+        
+        print("DEBUG: Fetching details for objectId: \(objectId)")
         
         switch selectedSearchType {
         case .events:
+            print("DEBUG: Fetching event details.")
             COLLECTION_EVENTS
                 .document(objectId)
-                .getDocument { document, _ in
+                .getDocument { document, error in
+                    if let error = error {
+                        print("DEBUG: Error fetching event: \(error.localizedDescription)")
+                    }
+                    
                     if let event = try? document?.data(as: Event.self) {
+                        print("DEBUG: Successfully fetched event.")
                         completion(.close, event, nil, nil)
+                    } else {
+                        print("DEBUG: Failed to decode event.")
                     }
                 }
         case .hosts:
+            print("DEBUG: Fetching host details.")
             COLLECTION_HOSTS
                 .document(objectId)
-                .getDocument { document, _ in
+                .getDocument { document, error in
+                    if let error = error {
+                        print("DEBUG: Error fetching host: \(error.localizedDescription)")
+                    }
+                    
                     if let host = try? document?.data(as: Host.self) {
+                        print("DEBUG: Successfully fetched host.")
                         completion(.close, nil, host, nil)
+                    } else {
+                        print("DEBUG: Failed to decode host.")
                     }
                 }
         case .users:
+            print("DEBUG: Fetching user details.")
             COLLECTION_USERS
                 .document(objectId)
-                .getDocument { document, _ in
+                .getDocument { document, error in
+                    if let error = error {
+                        print("DEBUG: Error fetching user: \(error.localizedDescription)")
+                    }
+                    
                     if let user = try? document?.data(as: User.self) {
+                        print("DEBUG: Successfully fetched user.")
                         completion(.close, nil, nil, user)
+                    } else {
+                        print("DEBUG: Failed to decode user.")
                     }
                 }
         }
     }
+
     
     
     // DEBUG: Func extracted for potential expansion

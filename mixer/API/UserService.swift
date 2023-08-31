@@ -85,6 +85,8 @@ class UserService: ObservableObject {
     
     func fetchUniversity(with id: String,
                          completion: @escaping (University) -> Void) {
+        guard id != "com" else { return }
+        
         COLLECTION_UNIVERSITIES
             .document(id)
             .getDocument { snapshot, error in
@@ -117,7 +119,7 @@ class UserService: ObservableObject {
             batch
                 .batchUpdate(documentRefs: documentRefs,
                              data: favoriteData) { error in
-                    NotificationsViewModel.uploadNotification(toUid: currentUserId,
+                    NotificationsViewModel.uploadNotification(toUid: event.postedByUserId,
                                                               type: .eventLiked,
                                                               event: event)
                     
@@ -283,19 +285,22 @@ class UserService: ObservableObject {
                                     state: .requestSent,
                                     timestamp: Timestamp())
 
-        guard let encodedFriendship = try? Firestore.Encoder().encode(friendship) else { return }
-        
-        COLLECTION_FRIENDSHIPS
-            .document(path)
-            .setData(encodedFriendship) { error in
-                if let error = error {
-                    completion?(error)
-                    return
+        do {
+            let encodedFriendship = try Firestore.Encoder().encode(friendship)
+            COLLECTION_FRIENDSHIPS
+                .document(path)
+                .setData(encodedFriendship) { error in
+                    if let error = error {
+                        completion?(error)
+                        return
+                    }
+                    
+                    NotificationsViewModel.uploadNotification(toUid: uid,
+                                                              type: .friendRequest)
                 }
-                
-                NotificationsViewModel.uploadNotification(toUid: uid,
-                                                          type: .friendRequest)
-            }
+        } catch let encodingError {
+            print("Error encoding friendship: \(encodingError)")
+        }
     }
 
 
@@ -330,35 +335,26 @@ class UserService: ObservableObject {
 
 
     func acceptFriendRequest(uid: String,
-                             notificationId: String? = "",
                              completion: FirestoreCompletion) {
         guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
         
-        let data: [String: Any] = ["state": FriendshipState.friends,
+        let data: [String: Any] = ["state": FriendshipState.friends.rawValue,
                                    "timestamp": Timestamp()]
         
         // Update friendship state
         COLLECTION_FRIENDSHIPS
-            .updateDocument(documentID: path, data: data) { error in
-                if let error = error {
-                    completion?(error)
-                    return
-                }
-                
+            .document(path)
+            .updateData(data) { error in
                 // Send a "friend accepted" notification to the person who sent the request
                 NotificationsViewModel.uploadNotification(toUid: uid,
                                                           type: .friendAccepted)
                 
-                // Delete the friend request notification for the current user
-                COLLECTION_NOTIFICATIONS
-                    .updateDocument(documentID: currentUid,
-                                    data: ["timestamp": Timestamp(),
-                                           "type": NotificationType.friendAccepted],
-                                    completion: completion)
+                completion?(error)
             }
     }
-
+    
+    
 
     func getUserRelationship(uid: String,
                              completion: @escaping (FriendshipState) -> Void) {

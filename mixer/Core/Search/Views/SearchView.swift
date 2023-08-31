@@ -33,7 +33,7 @@ struct SearchView: View {
                             }
                             
                             if !viewModel.searchText.isEmpty {
-                                MixerMapItemSearchResultsView(viewModel: viewModel)
+                                MixerMapItemSearchResultsView(viewModel: viewModel, context: $context)
                             }
                             
                             Spacer()
@@ -43,9 +43,9 @@ struct SearchView: View {
                     case .back, .close:
                         eventDetailView()
                         
-                        hostDetailView()
-                    
                         userProfileView()
+                        
+                        hostDetailView()
                 }
             }
         }
@@ -55,6 +55,7 @@ struct SearchView: View {
 fileprivate struct MixerMapItemSearchResultsView: View {
     @ObservedObject var viewModel: SearchViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
+    @Binding var context: [NavigationContext]
     
     var body: some View {
         LazyVStack(pinnedViews: [.sectionHeaders]) {

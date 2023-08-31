@@ -12,7 +12,7 @@ import TabBar
 import PopupView
 
 struct ProfileView: View {
-    @StateObject private var viewModel: ProfileViewModel
+    @StateObject var viewModel: ProfileViewModel
     @State private var showOptions  = false
     @State private var showUsername = false
     @Binding var path: NavigationPath
@@ -28,6 +28,9 @@ struct ProfileView: View {
     
     var body: some View {
         ZStack {
+            Color.theme.backgroundColor
+                .ignoresSafeArea(.all)
+            
             ScrollView(showsIndicators: false) {
                 // Banner and overlayed button(s)
                 banner
@@ -36,10 +39,10 @@ struct ProfileView: View {
                 profileInfo
                 
                 // Contains user relationship status and major
-                aboutSection
+                if viewModel.user.relationshipStatus != nil || viewModel.user.major != nil {
+                    aboutSection
+                }
             }
-            .background(Color.theme.backgroundColor)
-            .preferredColorScheme(.dark)
             .ignoresSafeArea(.all)
             .statusBar(hidden: true)
             
@@ -50,14 +53,30 @@ struct ProfileView: View {
                     .blur(radius: 20)
                     .ignoresSafeArea()
                 
-                MoreProfileOptions()
+                MoreProfileOptions(viewModel: viewModel)
                     .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
             }
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                PresentationBackArrowButton()
+            if path.count > 1 {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationBackArrowButton(path: $path)
+                }
             }
+        }
+        .alert(item: $viewModel.currentAlert) { alertType in
+            hideKeyboard()
+            
+            switch alertType {
+            case .regular(let alertItem):
+                guard let item = alertItem else { break }
+                return item.alert
+            case .confirmation(let confirmationAlertItem):
+                guard let item = confirmationAlertItem else { break }
+                return item.alert
+            }
+            
+            return Alert(title: Text("Unexpected Error"))
         }
     }
 }
@@ -225,5 +244,12 @@ fileprivate struct ProfileCornerButton: View {
                 .padding(.horizontal, 5)
                 .contentShape(Rectangle())
         }
+    }
+}
+
+struct ProfileView_Previews: PreviewProvider {
+    static var previews: some View {
+        ProfileView(user: dev.mockUser,
+                    path: .constant(NavigationPath.init()))
     }
 }

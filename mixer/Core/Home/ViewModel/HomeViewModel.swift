@@ -21,11 +21,14 @@ class HomeViewModel: ObservableObject {
     @Published var navigationStackTabMap: [TabItem: [NavigationContext]] = [:] {
         didSet {
             selectedNavigationStack = navigationStackTabMap[currentTab] ?? []
-            print("DEBUG: Updated navigation stack: \(selectedNavigationStack)")
         }
     }
     @Published var selectedNavigationStack: [NavigationContext] = []
     var currentState: NavigationState {
+        if let context = selectedNavigationStack.first(where: { $0.state == .close }) {
+            print("DEBUG: Context user \(context.selectedUser)")
+        }
+        
         return selectedNavigationStack.last?.state ?? .menu
     }
     @Published var showSideMenu: Bool = false
@@ -62,7 +65,6 @@ extension HomeViewModel {
     func pushContext(_ context: NavigationContext) {
         navigationStackTabMap[currentTab]?.append(context)
         selectedNavigationStack = navigationStackTabMap[currentTab] ?? [NavigationContext(state: .menu)]
-        print("DEBUG: Pushed context: \(navigationStackTabMap)")
     }
     
     
@@ -84,14 +86,13 @@ extension HomeViewModel {
                   withUser user: User? = nil) {
         let currentContext = NavigationContext(state: state,
                                                selectedEvent: event,
-                                               selectedHost: host)
+                                               selectedHost: host,
+                                               selectedUser: user)
         pushContext(currentContext)
-        print("DEBUG: Navigated to new context: \(navigationStackTabMap)")
     }
     
     
     private func navigateBack() {
         let _ = popContext() // Pop the current context
-        print("DEBUG: Popped context: \(navigationStackTabMap)")
     }
 }

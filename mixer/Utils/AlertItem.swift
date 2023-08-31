@@ -205,6 +205,13 @@ struct AlertContext {
     
     
     //MARK: - ProfileView Errors
+    static func confirmRemoveFriend(confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {
+        ConfirmationAlertItem(title: Text("Confirmation Required"),
+                     message: Text("Are you sure you want unadd this person as a friend?\nYou will have to request again."),
+                     primaryButton: .default(Text("Unadd").bold(), action: confirmAction),
+                     secondaryButton: .default(Text("Go back")))
+    }
+    
     static let invalidProfile                     = AlertItem(title: Text("Invalid Profile"),
                                                               message: Text("All fields are required as well as a profile photo. Your bio must be < 100 characters.\nPlease try again."),
                                                               dismissButton: .default(Text("Ok")))

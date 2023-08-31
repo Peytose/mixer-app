@@ -165,6 +165,11 @@ extension AuthViewModel {
         let domain = String(emailComponents[1])
         print("DEBUG: Domain from email: \(domain)")
         
+        if domain.contains(".com") {
+            self.universityId = ".com"
+            completion(true)
+        }
+        
         COLLECTION_UNIVERSITIES.whereField("domain", isEqualTo: domain).getDocuments { snapshot, error in
             if let error = error {
                 print("DEBUG: Error getting domain from email. \(error.localizedDescription)")

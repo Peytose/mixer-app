@@ -9,7 +9,7 @@ import SwiftUI
 import Kingfisher
 
 struct MoreProfileOptions: View {
-    @EnvironmentObject var viewModel: ProfileViewModel
+    @ObservedObject var viewModel: ProfileViewModel
     @Environment(\.presentationMode) var mode
     @State private var profileImage: Image? = nil
     @State var showBlockAlert               = false
@@ -92,8 +92,7 @@ struct MoreProfileOptions: View {
 
 struct MoreProfileOptions_Previews: PreviewProvider {
     static var previews: some View {
-        MoreProfileOptions()
-            .environmentObject(ProfileViewModel(user: dev.mockUser))
+        MoreProfileOptions(viewModel: ProfileViewModel(user: dev.mockUser))
     }
 }
 

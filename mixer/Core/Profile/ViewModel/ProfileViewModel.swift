@@ -18,6 +18,18 @@ class ProfileViewModel: ObservableObject {
     @Published var pastEvents           = [Event]()
     @Published var mutuals              = [User]()
     
+    @Published var currentAlert: AlertType?
+    @Published var alertItem: AlertItem? {
+        didSet {
+            currentAlert = .regular(alertItem)
+        }
+    }
+    @Published var confirmationAlertItem: ConfirmationAlertItem? {
+        didSet {
+            currentAlert = .confirmation(confirmationAlertItem)
+        }
+    }
+    
     enum EventSection: String, CaseIterable {
         case interests
         case past
@@ -77,7 +89,7 @@ class ProfileViewModel: ObservableObject {
         guard let uid = user.id else { return }
         UserService.shared.sendFriendRequest(username: user.username, uid: uid) { _ in
             self.user.friendshipState = .requestSent
-            HapticManager.playLightImpact()
+            HapticManager.playSuccess()
         }
     }
     
@@ -86,19 +98,29 @@ class ProfileViewModel: ObservableObject {
         guard let uid = user.id else { return }
         UserService.shared.acceptFriendRequest(uid: uid) { _ in
             self.user.friendshipState = .friends
-            HapticManager.playLightImpact()
+            HapticManager.playSuccess()
         }
     }
     
     
     @MainActor func cancelFriendRequest() {
         guard let uid = user.id else { return }
+        guard let state = user.friendshipState else { return }
         
-        if self.user.friendshipState != .notFriends {
+        switch state {
+        case .friends:
+            self.confirmationAlertItem = AlertContext.confirmRemoveFriend {
+                UserService.shared.cancelRequestOrRemoveFriend(uid: uid) { _ in
+                    self.user.friendshipState = .notFriends
+                    HapticManager.playLightImpact()
+                }
+            }
+        case .requestReceived, .requestSent:
             UserService.shared.cancelRequestOrRemoveFriend(uid: uid) { _ in
                 self.user.friendshipState = .notFriends
                 HapticManager.playLightImpact()
             }
+        default: break
         }
     }
     

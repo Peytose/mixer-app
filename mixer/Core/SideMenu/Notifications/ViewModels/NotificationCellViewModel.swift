@@ -104,13 +104,29 @@ class NotificationCellViewModel: ObservableObject {
     
     
     func acceptFriendRequest() {
+        guard let notificationId = notification.id else { return }
+        
         userService.acceptFriendRequest(uid: notification.uid) { _ in
-            HapticManager.playSuccess()
+            guard let userId = self.userService.user?.id else { return }
+            
+            COLLECTION_NOTIFICATIONS
+                .updateNotification(forUserID: userId,
+                                    notificationID: notificationId,
+                                    updatedData: ["timestamp": Timestamp(),
+                                                  "type": NotificationType.friendAccepted.rawValue]) { error in
+                    if let error = error {
+                        print("DEBUG: Error updating notification. \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    HapticManager.playSuccess()
+                }
         }
     }
     
     
     func cancelRequestOrRemoveFriend() {
+        
         userService.cancelRequestOrRemoveFriend(uid: notification.uid) { _ in
             HapticManager.playLightImpact()
         }
