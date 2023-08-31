@@ -303,25 +303,19 @@ class UserService: ObservableObject {
                                     toUsername: username,
                                     state: .requestSent,
                                     timestamp: Timestamp())
-
-        do {
-            let encodedFriendship = try Firestore.Encoder().encode(friendship)
-            COLLECTION_FRIENDSHIPS
-                .document(path)
-                .setData(encodedFriendship) { error in
-                    if let error = error {
-                        completion?(error)
-                        return
-                    }
-                    
-                    NotificationsViewModel.uploadNotification(toUid: uid,
-                                                              type: .friendRequest)
-                }
-        } catch let encodingError {
-            print("Error encoding friendship: \(encodingError)")
-        }
+        
+        guard let encodedFriendship = try? Firestore.Encoder().encode(friendship) else { return }
+        
+        COLLECTION_FRIENDSHIPS
+            .document(path)
+            .setData(encodedFriendship) { error in
+                NotificationsViewModel.uploadNotification(toUid: uid,
+                                                          type: .friendRequest)
+                
+                completion?(error)
+            }
     }
-
+    
 
     func cancelRequestOrRemoveFriend(uid: String,
                                      completion: FirestoreCompletion) {
