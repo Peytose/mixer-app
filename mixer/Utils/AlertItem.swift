@@ -204,7 +204,14 @@ struct AlertContext {
                                                               dismissButton: .default(Text("Ok")))
     
     
-    //MARK: - ProfileView Errors
+    //MARK: - ProfileView Messages/Errors
+    static func confirmBlock(name: String, confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {
+        ConfirmationAlertItem(title: Text("Block \(name)?"),
+                     message: Text("\(name) will no longer be able to see your profile, activity, or follow you."),
+                     primaryButton: .default(Text("Block").bold(), action: confirmAction),
+                     secondaryButton: .default(Text("Cancel")))
+    }
+    
     static func confirmRemoveFriend(confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {
         ConfirmationAlertItem(title: Text("Confirmation Required"),
                      message: Text("Are you sure you want unadd this person as a friend?\nYou will have to request again."),

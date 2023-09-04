@@ -48,6 +48,10 @@ struct SearchView: View {
                         hostDetailView()
                 }
             }
+            .disabled(homeViewModel.showSideMenu)
+            .swipeGesture(direction: .right) {
+                homeViewModel.actionForState()
+            }
         }
     }
 }
@@ -99,7 +103,6 @@ extension SearchView {
     func eventDetailView() -> some View {
         if let event = context.last?.selectedEvent {
             EventDetailView(event: event,
-                            path: .constant(NavigationPath()),
                             action: homeViewModel.navigate)
         }
     }
@@ -108,7 +111,6 @@ extension SearchView {
     func hostDetailView() -> some View {
         if let host = context.last?.selectedHost {
             HostDetailView(host: host,
-                           path: .constant(NavigationPath()),
                            action: homeViewModel.navigate)
         }
     }
@@ -117,7 +119,6 @@ extension SearchView {
     func userProfileView() -> some View {
         if let user = context.last?.selectedUser {
             ProfileView(user: user,
-                        path: .constant(NavigationPath()),
                         action: homeViewModel.navigate)
         }
     }

@@ -56,29 +56,8 @@ class UserService: ObservableObject {
     
     private func fetchAssociatedHosts() {
         guard let hostIds = user?.associatedHostIds else { return }
-        var hosts: [Host] = []
-        let group = DispatchGroup()
-        
-        for hostId in hostIds {
-            group.enter()
-            COLLECTION_HOSTS
-                .document(hostId)
-                .getDocument { snapshot, error in
-                    if let error = error {
-                        print("DEBUG: Error fetching host. \(error.localizedDescription)")
-                        return
-                    }
-                    
-                    guard let host = try? snapshot?.data(as: Host.self) else { return }
-                    hosts.append(host)
-                    
-                    group.leave()
-                }
-        }
-        
-        group.notify(queue: .main) {
+        HostManager.shared.fetchHosts(with: hostIds) { hosts in
             self.user?.associatedHosts = hosts
-            print("DEBUG: Fetch hosts: \(hosts)")
         }
     }
     
@@ -287,6 +266,54 @@ class UserService: ObservableObject {
                 completion(isFollowed)
             }
     }
+    
+    
+    func fetchBlockedUsers(completion: @escaping ([String]) -> Void) {
+        guard let currentUserId = self.user?.id else { return }
+        var blockedUsers = [String]()
+        
+        // Assuming you have a Firebase collection for relationships.
+        COLLECTION_RELATIONSHIPS
+            .whereField("initiatorUid", isEqualTo: currentUserId)
+            .whereField("state", isEqualTo: RelationshipState.blocked.rawValue)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("Error fetching blocked users: \(error.localizedDescription)")
+                    completion([])
+                    return
+                }
+                
+                for document in snapshot?.documents ?? [] {
+                    let relationship = try? document.data(as: Relationship.self)
+                    if let recipientUid = relationship?.recipientUid {
+                        blockedUsers.append(recipientUid)
+                    }
+                }
+                
+                completion(blockedUsers)
+            }
+    }
+    
+    
+    func blockUser(_ blockedUser: User, completion: FirestoreCompletion) {
+        guard let uid = blockedUser.id else { return}
+        guard let currentUser = self.user, let currentUid = currentUser.id else { return }
+        
+        let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
+        
+        let friendship = Relationship(initiatorUid: currentUid,
+                                      recipientUid: uid,
+                                      initiatorUsername: currentUser.username,
+                                      recipientUsername: blockedUser.username,
+                                      state: .blocked,
+                                      updatedAt: Timestamp())
+        
+        guard let encodedRelationship = try? Firestore.Encoder().encode(friendship) else { return }
+        
+        COLLECTION_RELATIONSHIPS
+            .document(path)
+            .setData(encodedRelationship, merge: true, completion: completion)
+    }
 
 
     func sendFriendRequest(username: String,
@@ -297,18 +324,18 @@ class UserService: ObservableObject {
         
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
         
-        let friendship = Friendship(fromUserUid: currentUid,
-                                    toUserUid: uid,
-                                    fromUsername: currentUser.username,
-                                    toUsername: username,
-                                    state: .requestSent,
-                                    timestamp: Timestamp())
+        let friendship = Relationship(initiatorUid: currentUid,
+                                      recipientUid: uid,
+                                      initiatorUsername: currentUser.username,
+                                      recipientUsername: username,
+                                      state: .requestSent,
+                                      updatedAt: Timestamp())
         
-        guard let encodedFriendship = try? Firestore.Encoder().encode(friendship) else { return }
+        guard let encodedRelationship = try? Firestore.Encoder().encode(friendship) else { return }
         
-        COLLECTION_FRIENDSHIPS
+        COLLECTION_RELATIONSHIPS
             .document(path)
-            .setData(encodedFriendship) { error in
+            .setData(encodedRelationship) { error in
                 NotificationsViewModel.uploadNotification(toUid: uid,
                                                           type: .friendRequest)
                 
@@ -317,12 +344,11 @@ class UserService: ObservableObject {
     }
     
 
-    func cancelRequestOrRemoveFriend(uid: String,
-                                     completion: FirestoreCompletion) {
+    func cancelOrDeleteRelationship(uid: String, completion: FirestoreCompletion) {
         guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
 
-        COLLECTION_FRIENDSHIPS
+        COLLECTION_RELATIONSHIPS
             .document(path)
             .delete { error in
                 if let error = error {
@@ -352,11 +378,11 @@ class UserService: ObservableObject {
         guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
         
-        let data: [String: Any] = ["state": FriendshipState.friends.rawValue,
+        let data: [String: Any] = ["state": RelationshipState.friends.rawValue,
                                    "timestamp": Timestamp()]
         
         // Update friendship state
-        COLLECTION_FRIENDSHIPS
+        COLLECTION_RELATIONSHIPS
             .document(path)
             .updateData(data) { error in
                 // Send a "friend accepted" notification to the person who sent the request
@@ -370,26 +396,26 @@ class UserService: ObservableObject {
     
 
     func getUserRelationship(uid: String,
-                             completion: @escaping (FriendshipState) -> Void) {
+                             completion: @escaping (RelationshipState) -> Void) {
         guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
 
-        COLLECTION_FRIENDSHIPS.document(path).getDocument { snapshot, _ in
-            guard let hasFriendship = snapshot?.exists else { return }
+        COLLECTION_RELATIONSHIPS.document(path).getDocument { snapshot, _ in
+            guard let hasRelationship = snapshot?.exists else { return }
             
-            if !hasFriendship {
+            if !hasRelationship {
                 completion(.notFriends)
             }
             
             guard let stateRawValue = snapshot?.get("state") as? Int else { return }
-            guard let state = FriendshipState(rawValue: stateRawValue) else { return }
+            guard let state = RelationshipState(rawValue: stateRawValue) else { return }
             
             switch state {
                 case .friends:
                     completion(.friends)
                 case .requestSent:
-                    guard let fromUserUid = snapshot?.get("fromUserUid") as? String else { return }
-                    completion(fromUserUid == currentUid ? .requestSent : .requestReceived)
+                    guard let initiatorUid = snapshot?.get("initiatorUid") as? String else { return }
+                    completion(initiatorUid == currentUid ? .requestSent : .requestReceived)
                 default:
                     // Should not execute but here in case
                     completion(state)

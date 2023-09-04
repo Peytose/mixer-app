@@ -10,33 +10,37 @@ import SwiftUI
 import Kingfisher
 
 struct SideMenuView: View {
+    @EnvironmentObject var homeViewModel: HomeViewModel
     @StateObject private var settingsViewModel      = SettingsViewModel()
     @StateObject private var notificationsViewModel = NotificationsViewModel()
     private let hostFormLink = "https://forms.gle/S3jmgEGSa3VU1Vi56"
-    @Binding var path: NavigationPath
     
     var body: some View {
         VStack(spacing: 40) {
             // MARK: - Header view
             VStack(alignment: .leading, spacing: 32) {
                 // user info
-                HStack(alignment: .center, spacing: 15) {
-                    if let user = settingsViewModel.user {
-                        KFImage(URL(string: user.profileImageUrl))
-                            .resizable()
-                            .scaledToFill()
-                            .clipShape(Circle())
-                            .frame(width: 64, height: 64)
-                        
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(user.displayName)
-                                .font(.title3)
-                                .fontWeight(.semibold)
+                if let user = settingsViewModel.user {
+                    NavigationLink {
+                        ProfileView(user: user)
+                    } label: {
+                        HStack(alignment: .center, spacing: 15) {
+                            KFImage(URL(string: user.profileImageUrl))
+                                .resizable()
+                                .scaledToFill()
+                                .clipShape(Circle())
+                                .frame(width: 64, height: 64)
                             
-                            Text("@\(user.username)")
-                                .font(.subheadline)
-                                .foregroundColor(.white)
-                                .opacity(0.77)
+                            VStack(alignment: .leading, spacing: 5) {
+                                Text(user.displayName)
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                
+                                Text("@\(user.username)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
+                                    .opacity(0.77)
+                            }
                         }
                     }
                 }
@@ -109,9 +113,9 @@ struct SideMenuView: View {
             .navigationDestination(for: SideMenuOption.self) { option in
                 switch option {
                 case .notifications:
-                    NotificationsView(viewModel: notificationsViewModel, path: $path)
+                    NotificationsView(viewModel: notificationsViewModel)
                 case .favorites:
-                    FavoritesView(path: $path)
+                    FavoritesView()
                 case .mixerId:
                     if let user = settingsViewModel.user, let image = user.id?.generateQRCode() {
                         MixerIdView(user: user,

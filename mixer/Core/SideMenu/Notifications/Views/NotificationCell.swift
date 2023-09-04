@@ -9,39 +9,35 @@ import SwiftUI
 import Kingfisher
 
 struct NotificationCell: View {
-    @ObservedObject var cellViewModel: NotificationCellViewModel
+    @ObservedObject var notificationsViewModel: NotificationsViewModel
+    @StateObject var cellViewModel: NotificationCellViewModel
     var isFollowed: Bool { return cellViewModel.notification.isFollowed ?? false }
     @Namespace var namespace
-    @Binding var path: NavigationPath
     
-    init(cellViewModel: NotificationCellViewModel,
-         path: Binding<NavigationPath>) {
-        self.cellViewModel = cellViewModel
-        self._path         = path
+    init(notificationsViewModel: NotificationsViewModel,
+         notification: Notification) {
+        self.notificationsViewModel = notificationsViewModel
+        _cellViewModel              = StateObject(wrappedValue: NotificationCellViewModel(notification: notification))
     }
     
     var body: some View {
         HStack {
-            Button {
-                cellViewModel.deleteNotification()
-            } label: {
-                Image(systemName: "trash.fill")
-                    .foregroundColor(.red)
+            if notificationsViewModel.isEditing {
+                Image(systemName: notificationsViewModel.selectedNotificationIds.contains(where: { $0 == cellViewModel.notification.id }) ? "checkmark.circle" : "circle")
+                    .resizable()
+                    .frame(width: 25, height: 25)
+                    .foregroundColor(notificationsViewModel.selectedNotificationIds.contains(where: { $0 == cellViewModel.notification.id }) ? Color.theme.mixerIndigo : .white)
             }
             
-            ZStack {
+            NavigationLink(value: cellViewModel.notification) {
                 KFImage(URL(string: cellViewModel.notification.imageUrl))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)
                     .clipShape(Circle())
-                
-                NavigationLink(value: cellViewModel.notification.type) {
-                    Text("")
-                        .opacity(0)
-                }
             }
-            .frame(width: 40, height: 40)
+            .padding(.trailing, 5)
+            .disabled(notificationsViewModel.isEditing)
             
             Group {
                 cellViewModel.formattedNotificationMessage()
@@ -51,52 +47,59 @@ struct NotificationCell: View {
             Spacer()
             
             // Side button(s)
-            Group {
-                switch cellViewModel.notification.type {
-                case .friendRequest:
-                    HStack {
-                        ListCellActionButton(text: "Accept",
+            if !notificationsViewModel.isEditing {
+                Group {
+                    switch cellViewModel.notification.type {
+                    case .friendRequest:
+                        HStack {
+                            ListCellActionButton(text: "Accept",
                                                  action: cellViewModel.acceptFriendRequest)
-                        
-                        ListCellActionButton(text: "Decline",
+                            
+                            ListCellActionButton(text: "Decline",
                                                  isSecondaryLabel: true,
-                                                 action: cellViewModel.cancelRequestOrRemoveFriend)
-                    }
-                case .newFollower:
-                    if let user = cellViewModel.notification.user {
-                        NotificationSecondaryImage(imageUrl: user.profileImageUrl) {
-                            ProfileView(user: user, path: $path)
+                                                 action: cellViewModel.cancelOrDeleteRelationship)
                         }
-                    }
-                case .memberInvited:
-                    HStack {
-                        ListCellActionButton(text: "Join",
+                    case .newFollower:
+                        if let user = cellViewModel.notification.user {
+                            NotificationSecondaryImage(imageUrl: user.profileImageUrl) {
+                                ProfileView(user: user)
+                            }
+                        }
+                    case .memberInvited:
+                        HStack {
+                            ListCellActionButton(text: "Join",
                                                  action: cellViewModel.acceptMemberInvite)
-                        
-                        ListCellActionButton(text: "Reject",
+                            
+                            ListCellActionButton(text: "Reject",
                                                  isSecondaryLabel: true,
                                                  action: cellViewModel.declineMemberInvite)
-                    }
-                case .eventLiked:
-                    if let event = cellViewModel.notification.event {
-                        NotificationSecondaryImage(imageUrl: event.eventImageUrl) {
-                            EventDetailView(event: event, path: $path)
                         }
-                    }
-                case .guestlistJoined:
-                    ListCellActionButton(text: "Remove",
+                    case .eventLiked:
+                        if let event = cellViewModel.notification.event {
+                            NotificationSecondaryImage(imageUrl: event.eventImageUrl) {
+                                EventDetailView(event: event)
+                            }
+                        }
+                    case .guestlistJoined:
+                        ListCellActionButton(text: "Remove",
                                              action: cellViewModel.removeFromGuestlist)
-                case .guestlistAdded:
-                    if let event = cellViewModel.notification.event {
-                        NotificationSecondaryImage(imageUrl: event.eventImageUrl) {
-                            EventDetailView(event: event, path: $path)
+                    case .guestlistAdded:
+                        if let event = cellViewModel.notification.event {
+                            NotificationSecondaryImage(imageUrl: event.eventImageUrl) {
+                                EventDetailView(event: event)
+                            }
                         }
+                    default: Text("")
                     }
-                default: Text("")
                 }
             }
         }
         .padding(.horizontal)
+        .onTapGesture {
+            if notificationsViewModel.isEditing {
+                notificationsViewModel.selectNotification(cellViewModel.notification)
+            }
+        }
     }
 }
 
@@ -105,31 +108,12 @@ fileprivate struct NotificationSecondaryImage<Content: View>: View {
     @ViewBuilder let content: Content
     
     var body: some View {
-        ZStack {
+        NavigationLink { content } label: {
             KFImage(URL(string: imageUrl))
                 .resizable()
                 .scaledToFill()
                 .frame(width: 40, height: 40)
                 .clipped()
-            
-            NavigationLink { content } label: {
-                Text("")
-                    .opacity(0)
-            }
-        }
-        .frame(width: 40, height: 40)
-    }
-}
-
-extension NotificationCell {
-    var backArrowButton: some View {
-        Button { path.removeLast() } label: {
-            Image(systemName: "arrow.left")
-                .font(.title2)
-                .imageScale(.medium)
-                .foregroundColor(.white)
-                .padding(10)
-                .contentShape(Rectangle())
         }
     }
 }

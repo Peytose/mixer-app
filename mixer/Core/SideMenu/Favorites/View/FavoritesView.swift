@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FavoritesView: View {
     @StateObject private var viewModel = FavoritesViewModel()
-    @Binding var path: NavigationPath
+    
     @Namespace var namespace
     
     var body: some View {
@@ -23,7 +23,7 @@ struct FavoritesView: View {
                         FavoriteCell(event: event)
                             .environmentObject(viewModel)
                             .navigationDestination(for: Event.self) { event in
-                                EventDetailView(event: event, path: $path)
+                                EventDetailView(event: event)
                             }
                     }
                 }

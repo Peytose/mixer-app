@@ -4,7 +4,6 @@
 //
 //  Created by Peyton Lyons on 8/20/23.
 //
-
 import Foundation
 import AlgoliaSearchClient
 
@@ -15,34 +14,84 @@ class AlgoliaManager: ObservableObject {
     private var usersIndex: Index
     private var eventsIndex: Index
     private var hostsIndex: Index
+    private var relationshipsIndex: Index
     static let shared = AlgoliaManager()
-    // Add other indexes as needed
     
     init() {
-        self.client      = SearchClient(appID: "PM1M1FWXLY",
-                                        apiKey: "c9219b0edb6cf85f8cf5726851e20882")
-        self.usersIndex  = client.index(withName: "prod_users_search")
-        self.eventsIndex = client.index(withName: "prod_events_search")
-        self.hostsIndex  = client.index(withName: "prod_hosts_search")
+        self.client             = SearchClient(appID: "PM1M1FWXLY",
+                                               apiKey: "b8e1ce81d5a8f61beecd12e1a125583d")
+        self.usersIndex         = client.index(withName: "prod_users_search")
+        self.eventsIndex        = client.index(withName: "prod_events_search")
+        self.hostsIndex         = client.index(withName: "prod_hosts_search")
+        self.relationshipsIndex = client.index(withName: "prod_relationships_index")
+        
+        // Setting attributes for faceting for the relationships index
+        let relationshipSettings = Settings()
+            .set(\.attributesForFaceting, to: ["initiatorUid",
+                                               "recipientUid",
+                                               "state"])
+        
+        self.relationshipsIndex.setSettings(relationshipSettings) { (result) in
+            switch result {
+            case .success(let response):
+                // You can handle a successful settings update here if needed
+                print("DEBUG: Settings for relationships index updated successfully. TaskID: \(response.task.taskID)")
+            case .failure(let error):
+                print("DEBUG: Error setting attributes for faceting: \(error)")
+            }
+        }
         
         print("DEBUG: init for algolia completed. \(client)")
     }
     
     
-    func search(by type: SearchType, query: Query, completion: @escaping AlgoliaCompletion) {
+    func search(by type: SearchType, searchText: String, completion: @escaping AlgoliaCompletion) {
         switch type {
-            case .events:
-                eventsIndex.search(query: query, completion: completion)
-            case .hosts:
-                hostsIndex.search(query: query, completion: completion)
-            case .users:
-                usersIndex.search(query: query, completion: completion)
+        case .events:
+            let query = Query(searchText)
+            eventsIndex.search(query: query, completion: completion)
+        case .hosts:
+            let query = Query(searchText)
+            hostsIndex.search(query: query, completion: completion)
+        case .users:
+            searchBlockedUsers { blockedUserIds in
+                print("DEBUG: Blocked users \(blockedUserIds)")
+                guard let currentUserId = UserService.shared.user?.id else { return }
+                let allExcludedUserIds = blockedUserIds + [currentUserId]
+                
+                var query = Query(searchText)
+                query.filters = allExcludedUserIds.compactMap { "NOT objectID:\($0)" }.joined(separator: " AND ")
+                
+                self.usersIndex.search(query: query, completion: completion)
+            }
+        }
+    }
+    
+    
+    private func searchBlockedUsers(completion: @escaping ([String]) -> Void) {
+        guard let currentUserId = UserService.shared.user?.id else { return }
+        guard let currentUsername = UserService.shared.user?.username else { return }
+        
+        // Structuring the filter as per the provided format
+        var query = Query(currentUsername)
+        query.filters = "recipientUid:\(currentUserId) AND state:\(RelationshipState.blocked.rawValue)"
+        
+        relationshipsIndex.search(query: query) { result in
+            switch result {
+            case .success(let response):
+                let relationships: [Relationship] = response.mapToRelationships()
+                let blockedUserIds = relationships.compactMap({ $0.initiatorUid })
+                completion(blockedUserIds)
+            case .failure(let error):
+                print("DEBUG: Error searching for blocked relationships: \(error.localizedDescription)")
+                completion([])
+            }
         }
     }
     
     
     func validateUsername(_ username: String, completion: @escaping (Bool) -> Void) {
-        var query = Query(username)
+        let query = Query(username)
             .set(\.typoTolerance, to: .false)
             .set(\.queryType, to: .prefixNone)
         

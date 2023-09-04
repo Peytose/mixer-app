@@ -25,7 +25,7 @@
 //    var universityData: [String: String]
 //    
 //    // Additional Information
-//    var relationshipStatus: RelationshipStatus?
+//    var datingStatus: DatingStatus?
 //    var major: StudentMajor?
 //    var userOptions: [String: Bool]
 //    var instagramHandle: String?
@@ -53,8 +53,8 @@
 //        self.birthday           = user.birthday
 //        self.universityData     = user.universityData
 //        
-//        if let relationshipStatus = user.relationshipStatus {
-//            self.relationshipStatus = relationshipStatus
+//        if let datingStatus = user.datingStatus {
+//            self.datingStatus = datingStatus
 //        }
 //        
 //        if let major = user.major {

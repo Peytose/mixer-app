@@ -53,9 +53,13 @@ class HomeViewModel: ObservableObject {
     func actionForState() {
         switch currentState {
         case .menu:
-            showSideMenu.toggle()
+            withAnimation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0)) {
+                showSideMenu.toggle()
+            }
         case .back, .close:
-            navigateBack()
+            withAnimation(.easeInOut) {
+                navigateBack()
+            }
         }
     }
 }

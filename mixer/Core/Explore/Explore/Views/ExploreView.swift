@@ -72,52 +72,19 @@ struct ExploreView: View {
                         eventDetailView()
                 }
             }
+            .disabled(homeViewModel.showSideMenu)
+            .swipeGesture(direction: .right) {
+                homeViewModel.actionForState()
+            }
         }
     }
 }
-
-//fileprivate struct RefreshButton: View {
-//    @Binding var isRefreshing: Bool
-//    let action: () -> Void
-//
-//    var body: some View {
-//        HStack {
-//            Spacer()
-//
-//            Button {
-//                let impact = UIImpactFeedbackGenerator(style: .light)
-//                impact.impactOccurred()
-//
-//                withAnimation(.spring(response: 2.2)) { action() }
-//            } label: {
-//                ZStack {
-//                    Circle()
-//                        .fill(.ultraThinMaterial.opacity(0.9))
-//                        .backgroundColor(opacity: 0.4)
-//                        .backgroundBlur(radius: 10)
-//
-//                    Image(systemName: "arrow.triangle.2.circlepath")
-//                        .resizable()
-//                        .scaledToFill()
-//                        .imageScale(.large)
-//                        .fontWeight(.medium)
-//                        .foregroundColor(.white)
-//                        .frame(width: 25, height: 25)
-//                }
-//                .rotationEffect(Angle(degrees: isRefreshing ? 720 : 0))
-//                .frame(width: 45, height: 45)
-//            }
-//        }
-//        .padding(.trailing)
-//    }
-//}
 
 extension ExploreView {
     @ViewBuilder
     func eventDetailView() -> some View {
         if let event = context.last?.selectedEvent {
             EventDetailView(event: event,
-                            path: .constant(NavigationPath()),
                             action: homeViewModel.navigate)
         }
     }
@@ -126,7 +93,6 @@ extension ExploreView {
     func hostDetailView() -> some View {
         if let host = context.last?.selectedHost {
             HostDetailView(host: host,
-                           path: .constant(NavigationPath()),
                            action: homeViewModel.navigate)
         }
     }

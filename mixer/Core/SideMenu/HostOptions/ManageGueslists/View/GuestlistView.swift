@@ -129,13 +129,6 @@ struct GuestlistView: View {
     }
 }
 
-struct GuestlistView_Previews: PreviewProvider {
-    static var previews: some View {
-        GuestlistView(hosts: [dev.mockHost])
-            .environmentObject(GuestlistViewModel(associatedHosts: [dev.mockHost]))
-    }
-}
-
 extension GuestlistView {
     var emptyView: some View {
         Group {

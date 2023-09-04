@@ -20,6 +20,7 @@ final class SearchViewModel: ObservableObject {
     @Published var selectedSearchItem: SearchItem?
     
     private let algoliaManager = AlgoliaManager.shared
+    private var userService = UserService.shared
     
     var cancellables = Set<AnyCancellable>()
     
@@ -38,32 +39,30 @@ final class SearchViewModel: ObservableObject {
         if !searchText.isEmpty {
             // Start loading
             showLoadingView()
-
-            let query = Query(searchText)
+            
             let group = DispatchGroup()
             var hitsCount: [SearchType: Int] = [:]
-
+            
             for type in SearchType.allCases {
                 group.enter()
-
-                algoliaManager.search(by: type, query: query) { [weak self] result in
+                
+                algoliaManager.search(by: type, searchText: searchText) { [weak self] result in
                     switch result {
                     case .success(let response):
                         let filteredItems = response.mapToSearchItems()
+                        
                         DispatchQueue.main.async {
                             self?.results.updateValue(filteredItems, forKey: type.description)
-                            print("DEBUG: Items from algolia: \(filteredItems)")
-                            
                             hitsCount[type] = filteredItems.count
                         }
                     case .failure(let error):
                         print("DEBUG: Error searching for \(self?.searchText ?? ""): \(error.localizedDescription)")
                     }
-
+                    
                     group.leave()
                 }
             }
-
+            
             group.notify(queue: DispatchQueue.main) { [weak self] in
                 self?.hideLoadingView()
                 
@@ -77,7 +76,6 @@ final class SearchViewModel: ObservableObject {
             print("DEBUG: Search text is empty.")
         }
     }
-
     
     
     func fetchDetails(for item: SearchItem,

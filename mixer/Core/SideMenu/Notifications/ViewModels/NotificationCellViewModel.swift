@@ -78,21 +78,6 @@ class NotificationCellViewModel: ObservableObject {
     }
     
     
-    func deleteNotification() {
-        guard let notificationId = notification.id,
-              let userId = userService.user?.id else { return }
-        
-        COLLECTION_NOTIFICATIONS
-            .document(userId)
-            .collection("user-notifications")
-            .document(notificationId)
-            .delete { _ in
-                HapticManager.playLightImpact()
-            }
-    }
-
-    
-    
     func removeFromGuestlist() {
         if let eventId = notification.eventId {
             hostService.removeUserFromGuestlist(with: notification.uid,
@@ -125,9 +110,9 @@ class NotificationCellViewModel: ObservableObject {
     }
     
     
-    func cancelRequestOrRemoveFriend() {
+    func cancelOrDeleteRelationship() {
         
-        userService.cancelRequestOrRemoveFriend(uid: notification.uid) { _ in
+        userService.cancelOrDeleteRelationship(uid: notification.uid) { _ in
             HapticManager.playLightImpact()
         }
     }

@@ -41,7 +41,7 @@ struct User: Hashable, Identifiable, Codable {
     var accountType: AccountType
 
     // MARK: - Additional Information
-    var relationshipStatus: RelationshipStatus?
+    var datingStatus: DatingStatus?
     var major: StudentMajor?
     var instagramHandle: String?
     var bio: String?
@@ -49,7 +49,7 @@ struct User: Hashable, Identifiable, Codable {
     
     // MARK: - Flags and Computed Properties
     var age: Int?
-    var friendshipState: FriendshipState?
+    var relationshipState: RelationshipState?
     var isCurrentUser: Bool {
         return UserService.shared.user?.id == id
     }

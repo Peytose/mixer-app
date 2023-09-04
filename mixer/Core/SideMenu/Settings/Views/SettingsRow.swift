@@ -158,7 +158,7 @@ extension MenuSettingsRow {
         case "Gender":
             return Gender.allCases
         case "Relationship Status":
-            return RelationshipStatus.allCases
+            return DatingStatus.allCases
         case "Major":
             return StudentMajor.allCases
         default:

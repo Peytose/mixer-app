@@ -163,6 +163,15 @@
       }
     },
     {
+      "identity" : "materialui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/chkn/MaterialUI",
+      "state" : {
+        "branch" : "master",
+        "revision" : "775decbe53c0dd05278d82481cddc3321e4a153d"
+      }
+    },
+    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",

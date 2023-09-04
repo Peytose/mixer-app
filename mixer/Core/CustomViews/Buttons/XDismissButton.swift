@@ -15,7 +15,7 @@ struct XDismissButton: View {
             Image(systemName: "xmark")
                 .font(.title3)
                 .fontWeight(.semibold)
-                .foregroundColor(.secondary)
+                .foregroundColor(.white)
                 .padding(10)
                 .contentShape(Rectangle())
         }

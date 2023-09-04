@@ -13,9 +13,7 @@ struct HomeViewActionButton: View {
     
     var body: some View {
         Button {
-            withAnimation(.spring()) {
-                homeViewModel.actionForState()
-            }
+            homeViewModel.actionForState()
         } label: {
             Image(systemName: homeViewModel.iconForState())
                 .font(.title2)

@@ -13,14 +13,11 @@ import PopupView
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
-    @State private var showOptions  = false
     @State private var showUsername = false
-    @Binding var path: NavigationPath
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
-    init(user: User, path: Binding<NavigationPath>, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
+    init(user: User, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
         self._viewModel = StateObject(wrappedValue: ProfileViewModel(user: user))
-        self._path      = path
         self.action     = action
     }
     
@@ -33,34 +30,48 @@ struct ProfileView: View {
             
             ScrollView(showsIndicators: false) {
                 // Banner and overlayed button(s)
-                banner
+                StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl,
+                                       namespace: namespace)
                 
                 // Name, age, links, school and bio
                 profileInfo
                 
                 // Contains user relationship status and major
-                if viewModel.user.relationshipStatus != nil || viewModel.user.major != nil {
+                if viewModel.user.datingStatus != nil || viewModel.user.major != nil {
                     aboutSection
                 }
             }
             .ignoresSafeArea(.all)
             .statusBar(hidden: true)
             
-            if showOptions {
-                Color.theme.secondaryBackgroundColor.opacity(0.6)
-                    .backgroundBlur(radius: 5, opaque: true)
-                    .padding(-20)
-                    .blur(radius: 20)
-                    .ignoresSafeArea()
-                
+            if viewModel.isShowingMoreProfileOptions {
                 MoreProfileOptions(viewModel: viewModel)
                     .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
             }
         }
+        .navigationBarBackButtonHidden(true)
         .toolbar {
-            if path.count > 1 {
+            if action == nil {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationBackArrowButton(path: $path)
+                    PresentationBackArrowButton()
+                }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    viewModel.isShowingMoreProfileOptions.toggle()
+                    HapticManager.playLightImpact()
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.callout)
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .contentShape(Rectangle())
+                        .background {
+                            Circle()
+                                .stroke(lineWidth: 1.3)
+                                .foregroundColor(.white)
+                        }
                 }
             }
         }
@@ -82,33 +93,10 @@ struct ProfileView: View {
 }
 
 extension ProfileView {
-    var banner: some View {
-        StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl, namespace: namespace)
-            .overlay(alignment: .topTrailing) {
-                if !viewModel.user.isCurrentUser {
-                    Image(systemName: "ellipsis")
-                        .font(.callout)
-                        .padding(10)
-                        .contentShape(Rectangle())
-                        .background {
-                            Circle()
-                                .stroke(lineWidth: 1.3)
-                                .foregroundColor(.white)
-                        }
-                        .onTapGesture {
-                            HapticManager.playLightImpact()
-                            showOptions.toggle()
-                        }
-                        .padding(.trailing)
-                        .padding(.top, 60)
-                }
-            }
-    }
-    
     var profileInfo: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 5) {
                     HStack {
                         HStack(alignment: .center, spacing: 15) {
                             Text(showUsername ? "@\(viewModel.user.username)" : viewModel.user.displayName)
@@ -133,7 +121,7 @@ extension ProfileView {
                         
                         if let instagramUrl = URL(string: "https://www.instagram.com/\(viewModel.user.instagramHandle ?? "mixerpartyapp")/") {
                             Link(destination: instagramUrl) {
-                                Image("Instagram_Glyph_Gradient 1")
+                                Image("instagram")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 24, height: 24)
@@ -141,37 +129,15 @@ extension ProfileView {
                         }
                     }
                     
-                    if let university = viewModel.user.university {
-                        HStack {
-                            Image(systemName: "graduationcap.fill")
-                                .resizable()
-                                .scaledToFill()
-                                .foregroundColor(.white)
-                                .frame(width: 15, height: 15)
-                            
-                            Text(university.shortName ?? university.name)
-                                .font(.body)
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.75)
-                        }
+                    if let university = viewModel.user.university, university.id != "com" {
+                        DetailRow(text: university.shortName ?? university.name,
+                                  icon: "building.columns.fill")
                     }
                     
                     if let memberHosts = viewModel.user.associatedHosts {
                         ForEach(memberHosts) { host in
-                            HStack {
-                                KFImage(URL(string: host.hostImageUrl))
-                                    .resizable()
-                                    .scaledToFill()
-                                    .foregroundColor(.white)
-                                    .frame(width: 15, height: 15)
-                                
-                                Text(host.name)
-                                    .foregroundColor(.secondary)
-                                    .font(.body)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.75)
-                            }
+                            DetailRow(text: host.name,
+                                      imageUrl: host.hostImageUrl)
                         }
                     }
                 }
@@ -179,7 +145,9 @@ extension ProfileView {
                 Spacer()
             }
             
-            FriendshipButtonsView(viewModel: viewModel)
+            if !viewModel.user.isCurrentUser {
+                RelationshipButtonsView(viewModel: viewModel)
+            }
             
             if let bio = viewModel.user.bio {
                 Text(bio)
@@ -188,7 +156,7 @@ extension ProfileView {
                     .minimumScaleFactor(0.75)
             }
             
-            if viewModel.user.friendshipState != .friends, viewModel.mutuals.count > 0 {
+            if viewModel.user.relationshipState != .friends, viewModel.mutuals.count > 0 {
                 UserIconList(users: viewModel.mutuals)
             }
         }
@@ -202,8 +170,9 @@ extension ProfileView {
             
             VStack(alignment: .leading) {
                 HStack {
-                    if let status = viewModel.user.relationshipStatus {
-                        DetailRow(image: status.icon, text: status.description)
+                    if let status = viewModel.user.datingStatus {
+                        DetailRow(text: status.description,
+                                  icon: status.icon)
                     }
                     
                     Spacer()
@@ -211,7 +180,8 @@ extension ProfileView {
                 
                 HStack {
                     if let major = viewModel.user.major {
-                        DetailRow(image: major.icon, text: major.description)
+                        DetailRow(text: major.description,
+                                  icon: major.icon)
                     }
                     
                     Spacer()
@@ -249,7 +219,6 @@ fileprivate struct ProfileCornerButton: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView(user: dev.mockUser,
-                    path: .constant(NavigationPath.init()))
+        ProfileView(user: dev.mockUser)
     }
 }

@@ -1,18 +1,18 @@
 //
-//  Friendship.swift
+//  RelationshipState.swift
 //  mixer
 //
-//  Created by Peyton Lyons on 8/7/23.
+//  Created by Peyton Lyons on 9/3/23.
 //
 
-import FirebaseFirestoreSwift
-import Firebase
+import SwiftUI
 
-enum FriendshipState: Int, Codable, IconRepresentable {
+enum RelationshipState: Int, Codable, IconRepresentable {
     case friends
     case requestSent
     case requestReceived
     case notFriends
+    case blocked
 
     var text: String {
         switch self {
@@ -20,6 +20,7 @@ enum FriendshipState: Int, Codable, IconRepresentable {
             case .requestSent: return "Request Sent"
             case .requestReceived: return "Accept Request"
             case .notFriends: return "Send Request"
+            case .blocked: return "Unblock"
         }
     }
     
@@ -29,15 +30,7 @@ enum FriendshipState: Int, Codable, IconRepresentable {
             case .requestSent: return "person.wave.2.fill"
             case .requestReceived: return "person.fill.checkmark"
             case .notFriends: return "person.fill.badge.plus"
+            case .blocked: return "person.crop.circle.badge.exclamationmark.fill"
         }
     }
-}
-
-struct Friendship: Codable {
-    let fromUserUid: String
-    let toUserUid: String
-    let fromUsername: String
-    let toUsername: String
-    var state: FriendshipState
-    var timestamp: Timestamp
 }

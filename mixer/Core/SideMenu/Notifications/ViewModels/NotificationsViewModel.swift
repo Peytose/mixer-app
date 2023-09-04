@@ -10,8 +10,11 @@ import Firebase
 import FirebaseFirestore
 
 class NotificationsViewModel: ObservableObject {
+    @Published var selectedNotificationIds: [String] = []
     @Published var notifications = [Notification]()
+    @Published var selectedNotification: Notification?
     @Published var cache = NotificationCache()
+    @Published var isEditing: Bool = false
     
     private let service = UserService.shared
     private var lastDocument: DocumentSnapshot?
@@ -23,6 +26,31 @@ class NotificationsViewModel: ObservableObject {
 
     deinit {
         listener?.remove() // Detach the listener when the ViewModel is deallocated
+    }
+    
+    
+    func selectNotification(_ notification: Notification) {
+        guard let notificationId = notification.id else { return }
+        
+        if let index = self.selectedNotificationIds.firstIndex(where: { $0 == notificationId }) {
+            self.selectedNotificationIds.remove(at: index)
+        } else {
+            self.selectedNotificationIds.append(notificationId)
+        }
+    }
+    
+    
+    func deleteNotifications() {
+        guard let userId = service.user?.id else { return }
+        
+        COLLECTION_NOTIFICATIONS
+            .document(userId)
+            .collection("user-notifications")
+            .batchDelete(documentIDs: selectedNotificationIds) { _ in
+                self.isEditing = false
+                self.selectedNotificationIds = []
+                HapticManager.playLightImpact()
+            }
     }
 
     

@@ -1,5 +1,5 @@
 //
-//  RelationshipStatus.swift
+//  DatingStatus.swift
 //  mixer
 //
 //  Created by Peyton Lyons on 8/9/23.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum RelationshipStatus: Int, Codable, CustomStringConvertible, CaseIterable {    
+enum DatingStatus: Int, Codable, CustomStringConvertible, CaseIterable {    
     case single
     case taken
     case complicated

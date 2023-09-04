@@ -1,5 +1,5 @@
 //
-//  FriendshipButtonsView.swift
+//  RelationshipButtonsView.swift
 //  mixer
 //
 //  Created by Peyton Lyons on 8/7/23.
@@ -7,16 +7,16 @@
 
 import SwiftUI
 
-struct FriendshipButtonsView: View {
+struct RelationshipButtonsView: View {
     @ObservedObject var viewModel: ProfileViewModel
     
     var body: some View {
         HStack(alignment: .center, spacing: 5) {
-            if viewModel.user.friendshipState != .requestReceived {
+            if viewModel.user.relationshipState != .requestReceived {
                 mainButton
             }
             
-            if viewModel.user.friendshipState == .requestReceived {
+            if viewModel.user.relationshipState == .requestReceived {
                 acceptButton
                 rejectButton
             }
@@ -24,20 +24,20 @@ struct FriendshipButtonsView: View {
     }
 }
 
-extension FriendshipButtonsView {
+extension RelationshipButtonsView {
     @ViewBuilder
     private var mainButton: some View {
         Button {
-            switch viewModel.user.friendshipState {
-            case .friends, .requestSent:
-                viewModel.cancelFriendRequest()
+            switch viewModel.user.relationshipState {
+            case .friends, .requestSent, .blocked:
+                viewModel.cancelRelationshipRequest()
             case .notFriends:
                 viewModel.sendFriendRequest()
             default:
                 break
             }
         } label: {
-            Text(viewModel.user.friendshipState?.text ?? "")
+            Text(viewModel.user.relationshipState?.text ?? "")
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .padding(EdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8))
@@ -62,7 +62,7 @@ extension FriendshipButtonsView {
     }
     
     private var rejectButton: some View {
-        Button(action: viewModel.cancelFriendRequest) {
+        Button(action: viewModel.cancelRelationshipRequest) {
             Text("Reject")
                 .font(.subheadline)
                 .fontWeight(.semibold)

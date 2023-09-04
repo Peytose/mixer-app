@@ -11,15 +11,15 @@ import CoreLocation
 import FirebaseFirestore
 
 struct HostDetailView: View {
+    @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel: HostViewModel
     var namespace: Namespace.ID?
-    @Binding var path: NavigationPath
+    
     @State var showBackArrow = false
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
-    init(host: Host, path: Binding<NavigationPath>, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
+    init(host: Host, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
         self._viewModel = StateObject(wrappedValue: HostViewModel(host: host))
-        self._path      = path
         self.action     = action
     }
     
@@ -31,7 +31,6 @@ struct HostDetailView: View {
                 .unredacted()
                 
                 HostInfoView(namespace: namespace,
-                             path: $path,
                              viewModel: viewModel,
                              action: action)
             }
@@ -39,9 +38,9 @@ struct HostDetailView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            if path.count > 1 {
+            if action == nil {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationBackArrowButton(path: $path)
+                    PresentationBackArrowButton()
                 }
             }
         }

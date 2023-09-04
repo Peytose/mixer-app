@@ -27,5 +27,32 @@ class HostManager: ObservableObject {
             self.hosts = hosts
         }
     }
+    
+    
+    func fetchHosts(with ids: [String], completion: @escaping ([Host]) -> Void) {
+        var hosts: [Host] = []
+        let group = DispatchGroup()
+        
+        for id in ids {
+            group.enter()
+            COLLECTION_HOSTS
+                .document(id)
+                .getDocument { snapshot, error in
+                    if let error = error {
+                        print("DEBUG: Error fetching host. \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    guard let host = try? snapshot?.data(as: Host.self) else { return }
+                    hosts.append(host)
+                    
+                    group.leave()
+                }
+        }
+        
+        group.notify(queue: .main) {
+            completion(hosts)
+        }
+    }
 }
 

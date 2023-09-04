@@ -96,7 +96,26 @@ extension View {
         self
             .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
     }
-    
-    
-    // MARK: [Insert next name here] Extensions
+}
+
+// MARK: Gesture extension
+extension View {
+    func swipeGesture(direction: SwipeDirection, action: @escaping () -> Void) -> some View {
+        return self.gesture(DragGesture(minimumDistance: 3.0, coordinateSpace: .local)
+            .onEnded { value in
+                switch direction {
+                case .left where value.translation.width < 0 && abs(value.translation.height) < 30:
+                    action()
+                case .right where value.translation.width > 0 && abs(value.translation.height) < 30:
+                    action()
+                case .up where value.translation.height < 0 && abs(value.translation.width) < 100:
+                    action()
+                case .down where value.translation.height > 0 && abs(value.translation.width) < 100:
+                    action()
+                default:
+                    break
+                }
+            }
+        )
+    }
 }

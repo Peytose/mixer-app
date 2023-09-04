@@ -28,7 +28,7 @@ class DeveloperPreview {
                         universityId: "3EjTVbgz6Ti7REzl18k0",
                         gender: .man,
                         accountType: .host,
-                        relationshipStatus: RelationshipStatus.taken,
+                        datingStatus: DatingStatus.taken,
                         major: StudentMajor.computerScience,
                         instagramHandle: "mixerpartyapp",
                         bio: "This is an example bio. Here it is. I'm making it purposely long, so I can see how it looks on a profile.",

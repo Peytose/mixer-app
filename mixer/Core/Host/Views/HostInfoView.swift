@@ -15,7 +15,6 @@ struct HostInfoView: View {
     @State private var contentHeight: CGFloat = 0
     var namespace: Namespace.ID?
     @State private var showMoreEvents = false
-    @Binding var path: NavigationPath
     @ObservedObject var viewModel: HostViewModel
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
 
@@ -46,8 +45,7 @@ struct HostInfoView: View {
                                 }
                             } else  {
                                 NavigationLink {
-                                    EventDetailView(event: event,
-                                                    path: $path)
+                                    EventDetailView(event: event)
                                 } label: {
                                     SmallEventCell(title: event.title,
                                                    duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",

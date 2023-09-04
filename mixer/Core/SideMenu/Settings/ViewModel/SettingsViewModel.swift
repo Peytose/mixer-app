@@ -29,7 +29,7 @@ class SettingsViewModel: ObservableObject {
     @Published var instagramHandle: String       = ""
     @Published var showAgeOnProfile: Bool        = false
     @Published var genderStr: String             = ""
-    @Published var relationshipStatusStr: String = ""
+    @Published var datingStatusStr: String = ""
     @Published var majorStr: String              = ""
     @Published var selectedImage: UIImage?
     private var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
@@ -57,7 +57,7 @@ class SettingsViewModel: ObservableObject {
                 self.instagramHandle = user.instagramHandle ?? ""
                 self.showAgeOnProfile = user.showAgeOnProfile
                 self.genderStr = user.gender.description
-                self.relationshipStatusStr = user.relationshipStatus?.description ?? ""
+                self.datingStatusStr = user.datingStatus?.description ?? ""
             }
             .store(in: &cancellable)
     }
@@ -76,9 +76,11 @@ class SettingsViewModel: ObservableObject {
         case .displayName:
             guard self.displayName != "" else { return }
             
-            COLLECTION_USERS.document(uid).updateData(["displayName": self.displayName]) { _ in
-                completion()
-            }
+            COLLECTION_USERS
+                .document(uid)
+                .updateData(["displayName": self.displayName]) { _ in
+                    completion()
+                }
             
         case .image:
             guard let image = self.selectedImage else {
@@ -90,53 +92,64 @@ class SettingsViewModel: ObservableObject {
                 COLLECTION_USERS
                     .document(uid)
                     .updateData(["profileImageUrl": imageUrl]) { _ in
-                    print("DEBUG: ✅ Succesfully updated profile image ...")
-                    completion()
-                }
+                        completion()
+                    }
             }
             
         case .bio:
             guard self.bio != "" else { return }
             
-            COLLECTION_USERS.document(uid).updateData(["bio": bio]) { _ in
-                completion()
-            }
+            COLLECTION_USERS
+                .document(uid)
+                .updateData(["bio": bio]) { _ in
+                    completion()
+                }
             
         case .instagram:
             guard self.instagramHandle != "" else { return }
             
-            COLLECTION_USERS.document(uid).updateData(["instagramHandle": instagramHandle]) { _ in
-                completion()
-            }
+            COLLECTION_USERS
+                .document(uid)
+                .updateData(["instagramHandle": instagramHandle]) { _ in
+                    completion()
+                }
             
         case .gender:
             guard self.genderStr != user?.gender.description else { return }
             guard let gender = Gender.enumCase(from: genderStr) else { return }
             
-            COLLECTION_USERS.document(uid).updateData(["gender": gender.rawValue]) { _ in
-                completion()
-            }
+            COLLECTION_USERS
+                .document(uid)
+                .updateData(["gender": gender.rawValue]) { _ in
+                    completion()
+                }
             
         case .relationship:
-            guard self.relationshipStatusStr != user?.relationshipStatus?.description else { return }
-            guard let relationshipStatus = RelationshipStatus.enumCase(from: relationshipStatusStr) else { return }
+            guard self.datingStatusStr != user?.datingStatus?.description else { return }
+            guard let datingStatus = DatingStatus.enumCase(from: datingStatusStr) else { return }
             
-            COLLECTION_USERS.document(uid).updateData(["relationshipStatus": relationshipStatus.rawValue]) { _ in
-                completion()
-            }
+            COLLECTION_USERS
+                .document(uid)
+                .updateData(["datingStatus": datingStatus.rawValue]) { _ in
+                    completion()
+                }
             
         case .major:
             guard self.majorStr != user?.major?.description else { return }
             guard let major = StudentMajor.enumCase(from: majorStr) else { return }
             
-            COLLECTION_USERS.document(uid).updateData(["major": major.rawValue]) { _ in
-                completion()
-            }
+            COLLECTION_USERS
+                .document(uid)
+                .updateData(["major": major.rawValue]) { _ in
+                    completion()
+                }
             
         case .ageToggle:
-            COLLECTION_USERS.document(uid).updateData(["showAgeOnProfile": showAgeOnProfile]) { _ in
-                completion()
-            }
+            COLLECTION_USERS
+                .document(uid)
+                .updateData(["showAgeOnProfile": showAgeOnProfile]) { _ in
+                    completion()
+                }
             
         case .unknown:
             break
@@ -182,7 +195,7 @@ extension SettingsViewModel {
         case "Gender":
             return Binding<String>(get: { self.genderStr }, set: { self.genderStr = $0 })
         case "Relationship Status":
-            return Binding<String>(get: { self.relationshipStatusStr }, set: { self.relationshipStatusStr = $0 })
+            return Binding<String>(get: { self.datingStatusStr }, set: { self.datingStatusStr = $0 })
         case "Major":
             return Binding<String>(get: { self.majorStr }, set: { self.majorStr = $0 })
         case "Name":

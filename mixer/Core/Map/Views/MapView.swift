@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MapView: View {
     @EnvironmentObject var viewModel: MapViewModel
+    @EnvironmentObject var homeViewModel: HomeViewModel
     @Binding var mapState: MapViewState
     
     var body: some View {

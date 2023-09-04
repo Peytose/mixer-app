@@ -8,7 +8,7 @@
 import FirebaseFirestoreSwift
 import Firebase
 
-struct Notification: Identifiable, Codable {
+struct Notification: Identifiable, Codable, Hashable {
     @DocumentID var id: String?
     var hostId: String?
     var eventId: String?
@@ -23,6 +23,13 @@ struct Notification: Identifiable, Codable {
     var event: Event?
     var user: User?
     var host: Host?
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(uid)
+        hasher.combine(username)
+        // You can add other properties if needed.
+    }
 }
 
 enum NotificationType: Int, Codable {

@@ -18,4 +18,15 @@ extension SearchResponse {
             return []
         }
     }
+    
+    
+    func mapToRelationships() -> [Relationship] {
+        do {
+            let hitsArray: [Relationship] = try self.extractHits()
+            return hitsArray
+        } catch let error {
+            print("DEBUG: Parsing error: \(error)")
+            return []
+        }
+    }
 }

@@ -12,8 +12,8 @@ class ProfileViewModel: ObservableObject {
     @Published var user: User
     @Published var showSettingsView     = false
     @Published var showUnfriendAlert    = false
+    @Published var isShowingMoreProfileOptions = false
     @Published var continueUnfriendFunc = false
-    @Published var eventSection         = EventSection.interests
     @Published var favoritedEvents      = [Event]()
     @Published var pastEvents           = [Event]()
     @Published var mutuals              = [User]()
@@ -30,65 +30,33 @@ class ProfileViewModel: ObservableObject {
         }
     }
     
-    enum EventSection: String, CaseIterable {
-        case interests
-        case past
-        
-        func sectionTitle(for isSelf: Bool) -> String {
-            switch self {
-            case .interests: return isSelf ? "Interests" : "Shared Interests"
-            case .past: return isSelf ? "History" : "Mutual History"
-            }
-        }
-    }
+    private var service = UserService.shared
+    private var hostManager = HostManager.shared
     
     init(user: User) {
         self.user = user
         self.getUserRelationship()
-    }
-    
-    @ViewBuilder func stickyHeader() -> some View {
-        let isSelf = user.isCurrentUser
         
-        HStack {
-            ForEach(EventSection.allCases, id: \.self) { [self] section in
-                VStack(spacing: 8) {
-                    Text(section.sectionTitle(for: isSelf))
-                        .font(.title3.weight(.semibold))
-                        .foregroundColor(eventSection == section ? .white : .gray)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
-                    
-                    ZStack{
-                        if eventSection == section {
-                            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                .fill(Color.theme.mixerIndigo)
-                        } else {
-                            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                                .fill(.clear)
-                        }
-                    }
-                    .padding(.horizontal,8)
-                    .frame(height: 4)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.easeInOut) {
-                        self.eventSection = section
-                    }
-                }
+        if let associatedHostIds = user.associatedHostIds,
+           !associatedHostIds.isEmpty,
+           user.accountType == .host || user.accountType == .member {
+            hostManager.fetchHosts(with: associatedHostIds) { hosts in
+                self.user.associatedHosts = hosts
             }
         }
-        .padding(.horizontal)
-        .padding(.top, 25)
-        .padding(.bottom,5)
+        
+        if user.university == nil {
+            service.fetchUniversity(with: user.universityId) { university in
+                self.user.university = university
+            }
+        }
     }
     
     
     @MainActor func sendFriendRequest() {
         guard let uid = user.id else { return }
         UserService.shared.sendFriendRequest(username: user.username, uid: uid) { _ in
-            self.user.friendshipState = .requestSent
+            self.user.relationshipState = .requestSent
             HapticManager.playSuccess()
         }
     }
@@ -97,27 +65,27 @@ class ProfileViewModel: ObservableObject {
     @MainActor func acceptFriendRequest() {
         guard let uid = user.id else { return }
         UserService.shared.acceptFriendRequest(uid: uid) { _ in
-            self.user.friendshipState = .friends
+            self.user.relationshipState = .friends
             HapticManager.playSuccess()
         }
     }
     
     
-    @MainActor func cancelFriendRequest() {
+    @MainActor func cancelRelationshipRequest() {
         guard let uid = user.id else { return }
-        guard let state = user.friendshipState else { return }
+        guard let state = user.relationshipState else { return }
         
         switch state {
         case .friends:
             self.confirmationAlertItem = AlertContext.confirmRemoveFriend {
-                UserService.shared.cancelRequestOrRemoveFriend(uid: uid) { _ in
-                    self.user.friendshipState = .notFriends
+                UserService.shared.cancelOrDeleteRelationship(uid: uid) { _ in
+                    self.user.relationshipState = .notFriends
                     HapticManager.playLightImpact()
                 }
             }
-        case .requestReceived, .requestSent:
-            UserService.shared.cancelRequestOrRemoveFriend(uid: uid) { _ in
-                self.user.friendshipState = .notFriends
+        case .requestReceived, .requestSent, .blocked:
+            UserService.shared.cancelOrDeleteRelationship(uid: uid) { _ in
+                self.user.relationshipState = .notFriends
                 HapticManager.playLightImpact()
             }
         default: break
@@ -134,27 +102,19 @@ class ProfileViewModel: ObservableObject {
         guard let uid = user.id else { return }
         
         UserService.shared.getUserRelationship(uid: uid) { relation in
-            self.user.friendshipState = relation
+            self.user.relationshipState = relation
             print("DEBUG: relation to user. \(relation)")
         }
     }
     
     
-//    @MainActor func getProfileEvents() {
-//        print("DEBUG: Getting profile events ...")
-//        if user.friendshipState != .friends && user.id != AuthViewModel.shared.currentUser?.id {
-//            print("DEBUG: Profile not a friend or self!")
-//            return
-//        }
-//
-//        guard let uid = user.id else { return }
-//
-//        COLLECTION_EVENTS
-//            .whereField("favoritedBy", arrayContains: uid)
-//            .getDocuments { snapshot, _ in
-//                guard let documents = snapshot?.documents else { return }
-//                let events = documents.compactMap({ try? $0.data(as: Event.self) })
-//                self.favoritedEvents = events
-//            }
-//    }
+    func blockUser() {
+        confirmationAlertItem = AlertContext.confirmBlock(name: user.displayName) {
+            self.service.blockUser(self.user) { _ in
+                self.user.relationshipState = .blocked
+                self.isShowingMoreProfileOptions = false
+                HapticManager.playSuccess()
+            }
+        }
+    }
 }

@@ -24,10 +24,10 @@ struct HomeView: View {
                 if userService.user == nil {
                     AuthFlow()
                 } else {
-                    NavigationStack(path: $homeViewModel.path) {
+                    NavigationStack {
                         ZStack {
                             if homeViewModel.showSideMenu {
-                                SideMenuView(path: $homeViewModel.path)
+                                SideMenuView()
                             }
                             
                             ZStack {
@@ -39,6 +39,7 @@ struct HomeView: View {
                                     case .explore:
                                         ExploreView(context: $homeViewModel.selectedNavigationStack)
                                             .environmentObject(exploreViewModel)
+                                        
                                     case .search:
                                         SearchView(context: $homeViewModel.selectedNavigationStack)
                                             .environmentObject(SearchViewModel())

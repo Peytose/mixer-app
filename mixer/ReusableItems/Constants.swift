@@ -10,7 +10,7 @@ import UIKit
 
 let COLLECTION_USERS = Firestore.firestore().collection("users")
 let COLLECTION_HOSTS = Firestore.firestore().collection("hosts")
-let COLLECTION_FRIENDSHIPS = Firestore.firestore().collection("friendships")
+let COLLECTION_RELATIONSHIPS = Firestore.firestore().collection("relationships")
 let COLLECTION_FOLLOWERS = Firestore.firestore().collection("followers")
 let COLLECTION_FOLLOWING = Firestore.firestore().collection("following")
 let COLLECTION_UNIVERSITIES = Firestore.firestore().collection("universities")

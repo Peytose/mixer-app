@@ -19,12 +19,10 @@ struct EventDetailView: View {
     @State private var showHeart = false
     @State private var heartRotation: Double = 0
     @State private var heartOpacity: Double = 1
-    @Binding var path: NavigationPath
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
-    init(event: Event, path: Binding<NavigationPath>, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
+    init(event: Event, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
         self._viewModel = StateObject(wrappedValue: EventViewModel(event: event))
-        self._path      = path
         self.action     = action
     }
     
@@ -43,18 +41,15 @@ struct EventDetailView: View {
                         
                         if let host = viewModel.host {
                             if let action = action {
-                                HostSection(viewModel: viewModel,
-                                            path: $path)
+                                HostSection(viewModel: viewModel)
                                 .onTapGesture {
                                     action(.back, nil, host, nil)
                                 }
                             } else {
                                 NavigationLink {
-                                    HostDetailView(host: host,
-                                                   path: $path)
+                                    HostDetailView(host: host)
                                 } label: {
-                                    HostSection(viewModel: viewModel,
-                                                path: $path)
+                                    HostSection(viewModel: viewModel)
                                 }
                             }
                         }
@@ -107,9 +102,9 @@ struct EventDetailView: View {
             }
             .navigationBarBackButtonHidden(true)
             .toolbar {
-                if path.count > 0 {
+                if action == nil {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        NavigationBackArrowButton(path: $path)
+                        PresentationBackArrowButton()
                     }
                 }
             }
@@ -234,7 +229,7 @@ struct EventFlyer: View {
 
 struct HostSection: View {
     @ObservedObject var viewModel: EventViewModel
-    @Binding var path: NavigationPath
+    
     
     var body: some View {
         if let host = viewModel.host {
@@ -316,9 +311,11 @@ struct EventDetails: View {
                 HStack {
                     if let amenities = viewModel.event.amenities {
                         if amenities.contains(where: { $0.rawValue.contains("Beer") || $0.rawValue.contains("Alcoholic Drinks") }) {
-                            DetailRow(image: "drop.fill", text: "Wet Event")
+                            DetailRow(text: "Wet Event",
+                                      icon: "drop.fill")
                         } else {
-                            DetailRow(image: "drop.fill", text: "Dry Event")
+                            DetailRow(text: "Dry Event",
+                                      icon: "drop.fill")
                         }
                     }
                     
@@ -327,9 +324,11 @@ struct EventDetails: View {
                 
                 HStack {
                     if viewModel.event.isInviteOnly {
-                        DetailRow(image: "list.clipboard.fill", text: "Invite Only Event")
+                        DetailRow(text: "Invite Only Event",
+                                  icon: "list.clipboard.fill")
                     } else {
-                        DetailRow(image: "list.clipboard.fill", text: "Open Event")
+                        DetailRow(text: "Open Event",
+                                  icon: "list.clipboard.fill")
                     }
                     
                     InfoButton { viewModel.alertItem = AlertContext.openAndInviteOnlyEventsInfo }
@@ -416,9 +415,11 @@ struct LocationSection: View {
             
             if viewModel.event.isInviteOnly && (viewModel.event.didGuestlist ?? false) {
                 if let altAddress = viewModel.event.altAddress {
-                    DetailRow(image: "mappin.and.ellipse", text: altAddress)
+                    DetailRow(text: altAddress,
+                              icon: "mappin.and.ellipse")
                 } else {
-                    DetailRow(image: "mappin.and.ellipse", text: "Available when you are on the guest list")
+                    DetailRow(text: "Available when you are on the guest list",
+                              icon: "mappin.and.ellipse")
                 }
             } else {
                 let location = CLLocationCoordinate2D(latitude: viewModel.event.geoPoint.latitude,
