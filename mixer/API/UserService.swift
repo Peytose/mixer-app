@@ -447,26 +447,38 @@ extension UserService {
                     return
                 }
                 
-                NotificationsViewModel.uploadNotification(toUid: host.mainUserId,
-                                                          type: .memberJoined,
-                                                          host: host)
+                guard let currentUserId = currentUser.id else { return }
+                let updatedUserData: [String: Any] = ["associatedHostIds": FieldValue.arrayUnion([hostId]),
+                                                      "accountType": AccountType.member.rawValue]
                 
-                COLLECTION_NOTIFICATIONS
-                    .deleteNotifications(forUserID: memberId,
-                                         ofTypes: [.memberInvited],
-                                         from: userId,
-                                         completion: completion)
+                COLLECTION_USERS
+                    .document(currentUserId)
+                    .updateData(updatedUserData) { error in
+                        if let error = error {
+                            print("DEBUG: Error updating member doc : \(error.localizedDescription)")
+                            completion?(error)
+                            return
+                        }
+                        
+                        NotificationsViewModel.uploadNotification(toUid: host.mainUserId,
+                                                                  type: .memberJoined,
+                                                                  host: host)
+                        
+                        COLLECTION_NOTIFICATIONS
+                            .deleteNotifications(forUserID: memberId,
+                                                 ofTypes: [.memberInvited],
+                                                 from: userId,
+                                                 completion: completion)
+                    }
             }
     }
     
-    
-    func rejectMemberInviteOrRemove(fromHost hostId: String,
-                                    fromUser userId: String,
-                                    memberId: String,
-                                    completion: FirestoreCompletion) {
+    func rejectMemberInvite(fromUser userId: String,
+                            fromHost hostId: String,
+                            memberId: String,
+                            completion: FirestoreCompletion) {
         guard let currentUser = self.user else { return }
-        guard currentUser.associatedHostIds?.contains(hostId) == true ||
-                memberId == currentUser.id else { return }
+        guard memberId == currentUser.id else { return }
         
         COLLECTION_HOSTS
             .document(hostId)
@@ -480,10 +492,51 @@ extension UserService {
                 
                 COLLECTION_NOTIFICATIONS
                     .deleteNotifications(forUserID: memberId,
-                                         ofTypes: [.memberInvited,
-                                                   .memberJoined],
+                                         ofTypes: [.memberInvited],
                                          from: userId,
                                          completion: completion)
+            }
+    }
+    
+    
+    func removeMember(fromHost hostId: String,
+                      member: User,
+                      completion: FirestoreCompletion) {
+        guard let memberId = member.id else { return }
+        guard let currentUser = self.user, let currentUserId = currentUser.id else { return }
+        guard currentUser.associatedHostIds?.contains(hostId) == true else { return }
+        
+        COLLECTION_HOSTS
+            .document(hostId)
+            .collection("member-list")
+            .document(memberId)
+            .delete { error in
+                if let error = error {
+                    completion?(error)
+                    return
+                }
+                
+                var updatedData: [String: Any] = ["associatedHostIds": FieldValue.arrayRemove([hostId])]
+                
+                if member.associatedHostIds?.count == 1 {
+                    updatedData.updateValue(AccountType.user.rawValue,
+                                            forKey: "accountType")
+                }
+                
+                COLLECTION_USERS
+                    .document(memberId)
+                    .updateData(updatedData) { error in
+                        if let error = error {
+                            completion?(error)
+                            return
+                        }
+                        
+                        COLLECTION_NOTIFICATIONS
+                            .deleteNotifications(forUserID: currentUserId,
+                                                 ofTypes: [.memberJoined],
+                                                 from: memberId,
+                                                 completion: completion)
+                    }
             }
     }
 }

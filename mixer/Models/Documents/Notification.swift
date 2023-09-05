@@ -16,7 +16,7 @@ struct Notification: Identifiable, Codable, Hashable {
     let username: String
     let timestamp: Timestamp
     let imageUrl: String
-    let type: NotificationType
+    var type: NotificationType
     
     var isFollowed: Bool? = false
     var isFriends: Bool? = false

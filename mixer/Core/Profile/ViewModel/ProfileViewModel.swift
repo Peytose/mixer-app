@@ -66,7 +66,15 @@ class ProfileViewModel: ObservableObject {
         guard let uid = user.id else { return }
         UserService.shared.acceptFriendRequest(uid: uid) { _ in
             self.user.relationshipState = .friends
-            HapticManager.playSuccess()
+            
+            guard let currentUserId = UserService.shared.user?.id else { return }
+            
+            COLLECTION_NOTIFICATIONS
+                .deleteNotifications(forUserID: currentUserId,
+                                     ofTypes: [.friendRequest],
+                                     from: uid) { _ in
+                    HapticManager.playSuccess()
+                }
         }
     }
     

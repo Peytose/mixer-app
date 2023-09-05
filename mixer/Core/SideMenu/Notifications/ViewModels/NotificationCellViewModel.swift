@@ -56,9 +56,9 @@ class NotificationCellViewModel: ObservableObject {
     
     func declineMemberInvite() {
         if let hostId = notification.hostId, let memberId = userService.user?.id {
-            userService.rejectMemberInviteOrRemove(fromHost: hostId,
-                                                   fromUser: notification.uid,
-                                                   memberId: memberId) { _ in
+            userService.rejectMemberInvite(fromUser: notification.uid,
+                                           fromHost: hostId,
+                                           memberId: memberId) { _ in
                 HapticManager.playLightImpact()
             }
         }
@@ -69,7 +69,8 @@ class NotificationCellViewModel: ObservableObject {
         print("Host: \(String(describing: notification.host))")
         print("Event: \(String(describing: notification.event))")
         if let host = notification.host {
-            userService.acceptMemberInvite(forHost: host, fromUser: notification.uid) { _ in
+            userService.acceptMemberInvite(forHost: host,
+                                           fromUser: notification.uid) { _ in
                 HapticManager.playSuccess()
             }
         } else {
@@ -104,6 +105,7 @@ class NotificationCellViewModel: ObservableObject {
                         return
                     }
                     
+                    self.notification.type = .friendAccepted
                     HapticManager.playSuccess()
                 }
         }

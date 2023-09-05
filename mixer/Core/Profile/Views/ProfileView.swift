@@ -32,12 +32,34 @@ struct ProfileView: View {
                 // Banner and overlayed button(s)
                 StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl,
                                        namespace: namespace)
+                .overlay(alignment: .topTrailing) {
+                    if action != nil {
+                        Button {
+                            viewModel.isShowingMoreProfileOptions.toggle()
+                            HapticManager.playLightImpact()
+                        } label: {
+                            Image(systemName: "ellipsis")
+                                .font(.callout)
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .contentShape(Rectangle())
+                                .background {
+                                    Circle()
+                                        .stroke(lineWidth: 1.3)
+                                        .foregroundColor(.white)
+                                }
+                        }
+                        .padding(.trailing, 20)
+                        .padding(.top, 60)
+                    }
+                }
                 
                 // Name, age, links, school and bio
                 profileInfo
                 
                 // Contains user relationship status and major
-                if viewModel.user.datingStatus != nil || viewModel.user.major != nil {
+                if viewModel.user.relationshipState == .friends
+                    && (viewModel.user.datingStatus != nil || viewModel.user.major != nil) {
                     aboutSection
                 }
             }
@@ -57,21 +79,23 @@ struct ProfileView: View {
                 }
             }
             
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    viewModel.isShowingMoreProfileOptions.toggle()
-                    HapticManager.playLightImpact()
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.callout)
-                        .foregroundColor(.white)
-                        .padding(10)
-                        .contentShape(Rectangle())
-                        .background {
-                            Circle()
-                                .stroke(lineWidth: 1.3)
-                                .foregroundColor(.white)
-                        }
+            if action == nil {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        viewModel.isShowingMoreProfileOptions.toggle()
+                        HapticManager.playLightImpact()
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.callout)
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .contentShape(Rectangle())
+                            .background {
+                                Circle()
+                                    .stroke(lineWidth: 1.3)
+                                    .foregroundColor(.white)
+                            }
+                    }
                 }
             }
         }

@@ -12,7 +12,6 @@ import FirebaseFirestore
 class NotificationsViewModel: ObservableObject {
     @Published var selectedNotificationIds: [String] = []
     @Published var notifications = [Notification]()
-    @Published var selectedNotification: Notification?
     @Published var cache = NotificationCache()
     @Published var isEditing: Bool = false
     
