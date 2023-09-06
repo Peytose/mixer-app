@@ -64,10 +64,10 @@ class DeveloperPreview {
                           guestLimit: 300,
                           guestInviteLimit: 5,
                           memberInviteLimit: 10,
+                          isPrivate: true,
                           isInviteOnly: true,
                           isManualApprovalEnabled: true,
                           isGuestlistEnabled: true,
-                          isWaitlistEnabled: false,
                           averageRating: 4.7)
     
     let mockHost = Host(id: NSUUID().uuidString,

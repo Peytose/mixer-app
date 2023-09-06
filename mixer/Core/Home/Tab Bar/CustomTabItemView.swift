@@ -9,7 +9,6 @@ import SwiftUI
 import TabBar
 
 struct CustomTabItemStyle: TabItemStyle {
-    
     public func tabItem(icon: String, title: String, isSelected: Bool) -> some View {
         EmptyView()
     }

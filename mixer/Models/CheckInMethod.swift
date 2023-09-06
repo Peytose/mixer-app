@@ -14,9 +14,9 @@ enum CheckInMethod: String, Codable, CaseIterable, IconRepresentable {
     
     var icon: String {
         switch self {
-        case .qrCode: return "qrcode"
-        case .manual: return "pencil.line"
-        case .outOfApp: return ""
+        case .qrCode: return "qrcode.viewfinder"
+        case .manual: return "rectangle.and.pencil.and.ellipsis"
+        case .outOfApp: return "arrow.up.doc.on.clipboard"
         }
     }
     

@@ -23,6 +23,7 @@ class EventCreationViewModel: NSObject, ObservableObject {
     @Published var selectedAmenities       = Set<EventAmenity>()
     @Published var type                    = EventType.party
     @Published var isLoading               = false
+    @Published var selectedCheckInMethod   = CheckInMethod.manual
     @Published var isInviteOnly            = false
     @Published var isPrivate               = false
     @Published var isManualApprovalEnabled = false
@@ -50,12 +51,51 @@ class EventCreationViewModel: NSObject, ObservableObject {
         }
     }
     
+    enum DefaultPrivacyOption: Int, CustomStringConvertible, CaseIterable {
+        case postIt
+        case publicOpen
+        case publicInvite
+        case privateOpen
+        case privateInvite
+        
+        var description: String {
+            switch self {
+            case .postIt: return "Just post it"
+            case .publicOpen: return "Public, Open Invite"
+            case .publicInvite: return "Public, Invite-Only"
+            case .privateOpen: return "Private, Open Invite"
+            case .privateInvite: return "Private, Invite-Only"
+            }
+        }
+        
+        func presets() -> (Bool, Bool, CheckInMethod) {
+            switch self {
+            case .postIt: return (false, false, .outOfApp)
+            case .publicOpen: return (false, false, .qrCode)
+            case .publicInvite: return (false, true, .qrCode)
+            case .privateOpen: return (true, false, .qrCode)
+            case .privateInvite: return (true, true, .qrCode)
+            }
+        }
+    }
+    
     // MARK: - Lifecycle
     override init() {
         super.init()
         
         searchCompleter.delegate      = self
         searchCompleter.queryFragment = queryFragment
+    }
+    
+    
+    func setDefaultOptions(for option: DefaultPrivacyOption) {
+        let presets = option.presets()
+        
+        DispatchQueue.main.async {
+            self.isPrivate = presets.0
+            self.isInviteOnly = presets.1
+            self.selectedCheckInMethod = presets.2
+        }
     }
     
     
@@ -92,7 +132,7 @@ class EventCreationViewModel: NSObject, ObservableObject {
         switch state {
             case .basicInfo: return AnyView(BasicEventInfo())
             case .locationAndDates: return AnyView(EventLocationAndDates())
-            case .guestsAndInvitations: return AnyView(Text("EventGuestsAndInvitations()"))
+            case .guestsAndInvitations: return AnyView(EventGuestsAndInvitations())
             case .costAndAmenities: return AnyView(Text("EventAmenityAndCost()"))
             case .review: return AnyView(Text("ReviewCreatedEventView()"))
         }
@@ -132,10 +172,10 @@ class EventCreationViewModel: NSObject, ObservableObject {
                               guestLimit: Int(self.guestLimitStr),
                               guestInviteLimit: Int(self.guestInviteLimitStr),
                               memberInviteLimit: Int(self.memberInviteLimitStr),
+                              isPrivate: self.isPrivate,
                               isInviteOnly: self.isInviteOnly,
                               isManualApprovalEnabled: self.isManualApprovalEnabled,
                               isGuestlistEnabled: self.isGuestlistEnabled,
-                              isWaitlistEnabled: false,
                               cost: self.cost)
             
             guard let encodedEvent = try? Firestore.Encoder().encode(event) else { return }

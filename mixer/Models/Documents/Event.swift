@@ -66,10 +66,10 @@ struct Event: Hashable, Identifiable, Codable {
     var memberInviteLimit: Int?
 
     // MARK: - Event Options
+    var isPrivate: Bool
     var isInviteOnly: Bool
     var isManualApprovalEnabled: Bool
     var isGuestlistEnabled: Bool
-    var isWaitlistEnabled: Bool
 
     // MARK: - Payment and Reviews
     var cost: Float?

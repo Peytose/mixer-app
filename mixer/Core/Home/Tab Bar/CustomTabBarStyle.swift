@@ -23,6 +23,5 @@ struct CustomTabBarStyle: TabBarStyle {
     
     public func tabBar(with geometry: GeometryProxy, itemsContainer: @escaping () -> AnyView) -> some View {
         itemsContainer()
-            
     }
 }

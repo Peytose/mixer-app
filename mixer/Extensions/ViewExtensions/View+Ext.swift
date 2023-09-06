@@ -119,3 +119,12 @@ extension View {
         )
     }
 }
+
+// MARK: Ripple extension
+extension View {
+    func rippleEffect(location: Binding<CGPoint>,
+                      rippleColor: Color = .accentColor.opacity(0.5),
+                      onTap: (() -> Void)? = nil) -> some View {
+        modifier(Ripple(location: location, color: rippleColor, onTap: onTap))
+    }
+}
