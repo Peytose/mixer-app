@@ -8,23 +8,25 @@
 import Firebase
 import SwiftUI
 
-enum GuestStatus: String, Codable, CustomStringConvertible, CaseIterable {
-    case invited   = "isInvited"
-    case checkedIn = "isCheckedIn"
+enum GuestStatus: Int, Codable, CustomStringConvertible, CaseIterable {
+    case invited
+    case checkedIn
+    case requested
     
     var description: String {
         switch self {
-            case .invited: return "Invite"
-            case .checkedIn: return "Check-in"
+            case .invited: return "Invites"
+            case .checkedIn: return "Check-ins"
+            case .requested: return "Requests"
         }
     }
 }
 
 struct EventLists {
-    static func loadUsers(eventUid: String, completion: @escaping ([EventGuest]) -> Void) {
+    static func loadUsers(eventId: String, completion: @escaping ([EventGuest]) -> Void) {
         var users = [EventGuest]()
         
-        COLLECTION_EVENTS.document(eventUid).collection("guestlist").getDocuments() { snapshot, error in
+        COLLECTION_EVENTS.document(eventId).collection("guestlist").getDocuments() { snapshot, error in
             if let error = error {
                 print("DEBUG: Error getting users from event list: \(error.localizedDescription)")
                 completion(users)

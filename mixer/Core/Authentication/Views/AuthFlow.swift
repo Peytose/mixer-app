@@ -29,6 +29,7 @@ struct AuthFlow: View {
         }
         .overlay(alignment: .bottom) {
             SignUpContinueButton(state: $authState)
+                .disabled(viewModel.isLoading)
         }
         .overlay(alignment: .topLeading) {
             if authState != .enterName {

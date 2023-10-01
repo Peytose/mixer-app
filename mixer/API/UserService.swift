@@ -41,7 +41,8 @@ class UserService: ObservableObject {
                 guard let user = try? snapshot?.data(as: User.self) else { return }
                 self.user = user
                 
-                if (user.accountType == .host || user.accountType == .member) && !(user.associatedHostIds?.isEmpty ?? true) {
+                if !(user.hostIdToAccountTypeMap?.isEmpty ?? true) {
+                    print("DEBUG: Fetching hosts...")
                     self.fetchAssociatedHosts()
                 }
                 
@@ -55,7 +56,8 @@ class UserService: ObservableObject {
 
     
     private func fetchAssociatedHosts() {
-        guard let hostIds = user?.associatedHostIds else { return }
+        guard let hostIds = user?.hostIdToAccountTypeMap?.keys.compactMap({ $0 as? String }) else { return }
+        print("DEBUG: Host ids: \(hostIds)")
         HostManager.shared.fetchHosts(with: hostIds) { hosts in
             self.user?.associatedHosts = hosts
         }
@@ -100,7 +102,7 @@ class UserService: ObservableObject {
     }
     
     
-    func updateFavoriteStatus(isFavorited: Bool,
+    func toggleFavoriteStatusStatus(isFavorited: Bool,
                               event: Event,
                               completion: FirestoreCompletion) {
         guard let eventId = event.id else { return }
@@ -149,20 +151,21 @@ class UserService: ObservableObject {
     }
     
     
-    func joinGuestlist(for event: Event, completion: FirestoreCompletion) {
+    func requestOrJoinGuestlist(for event: Event, completion: FirestoreCompletion) {
         guard !event.isInviteOnly,
               let eventId = event.id,
               let user = self.user,
               let userId = user.id,
               userId == Auth.auth().currentUser?.uid else { return }
         
+        let guestStatus: GuestStatus = event.isManualApprovalEnabled ? .requested : .invited
         let guest = EventGuest(name: user.name,
                                universityId: user.universityId,
                                email: user.email,
                                profileImageUrl: user.profileImageUrl,
                                age: user.age,
                                gender: user.gender,
-                               status: .invited,
+                               status: guestStatus,
                                timestamp: Timestamp())
         
         guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
@@ -172,17 +175,18 @@ class UserService: ObservableObject {
             .collection("guestlist")
             .document(userId)
             .setData(encodedGuest) { error in
-                NotificationsViewModel.uploadNotification(toUid: event.postedByUserId,
-                                                          type: .guestlistJoined,
-                                                          event: event)
+                if guestStatus == .invited {
+                    NotificationsViewModel.uploadNotification(toUid: event.postedByUserId,
+                                                              type: .guestlistJoined,
+                                                              event: event)
+                }
                 
                 completion?(error)
             }
     }
     
     
-    func leaveGuestlist(for event: Event, completion: FirestoreCompletion) {
-        guard event.didGuestlist ?? false else { return }
+    func cancelOrLeaveGuestlist(for event: Event, completion: FirestoreCompletion) {
         guard let eventId = event.id else { return }
         guard let userId = self.user?.id else { return }
         
@@ -198,7 +202,7 @@ class UserService: ObservableObject {
                 
                 COLLECTION_NOTIFICATIONS
                     .deleteNotifications(forUserID: event.postedByUserId,
-                                         ofTypes: [.guestlistJoined],
+                                         ofTypes: [NotificationType.guestlistJoined],
                                          from: userId,
                                          eventId: eventId,
                                          completion: completion)
@@ -237,18 +241,18 @@ class UserService: ObservableObject {
     }
     
     
-//    static func leaveWaitlist(eventUid: String, completion: FirestoreCompletion) {
+//    static func leaveWaitlist(eventId: String, completion: FirestoreCompletion) {
 //        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
 //
-//        COLLECTION_WAITLISTS.document(eventUid).collection("users").document(currentUid)
+//        COLLECTION_WAITLISTS.document(eventId).collection("users").document(currentUid)
 //            .delete(completion: completion)
 //    }
 //
 
-//    static func fetchQueueNumber(eventUid: String, completion: @escaping (Int?) -> Void) {
+//    static func fetchQueueNumber(eventId: String, completion: @escaping (Int?) -> Void) {
 //        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
 //
-//        COLLECTION_WAITLISTS.document(eventUid).collection("users").order(by: "timestamp").getDocuments { snapshot, _ in
+//        COLLECTION_WAITLISTS.document(eventId).collection("users").order(by: "timestamp").getDocuments { snapshot, _ in
 //            guard let documents = snapshot?.documents else { return }
 //            let queueNumber = documents.firstIndex(where: { $0.documentID == currentUid }) ?? -1
 //            completion(queueNumber)
@@ -448,8 +452,7 @@ extension UserService {
                 }
                 
                 guard let currentUserId = currentUser.id else { return }
-                let updatedUserData: [String: Any] = ["associatedHostIds": FieldValue.arrayUnion([hostId]),
-                                                      "accountType": AccountType.member.rawValue]
+                let updatedUserData: [String: Any] = ["hostIdToAccountTypeMap.\(hostId)": HostAccountType.member.rawValue]
                 
                 COLLECTION_USERS
                     .document(currentUserId)
@@ -504,7 +507,7 @@ extension UserService {
                       completion: FirestoreCompletion) {
         guard let memberId = member.id else { return }
         guard let currentUser = self.user, let currentUserId = currentUser.id else { return }
-        guard currentUser.associatedHostIds?.contains(hostId) == true else { return }
+        guard currentUser.hostIdToAccountTypeMap?.keys.contains(where: { $0 == hostId }) ?? false else { return }
         
         COLLECTION_HOSTS
             .document(hostId)
@@ -516,16 +519,11 @@ extension UserService {
                     return
                 }
                 
-                var updatedData: [String: Any] = ["associatedHostIds": FieldValue.arrayRemove([hostId])]
-                
-                if member.associatedHostIds?.count == 1 {
-                    updatedData.updateValue(AccountType.user.rawValue,
-                                            forKey: "accountType")
-                }
+                let updatedUserData: [String: Any] = ["hostIdToAccountTypeMap.\(hostId)": FieldValue.delete()]
                 
                 COLLECTION_USERS
                     .document(memberId)
-                    .updateData(updatedData) { error in
+                    .updateData(updatedUserData) { error in
                         if let error = error {
                             completion?(error)
                             return

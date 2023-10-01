@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseFirestoreSwift
+import FirebaseFirestore
 import Firebase
 
 class HostService: ObservableObject {
@@ -14,20 +15,43 @@ class HostService: ObservableObject {
     @Published var host: Host?
     
     
-    func inviteUser(eventUid: String, uid: String, invitedBy: String, completion: FirestoreCompletion) {
+    func approveGuest(with uid: String,
+                      for event: Event,
+                      by host: Host,
+                      completion: FirestoreCompletion) {
+        guard let currentUserId = UserService.shared.user?.id,
+              let eventId = event.id else { return }
+        
+        self.inviteUser(eventId: eventId,
+                        uid: uid,
+                        invitedById: currentUserId) { _ in
+            NotificationsViewModel.uploadNotification(toUid: uid,
+                                                      type: .guestlistJoined,
+                                                      host: host,
+                                                      event: event)
+        }
+    }
+    
+    
+    func inviteUser(eventId: String,
+                    uid: String,
+                    invitedById: String,
+                    completion: FirestoreCompletion) {
         let data = ["status": GuestStatus.invited.rawValue,
-                    "invitedBy": invitedBy,
+                    "invitedBy": invitedById,
                     "timestamp": Timestamp()] as [String: Any]
         
         COLLECTION_EVENTS
-            .document(eventUid)
+            .document(eventId)
             .collection("guestlist")
             .document(uid)
             .updateData(data, completion: completion)
     }
     
     
-    func checkInUser(eventUid: String, uid: String, completion: FirestoreCompletion) {
+    func checkInUser(eventId: String,
+                     uid: String,
+                     completion: FirestoreCompletion) {
         guard let currentUserName = UserService.shared.user?.name else { return }
         
         let data = ["status": GuestStatus.checkedIn.rawValue,
@@ -35,21 +59,21 @@ class HostService: ObservableObject {
                     "timestamp": Timestamp()] as [String: Any]
         
         COLLECTION_EVENTS
-            .document(eventUid)
+            .document(eventId)
             .collection("guestlist")
             .document(uid)
             .updateData(data) { _ in
                 COLLECTION_USERS
                     .document(uid)
                     .collection("events-attended")
-                    .document(eventUid)
+                    .document(eventId)
                     .setData(["timestamp": Timestamp()],
                              completion: completion)
             }
     }
     
     
-    func addUserToGuestlist(eventUid: String,
+    func addUserToGuestlist(eventId: String,
                             user: User,
                             status: GuestStatus,
                             invitedBy: String? = nil,
@@ -72,7 +96,7 @@ class HostService: ObservableObject {
         guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
         
         COLLECTION_EVENTS
-            .document(eventUid)
+            .document(eventId)
             .collection("guestlist")
             .document(userId)
             .setData(encodedGuest, completion: completion)
@@ -95,7 +119,6 @@ class HostService: ObservableObject {
                 
                 // Delete the notifications
                 COLLECTION_NOTIFICATIONS
-                
                     .deleteNotifications(forUserID: id,
                                          ofTypes: [.guestlistAdded,
                                                    .guestlistJoined],

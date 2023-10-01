@@ -9,6 +9,7 @@ import SwiftUI
 import Firebase
 import FirebaseAuth
 import FirebaseFirestoreSwift
+import FirebaseFirestore
 import Combine
 
 class AuthViewModel: ObservableObject {
@@ -210,7 +211,6 @@ extension AuthViewModel {
                             birthday: Timestamp(date: self.birthday),
                             universityId: self.universityId,
                             gender: self.gender,
-                            accountType: .user,
                             bio: self.bio,
                             showAgeOnProfile: true)
             

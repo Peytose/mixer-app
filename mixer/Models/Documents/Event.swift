@@ -5,8 +5,10 @@
 //  Created by Peyton Lyons on 1/12/23.
 //
 
-import FirebaseFirestoreSwift
+import SwiftUI
 import Firebase
+import FirebaseFirestoreSwift
+import FirebaseFirestore
 
 enum EventType: Int, Codable, CaseIterable {
     case school
@@ -30,7 +32,11 @@ enum EventType: Int, Codable, CaseIterable {
     }
 }
 
-struct Event: Hashable, Identifiable, Codable {
+struct Event: Hashable, Identifiable, Codable, Equatable {
+    static func ==(lhs: Event, rhs: Event) -> Bool {
+        return lhs.id == rhs.id && lhs.id == rhs.id
+    }
+    
     // MARK: - Metadata
     @DocumentID var id: String?
     var hostId: String
@@ -52,24 +58,22 @@ struct Event: Hashable, Identifiable, Codable {
 
     // MARK: - Event Details
     var amenities: [EventAmenity]?
-    var checkInMethods: [CheckInMethod]?
+    var isCheckInViaMixer: Bool
     var containsAlcohol: Bool
 
     // MARK: - Time and Dates
     var startDate: Timestamp
     var endDate: Timestamp
-    var registrationDeadlineDate: Timestamp?
+    var cutOffDate: Timestamp?
 
     // MARK: - Attendance and Capacity Options
     var guestLimit: Int?
-    var guestInviteLimit: Int?
     var memberInviteLimit: Int?
 
     // MARK: - Event Options
     var isPrivate: Bool
     var isInviteOnly: Bool
     var isManualApprovalEnabled: Bool
-    var isGuestlistEnabled: Bool
 
     // MARK: - Payment and Reviews
     var cost: Float?
@@ -77,6 +81,7 @@ struct Event: Hashable, Identifiable, Codable {
 
     // MARK: - Flags
     var didGuestlist: Bool? = false
+    var didRequest: Bool?   = false
     var isFavorited: Bool?  = false
     var didAttend: Bool?    = false
     var isFull: Bool?       = false

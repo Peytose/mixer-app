@@ -22,9 +22,9 @@ extension Array where Element == Event {
     func sortedByStartDate(_ ascending: Bool = true) -> [Event] {
         return self.sorted {
             if ascending {
-                return $0.timePosted > $1.timePosted
+                return $0.startDate < $1.startDate
             } else {
-                return $0.timePosted < $1.timePosted
+                return $0.startDate > $1.startDate
             }
         }
     }

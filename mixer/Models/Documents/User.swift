@@ -10,16 +10,14 @@ import FirebaseFirestoreSwift
 import FirebaseFirestore
 import SwiftUI
 
-enum AccountType: Int, CustomStringConvertible, Codable {
-    case user
-    case host
+enum HostAccountType: Int, CustomStringConvertible, Codable {
     case member
+    case host
     
     var description: String {
         switch self {
-            case .user: return "User"
-            case .host: return "Host"
             case .member: return "Member"
+            case .host: return "Host"
         }
     }
 }
@@ -38,7 +36,6 @@ struct User: Hashable, Identifiable, Codable {
     var birthday: Timestamp
     var universityId: String
     var gender: Gender
-    var accountType: AccountType
 
     // MARK: - Additional Information
     var datingStatus: DatingStatus?
@@ -55,7 +52,7 @@ struct User: Hashable, Identifiable, Codable {
     }
 
     // MARK: - Associated Data
-    var associatedHostIds: [String]?
+    var hostIdToAccountTypeMap: [String: HostAccountType]?
     var associatedHosts: [Host]?
     var university: University?
 }

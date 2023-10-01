@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
 import FirebaseFirestoreSwift
 import CodeScanner
 
@@ -57,7 +58,7 @@ class GuestlistViewModel: ObservableObject {
         }
     }
 
-    @Published var viewState: ListViewState = .loading
+    @Published var viewState: ListViewState = .empty
     @Published var isShowingUserInfoModal = false
     @Published var username               = ""
     @Published var name                   = ""
@@ -201,7 +202,7 @@ extension GuestlistViewModel {
                       let eventId = self.selectedEvent?.id,
                       let userId = user.id else { return }
                 
-                self.service.addUserToGuestlist(eventUid: eventId, user: user, status: status) { error in
+                self.service.addUserToGuestlist(eventId: eventId, user: user, status: status) { error in
                     if let error = error {
                         print("DEBUG: Error adding user to guestlist. \(error.localizedDescription)")
                         return
@@ -229,6 +230,8 @@ extension GuestlistViewModel {
                     self.alertItem = AlertContext.duplicateGuestInvite
                 case .checkedIn:
                     self.alertItem = AlertContext.guestAlreadyJoined
+                case .requested:
+                    self.approveGuest(guest)
             }
         } else {
             if username != "" {
@@ -240,6 +243,28 @@ extension GuestlistViewModel {
                               status: self.status,
                               invitedBy: currentUserName)
             }
+        }
+    }
+    
+    
+    func approveGuest(_ guest: EventGuest) {
+        guard let guestId = guest.id,
+              let selectedEvent = self.selectedEvent,
+              let selectedHost = self.selectedHost else { return }
+        
+        self.service.approveGuest(with: guestId,
+                                  for: selectedEvent,
+                                  by: selectedHost) { error in
+            if let error = error {
+                print("DEBUG: Error approving guest. \(error.localizedDescription)")
+                return
+            }
+            
+            if let updatedGuest = self.guests.first(where: { $0.id == guestId }) {
+                self.selectedGuest = updatedGuest
+            }
+            
+            HapticManager.playSuccess()
         }
     }
 
@@ -260,7 +285,7 @@ extension GuestlistViewModel {
                 guard let user = try? snapshot?.documents.first?.data(as: User.self),
                       let userId = user.id else { return }
                 
-                self.service.addUserToGuestlist(eventUid: eventId,
+                self.service.addUserToGuestlist(eventId: eventId,
                                                 user: user,
                                                 status: status,
                                                 invitedBy: invitedBy,
@@ -313,7 +338,7 @@ extension GuestlistViewModel {
     func checkIn() {
         guard let eventId = selectedEvent?.id, let guestId = selectedGuest?.id else { return }
         
-        service.checkInUser(eventUid: eventId, uid: guestId) { error in
+        service.checkInUser(eventId: eventId, uid: guestId) { error in
             if let error = error {
                 print("DEBUG: Error checking guest in. \(error.localizedDescription)")
                 return
@@ -338,32 +363,40 @@ extension GuestlistViewModel {
             confirmationAlertItem = AlertContext.confirmRemoveMember {
                 self.service.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in }
             }
-        } else if selectedGuest.status == .invited || self.isShowingUserInfoModal {
+        } else if selectedGuest.status == .invited || selectedGuest.status == .requested || self.isShowingUserInfoModal {
             self.service.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in
                 self.isShowingUserInfoModal = false
             }
         }
     }
-    
-    
-    
 }
 
 // MARK: - Helpers for Observing Guestlist
 extension GuestlistViewModel {
     private func addGuestlistObserverForEvent() {
-        viewState = .loading
         if listener != nil { listener?.remove() }
-        guard let selectedEvent = selectedEvent, let eventId = selectedEvent.id else { return }
         
+        guard let selectedEvent = selectedEvent, let eventId = selectedEvent.id else { return}
+        
+        viewState = .loading
         self.listener = COLLECTION_EVENTS
             .document(eventId)
             .collection("guestlist")
-            .addSnapshotListener { snapshot, _ in
-                guard let documents = snapshot?.documents else { return }
+            .addSnapshotListener { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error adding snapshot listener to guestlist.\n\(error.localizedDescription)")
+                    self.viewState = .empty
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else { return}
                 let guests = documents.compactMap({ try? $0.data(as: EventGuest.self) })
                 
-                print("DEBUG: Guests \(guests)")
+                if guests.isEmpty {
+                    self.viewState = .empty
+                    return
+                }
+                
                 self.fetchAndAssignUniversities(to: guests) { updatedGuests in
                     DispatchQueue.main.async {
                         self.guests = updatedGuests

@@ -60,6 +60,6 @@ final class ExploreViewModel: ObservableObject {
             eventsForSection = events.filter({ $0.startDate > Timestamp() })
         }
         
-        eventsForSection = eventsForSection.sortedByStartDate()
+        eventsForSection = eventsForSection.sortedByStartDate(true)
     }
 }

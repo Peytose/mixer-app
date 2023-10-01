@@ -30,11 +30,19 @@
 				<string>app-1-654687157441-ios-d5b44dbf9946ece94ea840</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.mixer.party</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mixerapp</string>
+			</array>
+		</dict>
 	</array>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<true/>
-	<key>UIUserInterfaceStyle</key>
-	<string>Dark</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>maps</string>

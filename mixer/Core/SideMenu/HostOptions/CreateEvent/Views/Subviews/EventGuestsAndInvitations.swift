@@ -9,18 +9,9 @@ import SwiftUI
 
 struct EventGuestsAndInvitations: View {
     @EnvironmentObject var viewModel: EventCreationViewModel
-    @State private var isGuestLimitEnabled                  = false
-    @State private var isMemberInviteLimitEnabled           = false
-    @State private var isGuestInviteLimitEnabled            = false
-    @State private var isRegistrationDeadlineEnabled        = false
-
-    var checkInMethodPresetText: String {
-        switch viewModel.selectedCheckInMethod {
-        case .qrCode: return "Check-in will be handled via QR Code."
-        case .manual: return "Check-in will be handled manually by the host."
-        case .outOfApp: return "You will handle check-in outside the app."
-        }
-    }
+    @State private var isGuestLimitEnabled           = false
+    @State private var isMemberInviteLimitEnabled    = false
+    @State private var isRegistrationCutoffEnabled = false
 
     var body: some View {
         FlowContainerView {
@@ -30,7 +21,7 @@ struct EventGuestsAndInvitations: View {
                     VStack(alignment: .leading, spacing: 10) {
                         eventPresetRow
                         
-                        Text("i.e. \(!viewModel.isPrivate ? "Everyone" : "Only users who have a link") can see this event, and \(!viewModel.isInviteOnly ? "anyone" : "only users on the guestlist") can check-in to this event and see its details. \(checkInMethodPresetText)")
+                        Text("i.e. \(!viewModel.isPrivate ? "Everyone" : "Only users who have a link") can see this event, and \(!viewModel.isInviteOnly ? "anyone" : "only users on the guestlist") can check-in to this event and see its details. Check-in will be handled \(viewModel.isCheckInViaMixer ? "via mixer" : "manually by you").")
                         .body(color: .secondary)
                     }
                     .padding(.horizontal)
@@ -42,18 +33,31 @@ struct EventGuestsAndInvitations: View {
                 }
                 .listRowBackground(Color.theme.secondaryBackgroundColor)
                 
-                // MARK: Guestlist settings
                 Section {
                     HStack {
-                        InfoButton { viewModel.alertItem = AlertContext.guestlistInfo }
-                        
-                        Toggle("Use guestlist", isOn: $viewModel.isGuestlistEnabled.animation())
-                            .font(.body)
-                            .fontWeight(.semibold)
-                            .disabled(viewModel.selectedCheckInMethod == .outOfApp)
+                        InfoButton { viewModel.alertItem = AlertContext.alcoholInfo }
+
+                        Toggle("Serving Alcohol", isOn: $viewModel.hasAlcohol.animation())
+                            .font(.body.weight(.semibold))
                     }
-                    
-                    if viewModel.isGuestlistEnabled {
+
+                    Picker("", selection: $viewModel.hasAlcohol.animation()) {
+                        Text("Dry").tag(false)
+                        Text("Wet").tag(true)
+                    }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .padding(.trailing)
+                } header: {
+                    Text("Event Alcohol Status")
+                }
+                .listRowBackground(Color.theme.secondaryBackgroundColor)
+                .onChange(of: viewModel.hasAlcohol) { _ in
+                    viewModel.toggleAmenity(EventAmenity.alcohol)
+                }
+                
+                // MARK: Guestlist settings
+                if viewModel.isCheckInViaMixer {
+                    Section {
                         HStack {
                             InfoButton { viewModel.alertItem = AlertContext.guestLimitInfo }
                             
@@ -67,17 +71,17 @@ struct EventGuestsAndInvitations: View {
                                 .foregroundColor(.white)
                                 .keyboardType(.numberPad)
                         }
+                    } header: { Text("Guestlist Settings") }
+                        .listRowBackground(Color.theme.secondaryBackgroundColor)
+                    
+                    // MARK: Invite limits section
+                    if isGuestLimitEnabled {
+                        inviteLimitsSection
                     }
-                } header: { Text("Guestlist Settings") }
-                    .listRowBackground(Color.theme.secondaryBackgroundColor)
-                
-                // MARK: Invite limits section
-                if isGuestLimitEnabled {
-                    inviteLimitsSection
+                    
+                    // MARK: Advanced settings sections
+                    advancedSettingsSection
                 }
-                
-                // MARK: Advanced settings sections
-                advancedSettingsSection
             }
             .padding(.bottom, 80)
             .scrollContentBackground(.hidden)
@@ -88,19 +92,29 @@ struct EventGuestsAndInvitations: View {
 extension EventGuestsAndInvitations {
     var eventPresetRow: some View {
         HStack(spacing: 10) {
-            Text(viewModel.isPrivate ? "Private Event" : "Open Event")
+            InfoButton { viewModel.alertItem = AlertContext.checkInMethodInfo }
+            
+            Text("\(viewModel.isPrivate ? "Private" : "Open") Event")
                 .secondaryHeading()
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
 
-            Image(systemName: viewModel.selectedCheckInMethod.icon)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
+            if viewModel.isCheckInViaMixer {
+                Image("mixer-icon-white")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
+            } else {
+                Image(systemName: "arrow.up.doc.on.clipboard")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.white)
+                    .frame(width: 30, height: 30)
+            }
 
             Spacer()
 
-            Menu("Select Preset") {
+            Menu("Quick Select") {
                 ForEach(EventCreationViewModel.DefaultPrivacyOption.allCases, id: \.self) { option in
                     Button(option.description) {
                         withAnimation() {
@@ -137,23 +151,30 @@ extension EventGuestsAndInvitations {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.trailing)
+                .onChange(of: viewModel.isInviteOnly) { newValue in
+                    if newValue {
+                        viewModel.isManualApprovalEnabled = false
+                    }
+                }
             }
 
             // Check-in Method Picker
-            HStack(spacing: 5) {
-                InfoButton { viewModel.alertItem = AlertContext.checkInMethodInfo }
-
-                Picker("", selection: $viewModel.selectedCheckInMethod.animation()) {
-                    Text("Manual").tag(CheckInMethod.manual)
-                    Text("QR Code").tag(CheckInMethod.qrCode)
-                    Text("Out-of-app").tag(CheckInMethod.outOfApp)
+            HStack {
+                InfoButton { viewModel.alertItem = AlertContext.invitePreferrenceInfo }
+                
+                Picker("", selection: $viewModel.isCheckInViaMixer.animation()) {
+                    Text("Via mixer").tag(true)
+                    Text("Out-of-app").tag(false)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding(.trailing)
             }
-            .onChange(of: viewModel.selectedCheckInMethod) { newValue in
-                if newValue == .outOfApp {
-                    viewModel.isGuestlistEnabled = false
+            .onChange(of: viewModel.isCheckInViaMixer) { newValue in
+                if !newValue {
+                    viewModel.resetCheckInRelatedOptions()
+                    self.isGuestLimitEnabled           = false
+                    self.isMemberInviteLimitEnabled    = false
+                    self.isRegistrationCutoffEnabled = false
                 }
             }
         }
@@ -161,33 +182,32 @@ extension EventGuestsAndInvitations {
 
     var inviteLimitsSection: some View {
         Section {
-            if isGuestLimitEnabled {
-                HStack {
-                    InfoButton { viewModel.alertItem = AlertContext.memberInviteLimitInfo }
-
-                    Toggle("Set member invite limit", isOn: $isMemberInviteLimitEnabled.animation())
-                        .font(.body.weight(.semibold))
-                }
-
-                if isMemberInviteLimitEnabled {
-                    TextField("Invites per member", text: $viewModel.memberInviteLimitStr)
-                        .foregroundColor(.white)
-                        .keyboardType(.numberPad)
-                }
-
-                HStack {
-                    InfoButton { viewModel.alertItem = AlertContext.guestInviteLimitInfo }
-
-                    Toggle("Set guest invite limit", isOn: $isGuestInviteLimitEnabled.animation())
-                        .font(.body.weight(.semibold))
-                }
-
-                if isGuestInviteLimitEnabled {
-                    TextField("Invites per guest", text: $viewModel.guestInviteLimitStr)
-                        .foregroundColor(.white)
-                        .keyboardType(.numberPad)
-                }
+            HStack {
+                InfoButton { viewModel.alertItem = AlertContext.memberInviteLimitInfo }
+                
+                Toggle("Set member invite limit", isOn: $isMemberInviteLimitEnabled.animation())
+                    .font(.body.weight(.semibold))
             }
+            
+            if isMemberInviteLimitEnabled {
+                TextField("Invites per member", text: $viewModel.memberInviteLimitStr)
+                    .foregroundColor(.white)
+                    .keyboardType(.numberPad)
+            }
+            
+            // MARK: Will be added
+//                HStack {
+//                    InfoButton { viewModel.alertItem = AlertContext.guestInviteLimitInfo }
+//
+//                    Toggle("Set guest invite limit", isOn: $isGuestInviteLimitEnabled.animation())
+//                        .font(.body.weight(.semibold))
+//                }
+//
+//                if isGuestInviteLimitEnabled {
+//                    TextField("Invites per guest", text: $viewModel.guestInviteLimitStr)
+//                        .foregroundColor(.white)
+//                        .keyboardType(.numberPad)
+//                }
         } header: {
             Text("Invite Settings")
         }
@@ -200,14 +220,35 @@ extension EventGuestsAndInvitations {
                 InfoButton { viewModel.alertItem = AlertContext.manuallyApproveInfo }
 
                 Toggle("Manually approve guests", isOn: $viewModel.isManualApprovalEnabled.animation())
-                    .font(.body.weight(.semibold))
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .disabled(viewModel.isInviteOnly)
             }
-
+            
             HStack {
                 InfoButton { viewModel.alertItem = AlertContext.registrationCutoffInfo }
 
-                Toggle("Registration cutoff", isOn: $isRegistrationDeadlineEnabled.animation())
-                    .font(.body.weight(.semibold))
+                Toggle("Registration cutoff", isOn: $isRegistrationCutoffEnabled.animation())
+                    .font(.body)
+                    .fontWeight(.semibold)
+            }
+            
+            if isRegistrationCutoffEnabled {
+                Picker("Cutoff time", selection: $viewModel.selectedDeadlineOption) {
+                    ForEach(DeadlineOption.allCases, id: \.self) { option in
+                        Text(option.description).tag(option)
+                    }
+                }
+                .pickerStyle(WheelPickerStyle())
+                
+                if viewModel.selectedDeadlineOption == .custom {
+                    DatePicker("", selection: $viewModel.cutoffDate,
+                               in: Date.now...viewModel.startDate,
+                               displayedComponents: [.date, .hourAndMinute])
+                    .datePickerStyle(.compact)
+                    .labelsHidden()
+                    .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .center)
+                }
             }
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)

@@ -14,14 +14,23 @@ struct BasicEventInfo: View {
         FlowContainerView {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    EventTypeMenu(type: $viewModel.type)
+                    FlyerSection(viewModel: viewModel)
                     
-                    FlyerSection(selectedImage: $viewModel.selectedImage)
-                    
-                    TextFieldSection(title: $viewModel.title,
-                                     description: $viewModel.eventDescription)
-                    
-                    NotesSection(note: $viewModel.note)
+                    if let _ = viewModel.selectedImage {
+                        EventTypeMenu(type: $viewModel.type)
+                        
+                        TextFieldItem(title: "Title",
+                                      placeholder: "Choose something catchy!",
+                                      input: $viewModel.title,
+                                      limit: 50)
+                        
+                        TextFieldItem(title: "Description",
+                                      placeholder: "Briefly describe your event",
+                                      input: $viewModel.eventDescription,
+                                      limit: 150)
+                        
+                        NotesSection(note: $viewModel.note)
+                    }
                 }
                 .padding()
                 .padding(.bottom, 80)
@@ -56,29 +65,9 @@ fileprivate struct EventTypeMenu: View {
     }
 }
 
-fileprivate struct TextFieldSection: View {
-    @Binding var title: String
-    @Binding var description: String
-    @EnvironmentObject var viewModel: EventCreationViewModel
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            TextFieldItem(title: "Title",
-                          placeholder: "Choose something catchy!",
-                          input: $title,
-                          limit: 50)
-            
-            TextFieldItem(title: "Description",
-                          placeholder: "Briefly describe your event",
-                          input: $description,
-                          limit: 150)
-        }
-    }
-}
-
 fileprivate struct NotesSection: View {
-    @Binding var note: String
     @State private var showNoteToggle = false
+    @Binding var note: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -100,7 +89,7 @@ fileprivate struct NotesSection: View {
 }
 
 fileprivate struct FlyerSection: View {
-    @Binding var selectedImage: UIImage?
+    @ObservedObject var viewModel: EventCreationViewModel
     @State private var image: Image?
     @State private var imagePickerPresented = false
     
@@ -117,7 +106,7 @@ fileprivate struct FlyerSection: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 } else {
                     VStack {
-                        Text("Event Flyer")
+                        Text("First, upload a flyer for your event!")
                             .font(.title2)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
@@ -145,14 +134,14 @@ fileprivate struct FlyerSection: View {
             }
         }
         .sheet(isPresented: $imagePickerPresented, onDismiss: loadImage) {
-            ImagePicker(image: $selectedImage)
+            ImagePicker(image: $viewModel.selectedImage)
         }
     }
 }
 
 extension FlyerSection {
     func loadImage() {
-        guard let selectedImage = selectedImage else { return }
+        guard let selectedImage = viewModel.selectedImage else { return }
         self.image = Image(uiImage: selectedImage)
     }
 }

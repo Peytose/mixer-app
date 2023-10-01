@@ -15,49 +15,49 @@ struct GuestlistRow: View {
         HStack(alignment: .center, spacing: 8) {
             AvatarView(url: guest.profileImageUrl, size: 30)
 
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(spacing: 5) {
-                    Text(guest.name.capitalized)
-                        .body(color: .white)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-
-                    if guest.gender.icon != "" {
-                        Image(guest.gender.icon)
-                            .resizable()
-                            .renderingMode(.template)
-                            .foregroundColor(.white)
-                            .frame(width: 20, height: 20)
-                    }
-
-                    if guest.status == .checkedIn {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(Color.theme.mixerIndigo)
-                            .frame(width: 20, height: 20)
-                    }
-                }
-            }
-
-            Spacer()
-            
-            if let university = guest.university, let icon = university.icon {
-                Image(systemName: icon)
-                    .foregroundColor(.secondary)
-                    .frame(width: 20, height: 20)
-                
-                Text(university.shortName ?? university.name)
-                    .subheadline()
+            HStack(spacing: 5) {
+                Text(guest.name.capitalized)
+                    .body(color: .white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
+                
+                if guest.gender.icon != "" {
+                    Image(guest.gender.icon)
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(.white)
+                        .frame(width: 20, height: 20)
+                }
+            }
+            
+            Spacer()
+            
+            switch guest.status {
+            case .requested:
+                ListCellActionButton(text: "Approve") {
+                    viewModel.approveGuest(guest)
+                }
+                .contentShape(Rectangle())
+            default:
+                EmptyView()
+            }
+            
+            if let university = guest.university, let icon = university.icon, guest.status != .requested {
+                HStack(spacing: 5) {
+                    Image(systemName: icon)
+                        .foregroundColor(.secondary)
+                        .frame(width: 20, height: 20)
+                    
+                    Text(university.shortName ?? university.name)
+                        .subheadline()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
             }
         }
+        .contentShape(Rectangle())
+        .showUserInfoModal(for: guest, viewModel: viewModel)
         .listRowBackground(Color.theme.secondaryBackgroundColor)
-        .onTapGesture {
-            withAnimation() {
-                viewModel.isShowingUserInfoModal = true
-                viewModel.selectedGuest = guest
-            }
-        }
         .swipeActions {
             Button(role: .destructive) {
                 viewModel.selectedGuest = guest
@@ -74,6 +74,18 @@ struct GuestlistRow: View {
                 } label: {
                     Label("Check-in", systemImage: "list.bullet.clipboard.fill")
                 }
+            }
+        }
+    }
+}
+
+// MARK: - View-specific extension
+extension View {
+    func showUserInfoModal(for guest: EventGuest, viewModel: GuestlistViewModel) -> some View {
+        self.onTapGesture {
+            withAnimation() {
+                viewModel.isShowingUserInfoModal = true
+                viewModel.selectedGuest = guest
             }
         }
     }

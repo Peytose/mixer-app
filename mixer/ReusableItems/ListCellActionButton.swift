@@ -14,17 +14,18 @@ struct ListCellActionButton: View {
     
     var body: some View {
         Button(action: action) {
-            Text(text)
-                .font(.footnote)
-                .frame(width: 100, height: 32)
-                .foregroundColor(isSecondaryLabel ? .secondary : .white)
-                .background(isSecondaryLabel ? .clear : Color.theme.mixerIndigo)
-                .cornerRadius(3)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 3)
-                        .stroke(Color.secondary, lineWidth: isSecondaryLabel ? 1 : 0)
-                }
+            ZStack(alignment: .center) {
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.secondary, lineWidth: isSecondaryLabel ? 1 : 0)
+                    .background(isSecondaryLabel ? .clear : Color.theme.mixerIndigo)
+                    .cornerRadius(3)
+                
+                Text(text)
+                    .font(.footnote)
+                    .foregroundColor(isSecondaryLabel ? .secondary : .white)
+            }
         }
-        .fixedSize()
+        .frame(width: 100, height: 32)
+        .contentShape(Rectangle())
     }
 }

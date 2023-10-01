@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct EventCreationActionButton: View {
-    @EnvironmentObject var viewModel: EventCreationViewModel
+    @ObservedObject var viewModel: EventCreationViewModel
     @Binding var state: EventCreationState
     
     var body: some View {
@@ -33,6 +33,6 @@ struct EventCreationActionButton: View {
 
 struct EventCreationActionButton_Previews: PreviewProvider {
     static var previews: some View {
-        EventCreationActionButton(state: .constant(.basicInfo))
+        EventCreationActionButton(viewModel: EventCreationViewModel(), state: .constant(.basicInfo))
     }
 }

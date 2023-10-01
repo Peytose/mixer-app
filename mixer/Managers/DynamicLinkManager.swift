@@ -1,96 +1,106 @@
-////
-////  DynamicLinkManager.swift
-////  mixer
-////
-////  Created by Peyton Lyons on 5/19/23.
-////
 //
-//import SwiftUI
-//import FirebaseDynamicLinks
+//  UniversalLinkManager.swift
+//  mixer
 //
-//enum DisplayItem: Identifiable {
-//    case user(User)
-//    case event(Event)
-//    case host(Host)
-//    
-//    var id: String {
-//        switch self {
-//        case .user(let user):
-//            return user.id ?? user.name
-//        case .event(let event):
-//            return event.id ?? event.title
-//        case .host(let host):
-//            return host.id ?? host.name
-//        }
-//    }
-//    
-//    @ViewBuilder
-//    func view(using namespace: Namespace.ID) -> some View {
-//        switch self {
-//        case .user(let user):
-//            ProfileView(viewModel: ProfileViewModel(user: user))
-//        case .event(let event):
-//            EventDetailView(viewModel: EventDetailViewModel(event: event), namespace: namespace)
-//        case .host(let host):
-//            HostDetailView(viewModel: HostDetailViewModel(host: host), namespace: namespace)
-//        }
-//    }
-//}
+//  Created by Peyton Lyons on 5/19/23.
 //
-//class DynamicLinkManager: ObservableObject {
-//    static let shared = DynamicLinkManager()
-//    @Published var itemToPresent: DisplayItem? = nil
-//    
-//    func handleIncomingDynamicLink(_ dynamicLink: DynamicLink) {
-//        guard let url = dynamicLink.url else {
-//            print("No URL found in dynamic link")
-//            return
-//        }
-//        handleLink(url: url)
-//    }
-//
-//    func handleLink(url: URL) {
-//        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-//        guard let pathComponents = components?.path.split(separator: "/") else {
-//            print("Invalid URL format for dynamic link")
-//            return
-//        }
-//
-//        guard let uidItem = components?.queryItems?.first(where: { $0.name == "uid" }),
-//              let uid = uidItem.value else {
-//            print("Invalid URL format for dynamic link")
-//            return
-//        }
-//
-//        Task {
-////            switch pathComponents[0] {
-////            case "profile":
-////                await fetchItem(with: uid,
-////                                    fetchFunction: UserCache.shared.getUser(withId: uid),
-////                                    displayFunction: DisplayItem.user)
-////            case "event":
-////                await fetchItem(with: uid,
-////                                    fetchFunction: EventCache.shared.getEvent,
-////                                    displayFunction: DisplayItem.event)
-////            case "host":
-////                await fetchItem(with: uid,
-////                                    fetchFunction: HostCache.shared.getHost,
-////                                    displayFunction: DisplayItem.host)
-////            default:
-////                print("Unknown dynamic link")
-////            }
-//        }
-//    }
-//    
-//    private func fetchItem<T>(with id: String, fetchFunction: @escaping (String) async throws -> T, displayFunction: @escaping (T) -> DisplayItem) async {
-//        do {
-//            let item = try await fetchFunction(id)
-//            DispatchQueue.main.async {
-//                DynamicLinkManager.shared.itemToPresent = displayFunction(item)
-//            }
-//            print("DEBUG: ID from dynamic link: \(id)")
-//        } catch {
-//            print("DEBUG: Error getting item from share link. \(error.localizedDescription)")
-//        }
-//    }
-//}
+
+import SwiftUI
+import Firebase
+import FirebaseFirestore
+import FirebaseFirestoreSwift
+
+class UniversalLinkManager: ObservableObject {
+    static let shared = UniversalLinkManager()
+
+    @Published var incomingEventId: String?
+    @Published var incomingToken: String?
+
+    
+    func processIncomingURL(_ url: URL, completion: @escaping (Event?) -> Void) {
+        guard handleIncomingURL(url) else {
+            completion(nil)
+            return
+        }
+        
+        fetchIncomingEvent { event in
+            if event.isPrivate {
+                guard let _ = self.incomingToken else {
+                    // Handle the error: A token is required but not provided
+                    completion(nil)
+                    return
+                }
+                
+                self.verifyToken { success in
+                    completion(success ? event : nil)
+                }
+            } else {
+                completion(event)
+            }
+        }
+    }
+    
+    
+    private func handleIncomingURL(_ url: URL) -> Bool {
+        guard url.scheme == "mixerapp" else {
+            return false
+        }
+
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+
+        switch url.host {
+        case "open-event":
+            if let eventId = components?.queryItems?.first(where: { $0.name == "id" })?.value {
+                self.incomingEventId = eventId
+                print("DEBUG: incoming Event Id: \(incomingEventId ?? "")")
+            }
+
+            if let token = components?.queryItems?.first(where: { $0.name == "token" })?.value {
+                self.incomingToken = token
+                print("DEBUG: incoming Token: \(incomingToken ?? "")")
+            }
+
+            return incomingEventId != nil
+        default:
+            return false
+        }
+    }
+    
+    
+    private func verifyToken(completion: @escaping (Bool) -> Void) {
+        guard let token = self.incomingToken else { return }
+        let url = URL(string: "https://us-central1-mixer-firebase-project.cloudfunctions.net/verifyEventToken")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        URLSession.shared.dataTask(with: request) { (data, response, error) in
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                completion(false)
+                return
+            }
+            
+            // If you wish, you can also decode the response to get the eventId
+            // and cross-check it with the eventId you have if needed.
+            
+            completion(true)
+        }.resume()
+    }
+    
+    
+    private func fetchIncomingEvent(completion: @escaping (Event) -> Void) {
+        guard let incomingEventId = self.incomingEventId else { return }
+        
+        COLLECTION_EVENTS
+            .document(incomingEventId)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching incoming event.\n\(error.localizedDescription)")
+                    return
+                }
+                
+                guard let event = try? snapshot?.data(as: Event.self) else { return }
+                completion(event)
+            }
+    }
+}

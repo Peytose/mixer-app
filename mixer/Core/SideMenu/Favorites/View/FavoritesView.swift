@@ -40,7 +40,7 @@ struct FavoritesView: View {
         }
         .onAppear {
             if viewModel.favoritedEvents.isEmpty {
-                viewModel.startListeningForFavorites()
+                viewModel.startObservingUserFavorites()
             }
         }
     }

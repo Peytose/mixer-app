@@ -10,119 +10,90 @@ import Combine
 
 struct EventAmenityAndCost: View {
     @EnvironmentObject var viewModel: EventCreationViewModel
-    @Binding var selectedAmenities: Set<EventAmenity>
-    @Binding var bathroomCount: Int
-    
-    @State private var showAlert = false
-
-    let action: () -> Void
     
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading) {
                 HStack {
-                    Text("Choose Amenities")
+                    Text("Tap to choose amenities!")
                         .primaryHeading()
-                    
-                    InfoButton(action: { showAlert.toggle() })
-                        .alert("Amenities", isPresented: $showAlert, actions: {}, message: { Text("Let your guests know what to expect before coming to your event. List important amenities like bathrooms, DJ, beer, water, etc...")})
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+
+                    InfoButton { viewModel.alertItem = AlertContext.aboutAmenitiesInfo }
                 }
+                .padding(.bottom, 15)
                 
-                VStack(alignment: .leading, spacing: 16) {
-                    ForEach(AmenityCategory.allCases, id: \.self) { category in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(category.rawValue.capitalized)
-                                .secondarySubheading()
-                            
-                            VStack(spacing: 0) {
-                                ForEach(EventAmenity.allCases.filter { $0.category == category }, id: \.self) { amenity in
+                ForEach(AmenityCategory.allCases, id: \.self) { category in
+                    let amenitiesInCategory = EventAmenity.allCases.filter { $0.category == category }
+                    if !amenitiesInCategory.isEmpty {
+                        Section {
+                            VStack(alignment: .leading) {
+                                ForEach(amenitiesInCategory, id: \.self) { amenity in
                                     Button {
-                                        if selectedAmenities.contains(amenity) {
-                                            if amenity != .bathrooms {
-                                                selectedAmenities.remove(amenity)
-                                            }
-                                        } else {
-                                            if amenity != .bathrooms {
-                                                selectedAmenities.insert(amenity)
-                                            }
-                                        }
+                                        viewModel.toggleAmenity(amenity)
                                     } label: {
                                         HStack {
-                                            if amenity == .beer {
-                                                Text("🍺")
-                                            } else if amenity == .water {
-                                                Text("💦")
-                                            } else if amenity == .smokingArea {
-                                                Text("🚬")
-                                            } else if amenity == .dj {
-                                                Text("🎧")
-                                            } else if amenity == .coatCheck {
-                                                Text("🧥")
-                                            } else if amenity == .nonAlcohol {
-                                                Text("🧃")
-                                            } else if amenity == .food {
-                                                Text("🍕")
-                                            } else if amenity == .danceFloor {
-                                                Text("🕺")
-                                            } else if amenity == .snacks {
-                                                Text("🍪")
-                                            } else if amenity == . drinkingGames{
-                                                Text("🏓")
-                                            } else {
-                                                Image(systemName: amenity.icon)
-                                                    .foregroundColor(.white)
-                                            }
+                                            amenity.displayIcon
+                                                .padding(2)
+                                                .frame(width: 20, height: 20, alignment: .center)
+                                                .padding(.trailing, 5)
                                             
                                             Text(amenity.rawValue)
-                                                .primaryActionButtonFont()
+                                                .font(.body)
                                             
                                             Spacer()
                                             
-                                            if amenity == EventAmenity.bathrooms {
-                                                AmenityCountView(count: $bathroomCount)
-                                                    .onChange(of: bathroomCount) { value in
-                                                        if value > 0 {
-                                                            selectedAmenities.insert(EventAmenity.bathrooms)
-                                                        } else if value == 0 {
-                                                            selectedAmenities.remove(EventAmenity.bathrooms)
-                                                        }
-                                                    }
-                                            } else if selectedAmenities.contains(amenity) {
-                                                Image(systemName: "checkmark")
-                                                    .fontWeight(.medium)
-                                                    .foregroundColor(Color.theme.mixerPurple)
-                                            }
+                                            accessoryView(for: amenity)
                                         }
                                         .padding(.horizontal)
-                                        .padding(.vertical, 10)
+                                        .foregroundColor(.white)
                                     }
                                     
-                                    if amenity.rawValue != EventAmenity.allCases.filter({ $0.category == category }).last?.rawValue {
+                                    if amenitiesInCategory.last != amenity {
                                         Divider()
+                                            .foregroundColor(.secondary)
+                                            .padding(.leading, 50)
+                                            .padding(.trailing, 20)
                                     }
                                 }
                             }
+                            .padding(.vertical)
                             .background {
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color.theme.secondaryBackgroundColor)
+                                Color.theme.secondaryBackgroundColor
+                                    .cornerRadius(10)
                             }
+                        } header: {
+                            Text(category.rawValue)
+                                .font(.title3)
+                                .fontWeight(.semibold)
+                                .padding(.top, 10)
+                                .padding(.bottom, 2)
                         }
                     }
                 }
             }
             .padding()
             .padding(.bottom, 80)
+            .background(Color.theme.backgroundColor)
         }
-        .background(Color.theme.backgroundColor)
+
     }
 }
 
-//struct EventAmenityAndCost_Previews: PreviewProvider {
-//    static var previews: some View {
-//        EventAmenityAndCost(viewModel: EventCreationViewModel(), selectedAmenities: .constant([]), bathroomCount: .constant(0)) {}
-//            .preferredColorScheme(.dark)
-//    }
-//}
+extension EventAmenityAndCost {
+    private func accessoryView(for amenity: EventAmenity) -> some View {
+        if amenity == .bathrooms {
+            return AnyView(AmenityCountView(count: $viewModel.bathroomCount))
+        } else if viewModel.selectedAmenities.contains(amenity) {
+            return AnyView(Image(systemName: "checkmark")
+                .fontWeight(.medium)
+                .foregroundColor(Color.theme.mixerPurple))
+        } else {
+            return AnyView(EmptyView())
+        }
+    }
+}
 
 fileprivate struct AmenityCountView: View {
     @Binding var count: Int
@@ -161,6 +132,7 @@ fileprivate struct AmenityCountView: View {
             })
         }
     }
+    
     func add() {
         count += 1
     }

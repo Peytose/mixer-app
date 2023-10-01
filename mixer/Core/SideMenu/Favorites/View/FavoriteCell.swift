@@ -21,7 +21,7 @@ struct FavoriteCell: View {
                                      activeTint: .pink,
                                      inActiveTint: .secondary,
                                      frameSize: 35) {
-                    viewModel.updateFavorite(event)
+                    viewModel.toggleFavoriteStatus(event)
                 }
                                      .fixedSize()
             }
@@ -41,7 +41,7 @@ struct FavoriteCell: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.8)
                         
-                        Text(viewModel.getSubtitleString(event))
+                        Text(viewModel.formattedEventSubtitle(event))
                             .font(.footnote)
                             .foregroundColor(event.endDate < Timestamp() ? .pink : .secondary)
                             .lineLimit(2)
@@ -52,21 +52,9 @@ struct FavoriteCell: View {
             
             Spacer()
             
-            if event.endDate < Timestamp() {
-                ListCellActionButton(text: "Remove", isSecondaryLabel: true) {
-                    print("DEBUG: Removing event !")
-                    viewModel.updateFavorite(event)
-                }
-            } else if event.didGuestlist ?? false {
-                ListCellActionButton(text: "Leave", isSecondaryLabel: true) {
-                    print("DEBUG: Leaving guestlist !")
-                    viewModel.leaveGuestlist(event)
-                }
-            } else if event.isGuestlistEnabled && !event.isInviteOnly {
-                ListCellActionButton(text: "Join") {
-                    print("DEBUG: Joining guestlist !")
-                    viewModel.joinGuestlist(event)
-                }
+            ListCellActionButton(text: EventUserActionState(event: event).favoriteText,
+                                 isSecondaryLabel: EventUserActionState(event: event).isSecondaryLabel) {
+                viewModel.actionForState(EventUserActionState(event: event), event: event)
             }
         }
         .padding(.horizontal)

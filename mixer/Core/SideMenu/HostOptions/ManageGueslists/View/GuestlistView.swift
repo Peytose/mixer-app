@@ -12,15 +12,11 @@ import CodeScanner
 import Combine
 
 struct GuestlistView: View {
-    @StateObject var viewModel: GuestlistViewModel
+    @ObservedObject var viewModel: GuestlistViewModel
     @State private var isShowingUserInfoModal  = false
     @State private var isShowingQRCodeScanView = false
     @State private var isTorchOn               = false
     
-    init(hosts: [Host]) {
-        _viewModel = StateObject(wrappedValue: GuestlistViewModel(associatedHosts: hosts))
-    }
-
     var body: some View {
         ZStack {
             Color.theme.backgroundColor
@@ -36,7 +32,6 @@ struct GuestlistView: View {
                 
                 StickyHeaderView(items: GuestStatus.allCases,
                                  selectedItem: $viewModel.selectedGuestSection)
-                
                 
                 switch viewModel.viewState {
                 case .loading:
@@ -137,7 +132,7 @@ extension GuestlistView {
                 case .invited:
                     Text("Tap '+' to invite a guest to \(selectedEvent.title)!")
                         .multilineTextAlignment(.center)
-                case .checkedIn:
+                case .checkedIn, .requested:
                     Text("Currently empty ...")
                 }
             }

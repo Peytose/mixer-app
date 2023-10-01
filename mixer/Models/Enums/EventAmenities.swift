@@ -17,7 +17,7 @@ enum AmenityCategory: String, CaseIterable {
     case convenientFeatures = "Convenient Features"
 }
 
-enum EventAmenity: String, Codable, CaseIterable {
+enum EventAmenity: String, Codable, CaseIterable, Equatable {
     case alcohol       = "Alcoholic Drinks"
     case nonAlcohol    = "Non-Alcoholic Drinks"
     case beer          = "Beer"

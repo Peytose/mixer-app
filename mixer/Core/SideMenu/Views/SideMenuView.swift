@@ -13,6 +13,7 @@ struct SideMenuView: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     @StateObject private var settingsViewModel      = SettingsViewModel()
     @StateObject private var notificationsViewModel = NotificationsViewModel()
+    @StateObject private var manageEventsViewModel  = ManageEventsViewModel()
     private let hostFormLink = "https://forms.gle/S3jmgEGSa3VU1Vi56"
     
     var body: some View {
@@ -75,7 +76,7 @@ struct SideMenuView: View {
             
             // MARK: - Side menu options
             VStack(alignment: .leading) {
-                if settingsViewModel.user?.accountType == .member || settingsViewModel.user?.accountType == .host {
+                if settingsViewModel.user?.hostIdToAccountTypeMap != nil {
                     ForEach(HostSideMenuOption.allCases) { option in
                         NavigationLink(value: option) {
                             SideMenuOptionView(option: option)
@@ -103,17 +104,22 @@ struct SideMenuView: View {
                 switch option {
                 case .createEvent:
                     EventCreationFlowView()
-                        .environmentObject(EventCreationViewModel())
                 case .manageGuestlists:
-                    GuestlistView(hosts: settingsViewModel.user?.associatedHosts ?? [])
+                    EmptyView()
+//                    GuestlistView(hosts: settingsViewModel.user?.associatedHosts ?? [])
                 case .manageMembers:
                     ManageMembersView(hosts: settingsViewModel.user?.associatedHosts ?? [])
+                case .manageEvents:
+                    ManageEventsView(viewModel: manageEventsViewModel)
                 }
             }
             .navigationDestination(for: SideMenuOption.self) { option in
                 switch option {
                 case .notifications:
                     NotificationsView(viewModel: notificationsViewModel)
+                        .onAppear {
+                            notificationsViewModel.saveCurrentTimestamp()
+                        }
                 case .favorites:
                     FavoritesView()
                 case .mixerId:

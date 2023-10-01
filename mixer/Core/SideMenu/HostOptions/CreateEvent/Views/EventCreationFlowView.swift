@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct EventCreationFlowView: View {
-    @EnvironmentObject private var viewModel: EventCreationViewModel
+    @Environment (\.dismiss) private var dismiss
+    @StateObject private var viewModel = EventCreationViewModel()
     @State private var eventCreationState = EventCreationState.basicInfo
 
     var body: some View {
@@ -19,13 +20,16 @@ struct EventCreationFlowView: View {
             
             viewModel.viewForState(eventCreationState)
                 .transition(.move(edge: .leading))
+                .environmentObject(viewModel)
             
             if viewModel.isLoading { LoadingView() }
         }
         .navigationBar(title: eventCreationState.title, displayMode: .inline)
         .navigationBarBackButtonHidden(true)
         .overlay(alignment: .bottom) {
-            EventCreationActionButton(state: $eventCreationState)
+            EventCreationActionButton(viewModel: viewModel,
+                                      state: $eventCreationState)
+            .disabled(viewModel.isLoading)
         }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .toolbar {
@@ -35,6 +39,12 @@ struct EventCreationFlowView: View {
                 } else {
                     PresentationBackArrowButton()
                 }
+            }
+        }
+        .onChange(of: viewModel.isEventCreated) { newValue in
+            if newValue {
+                self.eventCreationState = .basicInfo
+                dismiss()
             }
         }
     }

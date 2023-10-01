@@ -5,7 +5,9 @@
 //  Created by Peyton Lyons on 8/18/23.
 //
 
+import SwiftUI
 import Firebase
+import FirebaseFirestore
 
 class EventManager: ObservableObject {
     static let shared = EventManager()
@@ -15,12 +17,13 @@ class EventManager: ObservableObject {
     @Published var userPastEvents = [Event]()
     
     init() {
-        self.fetchEvents()
+        self.fetchAvailableEvents()
     }
     
     
-    func fetchEvents() {
+    func fetchAvailableEvents() {
         COLLECTION_EVENTS
+            .whereField("isPrivate", isEqualTo: false)
             .getDocuments { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error getting events: \(error.localizedDescription)")
@@ -34,7 +37,8 @@ class EventManager: ObservableObject {
     }
     
     
-    func checkIfUserIsOnGuestlist(for event: Event, completion: @escaping (Bool) -> Void) {
+    func getGuestlistAndRequestStatus(for event: Event,
+                                  completion: @escaping (Bool, Bool) -> Void) {
         guard let uid = UserService.shared.user?.id else { return }
         guard let eventId = event.id else { return }
         
@@ -43,8 +47,36 @@ class EventManager: ObservableObject {
             .collection("guestlist")
             .document(uid)
             .getDocument { snapshot, _ in
-                guard let didGuestlist = snapshot?.exists else { return }
-                completion(didGuestlist)
+                guard let data = snapshot?.data() else {
+                    completion(false, false)
+                    return
+                }
+                
+                let guestStatus = GuestStatus(rawValue: data["status"] as? Int ?? -1)
+                
+                let didGuestlist = guestStatus != .requested
+                let didRequest = guestStatus == .requested
+                
+                completion(didGuestlist, didRequest)
+            }
+    }
+    
+    
+    func fetchEvents(for host: Host, completion: @escaping ([Event]) -> Void) {
+        guard UserService.shared.user?.associatedHosts?.contains(where: { $0 == host }) ?? false else { return }
+        guard let hostId = host.id else { return }
+        
+        COLLECTION_EVENTS
+            .whereField("hostId", isEqualTo: hostId)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error getting events for \(host.name). \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let documents = snapshot?.documents else { return }
+                let events = documents.compactMap({ try? $0.data(as: Event.self) })
+                completion(events)
             }
     }
 

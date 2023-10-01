@@ -6,18 +6,19 @@
 //
 
 import Firebase
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 import UIKit
 
-let COLLECTION_USERS = Firestore.firestore().collection("users")
-let COLLECTION_HOSTS = Firestore.firestore().collection("hosts")
-let COLLECTION_RELATIONSHIPS = Firestore.firestore().collection("relationships")
-let COLLECTION_FOLLOWERS = Firestore.firestore().collection("followers")
-let COLLECTION_FOLLOWING = Firestore.firestore().collection("following")
-let COLLECTION_UNIVERSITIES = Firestore.firestore().collection("universities")
-let COLLECTION_EVENTS = Firestore.firestore().collection("events")
-let COLLECTION_WAITLISTS = Firestore.firestore().collection("waitlists")
-let COLLECTION_NOTIFICATIONS = Firestore.firestore().collection("notifications")
-
+let COLLECTION_USERS: CollectionReference = Firestore.firestore().collection("users")
+let COLLECTION_HOSTS: CollectionReference = Firestore.firestore().collection("hosts")
+let COLLECTION_RELATIONSHIPS: CollectionReference = Firestore.firestore().collection("relationships")
+let COLLECTION_FOLLOWERS: CollectionReference = Firestore.firestore().collection("followers")
+let COLLECTION_FOLLOWING: CollectionReference = Firestore.firestore().collection("following")
+let COLLECTION_UNIVERSITIES: CollectionReference = Firestore.firestore().collection("universities")
+let COLLECTION_EVENTS: CollectionReference = Firestore.firestore().collection("events")
+let COLLECTION_WAITLISTS: CollectionReference = Firestore.firestore().collection("waitlists")
+let COLLECTION_NOTIFICATIONS: CollectionReference = Firestore.firestore().collection("notifications")
 
 enum RecordType {
     static let host     = "HostOrganization"

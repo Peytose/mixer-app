@@ -22,7 +22,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             return true
         }
 
-        // Handle other URLs if needed
         return false
     }
 
@@ -47,6 +46,7 @@ struct mixerApp: App {
     @StateObject var authViewModel  = AuthViewModel.shared
     @StateObject var homeViewModel  = HomeViewModel()
     @StateObject var algoliaManager = AlgoliaManager.shared
+    @StateObject var linkManager    = UniversalLinkManager.shared
     @Namespace var namespace
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
@@ -57,27 +57,16 @@ struct mixerApp: App {
                 .environmentObject(authViewModel)
                 .environmentObject(homeViewModel)
                 .environmentObject(algoliaManager)
+                .environmentObject(linkManager)
+                .onOpenURL { url in
+                    linkManager.processIncomingURL(url) { event in
+                        if let event = event {
+                            homeViewModel.pushContext(NavigationContext(state: .close, selectedEvent: event))
+                        } else {
+                            // Handle errors like token verification failure or private event without token
+                        }
+                    }
+                }
         }
     }
 }
-
-
-
-
-// MARK: - For later implementation..
-//    .fullScreenCover(item: $dynamicLinkManager.itemToPresent) { item in
-//        item.view(using: namespace)
-//            .zIndex(0)
-//    }
-//    .onOpenURL { url in
-//        print("DEBUG: Handling URL...")
-//
-//        // First, try to handle this URL as a Firebase Authentication redirect
-//        if Auth.auth().canHandle(url) {
-//            print("DEBUG: URL handled as Firebase Auth redirect.")
-//            authViewModel.next()
-//        } else {
-//            // Handle the link using DynamicLinkManager
-//            dynamicLinkManager.handleLink(url: url)
-//        }
-//    }

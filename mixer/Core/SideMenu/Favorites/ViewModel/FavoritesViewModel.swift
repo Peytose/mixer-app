@@ -7,6 +7,8 @@
 
 import SwiftUI
 import Firebase
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 class FavoritesViewModel: ObservableObject {
     @Published var favoritedEvents = Set<Event>()
@@ -19,20 +21,35 @@ class FavoritesViewModel: ObservableObject {
         listener?.remove()
     }
     
+    
+    func actionForState(_ state: EventUserActionState,
+                        event: Event) {
+        switch state {
+        case .pastEvent:
+            self.toggleFavoriteStatus(event)
+        case .onGuestlist, .pendingJoinRequest:
+            self.cancelOrLeaveGuestlist(event)
+        case .requestToJoin, .open:
+            self.requestOrJoinGuestlist(event)
+        default:
+            break
+        }
+    }
+    
     @MainActor
-    func startListeningForFavorites() {
+    func startObservingUserFavorites() {
         guard let uid = service.user?.id else { return }
         
         listener = COLLECTION_USERS
             .document(uid)
             .collection("user-favorites")
-            .addSnapshotListener { [weak self] snapshot, error in
+            .addSnapshotListener { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error listening for changes. \(error.localizedDescription)")
                     return
                 }
                 
-                self?.favoritedEvents.removeAll()
+                self.favoritedEvents.removeAll()
                 guard let documents = snapshot?.documents else { return }
                 let eventIds = documents.compactMap({ $0.documentID })
                 
@@ -53,13 +70,14 @@ class FavoritesViewModel: ObservableObject {
                             for var event in events {
                                 event.isFavorited = true
                                 
-                                if event.isGuestlistEnabled {
-                                    EventManager.shared.checkIfUserIsOnGuestlist(for: event) { didGuestlist in
+                                if event.isCheckInViaMixer {
+                                    EventManager.shared.getGuestlistAndRequestStatus(for: event) { didGuestlist, didRequest in
                                         event.didGuestlist = didGuestlist
-                                        self?.favoritedEvents.insert(event)
+                                        event.didRequest   = didRequest
+                                        self.favoritedEvents.insert(event)
                                     }
                                 } else {
-                                    self?.favoritedEvents.insert(event)
+                                    self.favoritedEvents.insert(event)
                                 }
                             }
                         }
@@ -68,7 +86,7 @@ class FavoritesViewModel: ObservableObject {
     }
     
     
-    func getSubtitleString(_ event: Event) -> String {
+    func formattedEventSubtitle(_ event: Event) -> String {
         let text = event.type.description
         let startDate = event.startDate
         let endDate = event.endDate
@@ -84,26 +102,38 @@ class FavoritesViewModel: ObservableObject {
     }
     
 
-    func joinGuestlist(_ event: Event) {
+    func requestOrJoinGuestlist(_ event: Event) {
         updateGuestlistStatus(for: event,
-                              action: service.joinGuestlist,
-                              didGuestlist: true,
-                              haptic: HapticManager.playSuccess)
+                              with: service.requestOrJoinGuestlist) {
+            self.adjustEventForGuestStatus(event, isRequestOrJoin: true)
+            HapticManager.playSuccess()
+        }
     }
-    
 
-    func leaveGuestlist(_ event: Event) {
+    func cancelOrLeaveGuestlist(_ event: Event) {
         updateGuestlistStatus(for: event,
-                              action: service.leaveGuestlist,
-                              didGuestlist: false,
-                              haptic: HapticManager.playLightImpact)
+                              with: service.cancelOrLeaveGuestlist) {
+            self.adjustEventForGuestStatus(event, isRequestOrJoin: false)
+            HapticManager.playLightImpact()
+        }
     }
-    
-    
-    private func updateGuestlistStatus(for event: Event,
-                                       action: (Event, FirestoreCompletion) -> Void,
-                                       didGuestlist: Bool,
-                                       haptic: @escaping () -> Void) {
+
+    private func adjustEventForGuestStatus(_ event: Event, isRequestOrJoin: Bool) {
+        let guestStatus: GuestStatus = event.isManualApprovalEnabled ? .requested : .invited
+        var newEvent: Event = event
+        
+        if isRequestOrJoin {
+            newEvent.didGuestlist = guestStatus == .invited
+            newEvent.didRequest   = guestStatus == .requested
+        } else {
+            newEvent.didGuestlist = false
+            newEvent.didRequest   = false
+        }
+        
+        self.favoritedEvents.insert(newEvent)
+    }
+
+    private func updateGuestlistStatus(for event: Event, with action: (Event, FirestoreCompletion) -> Void, completion: @escaping () -> Void) {
         action(event) { error in
             if let error = error {
                 print("DEBUG: Error updating guestlist status. \(error.localizedDescription)")
@@ -111,18 +141,15 @@ class FavoritesViewModel: ObservableObject {
             }
             
             self.favoritedEvents.remove(event)
-            var newEvent = event
-            newEvent.didGuestlist = didGuestlist
-            self.favoritedEvents.insert(newEvent)
-            haptic()
+            completion()
         }
     }
     
     
-    func updateFavorite(_ event: Event) {
+    func toggleFavoriteStatus(_ event: Event) {
         let status = event.isFavorited ?? false
         
-        self.service.updateFavoriteStatus(isFavorited: !status,
+        self.service.toggleFavoriteStatusStatus(isFavorited: !status,
                                           event: event) { _ in
             HapticManager.playLightImpact()
         }

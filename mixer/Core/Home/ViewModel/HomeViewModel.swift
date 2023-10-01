@@ -25,10 +25,6 @@ class HomeViewModel: ObservableObject {
     }
     @Published var selectedNavigationStack: [NavigationContext] = []
     var currentState: NavigationState {
-        if let context = selectedNavigationStack.first(where: { $0.state == .close }) {
-            print("DEBUG: Context user \(context.selectedUser)")
-        }
-        
         return selectedNavigationStack.last?.state ?? .menu
     }
     @Published var showSideMenu: Bool = false
@@ -81,7 +77,6 @@ extension HomeViewModel {
         // If there's only one context, return it without popping
         return navigationStackTabMap[currentTab]?.last ?? NavigationContext(state: .menu)
     }
-
 
     
     func navigate(to state: NavigationState,

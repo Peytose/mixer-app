@@ -22,14 +22,14 @@ struct EventLocationAndDates: View {
                         
                         VStack(spacing: 13) {
                             // Start Date Selection : now - 3 months
-                            CustomDateSelection(text: "Start date",
-                                                date: $viewModel.startDate,
-                                                range: Date.now...Date.now.addingTimeInterval(7889400))
+                            CustomDateSelector(text: "Start date",
+                                               date: $viewModel.startDate,
+                                               range: Date.now...Date.now.addingTimeInterval(7889400))
                             
                             // End Date Selection : 1 hour - 25 hours
-                            CustomDateSelection(text: "End date",
-                                                date: $viewModel.endDate,
-                                                range: viewModel.startDate.addingTimeInterval(3600)...viewModel.startDate.addingTimeInterval(86460))
+                            CustomDateSelector(text: "End date",
+                                               date: $viewModel.endDate,
+                                               range: viewModel.startDate.addingTimeInterval(3600)...viewModel.startDate.addingTimeInterval(86460))
                         }
                     }
                     
@@ -38,36 +38,6 @@ struct EventLocationAndDates: View {
                 .padding()
                 .padding(.bottom, 80)
             }
-        }
-    }
-}
-
-fileprivate struct CustomDateSelection: View {
-    let text: String
-    @Binding var date: Date
-    let range: ClosedRange<Date>
-    
-    var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            Text(text)
-                .font(.title3)
-                .fontWeight(.medium)
-                .lineLimit(1)
-                .minimumScaleFactor(0.95)
-            
-            Spacer()
-            
-            DatePicker("", selection: $date,
-                       in: range,
-                       displayedComponents: [.date, .hourAndMinute])
-            .datePickerStyle(.compact)
-            .labelsHidden()
-        }
-        .padding()
-        .background(alignment: .center) {
-            RoundedRectangle(cornerRadius: 9)
-                .stroke(lineWidth: 1)
-                .foregroundColor(Color.theme.mixerIndigo)
         }
     }
 }

@@ -157,6 +157,15 @@ struct AlertContext {
     
     
     //MARK: - EventFlow Errors/Messages
+    static let alcoholInfo                        = AlertItem(title: Text("Event Alcohol Status"),
+                                                              message: Text("Wet events contain alcohol, while dry events don't. This allows guests to know what to expect."),
+                                                              dismissButton: .default(Text("Ok")))
+    
+    
+    static let aboutAmenitiesInfo                 = AlertItem(title: Text("What are 'Amenities'?"),
+                                                              message: Text("Let your guests know what to expect before coming to your event. List important amenities like bathrooms, DJ, beer, water, etc..."),
+                                                              dismissButton: .default(Text("Ok")))
+    
     static let eventVisiblityInfo                 = AlertItem(title: Text("Event Visibility"),
                                                               message: Text("Public events are visible to all users. Private events are only visible to invited users and users on the guest list."),
                                                               dismissButton: .default(Text("Ok")))
@@ -166,7 +175,7 @@ struct AlertContext {
                                                               dismissButton: .default(Text("Ok")))
     
     static let checkInMethodInfo                  = AlertItem(title: Text("Check-in Method"),
-                                                              message: Text("Manual check-in allows you to handle check-in manually in the app through swipe actions or buttons. QR Code check-in allows you to quickly scan guests in and check if they are on the guest list. If you want to handle check on your own then choose out-of-app"),
+                                                              message: Text("Check-in via mixer allows you to handle check-in manually in the app through swipe actions or buttons. It also enabled you to use QR codes to quickly scan guests as well as check if they are on the guestlist.\nHowever, if you want to handle check-in on your own, choose 'Out-of-app'"),
                                                               dismissButton: .default(Text("Ok")))
     
     static let guestlistInfo                      = AlertItem(title: Text("Use guestlist?"),

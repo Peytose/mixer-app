@@ -6,6 +6,8 @@
 //
 
 import Firebase
+import FirebaseFirestore
+import FirebaseFirestoreSwift
 
 class HostManager: ObservableObject {
     static let shared = HostManager()

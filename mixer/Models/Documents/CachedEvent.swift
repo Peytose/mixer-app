@@ -30,7 +30,7 @@
 //    // Time and Dates
 //    var startDate: Timestamp
 //    var endDate: Timestamp
-//    var registrationDeadlineDate: Timestamp?
+//    var cutOffDate: Timestamp?
 //    
 //    // Attendance and Capacity
 //    var attendance: Int?
@@ -70,7 +70,7 @@
 //        self.address                       = event.address
 //        self.startDate                     = event.startDate
 //        self.endDate                       = event.endDate
-//        self.registrationDeadlineDate      = event.registrationDeadlineDate
+//        self.cutOffDate      = event.cutOffDate
 //        self.attendance                    = event.attendance
 //        self.capacity                      = event.capacity
 //        self.guestLimit                    = event.guestLimit

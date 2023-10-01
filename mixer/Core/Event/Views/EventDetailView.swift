@@ -71,7 +71,7 @@ struct EventDetailView: View {
                 .ignoresSafeArea()
                 .onTapGesture(count: 2) { location in
                     let wasFavorited = viewModel.event.isFavorited
-                    viewModel.updateFavorite()
+                    viewModel.toggleFavoriteStatus()
                     
                     if wasFavorited == false { // If the event was not favorited before and is now favorited
                         self.doubleTapLocation = location
@@ -112,9 +112,20 @@ struct EventDetailView: View {
                 if viewModel.event.isFavorited == nil {
                     viewModel.checkIfUserFavoritedEvent()
                 }
+                
+                if viewModel.event.didGuestlist == nil || viewModel.event.didRequest == nil {
+                    viewModel.getGuestlistAndRequestStatus()
+                }
+            }
+            .overlay(alignment: .topTrailing) {
+                if !viewModel.event.isInviteOnly {
+                    GuestlistActionButton(state: EventUserActionState(event: viewModel.event)) {
+                        viewModel.actionForState(EventUserActionState(event: viewModel.event))
+                    }
+                    .padding([.top, .trailing])
+                }
             }
             .alert(item: $viewModel.alertItem, content: { $0.alert })
-            
         }
     }
 }
@@ -149,13 +160,13 @@ struct EventHeader: View {
                                          activeTint: .pink,
                                          inActiveTint: .secondary,
                                          frameSize: 45) {
-                        viewModel.updateFavorite()
+                        viewModel.toggleFavoriteStatus()
                     }
                 }
                 
-                if let eventId = viewModel.event.id,
-                   let url = URL(string: "https://mixer.page.link/event?eventId=\(eventId)") {
-                    ShareLink(item: url,
+                
+                if let shareURL = viewModel.shareURL {
+                    ShareLink(item: shareURL,
                               message: Text("\nCheck out this event on mixer!"),
                               preview: SharePreview("\(viewModel.event.title) by \(viewModel.event.hostName)",
                                                     image: viewModel.imageLoader.image ?? Image("AppIcon")),
@@ -413,12 +424,12 @@ struct LocationSection: View {
                 InfoButton { viewModel.alertItem = AlertContext.locationDetailsInfo }
             }
             
-            if viewModel.event.isInviteOnly && (viewModel.event.didGuestlist ?? false) {
+            if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
                 if let altAddress = viewModel.event.altAddress {
                     DetailRow(text: altAddress,
                               icon: "mappin.and.ellipse")
                 } else {
-                    DetailRow(text: "Available when you are on the guest list",
+                    DetailRow(text: "Available when you are on the guestlist",
                               icon: "mappin.and.ellipse")
                 }
             } else {
@@ -459,29 +470,35 @@ fileprivate struct EventImageModalView: View {
     }
 }
 
-fileprivate struct JoinGuestlistButton: View {
+fileprivate struct GuestlistActionButton: View {
+    let state: EventUserActionState
     let action: () -> Void
+    
     var body: some View {
-        Button {
-            let impact = UIImpactFeedbackGenerator(style: .light)
-            impact.impactOccurred()
-            
-            action()
-        } label: {
+        Button(action: action) {
             HStack {
-                Image(systemName: "list.clipboard")
-                    .imageScale(.large)
+                Image(systemName: state.icon)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.white)
+                    .frame(width: 20, height: 20)
                 
-                Text("Join Guestlist")
+                Text(state.eventDetailText)
                     .font(.title3)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(.white)
+            .foregroundColor(state.isSecondaryLabel ? .secondary : .white)
             .padding()
             .background {
                 Capsule()
-                    .fill(Color.theme.mixerPurpleGradient)
+                    .fill (
+                        (state.isSecondaryLabel ? Color.theme.secondaryBackgroundColor : Color.theme.mixerIndigo)
+                            .opacity(0.7)
+                    )
+                    .clipShape(Capsule())
+                    .shadow(radius: 2)
             }
         }
+        .preferredColorScheme(.dark)
     }
 }

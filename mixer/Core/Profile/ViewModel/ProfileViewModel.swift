@@ -37,9 +37,7 @@ class ProfileViewModel: ObservableObject {
         self.user = user
         self.getUserRelationship()
         
-        if let associatedHostIds = user.associatedHostIds,
-           !associatedHostIds.isEmpty,
-           user.accountType == .host || user.accountType == .member {
+        if let associatedHostIds = user.hostIdToAccountTypeMap?.keys as? [String] {
             hostManager.fetchHosts(with: associatedHostIds) { hosts in
                 self.user.associatedHosts = hosts
             }

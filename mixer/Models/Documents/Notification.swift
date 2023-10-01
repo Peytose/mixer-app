@@ -6,6 +6,7 @@
 //
 
 import FirebaseFirestoreSwift
+import FirebaseFirestore
 import Firebase
 
 struct Notification: Identifiable, Codable, Hashable {
@@ -52,6 +53,7 @@ enum NotificationType: Int, Codable {
             case .memberJoined: return " joined "
             case .guestlistJoined: return " joined the guestlist for "
             case .guestlistAdded: return " added you to the guestlist for "
+            
         }
     }
 }

@@ -106,7 +106,7 @@ extension MixerMapViewRepresentable {
         // MARK: - Helpers
         func downloadImage(with urlString : String, completion: @escaping(UIImage) -> Void) {
             guard let url = URL.init(string: urlString) else { return }
-            let resource = ImageResource(downloadURL: url)
+            let resource = KF.ImageResource(downloadURL: url)
 
             KingfisherManager.shared.retrieveImage(with: resource, options: nil, progressBlock: nil) { result in
                 switch result {

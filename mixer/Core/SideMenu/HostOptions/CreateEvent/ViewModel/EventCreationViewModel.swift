@@ -8,39 +8,44 @@
 import SwiftUI
 import FirebaseFirestoreSwift
 import Firebase
+import FirebaseFirestore
 import MapKit
 
 class EventCreationViewModel: NSObject, ObservableObject {
-    @Published var title                   = ""
-    @Published var eventDescription        = "" // Renamed because NSObject has 'description' property
-    @Published var note                    = ""
-    @Published var guestLimitStr           = ""
-    @Published var guestInviteLimitStr     = ""
-    @Published var memberInviteLimitStr    = ""
-    @Published var startDate               = Date()
-    @Published var endDate                 = Date().addingTimeInterval(80600)
-    @Published var altAddress              = ""
-    @Published var selectedAmenities       = Set<EventAmenity>()
-    @Published var type                    = EventType.party
-    @Published var isLoading               = false
-    @Published var selectedCheckInMethod   = CheckInMethod.manual
-    @Published var isInviteOnly            = false
-    @Published var isPrivate               = false
-    @Published var isManualApprovalEnabled = false
-    @Published var isGuestlistEnabled      = false
-    @Published var checkInMethod           = [CheckInMethod.manual]
+    @Published var title                       = ""
+    @Published var eventDescription            = "" // Renamed because NSObject has 'description' property
+    @Published var note                        = ""
+    @Published var guestLimitStr               = ""
+    @Published var memberInviteLimitStr        = ""
+    @Published var startDate                   = Date()
+    @Published var endDate                     = Date().addingTimeInterval(80600)
+    @Published var altAddress                  = ""
+    @Published var selectedAmenities           = Set<EventAmenity>()
+    @Published var bathroomCount               = 0
+    @Published var type                        = EventType.party
+    @Published private(set) var isEventCreated = false
+    @Published var isLoading                   = false
+    @Published var isInviteOnly                = false
+    @Published var isPrivate                   = false
+    @Published var isManualApprovalEnabled     = false
+    @Published var hasAlcohol                  = false
+    @Published var isCheckInViaMixer           = true
     
-    @Published var registrationDeadlineDate: Date?
+    @Published var selectedDeadlineOption: DeadlineOption = .oneDayBefore {
+        didSet {
+            self.cutoffDate = selectedDeadlineOption.deadline(from: self.startDate)
+        }
+    }
+    @Published var cutoffDate                  = Date.now
     @Published var selectedImage: UIImage?
     
     // Location search properties
-    @Published var isLocationSearchActive = true
+    @Published var isLocationSearchActive      = true
     @Published var results = [MKLocalSearchCompletion]()
     @Published var selectedLocation: UserSelectedLocation?
     
     @Published var cost: Float?
     @Published var alcoholPresence: Bool?
-    @Published var bathroomCount: Int?
     @Published var alertItem: AlertItem?
     
     private let searchCompleter = MKLocalSearchCompleter()
@@ -68,13 +73,13 @@ class EventCreationViewModel: NSObject, ObservableObject {
             }
         }
         
-        func presets() -> (Bool, Bool, CheckInMethod) {
+        func presets() -> (Bool, Bool, Bool) {
             switch self {
-            case .postIt: return (false, false, .outOfApp)
-            case .publicOpen: return (false, false, .qrCode)
-            case .publicInvite: return (false, true, .qrCode)
-            case .privateOpen: return (true, false, .qrCode)
-            case .privateInvite: return (true, true, .qrCode)
+            case .postIt: return (false, false, false)
+            case .publicOpen: return (false, false, true)
+            case .publicInvite: return (false, true, true)
+            case .privateOpen: return (true, false, true)
+            case .privateInvite: return (true, true, true)
             }
         }
     }
@@ -88,13 +93,20 @@ class EventCreationViewModel: NSObject, ObservableObject {
     }
     
     
+    func resetCheckInRelatedOptions() {
+        self.isManualApprovalEnabled = false
+        self.guestLimitStr = ""
+        self.memberInviteLimitStr = ""
+    }
+    
+    
     func setDefaultOptions(for option: DefaultPrivacyOption) {
         let presets = option.presets()
         
         DispatchQueue.main.async {
             self.isPrivate = presets.0
             self.isInviteOnly = presets.1
-            self.selectedCheckInMethod = presets.2
+            self.isCheckInViaMixer = presets.2
         }
     }
     
@@ -133,54 +145,106 @@ class EventCreationViewModel: NSObject, ObservableObject {
             case .basicInfo: return AnyView(BasicEventInfo())
             case .locationAndDates: return AnyView(EventLocationAndDates())
             case .guestsAndInvitations: return AnyView(EventGuestsAndInvitations())
-            case .costAndAmenities: return AnyView(Text("EventAmenityAndCost()"))
-            case .review: return AnyView(Text("ReviewCreatedEventView()"))
+            case .costAndAmenities: return AnyView(EventAmenityAndCost())
+            case .review: return AnyView(ReviewCreatedEventView())
         }
     }
     
     
+    func toggleAmenity(_ amenity: EventAmenity) {
+        guard amenity != .bathrooms else { return }
+
+        if self.selectedAmenities.contains(amenity) {
+            self.selectedAmenities.remove(amenity)
+        } else {
+            self.selectedAmenities.insert(amenity)
+        }
+
+        self.hasAlcohol = selectedAmenities.contains(.alcohol) || selectedAmenities.contains(.beer)
+    }
+    
+    
     func createEvent() {
-        guard let image = selectedImage else {return }
+        self.showLoadingView()
+        guard let image = selectedImage else {
+            self.hideLoadingView()
+            return
+        }
         
         ImageUploader.uploadImage(image: image, type: .event) { imageUrl in
             // Needs attention (issue: only allows users to be single host)
-            guard let host = UserService.shared.user?.associatedHosts?.first, let hostId = host.id else { return }
-            guard let uid = Auth.auth().currentUser?.uid else { return }
+            guard let host = UserService.shared.user?.associatedHosts?.first,
+                  let hostId = host.id,
+                  let uid = Auth.auth().currentUser?.uid,
+                  let location = self.selectedLocation else {
+                self.hideLoadingView()
+                return
+            }
             
-            guard let location = self.selectedLocation else { return }
             let geoPoint = GeoPoint(latitude: location.coordinate.latitude,
                                     longitude: location.coordinate.longitude)
             
-            let event = Event(hostId: hostId,
+            var event = Event(hostId: hostId,
                               postedByUserId: uid,
                               hostName: host.name,
                               timePosted: Timestamp(),
                               eventImageUrl: imageUrl,
                               title: self.title,
-                              description: self.description,
+                              description: self.eventDescription,
                               type: self.type,
-                              note: self.note,
+                              note: nil,
                               address: location.title,
-                              altAddress: self.altAddress,
+                              altAddress: nil,
                               geoPoint: geoPoint,
                               amenities: Array(self.selectedAmenities),
-                              checkInMethods: self.checkInMethod,
+                              isCheckInViaMixer: self.isCheckInViaMixer,
                               containsAlcohol: self.alcoholPresence ?? false,
                               startDate: Timestamp(date: self.startDate),
                               endDate: Timestamp(date: self.endDate),
-                              //                                  registrationDeadlineDate: self.registrationDeadlineDate,
-                              guestLimit: Int(self.guestLimitStr),
-                              guestInviteLimit: Int(self.guestInviteLimitStr),
-                              memberInviteLimit: Int(self.memberInviteLimitStr),
+                              cutOffDate: nil,
+                              guestLimit: nil,
+                              memberInviteLimit: nil,
                               isPrivate: self.isPrivate,
                               isInviteOnly: self.isInviteOnly,
                               isManualApprovalEnabled: self.isManualApprovalEnabled,
-                              isGuestlistEnabled: self.isGuestlistEnabled,
-                              cost: self.cost)
+                              cost: nil)
+
+            if !self.note.isEmpty {
+                event.note = self.note
+            }
+
+            if !self.altAddress.isEmpty {
+                event.altAddress = self.altAddress
+            }
+
+            if self.cutoffDate >= Date.now {
+                event.cutOffDate = Timestamp(date: self.cutoffDate)
+            }
+
+            if let guestLimit = Int(self.guestLimitStr), guestLimit > 0 {
+                event.guestLimit = guestLimit
+            }
+
+            if let memberInviteLimit = Int(self.memberInviteLimitStr), memberInviteLimit > 0 {
+                event.memberInviteLimit = memberInviteLimit
+            }
+
+            if let costValue = self.cost, costValue > 0 {
+                event.cost = costValue
+            }
             
-            guard let encodedEvent = try? Firestore.Encoder().encode(event) else { return }
+            guard let encodedEvent = try? Firestore.Encoder().encode(event) else {
+                self.hideLoadingView()
+                return
+            }
             
-            COLLECTION_EVENTS.addDocument(data: encodedEvent)
+            COLLECTION_EVENTS
+                .addDocument(data: encodedEvent) { _ in
+                    self.reset()
+                    self.isEventCreated = true
+                    self.hideLoadingView()
+                    HapticManager.playSuccess()
+                }
         }
     }
 }
@@ -238,6 +302,31 @@ extension EventCreationViewModel {
         if let previousState = EventCreationState(rawValue: previousIndex) {
             state.wrappedValue = previousState
         }
+    }
+    
+    
+    private func reset() {
+        title                   = ""
+        eventDescription        = ""
+        note                    = ""
+        guestLimitStr           = ""
+        memberInviteLimitStr    = ""
+        startDate               = Date()
+        endDate                 = Date().addingTimeInterval(80600)
+        altAddress              = ""
+        selectedAmenities       = Set<EventAmenity>()
+        type                    = EventType.party
+        isLoading               = false
+        isInviteOnly            = false
+        isPrivate               = false
+        isManualApprovalEnabled = false
+        isCheckInViaMixer       = true
+        results                 = []
+        selectedLocation        = nil
+        cost                    = nil
+        alcoholPresence         = nil
+        bathroomCount           = 0
+        queryFragment           = ""
     }
     
     
