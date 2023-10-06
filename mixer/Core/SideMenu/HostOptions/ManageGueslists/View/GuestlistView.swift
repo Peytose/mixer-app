@@ -23,10 +23,9 @@ struct GuestlistView: View {
                 .ignoresSafeArea()
             
             VStack {
-                EventTitleView(events: viewModel.events,
-                               selectedEvent: viewModel.selectedEvent) { event in
-                    viewModel.changeEvent(to: event)
-                }
+                Text(viewModel.event.title)
+                    .primaryHeading()
+                    .multilineTextAlignment(.trailing)
                                .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .leading)
                                .padding([.leading, .top])
                 
@@ -62,24 +61,22 @@ struct GuestlistView: View {
             HStack {
                 Spacer()
                 
-                if let selectedEvent = viewModel.selectedEvent {
-                    DownloadGuestlistButton(url: GuestlistPDF(
-                        event: selectedEvent,
-                        guests: viewModel.guests.filter({ $0.status == .checkedIn})).renderPDF(title: viewModel.getPdfTitle())
-                    )
-                }
+                DownloadGuestlistButton(url: GuestlistPDF(
+                    event: viewModel.event,
+                    guests: viewModel.guests.filter({ $0.status == .checkedIn})).renderPDF(title: viewModel.getPdfTitle())
+                )
                 
                 Spacer()
                 
-                if let selectedEvent = viewModel.selectedEvent, selectedEvent.endDate > Timestamp() {
+                if viewModel.event.endDate > Timestamp() {
                     QRCodeScannerButton(isShowingQRCodeScanView: $isShowingQRCodeScanView)
-                        .opacity(selectedEvent.endDate < Timestamp() ? 0 : 1)
-                        .disabled(selectedEvent.endDate < Timestamp())
+                        .opacity(viewModel.event.endDate < Timestamp() ? 0 : 1)
+                        .disabled(viewModel.event.endDate < Timestamp())
                     
                     Spacer()
                 }
                 
-                if let selectedEvent = viewModel.selectedEvent, selectedEvent.endDate > Timestamp() {
+                if viewModel.event.endDate > Timestamp() {
                     AddToGuestlistButton(viewModel: viewModel)
                     
                     Spacer()
@@ -127,14 +124,12 @@ struct GuestlistView: View {
 extension GuestlistView {
     var emptyView: some View {
         Group {
-            if let selectedEvent = viewModel.selectedEvent {
-                switch viewModel.selectedGuestSection {
-                case .invited:
-                    Text("Tap '+' to invite a guest to \(selectedEvent.title)!")
-                        .multilineTextAlignment(.center)
-                case .checkedIn, .requested:
-                    Text("Currently empty ...")
-                }
+            switch viewModel.selectedGuestSection {
+            case .invited:
+                Text("Tap '+' to invite a guest to \(viewModel.event.title)!")
+                    .multilineTextAlignment(.center)
+            case .checkedIn, .requested:
+                Text("Currently empty ...")
             }
         }
         .foregroundColor(.secondary)

@@ -25,12 +25,6 @@ enum UniversityExamples: String, CaseIterable {
 }
 
 class GuestlistViewModel: ObservableObject {
-    @Published var selectedEvent: Event? {
-        didSet {
-            self.addGuestlistObserverForEvent()
-        }
-    }
-    @Published var events: [Event] = []
     @Published var guests = [EventGuest]() {
         didSet {
             self.updateSectionedGuests()
@@ -45,7 +39,6 @@ class GuestlistViewModel: ObservableObject {
         }
     }
     @Published var selectedGuest: EventGuest?
-    @Published var selectedHost: Host?
     @Published var currentAlert: AlertType?
     @Published var alertItem: AlertItem? {
         didSet {
@@ -57,7 +50,8 @@ class GuestlistViewModel: ObservableObject {
             currentAlert = .confirmation(confirmationAlertItem)
         }
     }
-
+    
+    @Published var event: Event
     @Published var viewState: ListViewState = .empty
     @Published var isShowingUserInfoModal = false
     @Published var username               = ""
@@ -71,10 +65,13 @@ class GuestlistViewModel: ObservableObject {
 
     private let service = HostService.shared
     private var listener: ListenerRegistration?
+    private let host: Host?
     
-    init(associatedHosts: [Host]) {
-        self.selectedHost = associatedHosts.first
-        self.fetchGuestlistEvents()
+    init(event: Event, host: Host?) {
+        self.event = event
+        self.host = host
+        
+        self.addGuestlistObserverForEvent()
     }
     
     deinit {
@@ -90,12 +87,11 @@ class GuestlistViewModel: ObservableObject {
     
     
     func getPdfTitle() -> String {
-        guard let eventName = self.selectedEvent?.title else { return "" }
         let purpose = "Attendance"
         let date = Timestamp().getTimestampString(format: "yyyy-MM-dd")
         let time = Timestamp().getTimestampString(format: "HHmm")
 
-        return "\(eventName)_\(purpose)_\(date)_\(time)"
+        return "\(self.event.title)_\(purpose)_\(date)_\(time)"
     }
     
     
@@ -106,30 +102,30 @@ class GuestlistViewModel: ObservableObject {
     }
     
     
-    func fetchGuestlistEvents() {
-        guard let hostId = selectedHost?.id else { return }
-        
-        COLLECTION_EVENTS
-            .whereField("hostId", isEqualTo: hostId)
-            .getDocuments { snapshot, error in
-                if let _ = error {
-                    self.alertItem = AlertContext.unableToGetGuestlistEvents
-                }
-                
-                guard let documents = snapshot?.documents else { return }
-                let events = documents.compactMap({ try? $0.data(as: Event.self) })
-                let sortedEvents = events.sortedByStartDate()
-                
-                if let closestEvent = sortedEvents.first(where: { $0.startDate >= Timestamp() }) {
-                    DispatchQueue.main.async {
-                        self.events = sortedEvents
-                        self.selectedEvent = closestEvent
-                    }
-                } else {
-                    self.selectedEvent = sortedEvents.first
-                }
-            }
-    }
+//    func fetchGuestlistEvents() {
+//        guard let hostId = selectedHost?.id else { return }
+//        
+//        COLLECTION_EVENTS
+//            .whereField("hostId", isEqualTo: hostId)
+//            .getDocuments { snapshot, error in
+//                if let _ = error {
+//                    self.alertItem = AlertContext.unableToGetGuestlistEvents
+//                }
+//                
+//                guard let documents = snapshot?.documents else { return }
+//                let events = documents.compactMap({ try? $0.data(as: Event.self) })
+//                let sortedEvents = events.sortedByStartDate()
+//                
+//                if let closestEvent = sortedEvents.first(where: { $0.startDate >= Timestamp() }) {
+//                    DispatchQueue.main.async {
+//                        self.events = sortedEvents
+//                        self.selectedEvent = closestEvent
+//                    }
+//                } else {
+//                    self.selectedEvent = sortedEvents.first
+//                }
+//            }
+//    }
 }
 
 
@@ -143,12 +139,6 @@ extension GuestlistViewModel {
         }
         
         guests = filteredGuests
-    }
-
-    
-    @MainActor
-    func changeEvent(to event: Event) {
-        self.selectedEvent = event
     }
 }
 
@@ -174,13 +164,11 @@ extension GuestlistViewModel {
             return
         }
         
-        guard let selectedEvent = selectedEvent else { return }
-        
         if let guest = guests.first(where: { $0.id == uid }), guest.status != .checkedIn {
             self.selectedGuest = guest
             self.checkIn()
-        } else if !selectedEvent.isInviteOnly {
-            let status: GuestStatus = selectedEvent.startDate > Timestamp() ? .invited : .checkedIn
+        } else if !self.event.isInviteOnly {
+            let status: GuestStatus = self.event.startDate > Timestamp() ? .invited : .checkedIn
             fetchAndAddUserToGuestlist(uid: uid, status: status)
         } else {
             print("DEBUG: User is not on guestlist")
@@ -199,7 +187,7 @@ extension GuestlistViewModel {
                 }
                 
                 guard let user = try? snapshot?.data(as: User.self),
-                      let eventId = self.selectedEvent?.id,
+                      let eventId = self.event.id,
                       let userId = user.id else { return }
                 
                 self.service.addUserToGuestlist(eventId: eventId, user: user, status: status) { error in
@@ -210,8 +198,8 @@ extension GuestlistViewModel {
                     
                     NotificationsViewModel.uploadNotification(toUid: userId,
                                                               type: .guestlistAdded,
-                                                              host: self.selectedHost,
-                                                              event: self.selectedEvent)
+                                                              host: self.host,
+                                                              event: self.event)
                 }
             }
     }
@@ -221,7 +209,7 @@ extension GuestlistViewModel {
 extension GuestlistViewModel {
     @MainActor
     func createGuest() {
-        guard let eventId = self.selectedEvent?.id,
+        guard let eventId = self.event.id,
               let currentUserName = UserService.shared.user?.name else { return }
         
         if let guest = self.guests.first(where: { $0.username == username }) {
@@ -249,12 +237,11 @@ extension GuestlistViewModel {
     
     func approveGuest(_ guest: EventGuest) {
         guard let guestId = guest.id,
-              let selectedEvent = self.selectedEvent,
-              let selectedHost = self.selectedHost else { return }
+              let host = self.host else { return }
         
         self.service.approveGuest(with: guestId,
-                                  for: selectedEvent,
-                                  by: selectedHost) { error in
+                                  for: self.event,
+                                  by: host) { error in
             if let error = error {
                 print("DEBUG: Error approving guest. \(error.localizedDescription)")
                 return
@@ -298,8 +285,8 @@ extension GuestlistViewModel {
                     
                     NotificationsViewModel.uploadNotification(toUid: userId,
                                                               type: .guestlistAdded,
-                                                              host: self.selectedHost,
-                                                              event: self.selectedEvent)
+                                                              host: self.host,
+                                                              event: self.event)
                 }
             }
     }
@@ -336,7 +323,7 @@ extension GuestlistViewModel {
     
     @MainActor
     func checkIn() {
-        guard let eventId = selectedEvent?.id, let guestId = selectedGuest?.id else { return }
+        guard let eventId = self.event.id, let guestId = selectedGuest?.id else { return }
         
         service.checkInUser(eventId: eventId, uid: guestId) { error in
             if let error = error {
@@ -357,7 +344,7 @@ extension GuestlistViewModel {
     func remove() {
         guard let selectedGuest = selectedGuest,
               let guestId = selectedGuest.id,
-              let eventId = selectedEvent?.id else { return }
+              let eventId = self.event.id else { return }
         
         if selectedGuest.status == .checkedIn && !self.isShowingUserInfoModal {
             confirmationAlertItem = AlertContext.confirmRemoveMember {
@@ -376,7 +363,7 @@ extension GuestlistViewModel {
     private func addGuestlistObserverForEvent() {
         if listener != nil { listener?.remove() }
         
-        guard let selectedEvent = selectedEvent, let eventId = selectedEvent.id else { return}
+        guard let eventId = self.event.id else { return }
         
         viewState = .loading
         self.listener = COLLECTION_EVENTS

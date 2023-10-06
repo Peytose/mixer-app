@@ -28,7 +28,8 @@ struct ManageEventsView: View {
                     LazyVGrid(columns: Array(repeating: GridItem(spacing: .zero), count: 2), spacing: 10) {
                         ForEach(viewModel.eventsForSelectedState) { event in
                             NavigationLink {
-                                <#code#>
+                                GuestlistView(viewModel: GuestlistViewModel(event: event,
+                                                                            host: viewModel.selectedHost))
                             } label: {
                                 ManageEventCell(viewModel: viewModel, event: event)
                             }
