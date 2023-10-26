@@ -29,7 +29,23 @@ class NotificationsViewModel: ObservableObject {
     
     
     static func sendNotificationsToPlanners(for event: Event, with type: NotificationType) {
-        guard let activePlannerIds = event.activePlannerIds else { return }
+        var activePlannerIds: [String] = []
+        
+        switch type {
+        case .plannerAccepted,
+                .plannerDeclined,
+                .plannerRemoved,
+                .plannerReplaced,
+                .eventPostedWithoutPlanner:
+            activePlannerIds = event.activePlannerIds ?? []
+        case .plannerInvited,
+                .plannerPendingReminder:
+            activePlannerIds = event.pendingPlannerIds ?? []
+        default:
+            break
+        }
+        
+        guard !activePlannerIds.isEmpty else { return }
         // Prepare the notifications for each planner
         var documentRefsDataMap: [DocumentReference: [String: Any]] = [:]
         for uid in activePlannerIds {
