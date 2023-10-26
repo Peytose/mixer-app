@@ -13,7 +13,7 @@ struct GuestlistPDF: View {
     
     var body: some View {
         VStack {
-            Text("\(event.title) by \(event.hostName)")
+            Text("Hosted by \(event.hostNames.joinedWithCommasAndAnd())")
             
             HStack {
                 Text("STARTED: \(event.startDate.getTimestampString(format: "MM-dd-yyyy h:mm a"))")

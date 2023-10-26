@@ -56,9 +56,9 @@ class UserService: ObservableObject {
 
     
     private func fetchAssociatedHosts() {
-        guard let hostIds = user?.hostIdToAccountTypeMap?.keys.compactMap({ $0 as? String }) else { return }
-        print("DEBUG: Host ids: \(hostIds)")
-        HostManager.shared.fetchHosts(with: hostIds) { hosts in
+        guard let hostIds = user?.hostIdToAccountTypeMap?.keys else { return }
+        
+        HostManager.shared.fetchHosts(with: Array(hostIds)) { hosts in
             self.user?.associatedHosts = hosts
         }
     }
@@ -111,17 +111,15 @@ class UserService: ObservableObject {
         let eventFavoritesReference = COLLECTION_EVENTS.document(eventId).collection("event-favorites").document(currentUserId)
         let userFavoritesReference = COLLECTION_USERS.document(currentUserId).collection("user-favorites").document(eventId)
 
-        let documentRefs = [eventFavoritesReference, userFavoritesReference]
         let favoriteData = ["timestamp": Timestamp()] as [String: Any]
+        let documentRefs = [eventFavoritesReference, userFavoritesReference]
+        let documentRefsDataMap = Dictionary(uniqueKeysWithValues: documentRefs.map { ($0, favoriteData) })
         let batch = Firestore.firestore().batch()
         
         if isFavorited {
             batch
-                .batchUpdate(documentRefs: documentRefs,
-                             data: favoriteData) { error in
-                    NotificationsViewModel.uploadNotification(toUid: event.postedByUserId,
-                                                              type: .eventLiked,
-                                                              event: event)
+                .batchUpdate(documentRefsDataMap: documentRefsDataMap) { error in
+                    NotificationsViewModel.sendNotificationsToPlanners(for: event, with: .eventLiked)
                     
                     completion?(error)
                 }
@@ -129,11 +127,10 @@ class UserService: ObservableObject {
             batch
                 .batchDelete(documentRefs: documentRefs) { error in
                     COLLECTION_NOTIFICATIONS
-                        .deleteNotifications(forUserID: event.postedByUserId,
-                                             ofTypes: [.eventLiked],
-                                             from: currentUserId,
-                                             eventId: eventId,
-                                             completion: completion)
+                        .deleteNotificationsForPlanners(for: event,
+                                                        ofTypes: [.eventLiked],
+                                                        from: currentUserId,
+                                                        completion: completion)
                     
                     completion?(error)
                 }
@@ -141,10 +138,33 @@ class UserService: ObservableObject {
     }
     
     
-    func fetchHost(from event: Event, completion: @escaping (Host) -> Void) {
+    func fetchHosts(from event: Event, completion: @escaping ([Host]) -> Void) {
+        var hosts = [Host]()
+        let group = DispatchGroup()
+        
+        for hostId in event.hostIds {
+            group.enter()
+            fetchHost(from: hostId) { host in
+                hosts.append(host)
+                group.leave()
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion(hosts)
+        }
+    }
+    
+    
+    private func fetchHost(from id: String, completion: @escaping (Host) -> Void) {
         COLLECTION_HOSTS
-            .document(event.hostId)
-            .getDocument { snapshot, _ in
+            .document(id)
+            .getDocument { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching host: \(error.localizedDescription)")
+                    return
+                }
+                
                 guard let host = try? snapshot?.data(as: Host.self) else { return }
                 completion(host)
             }
@@ -176,9 +196,8 @@ class UserService: ObservableObject {
             .document(userId)
             .setData(encodedGuest) { error in
                 if guestStatus == .invited {
-                    NotificationsViewModel.uploadNotification(toUid: event.postedByUserId,
-                                                              type: .guestlistJoined,
-                                                              event: event)
+                    NotificationsViewModel.sendNotificationsToPlanners(for: event,
+                                                                       with: .guestlistJoined)
                 }
                 
                 completion?(error)
@@ -201,11 +220,10 @@ class UserService: ObservableObject {
                 }
                 
                 COLLECTION_NOTIFICATIONS
-                    .deleteNotifications(forUserID: event.postedByUserId,
-                                         ofTypes: [NotificationType.guestlistJoined],
-                                         from: userId,
-                                         eventId: eventId,
-                                         completion: completion)
+                    .deleteNotificationsForPlanners(for: event,
+                                                    ofTypes: [NotificationType.guestlistJoined],
+                                                    from: userId,
+                                                    completion: completion)
             }
     }
 
@@ -428,8 +446,74 @@ class UserService: ObservableObject {
     }
 }
 
-// MARK: - CRUD Operations for member invite (host-associated functions; enforce permission!)
+// MARK: - CRUD Operations for host-associated functions; enforce permission!
 extension UserService {
+    func handlePlannerAction(forEvent event: Event,
+                             actionType: NotificationType,
+                             completion: FirestoreCompletion) {
+        guard let currentUserId = self.user?.id,
+              let eventId = event.id,
+              let keyForCurrentUser = event.plannerHostStatusMap.keys.first(where: { $0.plannerId == currentUserId }),
+              let primaryPlannerKey = event.primaryPlannerKey?.plannerId,
+              let hostId = keyForCurrentUser.hostId else {
+            print("DEBUG: Failed to retrieve necessary data.")
+            return
+        }
+        
+        var data: [String: Any] = [:]
+        
+        switch actionType {
+        case .plannerAccepted:
+            data["plannerHostStatusMap.\(keyForCurrentUser)"] = PlannerStatus.confirmed.rawValue
+            
+        case .plannerDeclined, .plannerRemoved:
+            if actionType == .plannerDeclined {
+                data["plannerHostStatusMap.\(keyForCurrentUser)"] = PlannerStatus.declined.rawValue
+            } else if actionType == .plannerRemoved {
+                data["plannerHostStatusMap.\(keyForCurrentUser)"] = FieldValue.delete()
+            }
+            
+            // Check if there's another planner with the same hostId
+            let otherPlannersWithSameHost = event.plannerHostStatusMap.keys.filter { $0 != keyForCurrentUser && $0.hostId == hostId }
+            
+            if otherPlannersWithSameHost.isEmpty {
+                data["hostIds"] = FieldValue.arrayRemove([hostId])
+            }
+            
+        default:
+            // Handle other notification types or do nothing
+            break
+        }
+        
+        COLLECTION_EVENTS
+            .document(eventId)
+            .updateData(data) { error in
+                if let error = error {
+                    completion?(error)
+                    return
+                }
+                
+                NotificationsViewModel.sendNotificationsToPlanners(for: event,
+                                                                   with: actionType)
+                
+                // Assuming you want to delete notifications related to the action
+                switch actionType {
+                case .plannerAccepted,
+                        .plannerDeclined,
+                        .plannerRemoved:
+                    COLLECTION_NOTIFICATIONS
+                        .deleteNotifications(forUserID: currentUserId,
+                                             ofTypes: [.plannerInvited],
+                                             from: primaryPlannerKey,
+                                             completion: completion)
+                default:
+                    // Handle other notification types or do nothing
+                    break
+                }
+            }
+    }
+    
+    
     func acceptMemberInvite(forHost host: Host,
                             fromUser userId: String,
                             completion: FirestoreCompletion) {

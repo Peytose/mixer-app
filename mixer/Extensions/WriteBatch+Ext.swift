@@ -10,10 +10,10 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 
 extension WriteBatch {
-    func batchUpdate(documentRefs: [DocumentReference],
-                     data: [String: Any],
+    // Function to update/set document that span several references
+    func batchUpdate(documentRefsDataMap: [DocumentReference: [String: Any]],
                      completion: FirestoreCompletion) {
-        for docRef in documentRefs {
+        for (docRef, data) in documentRefsDataMap {
             self.setData(data, forDocument: docRef, merge: true)
         }
         

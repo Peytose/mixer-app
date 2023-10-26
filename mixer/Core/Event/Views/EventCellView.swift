@@ -34,14 +34,14 @@ struct EventCellView: View {
             VStack(alignment: .leading) {
                 Spacer()
                 
-                //MARK: Title and host
+                //MARK: Title and host(s)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(event.title)
                         .primaryHeading()
                         .lineLimit(1)
                         .minimumScaleFactor(0.75)
                     
-                    Text("Hosted by \(event.hostName)")
+                    Text("Hosted by \(event.hostNames.joinedWithCommasAndAnd())")
                         .footnote()
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

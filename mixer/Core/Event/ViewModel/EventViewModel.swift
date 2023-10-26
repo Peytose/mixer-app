@@ -13,7 +13,7 @@ import MapKit
 
 final class EventViewModel: ObservableObject {
     @Published var event: Event
-    @Published var host: Host?
+    @Published var hosts: [Host]?
     @Published var shareURL: URL? = nil
     @Published private (set) var imageLoader: ImageLoader
     @Published var alertItem: AlertItem?
@@ -24,16 +24,16 @@ final class EventViewModel: ObservableObject {
         self.event = event
         self.imageLoader = ImageLoader(url: event.eventImageUrl)
         
-        service.fetchHost(from: event) { host in
-            self.host = host
+        service.fetchHosts(from: event) { hosts in
+            self.hosts = hosts
         }
         
         self.generateShareURL()
     }
     
     
-    private func loadHostImage() -> ImageLoader {
-        return ImageLoader(url: self.host?.hostImageUrl ?? "")
+    private func loadImage(for host: Host) -> ImageLoader {
+        return ImageLoader(url: host.hostImageUrl)
     }
     
     
@@ -73,12 +73,13 @@ final class EventViewModel: ObservableObject {
     
     
     @MainActor func updateFollow(_ isFollowed: Bool) {
-        guard let hostId = host?.id else { return }
-        
-        UserService.shared.updateFollowStatus(didFollow: isFollowed, hostUid: hostId) { _ in
-            self.host?.isFollowed = isFollowed
-            HapticManager.playLightImpact()
-        }
+        //MARK: WILL UPDATE SOON! (PEYTON)
+//        guard let hostId = host?.id else { return }
+//        
+//        UserService.shared.updateFollowStatus(didFollow: isFollowed, hostUid: hostId) { _ in
+//            self.host?.isFollowed = isFollowed
+//            HapticManager.playLightImpact()
+//        }
     }
     
     
@@ -148,17 +149,6 @@ final class EventViewModel: ObservableObject {
             self.event.didRequest   = didRequest
         }
     }
-    
-    
-    @MainActor func fetchEventHost() {
-        COLLECTION_HOSTS
-            .document(event.hostId)
-            .getDocument { snapshot, _ in
-                guard let snapshot = snapshot else { return }
-                guard let host = try? snapshot.data(as: Host.self) else { return }
-                self.host = host
-            }
-    }
 }
 
 extension EventViewModel {
@@ -168,7 +158,7 @@ extension EventViewModel {
             return
         }
         
-        var baseURL = "mixerapp://open-event?id=\(eventId)"
+        let baseURL = "mixerapp://open-event?id=\(eventId)"
         
         if event.isPrivate {
             generateEventToken { token in

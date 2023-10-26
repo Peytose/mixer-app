@@ -96,4 +96,27 @@ extension String {
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailPattern)
         return emailPredicate.evaluate(with: self)
     }
+    
+    var plannerId: String? {
+        let components = self.split(separator: "-")
+        print("DEBUG: components of path \(components)")
+        return components.count == 2 ? String(components[0]) : nil
+    }
+    
+    var hostId: String? {
+        let components = self.split(separator: "-")
+        return components.count == 2 ? String(components[1]) : nil
+    }
+    
+    
+    func replacingPlannerId(with newPlannerId: String) -> String {
+        guard let hostId = self.hostId else { return self }
+        return "\(newPlannerId)-\(hostId)"
+    }
+    
+    
+    func replacingHostId(with newHostId: String) -> String {
+        guard let plannerId = self.plannerId else { return self }
+        return "\(plannerId)-\(newHostId)"
+    }
 }

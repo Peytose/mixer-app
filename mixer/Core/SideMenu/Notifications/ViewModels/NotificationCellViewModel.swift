@@ -20,7 +20,7 @@ class NotificationCellViewModel: ObservableObject {
     
     
     func formattedNotificationMessage() -> Text {
-        var message = Text("@\(notification.username)")
+        var message = Text(notification.headline)
             .font(.footnote)
             .fontWeight(.semibold)
             .foregroundColor(Color.theme.mixerIndigo)
@@ -32,7 +32,13 @@ class NotificationCellViewModel: ObservableObject {
         switch notification.type {
             case .eventLiked,
                     .guestlistJoined,
-                    .guestlistAdded:
+                    .guestlistAdded,
+                    .plannerInvited,
+                    .plannerAccepted,
+                    .plannerDeclined,
+                    .plannerReplaced,
+                    .plannerRemoved,
+                    .plannerPendingReminder:
                 if let event = notification.event {
                     message = message + Text(event.title)
                         .font(.subheadline)
@@ -54,8 +60,36 @@ class NotificationCellViewModel: ObservableObject {
     }
     
     
+    func removePlanner() {
+        guard let event = notification.event else { return }
+        userService.handlePlannerAction(forEvent: event,
+                                        actionType: .plannerRemoved) { _ in
+            HapticManager.playLightImpact()
+        }
+    }
+    
+    
+    func acceptPlannerInvite() {
+        guard let event = notification.event else { return }
+        userService.handlePlannerAction(forEvent: event,
+                                        actionType: .plannerAccepted) { _ in
+            HapticManager.playLightImpact()
+        }
+    }
+    
+    
+    func declinePlannerInvite() {
+        guard let event = notification.event else { return }
+        userService.handlePlannerAction(forEvent: event,
+                                        actionType: .plannerDeclined) { _ in
+            HapticManager.playLightImpact()
+        }
+    }
+    
+    
     func declineMemberInvite() {
-        if let hostId = notification.hostId, let memberId = userService.user?.id {
+        if let hostId = notification.hostId,
+           let memberId = userService.user?.id {
             userService.rejectMemberInvite(fromUser: notification.uid,
                                            fromHost: hostId,
                                            memberId: memberId) { _ in

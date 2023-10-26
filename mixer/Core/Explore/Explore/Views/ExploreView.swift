@@ -34,12 +34,13 @@ struct ExploreView: View {
                                     
                                     
                                     ScrollView(.horizontal, showsIndicators: false) {
-                                        ForEach(exploreViewModel.hosts.sorted(by: { $0.name < $1.name })) { host in
-                                            FeaturedHostCell(host: host, namespace: namespace)
-                                                .onTapGesture {
-                                                    homeViewModel.navigate(to: .close,
-                                                                           withHost: host)
-                                                }
+                                        HStack(spacing: 10) {
+                                            ForEach(exploreViewModel.hosts.sorted(by: { $0.name < $1.name })) { host in
+                                                FeaturedHostCell(host: host, namespace: namespace)
+                                                    .onTapGesture {
+                                                        homeViewModel.navigate(to: .close, withHost: host)
+                                                    }
+                                            }
                                         }
                                     }
                                 }

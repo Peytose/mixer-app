@@ -39,9 +39,9 @@ struct Event: Hashable, Identifiable, Codable, Equatable {
     
     // MARK: - Metadata
     @DocumentID var id: String?
-    var hostId: String
-    var postedByUserId: String
-    var hostName: String
+    var hostIds: [String]
+    var hostNames: [String]
+    var plannerHostStatusMap: [String: PlannerStatus]
     var timePosted: Timestamp
     var eventImageUrl: String
 

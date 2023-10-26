@@ -114,13 +114,14 @@ class AuthViewModel: ObservableObject {
     func isButtonActiveForState(_ state: AuthFlowViewState) -> Bool {
         switch state {
         case .enterName:
-            return !name.isEmpty && name.contains(" ")
+            let components = name.split(separator: " ")
+            return components.count >= 2 && components.allSatisfy { $0.count >= 1 }
         case .enterPhone:
             return !phoneNumber.isEmpty
         case .verifyCode:
             return !code.isEmpty
         case .enterEmail:
-            return !email.isEmpty
+            return email.isValidEmail
         case .enterBirthday:
             return isBirthdayValid
         case .chooseUsername:

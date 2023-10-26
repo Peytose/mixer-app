@@ -32,7 +32,12 @@ struct NotificationsView: View {
                         .friendRequest,
                         .newFollower,
                         .memberJoined,
-                        .guestlistJoined:
+                        .guestlistJoined,
+                        .plannerAccepted,
+                        .plannerDeclined,
+                        .plannerReplaced,
+                        .plannerRemoved,
+                        .plannerPendingReminder:
                     if let user = notification.user {
                         ProfileView(user: user)
                     }
@@ -41,10 +46,13 @@ struct NotificationsView: View {
                     if let host = notification.host {
                         HostDetailView(host: host)
                     }
-                case .eventLiked:
+                case .eventLiked,
+                        .eventPostedWithoutPlanner:
                     if let event = notification.event {
                         EventDetailView(event: event)
                     }
+                default:
+                    EmptyView()
                 }
             }
         }

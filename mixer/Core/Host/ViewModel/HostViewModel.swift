@@ -57,7 +57,7 @@ final class HostViewModel: ObservableObject {
         guard let hostUid = host.id else { return }
         
         let events = EventManager.shared.events.filter({
-            $0.hostId == hostUid &&
+            $0.hostIds.contains(where: { $0 == hostUid }) &&
             $0.endDate > Timestamp()
         })
         

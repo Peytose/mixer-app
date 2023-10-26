@@ -104,9 +104,6 @@ struct SideMenuView: View {
                 switch option {
                 case .createEvent:
                     EventCreationFlowView()
-                case .manageGuestlists:
-                    EmptyView()
-//                    GuestlistView(hosts: settingsViewModel.user?.associatedHosts ?? [])
                 case .manageMembers:
                     ManageMembersView(hosts: settingsViewModel.user?.associatedHosts ?? [])
                 case .manageEvents:

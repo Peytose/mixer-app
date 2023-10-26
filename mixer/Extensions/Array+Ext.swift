@@ -14,3 +14,20 @@ extension Array {
         }
     }
 }
+
+extension Array where Element == String {
+    func joinedWithCommasAndAnd() -> String {
+        switch count {
+        case 0:
+            return ""
+        case 1:
+            return self[0]
+        case 2:
+            return "\(self[0]) and \(self[1])"
+        default:
+            let allButLast = self.dropLast().joined(separator: ", ")
+            let last = self[count - 1]
+            return "\(allButLast), and \(last)"
+        }
+    }
+}

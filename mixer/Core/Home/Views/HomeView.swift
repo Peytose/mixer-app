@@ -50,10 +50,10 @@ struct HomeView: View {
                                 VStack {
                                     Spacer()
                                     
-                                    ZStack {
-                                        CircleView(tabSelection: $homeViewModel.currentTab)
-                                        
+                                    VStack {
                                         TabBarItems(tabSelection: $homeViewModel.currentTab)
+                                        
+                                        CircleView(tabSelection: $homeViewModel.currentTab)
                                     }
                                     .opacity(homeViewModel.showSideMenu ? 0 : 1)
                                     .frame(height: 80)
@@ -96,9 +96,9 @@ struct CircleView: View {
     @Binding var tabSelection: TabItem
     
     var body: some View {
-        Circle()
+        Capsule()
             .foregroundColor(Color.theme.mixerIndigo)
-            .frame(width: 60, height: 60)
+            .frame(width: 60, height: 3)
             .offset(x: getOffset(), y: 0)
             .animation(.spring(response: 0.4, dampingFraction: 0.7, blendDuration: 0))
     }
@@ -124,6 +124,7 @@ struct TabBarItems: View {
                     .foregroundColor(tabSelection == item ? .white : .secondary)
                     .frame(width: 35, height: 35)
                     .scaleEffect(tabSelection == item ? 1.3 : 1)
+                    .animation(Animation.timingCurve(0.2, 0.2, 0.2, 1, duration: 0.2))
                     .contentShape(Rectangle())
                     .onTapGesture {
                         self.tabSelection = item

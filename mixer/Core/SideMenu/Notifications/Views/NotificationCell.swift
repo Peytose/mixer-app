@@ -89,6 +89,18 @@ struct NotificationCell: View {
                                 EventDetailView(event: event)
                             }
                         }
+                    case .plannerInvited, .plannerPendingReminder:
+                        HStack {
+                            ListCellActionButton(text: "Accept",
+                                                 action: cellViewModel.acceptPlannerInvite)
+                            
+                            ListCellActionButton(text: "Decline",
+                                                 isSecondaryLabel: true,
+                                                 action: cellViewModel.declinePlannerInvite)
+                        }
+                    case .plannerDeclined:
+                        ListCellActionButton(text: "Remove",
+                                             action: cellViewModel.removePlanner)
                     default: Text("")
                     }
                 }

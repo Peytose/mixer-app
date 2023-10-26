@@ -30,11 +30,74 @@ struct BasicEventInfo: View {
                                       limit: 150)
                         
                         NotesSection(note: $viewModel.note)
+                        
+                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                            // Co-planners shown here
+                            ForEach(Array(viewModel.plannerNameMap.keys), id: \.self) { plannerId in
+                                let name = viewModel.plannerNameMap[plannerId] ?? ""
+                                ZStack(alignment: .topTrailing) {
+                                    Text(name)
+                                        .font(.body)
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color.theme.backgroundColor)
+                                        .padding()
+                                        .background(Color.white)
+                                        .cornerRadius(8)
+                                    
+                                    Button {
+                                        viewModel.removePlanner(withId: plannerId)
+                                    } label: {
+                                        Image(systemName: "xmark")
+                                            .font(.caption)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color.theme.backgroundColor)
+                                            .padding([.top, .trailing], 5)
+                                            .contentShape(Rectangle())
+                                    }
+                                }
+                            }
+                            
+                            Button {
+                                // Trigger the alert to add a user
+                                viewModel.isShowingAddPlannerAlert.toggle()
+                            } label: {
+                                Image(systemName: "plus")
+                                    .foregroundStyle(.white)
+                                    .padding()
+                                    .background {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white, lineWidth: 2)
+                                    }
+                            }
+                        }
+                        .padding()
                     }
                 }
                 .padding()
                 .padding(.bottom, 80)
             }
+        }
+        .actionSheet(isPresented: $viewModel.isShowingHostSelectionAlert) {
+            ActionSheet(title: Text("Select a Host"),
+                        message: Text("Please select one of your associated hosts."),
+                        buttons: viewModel.hostSelectionButtons())
+        }
+        .alert("Add Co-Planner(s)", isPresented: $viewModel.isShowingAddPlannerAlert) {
+            VStack {
+                TextField("Type a username here...", text: $viewModel.plannerUsername)
+                    .foregroundColor(.primary)
+                
+                if #available(iOS 16.0, *) {
+                    Button("Add") { viewModel.addPlanner() }
+                        .tint(.secondary)
+                    Button("Cancel", role: .cancel) {
+                        viewModel.isShowingAddPlannerAlert = false
+                    }
+                    .tint(.white)
+                }
+            }
+        } message: {
+            Text("")
         }
     }
 }

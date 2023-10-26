@@ -28,6 +28,38 @@ class NotificationsViewModel: ObservableObject {
     }
     
     
+    static func sendNotificationsToPlanners(for event: Event, with type: NotificationType) {
+        // Prepare the notifications for each planner
+        var documentRefsDataMap: [DocumentReference: [String: Any]] = [:]
+        for uid in event.activePlannerKeys {
+            let plannerNotificationRef = COLLECTION_NOTIFICATIONS
+                .document(uid)
+                .collection("user-notifications")
+                .document(UUID().uuidString)
+            documentRefsDataMap.updateValue(prepareNotificationData(toUid: uid,
+                                                                    type: type,
+                                                                    event: event),
+                                            forKey: plannerNotificationRef)
+            
+        }
+        
+        let batch = Firestore.firestore().batch()
+        
+        // Use the batchUpdate function to send all notifications at once
+        batch
+            .batchUpdate(documentRefsDataMap: documentRefsDataMap) { error in
+            if let error = error {
+                print("Error sending notifications: \(error.localizedDescription)")
+            } else {
+                print("Notifications sent successfully!")
+            }
+        }
+    }
+
+    
+
+    
+    
     func selectNotification(_ notification: Notification) {
         guard let notificationId = notification.id else { return }
         
@@ -92,34 +124,10 @@ class NotificationsViewModel: ObservableObject {
         guard let user = UserService.shared.user else { return }
 //        guard uid != user.id else { return }
         
-        var imageUrl = ""
-        var username = ""
-        
-        switch type {
-        case .friendRequest,
-                .friendAccepted,
-                .eventLiked,
-                .newFollower,
-                .memberJoined,
-                .guestlistJoined:
-            imageUrl = user.profileImageUrl
-            username = user.username
-        case .memberInvited,
-                .guestlistAdded:
-            guard let host = host else { return }
-            username = host.username
-            imageUrl = host.hostImageUrl
-        }
-        
-        let notification = Notification(hostId: host?.id,
-                                        eventId: event?.id,
-                                        uid: user.id ?? "",
-                                        username: username,
-                                        timestamp: Timestamp(),
-                                        imageUrl: imageUrl,
-                                        type: type)
-        
-        guard let encodedNotification = try? Firestore.Encoder().encode(notification) else { return }
+        let encodedNotification = prepareNotificationData(toUid: uid,
+                                                          type: type,
+                                                          host: host,
+                                                          event: event)
         
         COLLECTION_NOTIFICATIONS
             .document(uid)
@@ -129,6 +137,43 @@ class NotificationsViewModel: ObservableObject {
 }
 
 extension NotificationsViewModel {
+    private static func prepareNotificationData(toUid uid: String,
+                                 type: NotificationType,
+                                 host: Host? = nil,
+                                 event: Event? = nil) -> [String: Any] {
+        guard let user = UserService.shared.user else { fatalError("Current user not found!") }
+        
+        var imageUrl = ""
+        var headline = ""
+        
+        switch type {
+        case .friendRequest, .friendAccepted, .eventLiked, .newFollower, .memberJoined, .guestlistJoined, .plannerInvited, .plannerAccepted, .plannerDeclined, .plannerReplaced, .plannerRemoved, .plannerPendingReminder:
+            imageUrl = user.profileImageUrl
+            headline = user.username
+        case .memberInvited, .guestlistAdded:
+            guard let host = host else { fatalError("Host not found!") }
+            headline = host.username
+            imageUrl = host.hostImageUrl
+        case .eventPostedWithoutPlanner, .eventDeletedDueToDecline, .eventAutoDeleted:
+            guard let event = event else { fatalError("Event not found!") }
+            headline = event.title
+            imageUrl = event.eventImageUrl
+        }
+        
+        let notification = Notification(hostId: host?.id,
+                                        eventId: event?.id,
+                                        uid: user.id ?? "",
+                                        headline: headline,
+                                        timestamp: Timestamp(),
+                                        imageUrl: imageUrl,
+                                        type: type)
+        
+        guard let encodedNotification = try? Firestore.Encoder().encode(notification) else { fatalError("Could not encode notification!") }
+        
+        return encodedNotification
+    }
+    
+    
     private func gatherUniqueIDs() -> (hostIDs: Set<String>, eventIDs: Set<String>, userIDs: Set<String>) {
         var hostIDs = Set<String>()
         var eventIDs = Set<String>()
@@ -142,6 +187,7 @@ extension NotificationsViewModel {
         
         return (hostIDs, eventIDs, userIDs)
     }
+    
     
     private func populateCache() {
         let ids = gatherUniqueIDs()
@@ -218,6 +264,7 @@ extension NotificationsViewModel {
         return newNotifications.count
     }
 
+    
     func saveCurrentTimestamp() {
         let timestamp = Date()
         UserDefaults.standard.setValue(timestamp, forKey: "LastNotificationCheckTimestamp")

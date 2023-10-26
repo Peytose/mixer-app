@@ -39,17 +39,22 @@ struct EventDetailView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         EventHeader(viewModel: viewModel)
                         
-                        if let host = viewModel.host {
-                            if let action = action {
-                                HostSection(viewModel: viewModel)
-                                .onTapGesture {
-                                    action(.back, nil, host, nil)
-                                }
-                            } else {
-                                NavigationLink {
-                                    HostDetailView(host: host)
-                                } label: {
-                                    HostSection(viewModel: viewModel)
+                        VStack(alignment: .leading) {
+                            Text("\(viewModel.event.type.description) hosted by ")
+                                .secondaryHeading()
+                            
+                            ForEach(viewModel.hosts ?? []) { host in
+                                if let action = action {
+                                    HostSection(host: host)
+                                        .onTapGesture {
+                                            action(.back, nil, host, nil)
+                                        }
+                                } else {
+                                    NavigationLink {
+                                        HostDetailView(host: host)
+                                    } label: {
+                                        HostSection(host: host)
+                                    }
                                 }
                             }
                         }
@@ -166,9 +171,11 @@ struct EventHeader: View {
                 
                 
                 if let shareURL = viewModel.shareURL {
+                    let event = viewModel.event
+                    
                     ShareLink(item: shareURL,
                               message: Text("\nCheck out this event on mixer!"),
-                              preview: SharePreview("\(viewModel.event.title) by \(viewModel.event.hostName)",
+                              preview: SharePreview("\(event.title) by \(event.hostNames.joinedWithCommasAndAnd())",
                                                     image: viewModel.imageLoader.image ?? Image("AppIcon")),
                               label: {
                         Image(systemName: "square.and.arrow.up")
@@ -239,11 +246,9 @@ struct EventFlyer: View {
 }
 
 struct HostSection: View {
-    @ObservedObject var viewModel: EventViewModel
-    
+    var host: Host
     
     var body: some View {
-        if let host = viewModel.host {
             HStack(spacing: 12) {
                 KFImage(URL(string: host.hostImageUrl))
                     .resizable()
@@ -252,43 +257,36 @@ struct HostSection: View {
                     .frame(width: 45, height: 45)
                 
                 HStack {
-                    VStack(alignment: .leading) {
-                        Text("\(viewModel.event.type.description) hosted by ")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.secondary)
-                        
-                        Text("\(host.name)")
-                            .font(.title3)
-                            .bold()
-                            .foregroundColor(Color.theme.mixerIndigo)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.8)
-                    }
+                    Text("\(host.name)")
+                        .font(.title3)
+                        .bold()
+                        .foregroundColor(Color.theme.mixerIndigo)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                     
                     Spacer()
                     
-                    if let isFollowed = host.isFollowed {
-                        Button {
-                            withAnimation(.follow) {
-                                viewModel.updateFollow(isFollowed)
-                            }
-                        } label: {
-                            Text(isFollowed ? "Following" : "Follow")
-                                .font(.footnote)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                                .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
-                                .background {
-                                    Capsule()
-                                        .stroke(lineWidth: 1)
-                                }
-                        }
-                        .buttonStyle(.plain)
-                    }
+                    //MARK: WILL UPDATE SOON! (PEYTON)
+//                    if let isFollowed = host.isFollowed {
+//                        Button {
+//                            withAnimation(.follow) {
+//                                viewModel.updateFollow(isFollowed)
+//                            }
+//                        } label: {
+//                            Text(isFollowed ? "Following" : "Follow")
+//                                .font(.footnote)
+//                                .fontWeight(.semibold)
+//                                .foregroundColor(.white)
+//                                .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
+//                                .background {
+//                                    Capsule()
+//                                        .stroke(lineWidth: 1)
+//                                }
+//                        }
+//                        .buttonStyle(.plain)
+//                    }
                 }
             }
-        }
     }
 }
 

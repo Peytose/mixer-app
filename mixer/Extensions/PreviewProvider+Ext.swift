@@ -35,9 +35,9 @@ class DeveloperPreview {
                         associatedHosts: [])
     
     let mockEvent = Event(id: NSUUID().uuidString,
-                          hostId: "",
-                          postedByUserId: "",
-                          hostName: "Theta Chi",
+                          hostIds: [""],
+                          hostNames: ["Theta Chi"],
+                          plannerHostStatusMap: [:],
                           timePosted: Timestamp(),
                           eventImageUrl: "https://images.squarespace-cdn.com/content/v1/53ed0e3ce4b0c296acaeae80/1584577511464-8FDZYWQVXUI1OBS4VTZP/Bonneville14082-Edit-DHWEB%2BNick%2BFerguson%2BDenver%2BBroncos%2BHeadshot%2BPhotography%2Bby%2BAaron%2BLucy%2BDenver%2BColorado%2BHeadshots%2BPhotographer.jpg?format=2500w",
                           title: "Neon Party",

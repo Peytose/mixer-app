@@ -14,6 +14,12 @@ import MapKit
 class EventCreationViewModel: NSObject, ObservableObject {
     @Published var title                       = ""
     @Published var eventDescription            = "" // Renamed because NSObject has 'description' property
+    @Published var plannerUsername             = ""
+    @Published var hostIds                     = [String]()
+    @Published var hostNames                   = [String]()
+    @Published var plannerNameMap              = [String: String]()
+    @Published var plannerAssociatedHosts      = [String: String]()
+    @Published var plannerHostStatusMap            = [String: PlannerStatus]()
     @Published var note                        = ""
     @Published var guestLimitStr               = ""
     @Published var memberInviteLimitStr        = ""
@@ -24,12 +30,14 @@ class EventCreationViewModel: NSObject, ObservableObject {
     @Published var bathroomCount               = 0
     @Published var type                        = EventType.party
     @Published private(set) var isEventCreated = false
-    @Published var isLoading                   = false
+    @Published var isShowingAddPlannerAlert    = false
+    @Published var isShowingHostSelectionAlert = false
     @Published var isInviteOnly                = false
     @Published var isPrivate                   = false
     @Published var isManualApprovalEnabled     = false
     @Published var hasAlcohol                  = false
     @Published var isCheckInViaMixer           = true
+    @Published var isLoading                   = false
     
     @Published var selectedDeadlineOption: DeadlineOption = .oneDayBefore {
         didSet {
@@ -164,6 +172,61 @@ class EventCreationViewModel: NSObject, ObservableObject {
     }
     
     
+    func hostSelectionButtons() -> [ActionSheet.Button] {
+        var buttons: [ActionSheet.Button] = []
+        
+        for (hostId, hostName) in self.plannerAssociatedHosts {
+            let button = ActionSheet.Button.default(Text(hostName)) {
+                self.hostIds.append(hostId)
+                self.hostNames.append(hostName)
+                self.isShowingHostSelectionAlert = false
+            }
+            buttons.append(button)
+        }
+        
+        return buttons
+    }
+    
+    
+    func addPlanner() {
+        isShowingAddPlannerAlert = false
+
+        COLLECTION_USERS
+            .whereField("username", isEqualTo: self.plannerUsername.lowercased())
+            .limit(to: 1)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching user with username \(self.plannerUsername): \(error.localizedDescription)")
+                    return
+                }
+
+                guard let user = try? snapshot?.documents.first?.data(as: User.self),
+                      let userId = user.id else { return }
+
+                if let associatedHosts = user.hostIdToAccountTypeMap?.filter({ $0.value.privilege.rawValue > 0 }).keys {
+                    HostManager.shared.fetchHosts(with: Array(associatedHosts)) { hosts in
+                        self.plannerHostStatusMap.updateValue(PlannerStatus.pending, forKey: userId)
+                        self.plannerUsername = ""
+
+                        if !self.isShowingAddPlannerAlert && hosts.count > 1 {
+                            for host in hosts {
+                                guard let hostId = host.id else { return }
+                                self.plannerAssociatedHosts.updateValue(host.name, forKey: hostId)
+                            }
+                            self.isShowingHostSelectionAlert = true
+                        } else {
+                            guard let hostId = hosts.first?.id else { return }
+                            self.hostIds.append(hostId)
+                        }
+
+                        self.plannerNameMap.updateValue(user.displayName, forKey: userId)
+                        print("DEBUG: Planner Confirmations: \(self.plannerHostStatusMap)")
+                    }
+                }
+            }
+    }
+    
+    
     func createEvent() {
         self.showLoadingView()
         guard let image = selectedImage else {
@@ -174,8 +237,8 @@ class EventCreationViewModel: NSObject, ObservableObject {
         ImageUploader.uploadImage(image: image, type: .event) { imageUrl in
             // Needs attention (issue: only allows users to be single host)
             guard let host = UserService.shared.user?.associatedHosts?.first,
-                  let hostId = host.id,
-                  let uid = Auth.auth().currentUser?.uid,
+                  let mainHostId = host.id,
+                  let userId = Auth.auth().currentUser?.uid,
                   let location = self.selectedLocation else {
                 self.hideLoadingView()
                 return
@@ -184,9 +247,13 @@ class EventCreationViewModel: NSObject, ObservableObject {
             let geoPoint = GeoPoint(latitude: location.coordinate.latitude,
                                     longitude: location.coordinate.longitude)
             
-            var event = Event(hostId: hostId,
-                              postedByUserId: uid,
-                              hostName: host.name,
+            self.plannerHostStatusMap.updateValue(PlannerStatus.primary, forKey: userId)
+            self.hostIds.append(mainHostId)
+            self.hostNames.append(host.name)
+            
+            var event = Event(hostIds: self.hostIds,
+                              hostNames: self.hostNames,
+                              plannerHostStatusMap: self.plannerHostStatusMap,
                               timePosted: Timestamp(),
                               eventImageUrl: imageUrl,
                               title: self.title,
@@ -238,13 +305,25 @@ class EventCreationViewModel: NSObject, ObservableObject {
                 return
             }
             
-            COLLECTION_EVENTS
-                .addDocument(data: encodedEvent) { _ in
-                    self.reset()
-                    self.isEventCreated = true
-                    self.hideLoadingView()
-                    HapticManager.playSuccess()
+            let newDocumentReference = COLLECTION_EVENTS.document() // Create a new document reference with a generated ID
+
+            newDocumentReference.setData(encodedEvent) { error in
+                if let error = error {
+                    // Handle the error if needed
+                    print("Error adding document: \(error.localizedDescription)")
+                    return
                 }
+
+                // Update the event's id with the document ID from Firestore
+                event.id = newDocumentReference.documentID
+
+                self.reset()
+                self.isEventCreated = true
+                self.hideLoadingView()
+
+                NotificationsViewModel.sendNotificationsToPlanners(for: event, with: .plannerInvited)
+                HapticManager.playSuccess()
+            }
         }
     }
 }
@@ -327,6 +406,12 @@ extension EventCreationViewModel {
         alcoholPresence         = nil
         bathroomCount           = 0
         queryFragment           = ""
+    }
+    
+    
+    func removePlanner(withId plannerId: String) {
+        plannerNameMap.removeValue(forKey: plannerId)
+        plannerHostStatusMap.removeValue(forKey: plannerId)
     }
     
     

@@ -55,6 +55,23 @@ extension CollectionReference {
 
 // MARK: - Notification-related
 extension CollectionReference {
+    func deleteNotificationsForPlanners(for event: Event,
+                                        ofTypes types: [NotificationType],
+                                        from currentUserId: String,
+                                        completion: FirestoreCompletion) {
+        guard let eventId = event.id else { return }
+        
+        for userId in event.activePlannerKeys {
+            COLLECTION_NOTIFICATIONS
+                .deleteNotifications(forUserID: userId,
+                                     ofTypes: types,
+                                     from: currentUserId,
+                                     eventId: eventId,
+                                     completion: completion)
+        }
+    }
+
+    
     func deleteNotifications(forUserID userID: String,
                              ofTypes types: [NotificationType],
                              from uid: String? = nil,

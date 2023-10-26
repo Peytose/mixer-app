@@ -29,15 +29,13 @@ struct StickyHeaderView<Item: CustomStringConvertible>: View {
 
             return ZStack(alignment: .center) {
                 HStack(alignment: .center, spacing: 0) {  // set spacing to 0
-
                     ForEach(0..<uniqueItems.count, id: \.self) { index in
                         Text(uniqueItems[index].description.capitalized)
                             .font(.title3)
                             .fontWeight(.semibold)
                             .foregroundColor(selectedIdx == CGFloat(index) ? .white : .gray)
                             .contentShape(Rectangle())
-                            .frame(width: tabWidth)
-                            .padding(.bottom, 10)
+                            .frame(width: tabWidth, height: 80)
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7, blendDuration: 0)) {
                                     selectedItem = uniqueItems[index]

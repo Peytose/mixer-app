@@ -10,14 +10,42 @@ import FirebaseFirestoreSwift
 import FirebaseFirestore
 import SwiftUI
 
+enum PrivilegeLevel: Int {
+    case basic
+    case advanced
+    case admin
+}
+
 enum HostAccountType: Int, CustomStringConvertible, Codable {
     case member
-    case host
-    
+    case planner
+    case admin
+    case moderator
+    case vip
+
     var description: String {
         switch self {
-            case .member: return "Member"
-            case .host: return "Host"
+        case .member:
+            return "Member"
+        case .planner:
+            return "Planner"
+        case .admin:
+            return "Admin"
+        case .moderator:
+            return "Moderator"
+        case .vip:
+            return "VIP"
+        }
+    }
+    
+    var privilege: PrivilegeLevel {
+        switch self {
+        case .member:
+            return .basic
+        case .planner, .vip:
+            return .advanced
+        case .admin, .moderator:
+            return .admin
         }
     }
 }

@@ -23,6 +23,7 @@ class EventManager: ObservableObject {
     
     func fetchAvailableEvents() {
         COLLECTION_EVENTS
+            .whereField("endDate", isGreaterThan: Timestamp())
             .whereField("isPrivate", isEqualTo: false)
             .getDocuments { snapshot, error in
                 if let error = error {
@@ -32,7 +33,18 @@ class EventManager: ObservableObject {
                 
                 guard let documents = snapshot?.documents else { return }
                 let events = documents.compactMap({ try? $0.data(as: Event.self) })
-                self.events = events
+                
+                // Filter out events that have planners that are pending or declined
+                let filteredEvents = events.filter { event in
+                    for (_, status) in event.plannerHostStatusMap {
+                        if status == .pending || status == .declined {
+                            return false
+                        }
+                    }
+                    return true
+                }
+                
+                self.events = filteredEvents
             }
     }
     
