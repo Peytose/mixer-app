@@ -15,8 +15,8 @@ class EventCreationViewModel: NSObject, ObservableObject {
     @Published var title                       = ""
     @Published var eventDescription            = "" // Renamed because NSObject has 'description' property
     @Published var plannerUsername             = ""
-    @Published var hostIds                     = [String]()
-    @Published var hostNames                   = [String]()
+    @Published var hostIds                     = Set<String>()
+    @Published var hostNames                   = Set<String>()
     @Published var plannerNameMap              = [String: String]()
     @Published var plannerAssociatedHosts      = [String: String]()
     @Published var plannerHostStatusMap            = [String: PlannerStatus]()
@@ -177,8 +177,8 @@ class EventCreationViewModel: NSObject, ObservableObject {
         
         for (hostId, hostName) in self.plannerAssociatedHosts {
             let button = ActionSheet.Button.default(Text(hostName)) {
-                self.hostIds.append(hostId)
-                self.hostNames.append(hostName)
+                self.hostIds.insert(hostId)
+                self.hostNames.insert(hostName)
                 self.isShowingHostSelectionAlert = false
             }
             buttons.append(button)
@@ -216,7 +216,7 @@ class EventCreationViewModel: NSObject, ObservableObject {
                             self.isShowingHostSelectionAlert = true
                         } else {
                             guard let hostId = hosts.first?.id else { return }
-                            self.hostIds.append(hostId)
+                            self.hostIds.insert(hostId)
                         }
 
                         self.plannerNameMap.updateValue(user.displayName, forKey: userId)
@@ -248,11 +248,11 @@ class EventCreationViewModel: NSObject, ObservableObject {
                                     longitude: location.coordinate.longitude)
             
             self.plannerHostStatusMap.updateValue(PlannerStatus.primary, forKey: userId)
-            self.hostIds.append(mainHostId)
-            self.hostNames.append(host.name)
+            self.hostIds.insert(mainHostId)
+            self.hostNames.insert(host.name)
             
-            var event = Event(hostIds: self.hostIds,
-                              hostNames: self.hostNames,
+            var event = Event(hostIds: Array(self.hostIds),
+                              hostNames: Array(self.hostNames),
                               plannerHostStatusMap: self.plannerHostStatusMap,
                               timePosted: Timestamp(),
                               eventImageUrl: imageUrl,
@@ -321,7 +321,8 @@ class EventCreationViewModel: NSObject, ObservableObject {
                 self.isEventCreated = true
                 self.hideLoadingView()
 
-                NotificationsViewModel.sendNotificationsToPlanners(for: event, with: .plannerInvited)
+                NotificationsViewModel.sendNotificationsToPlanners(for: event,
+                                                                   with: .plannerInvited)
                 HapticManager.playSuccess()
             }
         }

@@ -29,9 +29,11 @@ class NotificationsViewModel: ObservableObject {
     
     
     static func sendNotificationsToPlanners(for event: Event, with type: NotificationType) {
+        guard let activePlannerIds = event.activePlannerIds else { return }
         // Prepare the notifications for each planner
         var documentRefsDataMap: [DocumentReference: [String: Any]] = [:]
-        for uid in event.activePlannerKeys {
+        for uid in activePlannerIds {
+            guard uid != UserService.shared.user?.id else { continue }
             let plannerNotificationRef = COLLECTION_NOTIFICATIONS
                 .document(uid)
                 .collection("user-notifications")
@@ -48,16 +50,13 @@ class NotificationsViewModel: ObservableObject {
         // Use the batchUpdate function to send all notifications at once
         batch
             .batchUpdate(documentRefsDataMap: documentRefsDataMap) { error in
-            if let error = error {
-                print("Error sending notifications: \(error.localizedDescription)")
-            } else {
-                print("Notifications sent successfully!")
+                if let error = error {
+                    print("Error sending notifications: \(error.localizedDescription)")
+                } else {
+                    print("Notifications sent successfully!")
+                }
             }
-        }
     }
-
-    
-
     
     
     func selectNotification(_ notification: Notification) {

@@ -8,10 +8,14 @@
 import SwiftUI
 
 extension Event {
-    var activePlannerKeys: [String] {
-        let confirmedPlanners = plannerHostStatusMap.filter { $0.value == .confirmed }.map { $0.key }
-        let primaryPlanner = plannerHostStatusMap.filter { $0.value == .primary }.map { $0.key }
-        return confirmedPlanners + primaryPlanner
+    var activePlannerIds: [String]? {
+        var confirmedPlanners = plannerHostStatusMap.filter({ $0.value == .confirmed }).compactMap({ $0.key.plannerId })
+        
+        if let primaryPlanner = self.primaryPlannerKey?.plannerId {
+            confirmedPlanners.append(primaryPlanner)
+        }
+        
+        return confirmedPlanners.isEmpty ? nil : confirmedPlanners
     }
     
     var primaryPlannerKey: String? {
