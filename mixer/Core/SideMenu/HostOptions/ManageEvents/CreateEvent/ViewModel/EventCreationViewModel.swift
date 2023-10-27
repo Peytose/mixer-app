@@ -18,7 +18,7 @@ class EventCreationViewModel: NSObject, ObservableObject {
     @Published var hostIds                     = Set<String>()
     @Published var hostNames                   = Set<String>()
     @Published var plannerNameMap              = [String: String]()
-    @Published var plannerAssociatedHosts      = [String: String]()
+    @Published var plannerAssociatedHosts      = [String: [String]]()
     @Published var plannerHostStatusMap            = [String: PlannerStatus]()
     @Published var note                        = ""
     @Published var guestLimitStr               = ""
@@ -175,10 +175,11 @@ class EventCreationViewModel: NSObject, ObservableObject {
     func hostSelectionButtons() -> [ActionSheet.Button] {
         var buttons: [ActionSheet.Button] = []
         
-        for (hostId, hostName) in self.plannerAssociatedHosts {
-            let button = ActionSheet.Button.default(Text(hostName)) {
-                self.hostIds.insert(hostId)
-                self.hostNames.insert(hostName)
+        for (hostId, hostNameAndUserId) in self.plannerAssociatedHosts {
+            let button = ActionSheet.Button.default(Text(hostNameAndUserId[0])) {
+                let key = "\(hostNameAndUserId[1])-\(hostId)"
+                self.plannerHostStatusMap.updateValue(PlannerStatus.pending, forKey: key)
+                self.hostNames.insert(hostNameAndUserId[0])
                 self.isShowingHostSelectionAlert = false
             }
             buttons.append(button)
@@ -205,18 +206,20 @@ class EventCreationViewModel: NSObject, ObservableObject {
 
                 if let associatedHosts = user.hostIdToAccountTypeMap?.filter({ $0.value.privilege.rawValue > 0 }).keys {
                     HostManager.shared.fetchHosts(with: Array(associatedHosts)) { hosts in
-                        self.plannerHostStatusMap.updateValue(PlannerStatus.pending, forKey: userId)
                         self.plannerUsername = ""
 
                         if !self.isShowingAddPlannerAlert && hosts.count > 1 {
                             for host in hosts {
                                 guard let hostId = host.id else { return }
-                                self.plannerAssociatedHosts.updateValue(host.name, forKey: hostId)
+                                self.plannerAssociatedHosts.updateValue([host.name, userId], forKey: hostId)
                             }
                             self.isShowingHostSelectionAlert = true
                         } else {
-                            guard let hostId = hosts.first?.id else { return }
-                            self.hostIds.insert(hostId)
+                            guard let host = hosts.first,
+                                  let hostId = host.id else { return }
+                            let key = "\(userId)-\(hostId)"
+                            self.plannerHostStatusMap.updateValue(PlannerStatus.pending, forKey: key)
+                            self.hostNames.insert(host.name)
                         }
 
                         self.plannerNameMap.updateValue(user.displayName, forKey: userId)
@@ -247,7 +250,9 @@ class EventCreationViewModel: NSObject, ObservableObject {
             let geoPoint = GeoPoint(latitude: location.coordinate.latitude,
                                     longitude: location.coordinate.longitude)
             
-            self.plannerHostStatusMap.updateValue(PlannerStatus.primary, forKey: userId)
+            let key = "\(userId)-\(mainHostId)"
+            self.plannerHostStatusMap.updateValue(PlannerStatus.primary,
+                                                  forKey: key)
             self.hostIds.insert(mainHostId)
             self.hostNames.insert(host.name)
             

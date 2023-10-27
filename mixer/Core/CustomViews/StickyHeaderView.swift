@@ -50,6 +50,6 @@ struct StickyHeaderView<Item: CustomStringConvertible>: View {
                     .offset(x: offset, y: 20)
             }
             .background(Color.theme.backgroundColor)
-            .frame(width: DeviceTypes.ScreenSize.width, height: 15)
+            .frame(width: DeviceTypes.ScreenSize.width)
         }
 }

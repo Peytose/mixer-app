@@ -61,16 +61,23 @@ class ManageEventsViewModel: ObservableObject {
         self.selectedHost = UserService.shared.user?.associatedHosts?.first
     }
     
+    
     private func updateEventsForSelectedState() {
         self.eventsForSelectedState = events.filter { EventState(event: $0).description == currentState.description }
     }
 
+    
     private func fetchHostEvents() {
         guard let host = selectedHost else { return }
         eventManager.fetchEvents(for: host) { events in
-            self.events = events
+            // Filter out unconfirmed events
+            let confirmedEvents = events.filter { event in
+                !(event.pendingPlannerIds?.isEmpty ?? false)
+            }
+            self.events = confirmedEvents
         }
     }
+
     
     @MainActor
     func changeHost(to host: Host) {

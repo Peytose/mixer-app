@@ -464,21 +464,11 @@ extension UserService {
         
         switch actionType {
         case .plannerAccepted:
+            data["hostIds"] = FieldValue.arrayUnion([hostId])
             data["plannerHostStatusMap.\(keyForCurrentUser)"] = PlannerStatus.confirmed.rawValue
             
-        case .plannerDeclined, .plannerRemoved:
-            if actionType == .plannerDeclined {
-                data["plannerHostStatusMap.\(keyForCurrentUser)"] = PlannerStatus.declined.rawValue
-            } else if actionType == .plannerRemoved {
-                data["plannerHostStatusMap.\(keyForCurrentUser)"] = FieldValue.delete()
-            }
-            
-            // Check if there's another planner with the same hostId
-            let otherPlannersWithSameHost = event.plannerHostStatusMap.keys.filter { $0 != keyForCurrentUser && $0.hostId == hostId }
-            
-            if otherPlannersWithSameHost.isEmpty {
-                data["hostIds"] = FieldValue.arrayRemove([hostId])
-            }
+        case .plannerDeclined:
+            data["plannerHostStatusMap.\(keyForCurrentUser)"] = PlannerStatus.declined.rawValue
             
         default:
             // Handle other notification types or do nothing

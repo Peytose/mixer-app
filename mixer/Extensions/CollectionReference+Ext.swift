@@ -103,6 +103,7 @@ extension CollectionReference {
         // Execute the query
         query.getDocuments { snapshot, error in
             if let error = error {
+                print("DEBUG: Error deleting the documents \(error.localizedDescription)")
                 completion?(error)
                 return
             }

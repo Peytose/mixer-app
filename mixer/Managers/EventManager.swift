@@ -79,7 +79,7 @@ class EventManager: ObservableObject {
         guard let hostId = host.id else { return }
         
         COLLECTION_EVENTS
-            .whereField("hostId", isEqualTo: hostId)
+            .whereField("hostIds", arrayContains: hostId)
             .getDocuments { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error getting events for \(host.name). \(error.localizedDescription)")
