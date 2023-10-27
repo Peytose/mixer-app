@@ -24,8 +24,6 @@
 		9C20AF0D2A735E4A00F057BD /* GuestlistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF002A735E4A00F057BD /* GuestlistViewModel.swift */; };
 		9C20AF0F2A735E4A00F057BD /* GuestlistEntryForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF022A735E4A00F057BD /* GuestlistEntryForm.swift */; };
 		9C20AF102A735E4A00F057BD /* GuestDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF032A735E4A00F057BD /* GuestDetailView.swift */; };
-		9C20AF132A735E4A00F057BD /* EventLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF072A735E4A00F057BD /* EventLocationView.swift */; };
-		9C20AF142A735E4A00F057BD /* EventVisibilityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF082A735E4A00F057BD /* EventVisibilityView.swift */; };
 		9C20AF162A735E4A00F057BD /* MapTemp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF0B2A735E4A00F057BD /* MapTemp.swift */; };
 		9C20AF182A735FDE00F057BD /* MixerIdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF172A735FDE00F057BD /* MixerIdView.swift */; };
 		9C20AF1A2A73600B00F057BD /* SettingsRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C20AF192A73600B00F057BD /* SettingsRow.swift */; };
@@ -204,6 +202,8 @@
 		9CDFC3DC2A9FAFB400BDFA60 /* WriteBatch+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFC3DB2A9FAFB400BDFA60 /* WriteBatch+Ext.swift */; };
 		9CF84C9929AAA38A005BE430 /* EnterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9829AAA38A005BE430 /* EnterNameView.swift */; };
 		9CF84C9B29AAE337005BE430 /* EnterProfilePictureAndBioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9A29AAE337005BE430 /* EnterProfilePictureAndBioView.swift */; };
+		9CFB25F12AEC106200F090E6 /* UniversitySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFB25F02AEC106200F090E6 /* UniversitySearchView.swift */; };
+		9CFB25F32AEC111800F090E6 /* UniversitySearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFB25F22AEC111800F090E6 /* UniversitySearchViewModel.swift */; };
 		A611E6E52A03123200DDFD32 /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = A611E6E42A03123200DDFD32 /* PopupView */; };
 		A611E6E82A0317B300DDFD32 /* LikedEventNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A611E6E72A0317B300DDFD32 /* LikedEventNotification.swift */; };
 		A611E6EA2A03198700DDFD32 /* AddedToGuestlistNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A611E6E92A03198700DDFD32 /* AddedToGuestlistNotification.swift */; };
@@ -279,8 +279,6 @@
 		9C20AF002A735E4A00F057BD /* GuestlistViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestlistViewModel.swift; sourceTree = "<group>"; };
 		9C20AF022A735E4A00F057BD /* GuestlistEntryForm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestlistEntryForm.swift; sourceTree = "<group>"; };
 		9C20AF032A735E4A00F057BD /* GuestDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GuestDetailView.swift; sourceTree = "<group>"; };
-		9C20AF072A735E4A00F057BD /* EventLocationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventLocationView.swift; sourceTree = "<group>"; };
-		9C20AF082A735E4A00F057BD /* EventVisibilityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventVisibilityView.swift; sourceTree = "<group>"; };
 		9C20AF0B2A735E4A00F057BD /* MapTemp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapTemp.swift; sourceTree = "<group>"; };
 		9C20AF172A735FDE00F057BD /* MixerIdView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MixerIdView.swift; path = mixer/Core/SideMenu/Views/MixerIdView.swift; sourceTree = SOURCE_ROOT; };
 		9C20AF192A73600B00F057BD /* SettingsRow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsRow.swift; path = mixer/Core/SideMenu/Settings/Views/SettingsRow.swift; sourceTree = SOURCE_ROOT; };
@@ -446,6 +444,8 @@
 		9CDFC3DB2A9FAFB400BDFA60 /* WriteBatch+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WriteBatch+Ext.swift"; sourceTree = "<group>"; };
 		9CF84C9829AAA38A005BE430 /* EnterNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterNameView.swift; sourceTree = "<group>"; };
 		9CF84C9A29AAE337005BE430 /* EnterProfilePictureAndBioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterProfilePictureAndBioView.swift; sourceTree = "<group>"; };
+		9CFB25F02AEC106200F090E6 /* UniversitySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversitySearchView.swift; sourceTree = "<group>"; };
+		9CFB25F22AEC111800F090E6 /* UniversitySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversitySearchViewModel.swift; sourceTree = "<group>"; };
 		A611E6E72A0317B300DDFD32 /* LikedEventNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedEventNotification.swift; sourceTree = "<group>"; };
 		A611E6E92A03198700DDFD32 /* AddedToGuestlistNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddedToGuestlistNotification.swift; sourceTree = "<group>"; };
 		A61D12B329B42D3D00AE0EED /* HostInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInfoView.swift; sourceTree = "<group>"; };
@@ -571,27 +571,9 @@
 			children = (
 				9C705F9D2A8FD79900F1D0DB /* ViewModel */,
 				9C705F9C2A8FD79400F1D0DB /* Views */,
-				9C20AEFD2A735E4A00F057BD /* Embedded Views */,
 				9C20AF0A2A735E4A00F057BD /* Needs looking at */,
 			);
 			path = Map;
-			sourceTree = "<group>";
-		};
-		9C20AEFD2A735E4A00F057BD /* Embedded Views */ = {
-			isa = PBXGroup;
-			children = (
-				9C20AF052A735E4A00F057BD /* Create Event View */,
-			);
-			path = "Embedded Views";
-			sourceTree = "<group>";
-		};
-		9C20AF052A735E4A00F057BD /* Create Event View */ = {
-			isa = PBXGroup;
-			children = (
-				9C20AF072A735E4A00F057BD /* EventLocationView.swift */,
-				9C20AF082A735E4A00F057BD /* EventVisibilityView.swift */,
-			);
-			path = "Create Event View";
 			sourceTree = "<group>";
 		};
 		9C20AF0A2A735E4A00F057BD /* Needs looking at */ = {
@@ -969,6 +951,7 @@
 				9C20AF032A735E4A00F057BD /* GuestDetailView.swift */,
 				9C20AF022A735E4A00F057BD /* GuestlistEntryForm.swift */,
 				9CDFC3CF2A9E908100BDFA60 /* GuestlistPDF.swift */,
+				9CFB25F02AEC106200F090E6 /* UniversitySearchView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -977,6 +960,7 @@
 			isa = PBXGroup;
 			children = (
 				9C20AF002A735E4A00F057BD /* GuestlistViewModel.swift */,
+				9CFB25F22AEC111800F090E6 /* UniversitySearchViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -1606,10 +1590,10 @@
 				9C58B3AF29C8E5CA0024CB7E /* CharactersRemainView.swift in Sources */,
 				A66E672429DFCE9D00AB355E /* EventGuestsAndInvitations.swift in Sources */,
 				9CDFA5BF2A832B8B00EE0370 /* AuthFlowViewState.swift in Sources */,
-				9C20AF132A735E4A00F057BD /* EventLocationView.swift in Sources */,
 				9C79586C2A8C763600590E1A /* EventAmenities.swift in Sources */,
 				9C4B0E512983795600A9D963 /* EventListView.swift in Sources */,
 				A6B9E6882953E9CB009C936E /* OffsetModifier.swift in Sources */,
+				9CFB25F12AEC106200F090E6 /* UniversitySearchView.swift in Sources */,
 				9C79586A2A8C6A4600590E1A /* HostSideMenuOption.swift in Sources */,
 				9C05C1CA29847FE500841100 /* UserIconList.swift in Sources */,
 				9C567A9E2934F83100EA5FCB /* PhotoPicker.swift in Sources */,
@@ -1631,6 +1615,7 @@
 				9C93319D29255D8D0079E039 /* AlertItem.swift in Sources */,
 				9C8F0A6E2A90636C00A06D9A /* SearchType.swift in Sources */,
 				A68DAA032A12DFDB0069A5E7 /* Button+Ext.swift in Sources */,
+				9CFB25F32AEC111800F090E6 /* UniversitySearchViewModel.swift in Sources */,
 				9C705F9B2A8FCB3600F1D0DB /* EventManager.swift in Sources */,
 				9C20AF2B2A75928900F057BD /* EventCreationFlowView.swift in Sources */,
 				9C567A98292FFF1800EA5FCB /* String+Ext.swift in Sources */,
@@ -1683,7 +1668,6 @@
 				9C20AF0F2A735E4A00F057BD /* GuestlistEntryForm.swift in Sources */,
 				9C58B39A29C7F8190024CB7E /* BasicEventInfo.swift in Sources */,
 				9C3E2CA529EE602A00A74D05 /* EventGuest.swift in Sources */,
-				9C20AF142A735E4A00F057BD /* EventVisibilityView.swift in Sources */,
 				9CF84C9B29AAE337005BE430 /* EnterProfilePictureAndBioView.swift in Sources */,
 				9CA1E75A2A18701400BF74AD /* ImageLoader.swift in Sources */,
 				9C05C1C22983A21700841100 /* CustomSecureField.swift in Sources */,

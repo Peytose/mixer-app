@@ -15,6 +15,7 @@ class AlgoliaManager: ObservableObject {
     private var eventsIndex: Index
     private var hostsIndex: Index
     private var relationshipsIndex: Index
+    private var universitiesIndex: Index
     static let shared = AlgoliaManager()
     
     init() {
@@ -24,6 +25,7 @@ class AlgoliaManager: ObservableObject {
         self.eventsIndex        = client.index(withName: "prod_events_search")
         self.hostsIndex         = client.index(withName: "prod_hosts_search")
         self.relationshipsIndex = client.index(withName: "prod_relationships_index")
+        self.universitiesIndex = client.index(withName: "prod_universities_search")
         
         // Setting attributes for faceting for the relationships index
         let relationshipSettings = Settings()
@@ -42,6 +44,12 @@ class AlgoliaManager: ObservableObject {
         }
         
         print("DEBUG: init for algolia completed. \(client)")
+    }
+    
+    
+    func searchUniversity(from searchText: String, completion: @escaping AlgoliaCompletion) {
+        let query = Query(searchText)
+        universitiesIndex.search(query: query, completion: completion)
     }
     
     

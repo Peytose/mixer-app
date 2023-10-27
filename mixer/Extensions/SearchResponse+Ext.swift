@@ -9,6 +9,17 @@ import AlgoliaSearchClient
 import SwiftUI
 
 extension SearchResponse {
+    func mapToUniversities() -> [University] {
+        do {
+            let hitsArray: [University] = try self.extractHits()
+            return hitsArray
+        } catch let error {
+            print("DEBUG: Parsing error: \(error)")
+            return []
+        }
+    }
+    
+    
     func mapToSearchItems() -> [SearchItem] {
         do {
             let hitsArray: [SearchItem] = try self.extractHits()

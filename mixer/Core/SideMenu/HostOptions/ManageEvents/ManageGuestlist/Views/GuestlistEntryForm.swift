@@ -10,6 +10,7 @@ import SwiftUI
 struct GuestlistEntryForm: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var viewModel: GuestlistViewModel
+    @StateObject private var universitySearchViewModel = UniversitySearchViewModel()
 
     var body: some View {
         ZStack {
@@ -48,7 +49,10 @@ struct GuestlistEntryForm: View {
         Section(header: Text("Status").fontWeight(.semibold)) {
             Picker("", selection: $viewModel.status) {
                 ForEach(GuestStatus.allCases, id: \.self) { status in
-                    Text(status.description)
+                    if status != .requested {
+                        Text(status.pickerTitle)
+                            .tag(status.rawValue)
+                    }
                 }
             }
             .pickerStyle(.segmented)
@@ -72,16 +76,13 @@ struct GuestlistEntryForm: View {
             TextField("Name", text: $viewModel.name)
                 .disabled(viewModel.username != "")
             
-//            HStack {
-//                Text(viewModel.university == .other ? viewModel.customUniversity : viewModel.university.rawValue)
-//                Spacer()
-//                universityMenu
-//            }
-//            
-//            if viewModel.university == .other {
-//                TextField("School Name", text: $viewModel.customUniversity)
-//                    .disabled(viewModel.username != "")
-//            }
+            UniversitySearchView(viewModel: universitySearchViewModel,
+                                 action: viewModel.selectUniversity(_:))
+            .disabled(viewModel.username != "")
+            
+            if viewModel.universityName != "" {
+                Text(viewModel.universityName)
+            }
             
             genderField
         }
@@ -94,18 +95,6 @@ struct GuestlistEntryForm: View {
                 .disabled(viewModel.username != "")
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)
-    }
-
-    private var universityMenu: some View {
-        Menu("Select School") {
-//            ForEach(UniversityExamples.allCases, id: \.self) { university in
-//                Button(university.rawValue) {
-//                    viewModel.university = university
-//                }
-//            }
-        }
-        .menuTextStyle()
-        .disabled(viewModel.username != "")
     }
 
     private var genderField: some View {

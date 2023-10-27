@@ -58,7 +58,7 @@ class GuestlistViewModel: ObservableObject {
     @Published var name                   = ""
     @Published var email                  = ""
     @Published var selectedUniversity: University?
-    @Published var universityString       = ""
+    @Published var universityName         = ""
     @Published var status                 = GuestStatus.invited
     @Published var gender                 = Gender.man
     @Published var age                    = 18
@@ -99,6 +99,12 @@ class GuestlistViewModel: ObservableObject {
         let count = self.filteredGuests.count
         
         return "\(count) guest\(count > 1 ? "s" : "")"
+    }
+    
+    
+    func selectUniversity(_ university: University) {
+        self.selectedUniversity = university
+        self.universityName     = university.name
     }
     
     
@@ -190,7 +196,9 @@ extension GuestlistViewModel {
                       let eventId = self.event.id,
                       let userId = user.id else { return }
                 
-                self.service.addUserToGuestlist(eventId: eventId, user: user, status: status) { error in
+                self.service.addUserToGuestlist(eventId: eventId,
+                                                user: user,
+                                                status: status) { error in
                     if let error = error {
                         print("DEBUG: Error adding user to guestlist. \(error.localizedDescription)")
                         return

@@ -13,6 +13,7 @@ struct SearchResultsCell: View {
     let title: String
     let subtitle: String
     var type: SearchType?
+    var isUniversity: Bool = false
     
     var body: some View {
         HStack {
@@ -23,7 +24,7 @@ struct SearchResultsCell: View {
                     .clipShape(Circle())
                     .frame(width: 50, height: 50)
             } else {
-                Image(systemName: "mappin.circle.fill")
+                Image(systemName: "\(isUniversity ? "graduationcap" : "mappin").circle.fill" )
                     .resizable()
                     .foregroundColor(Color.theme.mixerIndigo)
                     .tint(.white)

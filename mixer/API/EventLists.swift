@@ -20,6 +20,14 @@ enum GuestStatus: Int, Codable, CustomStringConvertible, CaseIterable {
             case .requested: return "Requests"
         }
     }
+    
+    var pickerTitle: String {
+        switch self {
+            case .invited: return "Send Invite"
+            case .checkedIn: return "Mark as Checked-in"
+            default: return ""
+        }
+    }
 }
 
 struct EventLists {
