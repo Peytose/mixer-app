@@ -92,6 +92,8 @@
 		9C58B3C829CA69C70024CB7E /* EventAmenitiesAndCost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B3C729CA69C70024CB7E /* EventAmenitiesAndCost.swift */; };
 		9C58B3CA29CAD4D50024CB7E /* Binding+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C58B3C929CAD4D50024CB7E /* Binding+Ext.swift */; };
 		9C66ADB12AE9A2E300878BBD /* Event+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C66ADB02AE9A2E300878BBD /* Event+Ext.swift */; };
+		9C67D1A22AED8AF0007BB6F4 /* NotesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C67D1A12AED8AF0007BB6F4 /* NotesSection.swift */; };
+		9C67D1A62AED8BEC007BB6F4 /* TextFieldItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C67D1A52AED8BEC007BB6F4 /* TextFieldItem.swift */; };
 		9C6D8BB52AA7825800BEF532 /* Ripple.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C6D8BB42AA7825800BEF532 /* Ripple.swift */; };
 		9C705F8D2A8E9A8B00F1D0DB /* CLLocationCoordinate2D+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C705F8C2A8E9A8B00F1D0DB /* CLLocationCoordinate2D+Ext.swift */; };
 		9C705F8F2A8E9AD000F1D0DB /* CoordinateRepresentable+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C705F8E2A8E9AD000F1D0DB /* CoordinateRepresentable+Ext.swift */; };
@@ -113,6 +115,7 @@
 		9C849A482A551CC3006FDCDB /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C849A472A551CC3006FDCDB /* AvatarView.swift */; };
 		9C8937A12AACF69A00C7C187 /* DeadlineOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8937A02AACF69A00C7C187 /* DeadlineOption.swift */; };
 		9C8937A32AACFBB800C7C187 /* CustomDateSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8937A22AACFBB800C7C187 /* CustomDateSelector.swift */; };
+		9C8E05C42AEDEF2100551B39 /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 9C8E05C32AEDEF2100551B39 /* SwiftCSV */; };
 		9C8F0A6A2A90097D00A06D9A /* NavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F0A692A90097D00A06D9A /* NavigationState.swift */; };
 		9C8F0A6C2A90148200A06D9A /* NavigationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F0A6B2A90148200A06D9A /* NavigationContext.swift */; };
 		9C8F0A6E2A90636C00A06D9A /* SearchType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F0A6D2A90636C00A06D9A /* SearchType.swift */; };
@@ -337,6 +340,8 @@
 		9C58B3C729CA69C70024CB7E /* EventAmenitiesAndCost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventAmenitiesAndCost.swift; sourceTree = "<group>"; };
 		9C58B3C929CAD4D50024CB7E /* Binding+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Ext.swift"; sourceTree = "<group>"; };
 		9C66ADB02AE9A2E300878BBD /* Event+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Event+Ext.swift"; sourceTree = "<group>"; };
+		9C67D1A12AED8AF0007BB6F4 /* NotesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesSection.swift; sourceTree = "<group>"; };
+		9C67D1A52AED8BEC007BB6F4 /* TextFieldItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldItem.swift; sourceTree = "<group>"; };
 		9C6D8BB42AA7825800BEF532 /* Ripple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ripple.swift; sourceTree = "<group>"; };
 		9C705F8C2A8E9A8B00F1D0DB /* CLLocationCoordinate2D+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CLLocationCoordinate2D+Ext.swift"; sourceTree = "<group>"; };
 		9C705F8E2A8E9AD000F1D0DB /* CoordinateRepresentable+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoordinateRepresentable+Ext.swift"; sourceTree = "<group>"; };
@@ -504,6 +509,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9C3BADF4291F59E7009C8043 /* FirebaseMessaging in Frameworks */,
+				9C8E05C42AEDEF2100551B39 /* SwiftCSV in Frameworks */,
 				9C99EAEA29A674B500D66FEB /* DebouncedOnChange in Frameworks */,
 				9C52122F2A58A2AE00C66C83 /* Courier_iOS in Frameworks */,
 				9C3BADE6291F59E7009C8043 /* FirebaseAuth in Frameworks */,
@@ -841,6 +847,8 @@
 				A6BF68202A02255F000FF54B /* LaunchScreenView.swift */,
 				9C849A472A551CC3006FDCDB /* AvatarView.swift */,
 				9C8F0A7B2A94099200A06D9A /* StickyHeaderView.swift */,
+				9C67D1A12AED8AF0007BB6F4 /* NotesSection.swift */,
+				9C67D1A52AED8BEC007BB6F4 /* TextFieldItem.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -1458,6 +1466,7 @@
 				9CD47AA92A6599CE00030D31 /* ScreenshotPreventingSwiftUI */,
 				9C8F0A702A92A95400A06D9A /* AlgoliaSearchClient */,
 				9C2368252AA557FE001F20E5 /* MaterialUI */,
+				9C8E05C32AEDEF2100551B39 /* SwiftCSV */,
 			);
 			productName = mixer;
 			productReference = 9C3BADB6291F54B4009C8043 /* mixer.app */;
@@ -1503,6 +1512,7 @@
 				9CD47AA82A6599CE00030D31 /* XCRemoteSwiftPackageReference "ScreenshotPreventing-iOS" */,
 				9C8F0A6F2A92A95400A06D9A /* XCRemoteSwiftPackageReference "algoliasearch-client-swift" */,
 				9C2368242AA557FE001F20E5 /* XCRemoteSwiftPackageReference "MaterialUI" */,
+				9C8E05C22AEDEF2100551B39 /* XCRemoteSwiftPackageReference "SwiftCSV" */,
 			);
 			productRefGroup = 9C3BADB7291F54B4009C8043 /* Products */;
 			projectDirPath = "";
@@ -1579,6 +1589,7 @@
 				9C05C1C82983BB2B00841100 /* HostDetailView.swift in Sources */,
 				A6AB6C7C2960E20F007E9BF0 /* PinchZoomImageModifier.swift in Sources */,
 				9CDFA59B2A7A056D00EE0370 /* NameAndLinksRow.swift in Sources */,
+				9C67D1A22AED8AF0007BB6F4 /* NotesSection.swift in Sources */,
 				9C3E2C9C29EA3A5900A74D05 /* SmallCornerNumber.swift in Sources */,
 				9C4B4AF02A993B8000D70454 /* NavigationBackArrowButton.swift in Sources */,
 				A678594A29C647F200A2D884 /* EnterPhoneNumberView.swift in Sources */,
@@ -1690,6 +1701,7 @@
 				9CD47AB22A67804600030D31 /* SettingsModel.swift in Sources */,
 				9C05C1C32983A21700841100 /* CustomTextField.swift in Sources */,
 				A62BE19D29C8231A0052D34F /* CardView.swift in Sources */,
+				9C67D1A62AED8BEC007BB6F4 /* TextFieldItem.swift in Sources */,
 				9C79585A2A880EBC00590E1A /* GuestlistView.swift in Sources */,
 				9CDFA58F2A79271100EE0370 /* SearchResultsCell.swift in Sources */,
 				9C2091A72A970231000E7664 /* NotificationsViewModel.swift in Sources */,
@@ -2031,6 +2043,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		9C8E05C22AEDEF2100551B39 /* XCRemoteSwiftPackageReference "SwiftCSV" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftcsv/SwiftCSV";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.1;
+			};
+		};
 		9C8F0A6F2A92A95400A06D9A /* XCRemoteSwiftPackageReference "algoliasearch-client-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/algolia/algoliasearch-client-swift";
@@ -2160,6 +2180,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9C52122D2A58A2AE00C66C83 /* XCRemoteSwiftPackageReference "courier-ios" */;
 			productName = Courier_iOS;
+		};
+		9C8E05C32AEDEF2100551B39 /* SwiftCSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9C8E05C22AEDEF2100551B39 /* XCRemoteSwiftPackageReference "SwiftCSV" */;
+			productName = SwiftCSV;
 		};
 		9C8F0A702A92A95400A06D9A /* AlgoliaSearchClient */ = {
 			isa = XCSwiftPackageProductDependency;

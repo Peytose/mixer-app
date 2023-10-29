@@ -244,6 +244,15 @@
       }
     },
     {
+      "identity" : "swiftcsv",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftcsv/SwiftCSV",
+      "state" : {
+        "revision" : "b61dcd1b2b1120e751cee4cd64a16ff10364885d",
+        "version" : "0.9.1"
+      }
+    },
+    {
       "identity" : "swiftui-map-item-picker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/lorenzofiamingo/swiftui-map-item-picker",

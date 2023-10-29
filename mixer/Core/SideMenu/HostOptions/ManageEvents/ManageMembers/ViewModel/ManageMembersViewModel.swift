@@ -17,6 +17,7 @@ class ManageMembersViewModel: ObservableObject {
     @Published private(set) var associatedHosts: [Host]
     
     @Published var username: String = ""
+    @Published var memberType: HostMemberType = .member
     @Published var hostUserLinks: [HostUserLink] = []
     @Published var filteredMembers: [User] = []
     @Published var selectedMemberSection: MemberInviteStatus = .invited {

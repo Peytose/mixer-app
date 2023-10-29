@@ -93,6 +93,8 @@ struct GuestlistEntryForm: View {
         Section(header: Text("Optional Details").fontWeight(.semibold)) {
             Stepper("Age: \(viewModel.age)", value: $viewModel.age, in: 17...100)
                 .disabled(viewModel.username != "")
+            
+            NotesSection(note: $viewModel.note)
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)
     }

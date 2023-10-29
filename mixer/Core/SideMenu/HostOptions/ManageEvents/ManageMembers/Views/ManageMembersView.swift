@@ -42,6 +42,18 @@ struct ManageMembersView: View {
                 Spacer()
             }
             .alert("Invite a Member", isPresented: $viewModel.isShowingUsernameInputAlert) {
+                if let hostId = viewModel.selectedHost?.id, let selfType = UserService.shared.user?.hostIdToAccountTypeMap?[hostId] {
+                    Picker("", selection: $viewModel.memberType) {
+                        ForEach(HostMemberType.allCases, id: \.self) { type in
+                            if type.rawValue < selfType.rawValue {
+                                Text(type.description)
+                                    .tag(type.rawValue)
+                            }
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                
                 TextField("Type username here...", text: $viewModel.username)
                     .foregroundColor(.primary)
                 

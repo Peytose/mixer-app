@@ -16,7 +16,7 @@ enum PrivilegeLevel: Int {
     case admin
 }
 
-enum HostAccountType: Int, CustomStringConvertible, Codable {
+enum HostMemberType: Int, CustomStringConvertible, Codable, CaseIterable {
     case member
     case planner
     case admin
@@ -80,7 +80,7 @@ struct User: Hashable, Identifiable, Codable {
     }
 
     // MARK: - Associated Data
-    var hostIdToAccountTypeMap: [String: HostAccountType]?
+    var hostIdToAccountTypeMap: [String: HostMemberType]?
     var associatedHosts: [Host]?
     var university: University?
 }

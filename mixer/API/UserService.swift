@@ -526,7 +526,7 @@ extension UserService {
                 }
                 
                 guard let currentUserId = currentUser.id else { return }
-                let updatedUserData: [String: Any] = ["hostIdToAccountTypeMap.\(hostId)": HostAccountType.member.rawValue]
+                let updatedUserData: [String: Any] = ["hostIdToAccountTypeMap.\(hostId)": HostMemberType.member.rawValue]
                 
                 COLLECTION_USERS
                     .document(currentUserId)

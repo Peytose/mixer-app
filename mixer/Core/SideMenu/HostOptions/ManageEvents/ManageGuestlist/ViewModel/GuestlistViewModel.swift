@@ -11,19 +11,6 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import CodeScanner
 
-enum UniversityExamples: String, CaseIterable {
-    case mit = "MIT"
-    case neu = "NEU"
-    case bu = "BU"
-    case harvard = "Harvard"
-    case bc = "BC"
-    case tufts = "Tufts"
-    case simmons = "Simmons"
-    case wellesley = "Wellesley"
-    case berklee = "Berklee College of Music"
-    case other = "Other"
-}
-
 class GuestlistViewModel: ObservableObject {
     @Published var guests = [EventGuest]() {
         didSet {
@@ -59,6 +46,7 @@ class GuestlistViewModel: ObservableObject {
     @Published var email                  = ""
     @Published var selectedUniversity: University?
     @Published var universityName         = ""
+    @Published var note                   = ""
     @Published var status                 = GuestStatus.invited
     @Published var gender                 = Gender.man
     @Published var age                    = 18
@@ -81,7 +69,7 @@ class GuestlistViewModel: ObservableObject {
     
     private func refreshViewState() {
         let filteredGuests = guests.filter({ $0.status == selectedGuestSection })
-        self.filteredGuests = filteredGuests
+        self.filteredGuests = filteredGuests.sorted(by: { $0.name < $1.name })
         self.viewState = filteredGuests.isEmpty ? .empty : .list
     }
     
@@ -310,6 +298,7 @@ extension GuestlistViewModel {
                                universityId: universityId,
                                email: self.email,
                                age: self.age,
+                               note: self.note.isEmpty ? nil : self.note,
                                gender: self.gender,
                                status: status,
                                invitedBy: invitedBy,
@@ -431,3 +420,128 @@ extension GuestlistViewModel {
         })
     }
 }
+
+
+
+import Foundation
+
+extension GuestlistViewModel {
+    func tt_upload() {
+        if let fileURL = Bundle.main.url(forResource: "test_guestlist", withExtension: "json") {
+            do {
+                let jsonData = try Data(contentsOf: fileURL)
+                
+                // Decode into an array of dictionaries
+                let decodedArray = try JSONDecoder().decode([[String: String]].self, from: jsonData)
+                
+                // Transform the array into the desired dictionary format
+                var inviteeDict = [String: [String]]()
+                for entry in decodedArray {
+                    let brotherName = entry["Brother"]!
+                    let invitees = Array(entry.values).filter { $0 != brotherName }
+                    inviteeDict[brotherName] = invitees
+                }
+                
+                // Now you have a dictionary with the brother's name as the key and the list of invitees as the value.
+                self.uploadGuestsFromDict(guestDict: inviteeDict)
+            } catch {
+                print("Failed to read or decode JSON: \(error)")
+            }
+        } else {
+            print("Failed to find test_guestlist.json in the main bundle.")
+        }
+    }
+    
+    
+    func uploadGuestsFromDict(guestDict: [String: [String]]) {
+        for (brotherName, invitees) in guestDict {
+            for invitee in invitees where !invitee.isEmpty {
+                uploadSingleGuest(invitee: invitee, brotherName: brotherName)
+            }
+        }
+    }
+    
+    func uploadSingleGuest(invitee: String, brotherName: String) {
+        var cleanedInvitee = invitee  // This will store the name without any notes or "+x" patterns.
+        var fullNote: String?
+        
+        // Extract gender.
+        let gender = inferGenderFromName(cleanedInvitee)
+        
+        // Extract note within parentheses
+        if let leftParenIndex = cleanedInvitee.firstIndex(of: "("), let rightParenIndex = cleanedInvitee.firstIndex(of: ")") {
+            let noteWithinParens = String(cleanedInvitee[leftParenIndex...rightParenIndex])
+            cleanedInvitee = cleanedInvitee.replacingOccurrences(of: noteWithinParens, with: "").trimmingCharacters(in: .whitespaces)
+            fullNote = String(noteWithinParens.dropFirst().dropLast()) // Convert to String after removing parentheses
+        }
+        
+        // Extract "+<number>" patterns (with potential space) indicating additional guests
+        if let range = cleanedInvitee.range(of: "\\+\\s?\\d", options: .regularExpression) {
+            let plusGuests = String(cleanedInvitee[range])
+            cleanedInvitee = cleanedInvitee.replacingOccurrences(of: plusGuests, with: "").trimmingCharacters(in: .whitespaces)
+            fullNote = (fullNote == nil) ? plusGuests : "\(fullNote!), \(plusGuests) additional guests"
+        }
+        
+        let guest = EventGuest(name: cleanedInvitee,
+                               universityId: "com",
+                               note: fullNote,
+                               gender: gender,
+                               status: .invited,
+                               invitedBy: brotherName,
+                               timestamp: Timestamp())
+        
+        guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
+        
+        let docId = "oo9xPo97lxtqcErh9wo8"
+        COLLECTION_EVENTS
+            .document(docId)
+            .collection("guestlist")
+            .addDocument(data: encodedGuest) { error in
+                if let error = error {
+                    print("DEBUG: Error \(error.localizedDescription)")
+                    return
+                }
+                
+                print("DEBUG: Success uploading the guestlist!")
+            }
+    }
+    
+    func inferGenderFromName(_ name: String) -> Gender {
+        // Lists based on common names and the provided data
+        let maleNames = ["Ben", "Matt", "Phillip", "Colin", "Steven", "Alexander"]
+        let femaleNames = ["Cristina", "Leah", "Maddie", "Cindy", "Sophie", "Samantha", "Alexandria", "Emma"]
+        
+        let cleanName = name.components(separatedBy: " ")[0]
+        
+        if maleNames.contains(cleanName) {
+            return .man
+        } else if femaleNames.contains(cleanName) {
+            return .woman
+        } else {
+            return .preferNotToSay
+        }
+    }
+    
+    func extractNoteFromInvitee(_ invitee: String) -> String? {
+        var note: String? = nil
+        var plusGuests: String? = nil
+        
+        // Extract notes within parentheses
+        if let leftParenIndex = invitee.firstIndex(of: "("), let rightParenIndex = invitee.firstIndex(of: ")") {
+            note = String(invitee[leftParenIndex...rightParenIndex].dropFirst().dropLast())
+        }
+        
+        // Extract "+<number>" patterns (with potential space) indicating additional guests
+        if let range = invitee.range(of: "\\+\\s?\\d", options: .regularExpression) {
+            plusGuests = String(invitee[range]).replacingOccurrences(of: " ", with: "")  // Remove space for uniformity
+            if let existingNote = note {
+                note = "\(existingNote), \(plusGuests!) additional guests"
+            } else {
+                note = "\(plusGuests!) additional guests"
+            }
+        }
+        
+        return note
+    }
+}
+

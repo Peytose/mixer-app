@@ -17,6 +17,7 @@ struct EventGuest: Identifiable, Codable {
     var username: String?
     var profileImageUrl: String?
     var age: Int?
+    var note: String?
     var gender: Gender
     var status: GuestStatus
     var invitedBy: String?
@@ -31,6 +32,7 @@ struct EventGuest: Identifiable, Codable {
          username: String? = nil,
          profileImageUrl: String? = nil,
          age: Int? = nil,
+         note: String? = nil,
          gender: Gender,
          status: GuestStatus = .invited,
          invitedBy: String? = nil,
@@ -43,6 +45,7 @@ struct EventGuest: Identifiable, Codable {
         self.username        = username
         self.universityId    = universityId
         self.age             = age
+        self.note            = note
         self.gender          = gender
         self.status          = status
         self.invitedBy       = invitedBy

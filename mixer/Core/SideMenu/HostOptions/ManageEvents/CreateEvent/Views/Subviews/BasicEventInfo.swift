@@ -29,7 +29,8 @@ struct BasicEventInfo: View {
                                       input: $viewModel.eventDescription,
                                       limit: 150)
                         
-                        NotesSection(note: $viewModel.note)
+                        NotesSection(title: "Note for guests",
+                                     note: $viewModel.note)
                         
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                             // Co-planners shown here
@@ -128,29 +129,6 @@ fileprivate struct EventTypeMenu: View {
     }
 }
 
-fileprivate struct NotesSection: View {
-    @State private var showNoteToggle = false
-    @Binding var note: String
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Toggle("Add Notes", isOn: $showNoteToggle)
-                    .toggleStyle(iOSCheckboxToggleStyle())
-                    .buttonStyle(.plain)
-                Spacer()
-            }
-            
-            if showNoteToggle {
-                TextFieldItem(title: "Note for guests",
-                              placeholder: "Add any additional notes/info",
-                              input: $note,
-                              limit: 250)
-            }
-        }
-    }
-}
-
 fileprivate struct FlyerSection: View {
     @ObservedObject var viewModel: EventCreationViewModel
     @State private var image: Image?
@@ -206,25 +184,5 @@ extension FlyerSection {
     func loadImage() {
         guard let selectedImage = viewModel.selectedImage else { return }
         self.image = Image(uiImage: selectedImage)
-    }
-}
-
-fileprivate struct TextFieldItem: View {
-    let title: String
-    let placeholder: String
-    @Binding var input: String
-    let limit: Int
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            EventFlowTextField(title: title,
-                               placeholder: placeholder,
-                               input: $input,
-                               keyboardType: .default)
-            .autocorrectionDisabled()
-            
-            CharactersRemainView(currentCount: input.count,
-                                 limit: limit)
-        }
     }
 }
