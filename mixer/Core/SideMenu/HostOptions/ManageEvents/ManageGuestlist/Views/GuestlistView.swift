@@ -210,10 +210,9 @@ fileprivate struct AddToGuestlistButton: View {
     @ObservedObject var viewModel: GuestlistViewModel
 
     var body: some View {
-        Button {
-            viewModel.tt_upload()
-//            GuestlistEntryForm()
-//                .environmentObject(viewModel)
+        NavigationLink {
+            GuestlistEntryForm()
+                .environmentObject(viewModel)
         } label: {
             Image(systemName: "plus")
                 .resizable()
