@@ -103,27 +103,49 @@ class HostService: ObservableObject {
     }
     
     
-    func removeUserFromGuestlist(with id: String,
-                                 eventId: String,
-                                 completion: FirestoreCompletion) {
-        // Delete the user from the guestlist
-        COLLECTION_EVENTS
-            .document(eventId)
-            .collection("guestlist")
-            .document(id)
-            .delete { error in
-                if let error = error {
-                    completion?(error)
-                    return
+    func removeUserFromGuestlist(with id: String, eventId: String, completion: FirestoreCompletion) {
+        let batch = Firestore.firestore().batch()
+        
+        // Reference to the user in the event's guestlist
+        let guestlistRef = COLLECTION_EVENTS.document(eventId).collection("guestlist").document(id)
+        batch.deleteDocument(guestlistRef)
+        
+        // Get document references for notifications
+        COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: id,
+                                                                   ofTypes: [.guestlistAdded, .guestlistJoined],
+                                                                   eventId: eventId) { documentReferences in
+            if let documentReferences = documentReferences {
+                Firestore.addDeleteOperations(to: batch, for: documentReferences)
+            }
+            batch.commit(completion: completion)
+        }
+    }
+    
+    
+    func removeMember(from host: Host,
+                      memberId: String,
+                      completion: FirestoreCompletion) {
+        guard let hostId = host.id else { return }
+        
+        let batch = Firestore.firestore().batch()
+        let memberReferenceOnHost = COLLECTION_HOSTS.document(hostId).collection("member-list").document(memberId)
+        
+        batch.deleteDocument(memberReferenceOnHost)
+        
+        let updatedUserData: [String: Any] = ["hostIdToMemberTypeMap.\(hostId)": FieldValue.delete()]
+        
+        let memberReference = COLLECTION_USERS.document(memberId)
+        
+        batch.updateData(updatedUserData, forDocument: memberReference)
+        
+        COLLECTION_NOTIFICATIONS
+            .getNotificationDocumentReferences(forUserID: host.mainUserId,
+                                               ofTypes: [.memberJoined]) { documentReferences in
+                if let documentReferences = documentReferences {
+                    Firestore.addDeleteOperations(to: batch, for: documentReferences)
                 }
                 
-                // Delete the notifications
-                COLLECTION_NOTIFICATIONS
-                    .deleteNotifications(forUserID: id,
-                                         ofTypes: [.guestlistAdded,
-                                                   .guestlistJoined],
-                                         eventId: eventId,
-                                         completion: completion)
+                batch.commit(completion: completion)
             }
     }
 }

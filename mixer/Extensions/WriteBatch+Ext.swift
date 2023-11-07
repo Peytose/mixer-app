@@ -22,6 +22,7 @@ extension WriteBatch {
         }
     }
 
+    
     func batchDelete(documentRefs: [DocumentReference],
                      completion: FirestoreCompletion) {
         for docRef in documentRefs {

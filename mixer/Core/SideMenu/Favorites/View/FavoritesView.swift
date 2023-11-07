@@ -20,16 +20,17 @@ struct FavoritesView: View {
             VStack {
                 LazyVStack(alignment: .center) {
                     ForEach(Array(viewModel.favoritedEvents)) { event in
-                        FavoriteCell(event: event)
-                            .environmentObject(viewModel)
-                            .navigationDestination(for: Event.self) { event in
-                                EventDetailView(event: event)
-                            }
+                        NavigationLink(value: event) {
+                            FavoriteCell(viewModel: viewModel, event: event)
+                        }
                     }
                 }
              
                 Spacer()
             }
+        }
+        .navigationDestination(for: Event.self) { event in
+            EventDetailView(event: event)
         }
         .navigationBar(title: "Favorites", displayMode: .inline)
         .navigationBarBackButtonHidden(true)

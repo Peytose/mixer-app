@@ -61,8 +61,8 @@ struct Host: Hashable, Identifiable, Codable {
     var location: GeoPoint
     
     // MARK: - Flags
-    var hasCurrentEvent: Bool? = false
-    var isFollowed: Bool?      = false
+    var hasCurrentEvent: Bool?
+    var isFollowed: Bool?
     
     // MARK: - Associated Data
     var university: University?

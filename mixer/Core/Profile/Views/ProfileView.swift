@@ -58,7 +58,7 @@ struct ProfileView: View {
                 profileInfo
                 
                 // Contains user relationship status and major
-                if viewModel.user.relationshipState == .friends
+                if (viewModel.user.relationshipState == .friends || viewModel.user.isCurrentUser)
                     && (viewModel.user.datingStatus != nil || viewModel.user.major != nil) {
                     aboutSection
                 }

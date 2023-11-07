@@ -80,11 +80,11 @@ struct Event: Hashable, Identifiable, Codable, Equatable {
     var averageRating: Float?
 
     // MARK: - Flags
-    var didGuestlist: Bool? = false
-    var didRequest: Bool?   = false
-    var isFavorited: Bool?  = false
-    var didAttend: Bool?    = false
-    var isFull: Bool?       = false
+    var didGuestlist: Bool?
+    var didRequest: Bool?
+    var isFavorited: Bool?
+    var didAttend: Bool?
+    var isFull: Bool? = false
 }
 
 extension Event {

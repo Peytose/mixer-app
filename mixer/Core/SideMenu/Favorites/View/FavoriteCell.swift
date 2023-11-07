@@ -10,7 +10,7 @@ import Kingfisher
 import FirebaseFirestore
 
 struct FavoriteCell: View {
-    @EnvironmentObject var viewModel: FavoritesViewModel
+    @ObservedObject var viewModel: FavoritesViewModel
     let event: Event
     
     var body: some View {
@@ -63,6 +63,6 @@ struct FavoriteCell: View {
 
 struct FavoriteCell_Previews: PreviewProvider {
     static var previews: some View {
-        FavoriteCell(event: dev.mockEvent)
+        FavoriteCell(viewModel: FavoritesViewModel(), event: dev.mockEvent)
     }
 }

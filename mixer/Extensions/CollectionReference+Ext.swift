@@ -58,44 +58,52 @@ extension CollectionReference {
     func deleteNotificationsForPlanners(for event: Event,
                                         ofTypes types: [NotificationType],
                                         from currentUserId: String,
-                                        completion: FirestoreCompletion) {
+                                        using batch: WriteBatch,
+                                        completion: @escaping () -> Void) {
         guard let eventId = event.id,
-              let activePlannerIds = event.activePlannerIds else { return }
+              let activePlannerIds = event.activePlannerIds else {
+            return
+        }
+        
+        let group = DispatchGroup()
         
         for userId in activePlannerIds {
+            group.enter()
             COLLECTION_NOTIFICATIONS
-                .deleteNotifications(forUserID: userId,
-                                     ofTypes: types,
-                                     from: currentUserId,
-                                     eventId: eventId,
-                                     completion: completion)
+                .getNotificationDocumentReferences(forUserID: userId,
+                                                   ofTypes: types,
+                                                   from: currentUserId,
+                                                   eventId: eventId) { documentReferences in
+                    defer { group.leave() }
+                    
+                    if let documentReferences = documentReferences {
+                        Firestore.addDeleteOperations(to: batch, for: documentReferences)
+                    }
+                }
+        }
+        
+        group.notify(queue: .main) {
+            completion()
         }
     }
 
     
-    func deleteNotifications(forUserID userID: String,
-                             ofTypes types: [NotificationType],
-                             from uid: String? = nil,
-                             hostId: String? = nil,
-                             eventId: String? = nil,
-                             completion: FirestoreCompletion) {
+    func getNotificationDocumentReferences(forUserID userID: String,
+                                           ofTypes types: [NotificationType],
+                                           from uid: String? = nil,
+                                           hostId: String? = nil,
+                                           eventId: String? = nil,
+                                           completion: @escaping ([DocumentReference]?) -> Void) {
+        // Build the query
+        var query: Query = self.document(userID).collection("user-notifications").whereField("type", in: types.map { $0.rawValue })
         
-        // Start building the query
-        var query: Query = self.document(userID)
-            .collection("user-notifications")
-            .whereField("type", in: types.map { $0.rawValue })
-        
-        // Optionally add the uid filter
+        // Add filters to the query if provided
         if let uid = uid {
             query = query.whereField("uid", isEqualTo: uid)
         }
-        
-        // Optionally add the hostId filter
         if let hostId = hostId {
             query = query.whereField("hostId", isEqualTo: hostId)
         }
-        
-        // Optionally add the eventId filter
         if let eventId = eventId {
             query = query.whereField("eventId", isEqualTo: eventId)
         }
@@ -103,22 +111,14 @@ extension CollectionReference {
         // Execute the query
         query.getDocuments { snapshot, error in
             if let error = error {
-                print("DEBUG: Error deleting the documents \(error.localizedDescription)")
-                completion?(error)
+                // Handle the error here, such as logging it or updating some UI
+                print("Error fetching notification document references: \(error.localizedDescription)")
+                completion(nil) // Complete with nil to indicate failure
                 return
             }
             
-            guard let documents = snapshot?.documents else {
-                completion?(nil)
-                return
-            }
-            
-            let documentIDs = documents.map { $0.documentID }
-            
-            // Batch delete the notifications
-            self.document(userID)
-                .collection("user-notifications")
-                .batchDelete(documentIDs: documentIDs, completion: completion)
+            let documentReferences = snapshot?.documents.map { $0.reference }
+            completion(documentReferences)
         }
     }
     

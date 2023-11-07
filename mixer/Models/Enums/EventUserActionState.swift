@@ -40,29 +40,29 @@ enum EventUserActionState {
             return "Remove"
         case .onGuestlist:
             return "Leave"
-        case .requestToJoin:
+        case .requestToJoin,
+                .inviteOnly:
             return "Request"
         case .pendingJoinRequest:
             return "Cancel"
         case .open:
             return "Join"
-        default:
-            return ""
         }
     }
     
     var eventDetailText: String {
         switch self {
+        case .pastEvent:
+            return "Event Ended"
         case .onGuestlist:
             return "Leave Guestlist"
-        case .requestToJoin:
+        case .requestToJoin,
+                .inviteOnly:
             return "Request to Join"
         case .pendingJoinRequest:
             return "Cancel Request"
         case .open:
             return "Join Guestlist"
-        default:
-            return ""
         }
     }
     
@@ -85,9 +85,8 @@ enum EventUserActionState {
     
     var isSecondaryLabel: Bool {
         switch self {
-        case .pastEvent, .onGuestlist, .pendingJoinRequest:
-            return true
-        case .requestToJoin, .open:
+        case .requestToJoin,
+                .open:
             return false
         default:
             return true

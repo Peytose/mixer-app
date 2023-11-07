@@ -62,7 +62,7 @@ struct EventDetailView: View {
                         EventDetails()
                             .environmentObject(viewModel)
                         
-                        if let amenities = viewModel.event.amenities {
+                        if let amenities = viewModel.event.amenities, !amenities.isEmpty {
                             AmenitiesView(amenities: amenities)
                                 .environmentObject(viewModel)
                         }
@@ -80,7 +80,7 @@ struct EventDetailView: View {
                     
                     if wasFavorited == false { // If the event was not favorited before and is now favorited
                         self.doubleTapLocation = location
-                        self.heartRotation = Double.random(in: 0..<360)
+                        self.heartRotation = Double.random(in: 180..<360)
                         self.showHeart = true
                         self.heartOpacity = 1
                         withAnimation(Animation.easeOut(duration: 1.5)) {
@@ -498,5 +498,11 @@ fileprivate struct GuestlistActionButton: View {
             }
         }
         .preferredColorScheme(.dark)
+    }
+}
+
+struct EventDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        EventDetailView(event: dev.mockEvent)
     }
 }

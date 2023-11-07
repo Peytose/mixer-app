@@ -37,7 +37,7 @@ class ProfileViewModel: ObservableObject {
         self.user = user
         self.getUserRelationship()
         
-        if let associatedHostIds = user.hostIdToAccountTypeMap?.keys as? [String] {
+        if let associatedHostIds = user.hostIdToMemberTypeMap?.keys as? [String] {
             hostManager.fetchHosts(with: associatedHostIds) { hosts in
                 self.user.associatedHosts = hosts
             }
@@ -64,15 +64,6 @@ class ProfileViewModel: ObservableObject {
         guard let uid = user.id else { return }
         UserService.shared.acceptFriendRequest(uid: uid) { _ in
             self.user.relationshipState = .friends
-            
-            guard let currentUserId = UserService.shared.user?.id else { return }
-            
-            COLLECTION_NOTIFICATIONS
-                .deleteNotifications(forUserID: currentUserId,
-                                     ofTypes: [.friendRequest],
-                                     from: uid) { _ in
-                    HapticManager.playSuccess()
-                }
         }
     }
     

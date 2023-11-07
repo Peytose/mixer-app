@@ -9,33 +9,41 @@ import SwiftUI
 
 struct MemberRow: View {
     @EnvironmentObject var viewModel: ManageMembersViewModel
+    @State private var showActionSheet = false
     let member: User
     let link: HostUserLink
     
     var subtitle: String {
-        var text = link.status.description + " "
+        let text = link.status.description + " "
         guard let date = link.timestamp else { return "" }
         return text + date.notificationTimeString() + " ago"
     }
 
     var body: some View {
-        SearchResultsCell(imageUrl: member.profileImageUrl,
-                          title: member.displayName,
-                          subtitle: subtitle)
-        .listRowBackground(Color.theme.backgroundColor)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            withAnimation() {
-                viewModel.selectedMember = member
+        HStack(alignment: .center) {
+            SearchResultsCell(imageUrl: member.profileImageUrl,
+                              title: member.displayName,
+                              subtitle: subtitle)
+            
+            if link.status == .joined {
+                EllipsisButton {
+                    showActionSheet = true
+                }
             }
         }
+        .listRowBackground(Color.theme.backgroundColor)
+        .contentShape(Rectangle())
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
-                viewModel.selectedMember = member
-                viewModel.remove()
+                if let memberId = member.id {
+                    viewModel.removeMember(with: memberId)
+                }
             } label: {
                 Label("Delete", systemImage: "trash.fill")
             }
+        }
+        .actionSheet(isPresented: $showActionSheet) {
+            viewModel.actionSheet(member)
         }
     }
 }

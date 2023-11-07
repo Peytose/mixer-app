@@ -36,6 +36,7 @@ class FavoritesViewModel: ObservableObject {
         }
     }
     
+    
     @MainActor
     func startObservingUserFavorites() {
         guard let uid = service.user?.id else { return }
@@ -110,6 +111,7 @@ class FavoritesViewModel: ObservableObject {
         }
     }
 
+    
     func cancelOrLeaveGuestlist(_ event: Event) {
         updateGuestlistStatus(for: event,
                               with: service.cancelOrLeaveGuestlist) {
@@ -118,6 +120,7 @@ class FavoritesViewModel: ObservableObject {
         }
     }
 
+    
     private func adjustEventForGuestStatus(_ event: Event, isRequestOrJoin: Bool) {
         let guestStatus: GuestStatus = event.isManualApprovalEnabled ? .requested : .invited
         var newEvent: Event = event
@@ -133,6 +136,7 @@ class FavoritesViewModel: ObservableObject {
         self.favoritedEvents.insert(newEvent)
     }
 
+    
     private func updateGuestlistStatus(for event: Event, with action: (Event, FirestoreCompletion) -> Void, completion: @escaping () -> Void) {
         action(event) { error in
             if let error = error {
@@ -149,7 +153,7 @@ class FavoritesViewModel: ObservableObject {
     func toggleFavoriteStatus(_ event: Event) {
         let status = event.isFavorited ?? false
         
-        self.service.toggleFavoriteStatusStatus(isFavorited: !status,
+        self.service.toggleFavoriteStatus(isFavorited: !status,
                                           event: event) { _ in
             HapticManager.playLightImpact()
         }

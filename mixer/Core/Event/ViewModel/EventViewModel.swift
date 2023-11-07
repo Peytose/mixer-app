@@ -24,9 +24,9 @@ final class EventViewModel: ObservableObject {
         self.event = event
         self.imageLoader = ImageLoader(url: event.eventImageUrl)
         
-        service.fetchHosts(from: event) { hosts in
-            self.hosts = hosts
-        }
+//        service.fetchHosts(from: event) { hosts in
+//            self.hosts = hosts
+//        }
         
         self.generateShareURL()
     }
@@ -64,7 +64,7 @@ final class EventViewModel: ObservableObject {
         // Negate the current favorite status to toggle it
         let newFavoriteStatus = !(event.isFavorited ?? false)
         
-        UserService.shared.toggleFavoriteStatusStatus(isFavorited: newFavoriteStatus,
+        UserService.shared.toggleFavoriteStatus(isFavorited: newFavoriteStatus,
                                                 event: event) { _ in
             self.event.isFavorited = newFavoriteStatus
             HapticManager.playLightImpact()
@@ -125,7 +125,7 @@ final class EventViewModel: ObservableObject {
     func toggleFavoriteStatus(_ event: Event) {
         let status = event.isFavorited ?? false
         
-        self.service.toggleFavoriteStatusStatus(isFavorited: !status,
+        self.service.toggleFavoriteStatus(isFavorited: !status,
                                           event: event) { _ in
             HapticManager.playLightImpact()
         }

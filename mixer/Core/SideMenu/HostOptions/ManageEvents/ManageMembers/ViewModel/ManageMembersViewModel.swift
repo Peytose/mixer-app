@@ -18,7 +18,11 @@ class ManageMembersViewModel: ObservableObject {
     
     @Published var username: String = ""
     @Published var memberType: HostMemberType = .member
-    @Published var hostUserLinks: [HostUserLink] = []
+    @Published var hostUserLinks: [HostUserLink] = [] {
+        didSet {
+            refreshViewState()
+        }
+    }
     @Published var filteredMembers: [User] = []
     @Published var selectedMemberSection: MemberInviteStatus = .invited {
         didSet {
@@ -47,7 +51,6 @@ class ManageMembersViewModel: ObservableObject {
         self.associatedHosts = associatedHosts
         self.selectedHost = associatedHosts.first
         self.fetchMembers()
-        print("DEBUG: Initialized member vm!")
     }
     
     
@@ -58,68 +61,49 @@ class ManageMembersViewModel: ObservableObject {
     
     
     private func refreshViewState() {
-        print("DEBUG: Refreshing view state ...")
         let filterLinks = hostUserLinks.filter({ $0.status == self.selectedMemberSection })
         var filteredMembers: [User] = []
         
         for link in filterLinks {
             guard let member = members.first(where: { $0.id == link.id }) else { return }
             filteredMembers.append(member)
-            print("DEBUG: Filtered members: \(filteredMembers)")
         }
         
         self.filteredMembers = filteredMembers
         self.viewState = filteredMembers.isEmpty ? .empty : .list
-        print("DEBUG: Refreshed view state: \(viewState)\nMembers: \(filteredMembers)")
     }
     
     
-    func remove() {
-        guard let selectedMember = selectedMember,
-              let memberId = selectedMember.id,
-              let memberLink = hostUserLinks.first(where: { $0.id == memberId }) else {
-            return
+    func removeMember(with memberId: String) {
+        guard let memberLink = hostUserLinks.first(where: { $0.id == memberId }),
+              let selectedHost = self.selectedHost else { return }
+        
+        let removeMemberAction = {
+            HostService.shared.removeMember(from: selectedHost, memberId: memberId) { [weak self] error in
+                if let _ = error {
+                    self?.showEmptyView()
+                    self?.alertItem = AlertContext.unableToRemoveMember
+                } else {
+                    self?.removeMemberFromLocalState(memberId)
+                }
+            }
         }
         
         switch memberLink.status {
             case .joined:
-                confirmationAlertItem = AlertContext.confirmRemoveMember {
-                    self.removeMember(with: memberId)
-                }
+                confirmationAlertItem = AlertContext.confirmRemoveMember(confirmAction: removeMemberAction)
             case .invited:
-                self.removeMember(with: memberId)
+                removeMemberAction()
         }
     }
+
     
-    
-    private func removeMember(with id: String) {
-        guard let hostId = selectedHost?.id else { return }
-        
-        COLLECTION_HOSTS
-            .document(hostId)
-            .collection("member-list")
-            .document(id)
-            .delete { error in
-                if let _ = error {
-                    self.showEmptyView()
-                    self.alertItem = AlertContext.unableToRemoveMember
-                    return
-                }
-                
-                DispatchQueue.main.async {
-                    self.members.removeAll(where: { $0.id == id })
-                    self.hostUserLinks.removeAll(where: { $0.id == id })
-                    self.refreshViewState()
-                }
-                
-                COLLECTION_NOTIFICATIONS
-                    .deleteNotifications(forUserID: id,
-                                         ofTypes: [.memberJoined,
-                                                   .memberInvited],
-                                         hostId: hostId) { _ in
-                        HapticManager.playLightImpact()
-                    }
-            }
+    private func removeMemberFromLocalState(_ id: String) {
+        DispatchQueue.main.async {
+            self.members.removeAll(where: { $0.id == id })
+            self.hostUserLinks.removeAll(where: { $0.id == id })
+            self.refreshViewState()
+        }
     }
     
     
@@ -185,12 +169,93 @@ class ManageMembersViewModel: ObservableObject {
         self.selectedHost = host
     }
     
+    
+    func actionSheet(_ member: User) -> ActionSheet {
+        var buttons: [ActionSheet.Button] = []
+        
+        // Check for selectedHost's ID
+        guard let hostId = self.selectedHost?.id else {
+            print("DEBUG: No selectedHost id available")
+            return ActionSheet(title: Text("No Actions Available"))
+        }
+        
+        // Check for selectedMember
+        guard let memberId = member.id else {
+            print("DEBUG: No selectedMember id available")
+            return ActionSheet(title: Text("No Actions Available"))
+        }
+        
+        // Check for memberRole
+        guard let memberRole = member.hostIdToMemberTypeMap?[hostId] else {
+            print("DEBUG: No memberRole available")
+            return ActionSheet(title: Text("No Actions Available"))
+        }
+        
+        // Check for currentUserRole
+        guard let currentUserRole = UserService.shared.user?.hostIdToMemberTypeMap?[hostId] else {
+            print("DEBUG: No currentUserRole available")
+            return ActionSheet(title: Text("No Actions Available"))
+        }
+        
+        // Check privilege level
+        guard currentUserRole.privilege.rawValue > memberRole.privilege.rawValue else {
+            print("DEBUG: currentUserRole does not have higher privilege than memberRole")
+            return ActionSheet(title: Text("No Actions Available"))
+        }
+        
+        // Add buttons for roles less privileged than the current user's role
+        let validRoles = HostMemberType.allCases.filter( {
+            $0.privilege.rawValue <= currentUserRole.privilege.rawValue &&
+            $0 != memberRole
+        })
+        
+        for role in validRoles {
+            buttons.append(.default(Text("Assign as \(role.description)")) {
+                // Assign role action
+                self.assignRole(role, to: memberId)
+            })
+        }
+        
+        // If the current user can delete users, add a delete button
+        if currentUserRole.privilege == .admin {
+            buttons.append(.destructive(Text("Delete Member")) {
+                // Delete member action
+                self.removeMember(with: memberId)
+            })
+        }
+        
+        // Cancel button
+        buttons.append(.cancel())
+        
+        return ActionSheet(title: Text("Manage Member"), message: nil, buttons: buttons)
+    }
+    
     private func showLoadingView() { viewState = .loading }
     private func showEmptyView() { viewState = .empty }
 }
 
 // MARK: - Helpers for fetching member list
 extension ManageMembersViewModel {
+    private func assignRole(_ role: HostMemberType, to userId: String) {
+        guard let hostId = self.selectedHost?.id else { return }
+        let data = ["hostIdToMemberTypeMap": [hostId: role.rawValue]]
+        guard let encodedData = try? Firestore.Encoder().encode(data) else { return }
+        
+        COLLECTION_USERS
+            .document(userId)
+            .setData(encodedData, merge: true) { error in
+                if let error = error {
+                    print("DEBUG: Error assigning role to member.\n\n\(error.localizedDescription)")
+                    return
+                }
+                
+                if let index = self.filteredMembers.firstIndex(where: { $0.id == userId }) {
+                    self.filteredMembers[index].hostIdToMemberTypeMap?[hostId] = role
+                }
+            }
+    }
+    
+    
     private func fetchMembers() {
         showLoadingView()
         
@@ -219,18 +284,21 @@ extension ManageMembersViewModel {
                         return
                     }
                     
-                    COLLECTION_USERS
-                        .document(linkId)
-                        .getDocument { snapshot, error in
-                            guard let member = try? snapshot?.data(as: User.self) else {
-                                self.showEmptyView()
-                                return
+                    if linkId == UserService.shared.user?.id {
+                        group.leave()
+                    } else {
+                        COLLECTION_USERS
+                            .document(linkId)
+                            .getDocument { snapshot, error in
+                                guard let member = try? snapshot?.data(as: User.self) else {
+                                    self.showEmptyView()
+                                    return
+                                }
+                                
+                                members.append(member)
+                                group.leave()
                             }
-                            
-                            members.append(member)
-                            print("DEBUG: Member: \(member)")
-                            group.leave()
-                        }
+                    }
                 }
                 
                 group.notify(queue: .main) {

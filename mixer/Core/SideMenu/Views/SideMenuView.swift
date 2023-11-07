@@ -76,7 +76,7 @@ struct SideMenuView: View {
             
             // MARK: - Side menu options
             VStack(alignment: .leading) {
-                if settingsViewModel.user?.hostIdToAccountTypeMap != nil {
+                if settingsViewModel.user?.hostIdToMemberTypeMap != nil {
                     ForEach(HostSideMenuOption.allCases) { option in
                         NavigationLink(value: option) {
                             SideMenuOptionView(option: option)

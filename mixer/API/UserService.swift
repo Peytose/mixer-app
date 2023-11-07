@@ -41,7 +41,7 @@ class UserService: ObservableObject {
                 guard let user = try? snapshot?.data(as: User.self) else { return }
                 self.user = user
                 
-                if !(user.hostIdToAccountTypeMap?.isEmpty ?? true) {
+                if !(user.hostIdToMemberTypeMap?.isEmpty ?? true) {
                     print("DEBUG: Fetching hosts...")
                     self.fetchAssociatedHosts()
                 }
@@ -56,7 +56,7 @@ class UserService: ObservableObject {
 
     
     private func fetchAssociatedHosts() {
-        guard let hostIds = user?.hostIdToAccountTypeMap?.keys else { return }
+        guard let hostIds = user?.hostIdToMemberTypeMap?.keys else { return }
         
         HostManager.shared.fetchHosts(with: Array(hostIds)) { hosts in
             self.user?.associatedHosts = hosts
@@ -102,7 +102,7 @@ class UserService: ObservableObject {
     }
     
     
-    func toggleFavoriteStatusStatus(isFavorited: Bool,
+    func toggleFavoriteStatus(isFavorited: Bool,
                               event: Event,
                               completion: FirestoreCompletion) {
         guard let eventId = event.id else { return }
@@ -124,15 +124,12 @@ class UserService: ObservableObject {
                     completion?(error)
                 }
         } else {
-            batch
-                .batchDelete(documentRefs: documentRefs) { error in
-                    COLLECTION_NOTIFICATIONS
-                        .deleteNotificationsForPlanners(for: event,
-                                                        ofTypes: [.eventLiked],
-                                                        from: currentUserId,
-                                                        completion: completion)
-                    
-                    completion?(error)
+            COLLECTION_NOTIFICATIONS
+                .deleteNotificationsForPlanners(for: event,
+                                                ofTypes: [.eventLiked],
+                                                from: currentUserId,
+                                                using: batch) {
+                    batch.commit(completion: completion)
                 }
         }
     }
@@ -209,24 +206,21 @@ class UserService: ObservableObject {
         guard let eventId = event.id else { return }
         guard let userId = self.user?.id else { return }
         
-        COLLECTION_EVENTS
-            .document(eventId)
-            .collection("guestlist")
-            .document(userId)
-            .delete { error in
-                if let error = error {
-                    print("DEBUG: Error leaving guestlist: \(error.localizedDescription)")
-                    return
-                }
-                
-                COLLECTION_NOTIFICATIONS
-                    .deleteNotificationsForPlanners(for: event,
-                                                    ofTypes: [NotificationType.guestlistJoined],
-                                                    from: userId,
-                                                    completion: completion)
+        let batch = Firestore.firestore().batch()
+        
+        let guestReference = COLLECTION_EVENTS.document(eventId).collection("guestlist").document(userId)
+        
+        batch.deleteDocument(guestReference)
+        
+        COLLECTION_NOTIFICATIONS
+            .deleteNotificationsForPlanners(for: event,
+                                            ofTypes: [NotificationType.guestlistJoined],
+                                            from: userId,
+                                            using: batch) {
+                batch.commit(completion: completion)
             }
     }
-
+    
     
     func updateFollowStatus(didFollow: Bool,
                             hostUid: String,
@@ -369,29 +363,39 @@ class UserService: ObservableObject {
     func cancelOrDeleteRelationship(uid: String, completion: FirestoreCompletion) {
         guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
-
-        COLLECTION_RELATIONSHIPS
-            .document(path)
-            .delete { error in
-                if let error = error {
-                    completion?(error)
-                    return
-                }
-                
-                COLLECTION_NOTIFICATIONS
-                    .deleteNotifications(forUserID: uid,
-                                         ofTypes: [.friendAccepted,
-                                                   .friendRequest],
-                                         from: currentUid,
-                                         completion: completion)
-                
-                COLLECTION_NOTIFICATIONS
-                    .deleteNotifications(forUserID: currentUid,
-                                         ofTypes: [.friendAccepted,
-                                                   .friendRequest],
-                                         from: uid,
-                                         completion: completion)
+        
+        let batch = Firestore.firestore().batch()
+        let relationshipRef = COLLECTION_RELATIONSHIPS.document(path)
+        batch.deleteDocument(relationshipRef)
+        
+        let dispatchGroup = DispatchGroup()
+        
+        // Enter the dispatch group before the first asynchronous operation
+        dispatchGroup.enter()
+        COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: uid,
+                                                                  ofTypes: [.friendAccepted, .friendRequest]) { documentReferences in
+            if let documentReferences = documentReferences {
+                Firestore.addDeleteOperations(to: batch, for: documentReferences)
             }
+            // Leave the dispatch group after the operation is done
+            dispatchGroup.leave()
+        }
+        
+        // Enter the dispatch group before the second asynchronous operation
+        dispatchGroup.enter()
+        COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: currentUid,
+                                                                  ofTypes: [.friendAccepted, .friendRequest]) { documentReferences in
+            if let documentReferences = documentReferences {
+                Firestore.addDeleteOperations(to: batch, for: documentReferences)
+            }
+            // Leave the dispatch group after the operation is done
+            dispatchGroup.leave()
+        }
+        
+        // Commit the batch after both operations have completed
+        dispatchGroup.notify(queue: .main) {
+            batch.commit(completion: completion)
+        }
     }
 
 
@@ -403,15 +407,31 @@ class UserService: ObservableObject {
         let data: [String: Any] = ["state": RelationshipState.friends.rawValue,
                                    "timestamp": Timestamp()]
         
-        // Update friendship state
-        COLLECTION_RELATIONSHIPS
-            .document(path)
-            .updateData(data) { error in
-                // Send a "friend accepted" notification to the person who sent the request
-                NotificationsViewModel.uploadNotification(toUid: uid,
-                                                          type: .friendAccepted)
+        let batch = Firestore.firestore().batch()
+        
+        // Reference to the relationship document
+        let relationshipRef = COLLECTION_RELATIONSHIPS.document(path)
+        batch.updateData(data, forDocument: relationshipRef)
+        
+        COLLECTION_NOTIFICATIONS
+            .getNotificationDocumentReferences(forUserID: currentUid,
+                                               ofTypes: [.friendRequest]) { documentReferences in
+                if let documentReferences = documentReferences {
+                    Firestore.addDeleteOperations(to: batch, for: documentReferences)
+                }
                 
-                completion?(error)
+                batch.commit { error in
+                    if let error = error {
+                        completion?(error)
+                    } else {
+                        // Send a "friend accepted" notification to the person who sent the request
+                        NotificationsViewModel.uploadNotification(toUid: uid,
+                                                                  type: .friendAccepted)
+                        
+                        HapticManager.playSuccess()
+                        completion?(nil)
+                    }
+                }
             }
     }
     
@@ -460,47 +480,52 @@ extension UserService {
             return
         }
         
+        let batch = Firestore.firestore().batch()
+        
+        let eventRef = COLLECTION_EVENTS.document(eventId)
         var data: [String: Any] = [:]
         
         switch actionType {
         case .plannerAccepted:
             data["hostIds"] = FieldValue.arrayUnion([hostId])
             data["plannerHostStatusMap.\(keyForCurrentUser)"] = PlannerStatus.confirmed.rawValue
-            
         case .plannerDeclined:
             data["plannerHostStatusMap.\(keyForCurrentUser)"] = PlannerStatus.declined.rawValue
-            
         default:
             // Handle other notification types or do nothing
             break
         }
         
-        COLLECTION_EVENTS
-            .document(eventId)
-            .updateData(data) { error in
-                if let error = error {
-                    completion?(error)
-                    return
+        // Add the update operation to the batch
+        batch.updateData(data, forDocument: eventRef)
+        
+        // Assuming you want to delete notifications related to the action
+        switch actionType {
+        case .plannerAccepted,
+                .plannerDeclined,
+                .plannerRemoved:
+            COLLECTION_NOTIFICATIONS
+                .getNotificationDocumentReferences(forUserID: currentUserId,
+                                                   ofTypes: [.plannerInvited],
+                                                   from: primaryPlannerKey) { documentReferences in
+                    if let documentReferences = documentReferences {
+                        Firestore.addDeleteOperations(to: batch, for: documentReferences)
+                    }
+                    
+                    batch.commit { error in
+                        if let error = error {
+                            completion?(error)
+                        } else {
+                            NotificationsViewModel.sendNotificationsToPlanners(for: event,
+                                                                               with: actionType)
+                            completion?(nil)
+                        }
+                    }
                 }
-                
-                NotificationsViewModel.sendNotificationsToPlanners(for: event,
-                                                                   with: actionType)
-                
-                // Assuming you want to delete notifications related to the action
-                switch actionType {
-                case .plannerAccepted,
-                        .plannerDeclined,
-                        .plannerRemoved:
-                    COLLECTION_NOTIFICATIONS
-                        .deleteNotifications(forUserID: currentUserId,
-                                             ofTypes: [.plannerInvited],
-                                             from: primaryPlannerKey,
-                                             completion: completion)
-                default:
-                    // Handle other notification types or do nothing
-                    break
-                }
-            }
+        default:
+            // Handle other notification types or do nothing
+            break
+        }
     }
     
     
@@ -511,42 +536,39 @@ extension UserService {
               let hostId = host.id,
               let memberId = currentUser.id else { return }
         
+        let batch = Firestore.firestore().batch()
         let data: [String: Any] = ["timestamp": Timestamp(),
                                    "status": MemberInviteStatus.joined.rawValue]
         
-        COLLECTION_HOSTS
-            .document(hostId)
-            .collection("member-list")
-            .document(memberId)
-            .updateData(data) { error in
-                if let error = error {
-                    print("DEBUG: Error updating member doc : \(error.localizedDescription)")
-                    completion?(error)
-                    return
+        let memberReference = COLLECTION_HOSTS.document(hostId).collection("member-list").document(memberId)
+        
+        batch.updateData(data, forDocument: memberReference)
+        
+        guard let currentUserId = currentUser.id else { return }
+        let updatedUserData: [String: Any] = ["hostIdToMemberTypeMap.\(hostId)": HostMemberType.member.rawValue]
+        
+        let currentUserReference = COLLECTION_USERS.document(currentUserId)
+        
+        batch.updateData(updatedUserData, forDocument: currentUserReference)
+        
+        COLLECTION_NOTIFICATIONS
+            .getNotificationDocumentReferences(forUserID: memberId,
+                                               ofTypes: [.memberInvited],
+                                               from: userId) { documentReferences in
+                if let documentReferences = documentReferences {
+                    Firestore.addDeleteOperations(to: batch, for: documentReferences)
                 }
                 
-                guard let currentUserId = currentUser.id else { return }
-                let updatedUserData: [String: Any] = ["hostIdToAccountTypeMap.\(hostId)": HostMemberType.member.rawValue]
-                
-                COLLECTION_USERS
-                    .document(currentUserId)
-                    .updateData(updatedUserData) { error in
-                        if let error = error {
-                            print("DEBUG: Error updating member doc : \(error.localizedDescription)")
-                            completion?(error)
-                            return
-                        }
-                        
+                batch.commit { error in
+                    if let error = error {
+                        completion?(error)
+                    } else {
                         NotificationsViewModel.uploadNotification(toUid: host.mainUserId,
                                                                   type: .memberJoined,
                                                                   host: host)
-                        
-                        COLLECTION_NOTIFICATIONS
-                            .deleteNotifications(forUserID: memberId,
-                                                 ofTypes: [.memberInvited],
-                                                 from: userId,
-                                                 completion: completion)
+                        completion?(nil)
                     }
+                }
             }
     }
     
@@ -557,58 +579,20 @@ extension UserService {
         guard let currentUser = self.user else { return }
         guard memberId == currentUser.id else { return }
         
-        COLLECTION_HOSTS
-            .document(hostId)
-            .collection("member-list")
-            .document(memberId)
-            .delete { error in
-                if let error = error {
-                    completion?(error)
-                    return
-                }
-                
-                COLLECTION_NOTIFICATIONS
-                    .deleteNotifications(forUserID: memberId,
-                                         ofTypes: [.memberInvited],
-                                         from: userId,
-                                         completion: completion)
-            }
-    }
-    
-    
-    func removeMember(fromHost hostId: String,
-                      member: User,
-                      completion: FirestoreCompletion) {
-        guard let memberId = member.id else { return }
-        guard let currentUser = self.user, let currentUserId = currentUser.id else { return }
-        guard currentUser.hostIdToAccountTypeMap?.keys.contains(where: { $0 == hostId }) ?? false else { return }
+        let batch = Firestore.firestore().batch()
+        let memberReferenceOnHost = COLLECTION_HOSTS.document(hostId).collection("member-list").document(memberId)
         
-        COLLECTION_HOSTS
-            .document(hostId)
-            .collection("member-list")
-            .document(memberId)
-            .delete { error in
-                if let error = error {
-                    completion?(error)
-                    return
+        batch.deleteDocument(memberReferenceOnHost)
+        
+        COLLECTION_NOTIFICATIONS
+            .getNotificationDocumentReferences(forUserID: memberId,
+                                               ofTypes: [.memberInvited],
+                                               from: userId) { documentReferences in
+                if let documentReferences = documentReferences {
+                    Firestore.addDeleteOperations(to: batch, for: documentReferences)
                 }
                 
-                let updatedUserData: [String: Any] = ["hostIdToAccountTypeMap.\(hostId)": FieldValue.delete()]
-                
-                COLLECTION_USERS
-                    .document(memberId)
-                    .updateData(updatedUserData) { error in
-                        if let error = error {
-                            completion?(error)
-                            return
-                        }
-                        
-                        COLLECTION_NOTIFICATIONS
-                            .deleteNotifications(forUserID: currentUserId,
-                                                 ofTypes: [.memberJoined],
-                                                 from: memberId,
-                                                 completion: completion)
-                    }
+                batch.commit(completion: completion)
             }
     }
 }

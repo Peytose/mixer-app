@@ -51,16 +51,8 @@ struct ManageEventCell: View {
                 }
             }
             .overlay(alignment: .topTrailing) {
-                Button {
-                     // action
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.white)
-                        .frame(width: 17, height: 17)
-                        .padding()
-                        .contentShape(Rectangle())
+                EllipsisButton {
+                    //
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 13))
