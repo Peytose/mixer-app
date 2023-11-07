@@ -13,8 +13,8 @@ struct EnterUsernameView: View {
     var body: some View {
         FlowContainerView {
             SignUpTextField(input: $viewModel.username,
-                            title: "Last thing \(viewModel.name)! Choose a username",
-                            placeholder: "ex. \(viewModel.name.lowercased() + randomNumber())",
+                            title: "Last thing \(viewModel.firstName)! Choose a username",
+                            placeholder: "ex. \(viewModel.firstName.lowercased() + randomNumber())",
                             footnote: "This will not be changeable in the near future, so choose wisely. It must be unique.",
                             keyboard: .default,
                             isValidUsername: viewModel.isUsernameValid)

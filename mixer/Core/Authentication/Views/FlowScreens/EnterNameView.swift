@@ -13,11 +13,18 @@ struct EnterNameView: View {
     
     var body: some View {
         FlowContainerView {
-            SignUpTextField(input: $viewModel.name,
-                            title: "My full name is",
-                            placeholder: "John Doe",
-                            footnote: "We ask for your full name for verification purposes. It is unchangable in-app. Don't worry, you can alter your display name in your settings.",
-                            keyboard: .default)
+            SignUpTextField(input: $viewModel.firstName,
+                            title: "Let's get acquainted! What's your name?",
+                            placeholder: "John",
+                            keyboard: .default,
+                            disableAutocorrection: true)
+            
+            SignUpTextField(input: $viewModel.lastName,
+                            title: "",
+                            placeholder: "Doe",
+                            footnote: "For verification and to ensure your security, we need your real first and last name. These will not be changeable for security reasons, but you'll have the option to set a display name of your choice in your profile settings.",
+                            keyboard: .default,
+                            disableAutocorrection: true)
         }
     }
 }

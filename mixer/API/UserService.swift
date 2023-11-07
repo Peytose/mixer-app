@@ -176,7 +176,7 @@ class UserService: ObservableObject {
               userId == Auth.auth().currentUser?.uid else { return }
         
         let guestStatus: GuestStatus = event.isManualApprovalEnabled ? .requested : .invited
-        let guest = EventGuest(name: user.name,
+        let guest = EventGuest(name: user.fullName,
                                universityId: user.universityId,
                                email: user.email,
                                profileImageUrl: user.profileImageUrl,

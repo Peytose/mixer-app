@@ -19,7 +19,8 @@ class DeveloperPreview {
     
     let mockUser = User(id: NSUUID().uuidString,
                         dateJoined: Timestamp(date: Date()),
-                        name: "Peyton Lyons",
+                        firstName: "Peyton",
+                        lastName: "Lyons",
                         displayName: "Pyrone",
                         username: "peyton123",
                         email: "test@example.edu",

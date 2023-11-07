@@ -16,7 +16,8 @@ struct User: Hashable, Identifiable, Codable {
     var dateJoined: Timestamp
 
     // MARK: - Basic Informationr
-    var name: String
+    var firstName: String
+    var lastName: String
     var displayName: String
     let username: String
     let email: String
@@ -43,4 +44,10 @@ struct User: Hashable, Identifiable, Codable {
     var hostIdToMemberTypeMap: [String: HostMemberType]?
     var associatedHosts: [Host]?
     var university: University?
+}
+
+extension User {
+    var fullName: String {
+        return "\(firstName) \(lastName)"
+    }
 }

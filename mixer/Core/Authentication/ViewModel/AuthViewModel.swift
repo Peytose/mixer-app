@@ -14,8 +14,8 @@ import Combine
 
 class AuthViewModel: ObservableObject {
     // User-Related Variables
-    @Published var name            = ""
-    @Published var displayName     = ""
+    @Published var firstName       = ""
+    @Published var lastName        = ""
     @Published var email           = ""
     @Published var phoneNumber     = ""
     @Published var countryCode     = ""
@@ -59,7 +59,6 @@ class AuthViewModel: ObservableObject {
     init() {
         DispatchQueue.main.async {
             self.isOnboardingScreensVisible = !self.hasShownOnboardingScreens()
-            print("DEBUG: \(self.isOnboardingScreensVisible)")
         }
     }
     
@@ -114,8 +113,7 @@ class AuthViewModel: ObservableObject {
     func isButtonActiveForState(_ state: AuthFlowViewState) -> Bool {
         switch state {
         case .enterName:
-            let components = name.split(separator: " ")
-            return components.count >= 2 && components.allSatisfy { $0.count >= 1 }
+            return !firstName.isEmpty && !lastName.isEmpty
         case .enterPhone:
             return !phoneNumber.isEmpty
         case .verifyCode:
@@ -134,8 +132,8 @@ class AuthViewModel: ObservableObject {
     func signOut() {
         DispatchQueue.main.async {
             self.isLoggedOut  = true
-            self.name         = ""
-            self.displayName  = ""
+            self.firstName    = ""
+            self.lastName     = ""
             self.phoneNumber  = ""
             self.countryCode  = ""
             self.code         = ""
@@ -195,7 +193,7 @@ extension AuthViewModel {
             completion(true)
         }
     }
-    
+
     
     func register() {
         guard let image = image else { return }
@@ -204,8 +202,9 @@ extension AuthViewModel {
             guard let uid = Auth.auth().currentUser?.uid else { return }
             
             let user = User(dateJoined: Timestamp(),
-                            name: self.name,
-                            displayName: self.name,
+                            firstName: self.firstName.capitalized,
+                            lastName: self.lastName.capitalized,
+                            displayName: self.firstName.capitalized,
                             username: self.username.lowercased(),
                             email: self.email.lowercased(),
                             profileImageUrl: imageUrl,

@@ -199,7 +199,7 @@ extension SettingsViewModel {
         case "Major":
             return Binding<String>(get: { self.majorStr }, set: { self.majorStr = $0 })
         case "Name":
-            return .constant(user.name)
+            return .constant(user.fullName)
         case "Username":
             return .constant(user.username)
         case "Email":

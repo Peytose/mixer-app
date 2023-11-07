@@ -55,7 +55,7 @@ struct MixerIdView: View {
                                 .foregroundColor(Color.theme.secondaryBackgroundColor)
                         }
                     
-                    Text(user.name)
+                    Text(user.firstName)
                         .font(.title2)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)

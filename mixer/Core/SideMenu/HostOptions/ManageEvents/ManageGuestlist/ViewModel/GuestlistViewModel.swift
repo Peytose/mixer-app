@@ -206,7 +206,7 @@ extension GuestlistViewModel {
     @MainActor
     func createGuest() {
         guard let eventId = self.event.id,
-              let currentUserName = UserService.shared.user?.name else { return }
+              let currentUserName = UserService.shared.user?.fullName else { return }
         
         if let guest = self.guests.first(where: { $0.username == username }) {
             switch guest.status {
