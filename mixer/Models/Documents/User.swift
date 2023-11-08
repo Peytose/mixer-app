@@ -34,7 +34,9 @@ struct User: Hashable, Identifiable, Codable {
     var showAgeOnProfile: Bool
     
     // MARK: - Flags and Computed Properties
-    var age: Int?
+    var age: Int {
+        return birthday.calculateAge()
+    }
     var relationshipState: RelationshipState?
     var isCurrentUser: Bool {
         return UserService.shared.user?.id == id

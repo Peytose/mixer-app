@@ -128,8 +128,8 @@ extension ProfileView {
                                     }
                                 }
                             
-                            if let age = viewModel.user.age, viewModel.user.showAgeOnProfile {
-                                Text("\(age)")
+                            if viewModel.user.showAgeOnProfile {
+                                Text("\(viewModel.user.age)")
                                     .font(.title)
                                     .fontWeight(.light)
                             }
