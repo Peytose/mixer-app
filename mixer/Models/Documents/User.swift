@@ -43,6 +43,7 @@ struct User: Hashable, Identifiable, Codable {
     // MARK: - Associated Data
     var hostIdToMemberTypeMap: [String: HostMemberType]?
     var associatedHosts: [Host]?
+    var currentHost: Host?
     var university: University?
 }
 

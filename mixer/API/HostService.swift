@@ -12,8 +12,6 @@ import Firebase
 
 class HostService: ObservableObject {
     static let shared = HostService()
-    @Published var host: Host?
-    
     
     func approveGuest(with uid: String,
                       for event: Event,

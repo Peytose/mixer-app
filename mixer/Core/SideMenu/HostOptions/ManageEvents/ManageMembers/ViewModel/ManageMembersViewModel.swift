@@ -14,8 +14,6 @@ import FirebaseFirestore
 class ManageMembersViewModel: ObservableObject {
     @Published var selectedHost: Host?
     @Published var selectedMember: User?
-    @Published private(set) var associatedHosts: [Host]
-    
     @Published var username: String = ""
     @Published var memberType: HostMemberType = .member
     @Published var hostUserLinks: [HostUserLink] = [] {
@@ -47,9 +45,8 @@ class ManageMembersViewModel: ObservableObject {
     
     private var members: [User] = []
     
-    init(associatedHosts: [Host]) {
-        self.associatedHosts = associatedHosts
-        self.selectedHost = associatedHosts.first
+    init() {
+        self.selectedHost = UserService.shared.user?.currentHost
         self.fetchMembers()
     }
     
@@ -61,12 +58,13 @@ class ManageMembersViewModel: ObservableObject {
     
     
     private func refreshViewState() {
-        let filterLinks = hostUserLinks.filter({ $0.status == self.selectedMemberSection })
+        let filteredLinks = hostUserLinks.filter({ $0.status == self.selectedMemberSection })
         var filteredMembers: [User] = []
         
-        for link in filterLinks {
-            guard let member = members.first(where: { $0.id == link.id }) else { return }
-            filteredMembers.append(member)
+        for link in filteredLinks {
+            if let member = members.first(where: { $0.id == link.id }) {
+                filteredMembers.append(member)
+            }
         }
         
         self.filteredMembers = filteredMembers
@@ -75,8 +73,7 @@ class ManageMembersViewModel: ObservableObject {
     
     
     func removeMember(with memberId: String) {
-        guard let memberLink = hostUserLinks.first(where: { $0.id == memberId }),
-              let selectedHost = self.selectedHost else { return }
+        guard let memberLink = hostUserLinks.first(where: { $0.id == memberId }), let selectedHost = self.selectedHost else { return }
         
         let removeMemberAction = {
             HostService.shared.removeMember(from: selectedHost, memberId: memberId) { [weak self] error in
@@ -259,7 +256,7 @@ extension ManageMembersViewModel {
     private func fetchMembers() {
         showLoadingView()
         
-        guard let hostId = selectedHost?.id else {
+        guard let hostId = self.selectedHost?.id else {
             showEmptyView()
             return
         }

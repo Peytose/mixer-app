@@ -24,13 +24,13 @@ enum ProfileSaveType {
 
 class SettingsViewModel: ObservableObject {
     @Published var user: User?
-    @Published var displayName: String           = ""
-    @Published var bio: String                   = ""
-    @Published var instagramHandle: String       = ""
-    @Published var showAgeOnProfile: Bool        = false
-    @Published var genderStr: String             = ""
+    @Published var displayName: String     = ""
+    @Published var bio: String             = ""
+    @Published var instagramHandle: String = ""
+    @Published var showAgeOnProfile: Bool  = false
+    @Published var genderStr: String       = ""
     @Published var datingStatusStr: String = ""
-    @Published var majorStr: String              = ""
+    @Published var majorStr: String        = ""
     @Published var selectedImage: UIImage?
     private var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
     
@@ -68,6 +68,7 @@ class SettingsViewModel: ObservableObject {
             HapticManager.playSuccess()
         }
     }
+    
     
     private func save(for type: ProfileSaveType, completion: @escaping () -> Void) {
         guard let uid = UserService.shared.user?.id else { return }

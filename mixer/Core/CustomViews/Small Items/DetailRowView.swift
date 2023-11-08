@@ -12,12 +12,13 @@ struct DetailRow: View {
     var text: String
     var imageUrl: String?
     var icon: String?
+    var size: CGFloat = 20
     
     var body: some View {
         HStack {
             if let imageUrl = imageUrl {
                 Color.clear
-                    .frame(width: 20, height: 20)
+                    .frame(width: size, height: size)
                     .padding(5)
                     .background {
                         KFImage(URL(string: imageUrl))
@@ -29,7 +30,7 @@ struct DetailRow: View {
                 Image(systemName: icon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 20, height: 20)
+                    .frame(width: size, height: size)
                     .padding(5)
                     .background(.ultraThinMaterial)
                     .backgroundStyle(cornerRadius: 10, opacity: 0.5)

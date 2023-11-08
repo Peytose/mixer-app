@@ -59,8 +59,19 @@ class UserService: ObservableObject {
         guard let hostIds = user?.hostIdToMemberTypeMap?.keys else { return }
         
         HostManager.shared.fetchHosts(with: Array(hostIds)) { hosts in
-            self.user?.associatedHosts = hosts
+            let sortedHosts = hosts.sorted(by: { $0.name < $1.name })
+            self.user?.associatedHosts = sortedHosts
+            if let firstHost = sortedHosts.first {
+                self.user?.currentHost = firstHost
+                print("DEBUG: Selected host: \(firstHost.name)")
+            }
         }
+    }
+    
+    
+    func selectHost(_ host: Host) {
+        self.user?.currentHost = host
+        print("DEBUG: Selected host: \(host.name)")
     }
     
     

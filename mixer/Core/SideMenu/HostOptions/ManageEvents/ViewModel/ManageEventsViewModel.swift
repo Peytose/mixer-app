@@ -58,7 +58,7 @@ class ManageEventsViewModel: ObservableObject {
     private var eventManager = EventManager.shared
     
     init() {
-        self.selectedHost = UserService.shared.user?.associatedHosts?.first
+        self.selectedHost = UserService.shared.user?.currentHost
     }
     
     
@@ -76,12 +76,6 @@ class ManageEventsViewModel: ObservableObject {
             }
             self.events = confirmedEvents
         }
-    }
-
-    
-    @MainActor
-    func changeHost(to host: Host) {
-        self.selectedHost = host
     }
 }
 

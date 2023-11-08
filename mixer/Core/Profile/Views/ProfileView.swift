@@ -34,20 +34,14 @@ struct ProfileView: View {
                                        namespace: namespace)
                 .overlay(alignment: .topTrailing) {
                     if action != nil {
-                        Button {
+                        EllipsisButton {
                             viewModel.isShowingMoreProfileOptions.toggle()
                             HapticManager.playLightImpact()
-                        } label: {
-                            Image(systemName: "ellipsis")
-                                .font(.callout)
+                        }
+                        .background {
+                            Circle()
+                                .stroke(lineWidth: 1.3)
                                 .foregroundColor(.white)
-                                .padding(10)
-                                .contentShape(Rectangle())
-                                .background {
-                                    Circle()
-                                        .stroke(lineWidth: 1.3)
-                                        .foregroundColor(.white)
-                                }
                         }
                         .padding(.trailing, 20)
                         .padding(.top, 60)

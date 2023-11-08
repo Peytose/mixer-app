@@ -28,13 +28,29 @@ class HomeViewModel: ObservableObject {
         return selectedNavigationStack.last?.state ?? .menu
     }
     @Published var showSideMenu: Bool = false
+    @Published var currentHost: Host?
+    
+    private let service = UserService.shared
+    private var cancellable = Set<AnyCancellable>()
     
     init() {
         for tab in TabItem.allCases {
             navigationStackTabMap[tab] = [NavigationContext(state: .menu)]
         }
+        
+        service.$user
+            .sink { user in
+                self.currentHost = user?.currentHost
+            }
+            .store(in: &cancellable)
+    }
+    
+    
+    func selectHost(_ host: Host) {
+        service.selectHost(host)
     }
 
+    
     func iconForState() -> String {
         switch currentState {
         case .menu:
@@ -45,6 +61,7 @@ class HomeViewModel: ObservableObject {
             return "xmark"
         }
     }
+    
     
     func actionForState() {
         switch currentState {

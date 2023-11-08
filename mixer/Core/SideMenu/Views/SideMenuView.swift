@@ -13,8 +13,6 @@ struct SideMenuView: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     @StateObject private var settingsViewModel      = SettingsViewModel()
     @StateObject private var notificationsViewModel = NotificationsViewModel()
-    @StateObject private var manageEventsViewModel  = ManageEventsViewModel()
-    private let hostFormLink = "https://forms.gle/S3jmgEGSa3VU1Vi56"
     
     var body: some View {
         VStack(spacing: 40) {
@@ -44,25 +42,10 @@ struct SideMenuView: View {
                             }
                         }
                     }
-                }
-                
-                // Become a host
-                Button { openHostFormLink() } label: {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Promote your own events!")
-                            .font(.footnote)
-                            .fontWeight(.semibold)
-                        
-                        HStack {
-                            Image(systemName: "music.note.house")
-                                .font(.title2)
-                                .imageScale(.medium)
-                            
-                            Text("Become A Host")
-                                .font(.headline)
-                        }
-                    }
-                    .foregroundColor(.white)
+                    
+                    // Become a host
+                    HostMenuView(viewModel: homeViewModel,
+                                 memberHosts: settingsViewModel.user?.associatedHosts ?? [])
                 }
                 
                 Rectangle()
@@ -105,9 +88,9 @@ struct SideMenuView: View {
                 case .createEvent:
                     EventCreationFlowView()
                 case .manageMembers:
-                    ManageMembersView(hosts: settingsViewModel.user?.associatedHosts ?? [])
+                    ManageMembersView()
                 case .manageEvents:
-                    ManageEventsView(viewModel: manageEventsViewModel)
+                    ManageEventsView()
                 }
             }
             .navigationDestination(for: SideMenuOption.self) { option in
@@ -136,9 +119,66 @@ struct SideMenuView: View {
     }
 }
 
-extension SideMenuView {
+struct HostMenuView: View {
+    @ObservedObject var viewModel: HomeViewModel
+    var memberHosts: [Host]
+
+    var body: some View {
+        Group {
+            if !memberHosts.isEmpty {
+                Menu {
+                    ForEach(memberHosts) { host in
+                        Button {
+                            viewModel.selectHost(host)
+                        } label: {
+                            HStack {
+                                Text(host.name)
+                                
+                                if host.username == UserService.shared.user?.currentHost?.username {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    hostTextView
+                }
+            } else {
+                Button(action: openHostFormLink) {
+                    hostTextView
+                }
+            }
+        }
+    }
+
+    private var hostTextView: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if memberHosts.isEmpty {
+                Text("Promote your own events!")
+                    .font(.footnote)
+                    .fontWeight(.semibold)
+            }
+
+            HStack {
+                Image(systemName: "music.note.house\(memberHosts.isEmpty ? "" : ".fill")")
+                    .font(.title2)
+                    .imageScale(.medium)
+                
+                Text(memberHosts.isEmpty ? "Become A Host" : (viewModel.currentHost?.name ?? "n/a"))
+                    .font(.headline)
+                
+                if memberHosts.count > 1 {
+                    Image(systemName: "chevron.right")
+                        .font(.headline)
+                }
+            }
+        }
+        .foregroundColor(.white)
+    }
+    
+    
     private func openHostFormLink() {
-        if let url = URL(string: hostFormLink) {
+        if let url = URL(string: "https://forms.gle/S3jmgEGSa3VU1Vi56") {
             UIApplication.shared.open(url)
         }
     }

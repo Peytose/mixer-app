@@ -8,11 +8,7 @@
 import SwiftUI
 
 struct ManageMembersView: View {
-    @StateObject var viewModel: ManageMembersViewModel
-    
-    init(hosts: [Host]) {
-        _viewModel = StateObject(wrappedValue: ManageMembersViewModel(associatedHosts: hosts))
-    }
+    @StateObject var viewModel = ManageMembersViewModel()
 
     var body: some View {
         ZStack {
@@ -20,12 +16,11 @@ struct ManageMembersView: View {
                 .ignoresSafeArea()
             
             VStack {
-                HostTitleView(hosts: viewModel.associatedHosts,
-                              selectedHost: viewModel.selectedHost) { host in
-                    viewModel.changeHost(to: host)
-                }
-                              .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .leading)
-                              .padding([.leading, .top])
+                Text("Members of \(viewModel.selectedHost?.name ?? "")")
+                    .primaryHeading()
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .leading)
+                    .padding([.leading, .top])
                 
                 StickyHeaderView(items: MemberInviteStatus.allCases,
                                  selectedItem: $viewModel.selectedMemberSection)
@@ -85,7 +80,7 @@ struct ManageMembersView: View {
 
 struct ManageMembersView_Previews: PreviewProvider {
     static var previews: some View {
-        ManageMembersView(hosts: [dev.mockHost])
+        ManageMembersView()
     }
 }
 
@@ -118,39 +113,6 @@ extension ManageMembersView {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-    }
-}
-
-
-fileprivate struct HostTitleView: View {
-    let hosts: [Host]
-    let selectedHost: Host?
-    let action: (Host) -> Void
-
-    var body: some View {
-        if !hosts.isEmpty, hosts.count > 1 {
-            Menu {
-                ForEach(hosts) { host in
-                    Button(host.name) { action(host) }
-                }
-            } label: {
-                VStack {
-                    Text((selectedHost?.name ?? "") + "'s")
-                        .fontWeight(.medium)
-                        .foregroundColor(Color.theme.mixerIndigo)
-                    +
-                    Text("Members")
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                }
-                .font(.title)
-                .multilineTextAlignment(.leading)
-            }
-        } else {
-            Text((selectedHost?.name ?? "") + "'s Members")
-                .primaryHeading()
-                .multilineTextAlignment(.leading)
-        }
     }
 }
 

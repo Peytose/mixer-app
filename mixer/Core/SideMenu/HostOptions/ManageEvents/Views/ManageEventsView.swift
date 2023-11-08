@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ManageEventsView: View {
-    @ObservedObject var viewModel: ManageEventsViewModel
+    @StateObject var viewModel = ManageEventsViewModel()
     
     var body: some View {
         ZStack {
@@ -16,10 +16,9 @@ struct ManageEventsView: View {
                 .ignoresSafeArea()
             
             VStack {
-                ChangeHostView(hosts: UserService.shared.user?.associatedHosts,
-                               selectedHost: viewModel.selectedHost) { host in
-                    viewModel.changeHost(to: host)
-                }
+                Text(viewModel.selectedHost?.name ?? "No host found.")
+                    .primaryHeading()
+                    .multilineTextAlignment(.trailing)
                 
                 StickyHeaderView(items: EventState.allCases,
                                  selectedItem: $viewModel.currentState)
@@ -63,32 +62,3 @@ struct ManageEventsView: View {
 //        ManageEventsView()
 //    }
 //}
-
-fileprivate struct ChangeHostView: View {
-    let hosts: [Host]?
-    let selectedHost: Host?
-    let action: (Host) -> Void
-
-    var body: some View {
-        if let hosts = hosts, !hosts.isEmpty, hosts.count > 1 {
-            Menu {
-                ForEach(hosts) { host in
-                    Button {
-                        action(host)
-                    } label: {
-                        Text(host.name)
-                            .primaryHeading(color: Color.theme.mixerIndigo)
-                            .multilineTextAlignment(.trailing)
-                    }
-                }
-            } label: {
-                Text(selectedHost?.name ?? "No hosts found.")
-                    .multilineTextAlignment(.trailing)
-            }
-        } else {
-            Text(selectedHost?.name ?? "No host found.")
-                .primaryHeading()
-                .multilineTextAlignment(.trailing)
-        }
-    }
-}
