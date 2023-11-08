@@ -65,7 +65,7 @@ final class EventViewModel: ObservableObject {
         let newFavoriteStatus = !(event.isFavorited ?? false)
         
         UserService.shared.toggleFavoriteStatus(isFavorited: newFavoriteStatus,
-                                                event: event) { _ in
+                                                event: self.event) { _ in
             self.event.isFavorited = newFavoriteStatus
             HapticManager.playLightImpact()
         }
@@ -118,16 +118,6 @@ final class EventViewModel: ObservableObject {
             }
             
             completion()
-        }
-    }
-    
-    
-    func toggleFavoriteStatus(_ event: Event) {
-        let status = event.isFavorited ?? false
-        
-        self.service.toggleFavoriteStatus(isFavorited: !status,
-                                          event: event) { _ in
-            HapticManager.playLightImpact()
         }
     }
     

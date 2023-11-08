@@ -310,24 +310,28 @@ class EventCreationViewModel: NSObject, ObservableObject {
                 return
             }
             
-            let newDocumentReference = COLLECTION_EVENTS.document() // Create a new document reference with a generated ID
+            let newDocumentReference = COLLECTION_EVENTS.document()
 
-            newDocumentReference.setData(encodedEvent) { error in
+            let batch = Firestore.firestore().batch()
+            batch.setData(encodedEvent, forDocument: newDocumentReference)
+            
+            // Update the event's id with the document ID from Firestore
+            event.id = newDocumentReference.documentID
+            
+            self.reset()
+            self.isEventCreated = true
+            self.hideLoadingView()
+
+            NotificationsViewModel.preparePlannerNotificationBatch(for: event,
+                                                               type: .plannerInvited,
+                                                               within: batch)
+            
+            batch.commit { error in
                 if let error = error {
-                    // Handle the error if needed
-                    print("Error adding document: \(error.localizedDescription)")
+                    print("DEBUG: Error creating event: \(error.localizedDescription)")
                     return
                 }
-
-                // Update the event's id with the document ID from Firestore
-                event.id = newDocumentReference.documentID
-
-                self.reset()
-                self.isEventCreated = true
-                self.hideLoadingView()
-
-                NotificationsViewModel.sendNotificationsToPlanners(for: event,
-                                                                   with: .plannerInvited)
+                
                 HapticManager.playSuccess()
             }
         }

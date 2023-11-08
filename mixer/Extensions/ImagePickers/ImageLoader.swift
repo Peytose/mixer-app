@@ -21,7 +21,6 @@ class ImageLoader: ObservableObject {
             if let data = data, let uiImage = UIImage(data: data) {
                 DispatchQueue.main.async {
                     self.image = Image(uiImage: uiImage)
-                    print("DEBUG: Updated image!")
                 }
             }
         }

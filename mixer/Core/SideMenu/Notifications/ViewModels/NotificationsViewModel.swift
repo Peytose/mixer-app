@@ -28,7 +28,9 @@ class NotificationsViewModel: ObservableObject {
     }
     
     
-    static func sendNotificationsToPlanners(for event: Event, with type: NotificationType) {
+    static func preparePlannerNotificationBatch(for event: Event,
+                                                type: NotificationType,
+                                                within batch: WriteBatch) {
         var activePlannerIds: [String] = []
         
         switch type {
@@ -61,17 +63,9 @@ class NotificationsViewModel: ObservableObject {
             
         }
         
-        let batch = Firestore.firestore().batch()
-        
         // Use the batchUpdate function to send all notifications at once
         batch
-            .batchUpdate(documentRefsDataMap: documentRefsDataMap) { error in
-                if let error = error {
-                    print("Error sending notifications: \(error.localizedDescription)")
-                } else {
-                    print("Notifications sent successfully!")
-                }
-            }
+            .addBatchUpdate(documentRefsDataMap: documentRefsDataMap)
     }
     
     
@@ -137,7 +131,7 @@ class NotificationsViewModel: ObservableObject {
                                    host: Host? = nil,
                                    event: Event? = nil) {
         guard let user = UserService.shared.user else { return }
-//        guard uid != user.id else { return }
+        guard uid != user.id else { return }
         
         let encodedNotification = prepareNotificationData(toUid: uid,
                                                           type: type,

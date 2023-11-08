@@ -154,7 +154,12 @@ class FavoritesViewModel: ObservableObject {
         let status = event.isFavorited ?? false
         
         self.service.toggleFavoriteStatus(isFavorited: !status,
-                                          event: event) { _ in
+                                          event: event) { error in
+            if let error = error {
+                print("DEBUG: Error toggling favorite status: \(error.localizedDescription)")
+                return
+            }
+            
             HapticManager.playLightImpact()
         }
     }

@@ -118,17 +118,19 @@ class UserService: ObservableObject {
         
         if isFavorited {
             batch
-                .batchUpdate(documentRefsDataMap: documentRefsDataMap) { error in
-                    NotificationsViewModel.sendNotificationsToPlanners(for: event, with: .eventLiked)
-                    
-                    completion?(error)
-                }
+                .addBatchUpdate(documentRefsDataMap: documentRefsDataMap)
+            
+            NotificationsViewModel.preparePlannerNotificationBatch(for: event,
+                                                                   type: .eventLiked,
+                                                                   within: batch)
+            batch.commit(completion: completion)
         } else {
             COLLECTION_NOTIFICATIONS
                 .deleteNotificationsForPlanners(for: event,
                                                 ofTypes: [.eventLiked],
                                                 from: currentUserId,
                                                 using: batch) {
+                    batch.addBatchDelete(documentRefs: documentRefs)
                     batch.commit(completion: completion)
                 }
         }
@@ -186,19 +188,19 @@ class UserService: ObservableObject {
                                timestamp: Timestamp())
         
         guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
+        let batch = Firestore.firestore().batch()
         
-        COLLECTION_EVENTS
-            .document(eventId)
-            .collection("guestlist")
-            .document(userId)
-            .setData(encodedGuest) { error in
-                if guestStatus == .invited {
-                    NotificationsViewModel.sendNotificationsToPlanners(for: event,
-                                                                       with: .guestlistJoined)
-                }
-                
-                completion?(error)
-            }
+        let guestlistReference = COLLECTION_EVENTS.document(eventId).collection("guestlist").document(userId)
+        
+        batch.setData(encodedGuest, forDocument: guestlistReference)
+        
+        if guestStatus == .invited {
+            NotificationsViewModel.preparePlannerNotificationBatch(for: event,
+                                                               type: .guestlistJoined,
+                                                               within: batch)
+        }
+        
+        batch.commit(completion: completion)
     }
     
     
@@ -516,8 +518,9 @@ extension UserService {
                         if let error = error {
                             completion?(error)
                         } else {
-                            NotificationsViewModel.sendNotificationsToPlanners(for: event,
-                                                                               with: actionType)
+                            NotificationsViewModel.preparePlannerNotificationBatch(for: event,
+                                                                               type: actionType,
+                                                                               within: batch)
                             completion?(nil)
                         }
                     }
