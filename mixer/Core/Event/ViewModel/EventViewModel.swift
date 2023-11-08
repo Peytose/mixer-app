@@ -24,9 +24,9 @@ final class EventViewModel: ObservableObject {
         self.event = event
         self.imageLoader = ImageLoader(url: event.eventImageUrl)
         
-//        service.fetchHosts(from: event) { hosts in
-//            self.hosts = hosts
-//        }
+        service.fetchHosts(from: event) { hosts in
+            self.hosts = hosts
+        }
         
         self.generateShareURL()
     }

@@ -64,7 +64,7 @@ struct ExploreView: View {
                                 .padding(.bottom, 100)
                             }
                         }
-                        .padding(.top, 80)
+                        .padding(.top, 60)
                         
                         
                     case .back, .close:

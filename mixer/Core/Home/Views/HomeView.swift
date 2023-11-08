@@ -56,13 +56,13 @@ struct HomeView: View {
                                         CircleView(tabSelection: $homeViewModel.currentTab)
                                     }
                                     .opacity(homeViewModel.showSideMenu ? 0 : 1)
-                                    .frame(height: 80)
+                                    .frame(height: 40)
                                     .background(Color.theme.backgroundColor.opacity(0.01))
                                     .background {
                                         Rectangle()
                                             .fill(Color.theme.backgroundColor)
                                             .mask(gradient)
-                                            .frame(height: 370)
+                                            .frame(height: homeViewModel.currentTab == .explore ? 220 : 370)
                                             .allowsHitTesting(false)
                                     }
                                 }
@@ -120,15 +120,15 @@ struct TabBarItems: View {
             ForEach(TabItem.allCases, id: \.self) { item in
                 Spacer()
                 
-                Image(systemName: (tabSelection == item && tabSelection != TabItem.search) ? item.icon + ".fill" : item.icon)
-                    .foregroundColor(tabSelection == item ? .white : .secondary)
-                    .frame(width: 35, height: 35)
-                    .scaleEffect(tabSelection == item ? 1.3 : 1)
-                    .animation(Animation.timingCurve(0.2, 0.2, 0.2, 1, duration: 0.2))
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        self.tabSelection = item
-                    }
+                    Image(systemName: (tabSelection == item && tabSelection != TabItem.search) ? item.icon + ".fill" : item.icon)
+                        .foregroundColor(tabSelection == item ? .white : .secondary)
+                        .frame(width: 35, height: 35)
+                        .scaleEffect(tabSelection == item ? 1.3 : 1)
+                        .animation(Animation.timingCurve(0.2, 0.2, 0.2, 1, duration: 0.2))
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            self.tabSelection = item
+                        }
                 
                 Spacer()
             }

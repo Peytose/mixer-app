@@ -25,7 +25,9 @@ struct ParticleEffectButton: View {
                     activeTint: activeTint,
                     inActiveTint: inActiveTint
                 )
-                .frame(width: frameSize, height: frameSize) // Set the frame size
+//                .frame(width: frameSize, height: frameSize) // Set the frame size
+                .font(.title3.weight(.medium))
+                .contentShape(Rectangle())
                 .foregroundColor(status ? activeTint : inActiveTint)
         }
     }

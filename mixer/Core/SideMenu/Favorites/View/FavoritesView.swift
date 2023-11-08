@@ -31,6 +31,12 @@ struct FavoritesView: View {
         }
         .navigationDestination(for: Event.self) { event in
             EventDetailView(event: event)
+                .toolbar(.hidden)
+                .overlay {
+                    PresentationBackArrowButton()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .padding(.horizontal)
+                }
         }
         .navigationBar(title: "Favorites", displayMode: .inline)
         .navigationBarBackButtonHidden(true)

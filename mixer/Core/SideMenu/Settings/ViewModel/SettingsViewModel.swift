@@ -34,7 +34,7 @@ class SettingsViewModel: ObservableObject {
     @Published var selectedImage: UIImage?
     private var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
     
-    let privacyLink = "https://mixer.llc/privacy-policy/"
+    let privacyLink = "https://rococo-gumdrop-0f32da.netlify.app"
     let termsOfServiceLink = "https://mixer.llc/privacy-policy/"
     
     private let service = UserService.shared

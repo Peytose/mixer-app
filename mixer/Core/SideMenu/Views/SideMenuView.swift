@@ -160,7 +160,7 @@ struct HostMenuView: View {
             }
 
             HStack {
-                Image(systemName: "music.note.house\(memberHosts.isEmpty ? "" : ".fill")")
+                Image(systemName: "house\(memberHosts.isEmpty ? "" : ".fill")")
                     .font(.title2)
                     .imageScale(.medium)
                 

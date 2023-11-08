@@ -32,21 +32,16 @@ struct ProfileView: View {
                 // Banner and overlayed button(s)
                 StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl,
                                        namespace: namespace)
-                .overlay(alignment: .topTrailing) {
-                    if action != nil {
-                        EllipsisButton {
-                            viewModel.isShowingMoreProfileOptions.toggle()
-                            HapticManager.playLightImpact()
-                        }
-                        .background {
-                            Circle()
-                                .stroke(lineWidth: 1.3)
-                                .foregroundColor(.white)
-                        }
-                        .padding(.trailing, 20)
-                        .padding(.top, 60)
-                    }
-                }
+//                .overlay {
+//                    if action != nil {
+//                        EllipsisButton {
+//                            viewModel.isShowingMoreProfileOptions.toggle()
+//                            HapticManager.playLightImpact()
+//                        }
+//                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+//                        .padding()
+//                    }
+//                }
                 
                 // Name, age, links, school and bio
                 profileInfo
@@ -65,32 +60,31 @@ struct ProfileView: View {
                     .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
             }
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
+        .toolbar(.hidden)
+        .overlay {
             if action == nil {
-                ToolbarItem(placement: .navigationBarLeading) {
+                HStack {
                     PresentationBackArrowButton()
-                }
-            }
-            
-            if action == nil {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
+                    
+                    Spacer()
+                    
+                    EllipsisButton {
                         viewModel.isShowingMoreProfileOptions.toggle()
                         HapticManager.playLightImpact()
-                    } label: {
-                        Image(systemName: "ellipsis")
-                            .font(.callout)
-                            .foregroundColor(.white)
-                            .padding(10)
-                            .contentShape(Rectangle())
-                            .background {
-                                Circle()
-                                    .stroke(lineWidth: 1.3)
-                                    .foregroundColor(.white)
-                            }
                     }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding()
+            } else {
+                HStack {
+                    Spacer()
+                    EllipsisButton {
+                        viewModel.isShowingMoreProfileOptions.toggle()
+                        HapticManager.playLightImpact()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .padding()
             }
         }
         .alert(item: $viewModel.currentAlert) { alertType in
@@ -149,7 +143,7 @@ extension ProfileView {
                     
                     if let university = viewModel.user.university, university.id != "com" {
                         DetailRow(text: university.shortName ?? university.name,
-                                  icon: "building.columns.fill")
+                                  icon: "graduationcap.fill")
                     }
                     
                     if let memberHosts = viewModel.user.associatedHosts {

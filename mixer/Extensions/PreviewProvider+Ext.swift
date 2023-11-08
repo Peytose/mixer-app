@@ -44,7 +44,7 @@ class DeveloperPreview {
                           title: "Neon Party",
                           description: "Neon party at Theta Chi, need we say more?",
                           type: .kickback,
-                          note: "",
+                          note: "Bad Biddies only",
                           address: "528 Beacon St, Boston, MA 02215",
                           altAddress: "Theta Chi",
                           geoPoint: GeoPoint(latitude: 42.35071,

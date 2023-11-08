@@ -20,16 +20,16 @@ struct MoreProfileOptions: View {
                 .ignoresSafeArea()
                 .onTapGesture { viewModel.isShowingMoreProfileOptions = false }
             
-            VStack {
+            VStack(spacing: 40) {
                 Spacer()
-                
+                    .frame(height: 100)
                 VStack(spacing: 20) {
                     KFImage(URL(string: viewModel.user.profileImageUrl))
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .clipShape(Circle())
-                        .frame(width: DeviceTypes.ScreenSize.width * 0.60,
-                               height: DeviceTypes.ScreenSize.width * 0.60)
+                        .frame(width: DeviceTypes.ScreenSize.width * 0.50,
+                               height: DeviceTypes.ScreenSize.width * 0.50)
                         .onAppear {
                             viewModel.user.profileImageUrl.loadImage { loadedImage in
                                 profileImage = loadedImage
@@ -54,7 +54,7 @@ struct MoreProfileOptions: View {
                                 viewModel.blockUser()
                             }
                         } label: {
-                            MoreOptionRow(icon: "hand.raised.square.fill",
+                            MoreOptionRow(icon: "hand.raised",
                                           text: (viewModel.user.relationshipState == .blocked ? "Unblock " : "Block ") + viewModel.user.displayName)
                         }
                     }
@@ -63,7 +63,7 @@ struct MoreProfileOptions: View {
                         ShareLink(item: url,
                                   message: Text("\nCheck out this profile on mixer!"),
                                   preview: SharePreview("\(viewModel.user.displayName) (@\(viewModel.user.username))", image: profileImage ?? Image("default-avatar"))) {
-                            MoreOptionRow(icon: "square.and.arrow.up.circle.fill",
+                            MoreOptionRow(icon: "square.and.arrow.up",
                                           text: "Share \(viewModel.user.displayName)'s profile")
                         }
                     }
@@ -79,8 +79,8 @@ struct MoreProfileOptions: View {
 struct MoreProfileOptions_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
-            Color.red
-                .ignoresSafeArea()
+//            Color.red
+//                .ignoresSafeArea()
             
             MoreProfileOptions(viewModel: ProfileViewModel(user: dev.mockUser))
         }
@@ -94,9 +94,8 @@ fileprivate struct MoreOptionRow: View {
     var body: some View {
         HStack(spacing: 15) {
             Image(systemName: icon)
-                .resizable()
-                .frame(width: 30, height: 30)
-                .foregroundColor(Color.theme.mixerIndigo)
+                .font(.title3)
+                .foregroundColor(Color.white)
             
             Text(text)
                 .font(.title3)

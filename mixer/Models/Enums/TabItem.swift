@@ -16,7 +16,7 @@ enum TabItem: Int, CaseIterable, Equatable {
     var icon: String {
         switch self {
             case .map: return "map"
-            case .explore: return "music.note.house"
+            case .explore: return "person.3"
             case .search: return "magnifyingglass"
         }
     }

@@ -18,15 +18,26 @@ struct SearchView: View {
                 ZStack {
                     switch state {
                     case .menu:
+                        VStack(spacing: -20) {
+                            StickyHeaderView(items: SearchType.allCases,
+                                             selectedItem: $viewModel.selectedSearchType)
+                            
                         List {
                             if !viewModel.searchText.isEmpty {
                                 NewSearchResultsView(viewModel: viewModel, context: $context)
                                     .redacted(reason: viewModel.isLoading ? .placeholder : [])
+                                    .listRowBackground(Color.theme.secondaryBackgroundColor)
+
                             }
                         }
                         .scrollContentBackground(.hidden)
                         .background(Color.theme.backgroundColor)
-                        .overlay {
+                        .navigationTitle("Search")
+                        .searchable(text: $viewModel.searchText,
+                                    placement: .automatic,
+                                    prompt: "Search Mixer")
+                    }
+                        .overlay(alignment: .top) {
                             Image("Blob 1")
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
@@ -35,11 +46,6 @@ struct SearchView: View {
                                 .opacity(0.8)
                                 .offset(x: -40, y: -355)
                         }
-                        .navigationTitle("Search")
-                        .searchable(text: $viewModel.searchText,
-                                    placement: .automatic,
-                                    prompt: "Search Users")
-                        
                         
                     case .back, .close:
                         eventDetailView()
@@ -105,36 +111,31 @@ fileprivate struct NewSearchResultsView: View {
     @Binding var context: [NavigationContext]
     
     var body: some View {
-        LazyVStack(pinnedViews: [.sectionHeaders]) {
-            Section {
-                let selectedResults = viewModel.results[viewModel.selectedSearchType.description] ?? []
-                
-                if selectedResults.isEmpty {
-                    Text("No results found for \"\(viewModel.searchText)\"")
-                        .foregroundColor(.secondary)
-                        .padding(.top)
-                } else {
-                    ForEach(selectedResults, id: \.self) { result in
-                        SearchResultsCell(imageUrl: result.imageUrl,
-                                          title: result.title,
-                                          subtitle: result.subtitle,
-                                          type: viewModel.selectedSearchType)
-                        .onTapGesture {
-                            withAnimation(.spring()) {
-                                viewModel.fetchDetails(for: result,
-                                                       completion: homeViewModel.navigate)
-                            }
-                        }
+        
+        let selectedResults = viewModel.results[viewModel.selectedSearchType.description] ?? []
+        
+        if selectedResults.isEmpty {
+            Text("No results found for \"\(viewModel.searchText)\"")
+                .foregroundColor(.secondary)
+                .padding(.top)
+        } else {
+            ForEach(selectedResults, id: \.self) { result in
+                SearchResultsCell(imageUrl: result.imageUrl,
+                                  title: result.title,
+                                  subtitle: result.subtitle,
+                                  type: viewModel.selectedSearchType)
+                .onTapGesture {
+                    withAnimation(.spring()) {
+                        viewModel.fetchDetails(for: result,
+                                               completion: homeViewModel.navigate)
                     }
                 }
-            } header: {
-                StickyHeaderView(items: SearchType.allCases,
-                                 selectedItem: $viewModel.selectedSearchType)
-                .padding(.vertical)
             }
         }
+        
     }
 }
+
 
 extension SearchView {
     @ViewBuilder

@@ -12,12 +12,15 @@ struct EllipsisButton: View {
     
     var body: some View {
         Image(systemName: "ellipsis")
-            .resizable()
-            .scaledToFit()
-            .foregroundStyle(Color.white)
-            .frame(width: 17, height: 17)
-            .padding()
+            .font(.callout)
+            .foregroundColor(.white)
+            .padding(10)
             .contentShape(Rectangle())
+            .background {
+                Circle()
+                    .stroke(lineWidth: 1.3)
+                    .foregroundColor(.white)
+            }
             .onTapGesture {
                 action()
             }
