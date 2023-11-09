@@ -28,6 +28,22 @@ enum GuestStatus: Int, Codable, CustomStringConvertible, CaseIterable {
             default: return ""
         }
     }
+    
+    var icon: String {
+        switch self {
+            case .invited: "list.clipboard"
+            case .checkedIn: "person.badge.minus"
+            case .requested: "hourglass"
+        }
+    }
+    
+    var guestlistButtonTitle: String {
+        switch self {
+            case .invited: "Check in"
+            case .checkedIn: "Remove"
+            case .requested: "Accept"
+        }
+    }
 }
 
 struct EventLists {

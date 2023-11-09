@@ -11,7 +11,6 @@ import FirebaseFirestore
 enum EventUserActionState {
     case pastEvent
     case onGuestlist
-    case requestToJoin
     case pendingJoinRequest
     case open
     case inviteOnly
@@ -22,12 +21,10 @@ enum EventUserActionState {
         } else if event.didGuestlist ?? false {
             self = .onGuestlist
         } else if event.isInviteOnly {
-            self = .inviteOnly
-        } else if event.isManualApprovalEnabled {
             if event.didRequest ?? false {
                 self = .pendingJoinRequest
             } else {
-                self = .requestToJoin
+                self = .inviteOnly
             }
         } else {
             self = .open
@@ -40,8 +37,7 @@ enum EventUserActionState {
             return "Remove"
         case .onGuestlist:
             return "Leave"
-        case .requestToJoin,
-                .inviteOnly:
+        case .inviteOnly:
             return "Request"
         case .pendingJoinRequest:
             return "Cancel"
@@ -56,8 +52,7 @@ enum EventUserActionState {
             return "Event Ended"
         case .onGuestlist:
             return "Leave Guestlist"
-        case .requestToJoin,
-                .inviteOnly:
+        case .inviteOnly:
             return "Request to Join"
         case .pendingJoinRequest:
             return "Cancel Request"
@@ -72,8 +67,6 @@ enum EventUserActionState {
             return "trash.fill"
         case .onGuestlist:
             return "person.crop.circle.badge.checkmark"
-        case .requestToJoin:
-            return "person.badge.plus.fill"
         case .pendingJoinRequest:
             return "hourglass"
         case .open:
@@ -85,8 +78,7 @@ enum EventUserActionState {
     
     var isSecondaryLabel: Bool {
         switch self {
-        case .requestToJoin,
-                .open:
+        case .open:
             return false
         default:
             return true

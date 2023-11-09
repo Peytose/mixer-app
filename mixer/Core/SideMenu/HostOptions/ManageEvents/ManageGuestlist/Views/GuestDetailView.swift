@@ -96,10 +96,13 @@ private extension GuestDetailView {
     @ViewBuilder
     func actionButton(guest: EventGuest) -> some View {
         Button {
-            if guest.status == .invited {
-                viewModel.checkIn()
-            } else {
+            switch guest.status {
+            case .checkedIn:
                 viewModel.remove()
+            case .invited:
+                viewModel.checkIn()
+            case .requested:
+                viewModel.approveGuest(guest)
             }
         } label: {
             Capsule()
@@ -109,11 +112,11 @@ private extension GuestDetailView {
                 .shadow(radius: 20, x: 8, y: 8)
                 .overlay {
                     HStack {
-                        Image(systemName: guest.status == .invited ? "list.clipboard" : "person.badge.minus")
+                        Image(systemName: guest.status.icon)
                             .imageScale(.large)
                             .foregroundColor(.white)
                         
-                        Text("\(guest.status == .invited ? "Check in" : "Remove") \(guest.name)")
+                        Text(guest.status.guestlistButtonTitle)
                             .body(color: .white)
                     }
                 }

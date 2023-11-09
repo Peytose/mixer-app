@@ -182,13 +182,12 @@ class UserService: ObservableObject {
     
     
     func requestOrJoinGuestlist(for event: Event, completion: FirestoreCompletion) {
-        guard !event.isInviteOnly,
-              let eventId = event.id,
+        guard let eventId = event.id,
               let user = self.user,
               let userId = user.id,
-              userId == Auth.auth().currentUser?.uid else { return }
+              user.isCurrentUser else { return }
         
-        let guestStatus: GuestStatus = event.isManualApprovalEnabled ? .requested : .invited
+        let guestStatus: GuestStatus = event.isInviteOnly ? .requested : .invited
         let guest = EventGuest(name: user.fullName,
                                universityId: user.universityId,
                                email: user.email,

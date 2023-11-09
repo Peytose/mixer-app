@@ -29,10 +29,8 @@ class FavoritesViewModel: ObservableObject {
             self.toggleFavoriteStatus(event)
         case .onGuestlist, .pendingJoinRequest:
             self.cancelOrLeaveGuestlist(event)
-        case .requestToJoin, .open:
+        case .inviteOnly, .open:
             self.requestOrJoinGuestlist(event)
-        default:
-            break
         }
     }
     
@@ -122,12 +120,11 @@ class FavoritesViewModel: ObservableObject {
 
     
     private func adjustEventForGuestStatus(_ event: Event, isRequestOrJoin: Bool) {
-        let guestStatus: GuestStatus = event.isManualApprovalEnabled ? .requested : .invited
         var newEvent: Event = event
         
         if isRequestOrJoin {
-            newEvent.didGuestlist = guestStatus == .invited
-            newEvent.didRequest   = guestStatus == .requested
+            newEvent.didGuestlist = !event.isInviteOnly
+            newEvent.didRequest   = event.isInviteOnly
         } else {
             newEvent.didGuestlist = false
             newEvent.didRequest   = false

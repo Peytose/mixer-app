@@ -52,10 +52,8 @@ final class EventViewModel: ObservableObject {
             self.toggleFavoriteStatus()
         case .onGuestlist, .pendingJoinRequest:
             self.cancelOrLeaveGuestlist()
-        case .requestToJoin, .open:
+        case .inviteOnly, .open:
             self.requestOrJoinGuestlist()
-        default:
-            break
         }
     }
 
@@ -85,29 +83,21 @@ final class EventViewModel: ObservableObject {
     
     func requestOrJoinGuestlist() {
         updateGuestlistStatus(with: service.requestOrJoinGuestlist) {
-            self.adjustEventForGuestStatus(isRequestOrJoin: true)
+            self.event.didGuestlist = !self.event.isInviteOnly
+            self.event.didRequest   = self.event.isInviteOnly
             HapticManager.playSuccess()
         }
     }
 
+    
     func cancelOrLeaveGuestlist() {
         updateGuestlistStatus(with: service.cancelOrLeaveGuestlist) {
-            self.adjustEventForGuestStatus(isRequestOrJoin: false)
+            self.event.didGuestlist = false
+            self.event.didRequest   = false
             HapticManager.playLightImpact()
         }
     }
-
-    private func adjustEventForGuestStatus(isRequestOrJoin: Bool) {
-        let guestStatus: GuestStatus = event.isManualApprovalEnabled ? .requested : .invited
-        
-        if isRequestOrJoin {
-            self.event.didGuestlist = guestStatus == .invited
-            self.event.didRequest   = guestStatus == .requested
-        } else {
-            self.event.didGuestlist = false
-            self.event.didRequest   = false
-        }
-    }
+    
 
     private func updateGuestlistStatus(with action: (Event, FirestoreCompletion) -> Void,
                                        completion: @escaping () -> Void) {

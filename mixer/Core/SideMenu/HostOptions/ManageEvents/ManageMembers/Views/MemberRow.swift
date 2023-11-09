@@ -25,23 +25,16 @@ struct MemberRow: View {
                               title: member.displayName,
                               subtitle: subtitle)
             
+            Spacer()
+            
             if link.status == .joined {
-                EllipsisButton {
+                EllipsisButton(stroke: 0) {
                     showActionSheet = true
                 }
             }
         }
         .listRowBackground(Color.theme.backgroundColor)
         .contentShape(Rectangle())
-        .swipeActions(edge: .trailing) {
-            Button(role: .destructive) {
-                if let memberId = member.id {
-                    viewModel.removeMember(with: memberId)
-                }
-            } label: {
-                Label("Delete", systemImage: "trash.fill")
-            }
-        }
         .actionSheet(isPresented: $showActionSheet) {
             viewModel.actionSheet(member)
         }

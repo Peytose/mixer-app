@@ -54,7 +54,9 @@ struct FavoriteCell: View {
             
             ListCellActionButton(text: EventUserActionState(event: event).favoriteText,
                                  isSecondaryLabel: EventUserActionState(event: event).isSecondaryLabel) {
-                viewModel.actionForState(EventUserActionState(event: event), event: event)
+                let state = EventUserActionState(event: event)
+                print("DEBUG: State \(state)")
+                viewModel.actionForState(state, event: event)
             }
         }
         .padding(.horizontal)

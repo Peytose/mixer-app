@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EllipsisButton: View {
+    var stroke: CGFloat = 1.3
     let action: () -> Void
     
     var body: some View {
@@ -18,7 +19,7 @@ struct EllipsisButton: View {
             .contentShape(Rectangle())
             .background {
                 Circle()
-                    .stroke(lineWidth: 1.3)
+                    .stroke(lineWidth: stroke)
                     .foregroundColor(.white)
             }
             .onTapGesture {

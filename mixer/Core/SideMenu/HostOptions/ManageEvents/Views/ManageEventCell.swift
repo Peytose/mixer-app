@@ -51,7 +51,7 @@ struct ManageEventCell: View {
                 }
             }
             .overlay(alignment: .topTrailing) {
-                EllipsisButton {
+                EllipsisButton(stroke: 0) {
                     //
                 }
             }

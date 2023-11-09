@@ -32,16 +32,6 @@ struct GuestlistRow: View {
             
             Spacer()
             
-            switch guest.status {
-            case .requested:
-                ListCellActionButton(text: "Approve") {
-                    viewModel.approveGuest(guest)
-                }
-                .contentShape(Rectangle())
-            default:
-                EmptyView()
-            }
-            
             if let university = guest.university, let icon = university.icon, guest.status != .requested {
                 HStack(spacing: 5) {
                     Image(systemName: icon)
