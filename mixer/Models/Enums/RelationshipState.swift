@@ -19,7 +19,7 @@ enum RelationshipState: Int, Codable, IconRepresentable {
             case .friends: return "Friends"
             case .requestSent: return "Request Sent"
             case .requestReceived: return "Accept Request"
-            case .notFriends: return "Send Request"
+            case .notFriends: return "Add Friend"
             case .blocked: return "Unblock"
         }
     }

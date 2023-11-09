@@ -57,3 +57,10 @@ struct GuestlistPDF: View {
         }
     }
 }
+
+
+struct GuestlistPDF_Previews: PreviewProvider {
+    static var previews: some View {
+        GuestlistPDF(event: dev.mockEvent, guests: [EventGuest(name: "Jose Martinez", universityId: "com", age: 1, gender: .man)])
+    }
+}

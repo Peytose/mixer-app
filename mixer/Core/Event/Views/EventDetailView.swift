@@ -123,7 +123,7 @@ struct EventDetailView: View {
                 }
             }
             .overlay(alignment: .bottom) {
-                if !viewModel.event.isInviteOnly {
+                if !viewModel.event.isPrivate {
                     GuestlistActionButton(state: EventUserActionState(event: viewModel.event)) {
                         viewModel.actionForState(EventUserActionState(event: viewModel.event))
                     }
@@ -209,12 +209,26 @@ struct EventHeader: View {
                 Spacer()
                 
                 VStack(alignment: .center, spacing: 4) {
-                    Image(systemName: viewModel.event.isInviteOnly ? "lock.fill" : "globe")
-                        .font(.title3.weight(.medium))
+                    Image(systemName: viewModel.event.isPrivate ? "lock.fill" : "globe")
+                        .font(.headline)
                         .contentShape(Rectangle())
                     
-                    Text(viewModel.event.isInviteOnly ? "Private" : "Public")
+                    Text(viewModel.event.isPrivate ? "Private" : "Public")
                         .foregroundColor(.secondary)
+                        .font(.subheadline)
+                    
+                }
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
+                
+                VStack(alignment: .center, spacing: 4) {
+                    Image(systemName: viewModel.event.isInviteOnly ? "door.left.hand.closed" : "door.left.hand.open")
+                        .font(.headline)
+                        .contentShape(Rectangle())
+                    
+                    Text(viewModel.event.isInviteOnly ? "Invite Only" : "Open")
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
                     
                 }
                 .lineLimit(1)

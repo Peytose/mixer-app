@@ -31,13 +31,13 @@ struct SearchResultsCell: View {
                     .frame(width: 40, height: 40)
             }
             
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.body)
+                    .font(.callout)
                     .foregroundColor(.white)
                 
                 Text("\(type == SearchType.hosts || type == SearchType.users ? "@" : "")\(subtitle)")
-                    .font(.subheadline)
+                    .font(.footnote)
                     .foregroundColor(.secondary)
                     .lineLimit(1)
                     .minimumScaleFactor(0.9)

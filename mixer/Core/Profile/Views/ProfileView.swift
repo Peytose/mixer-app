@@ -32,16 +32,6 @@ struct ProfileView: View {
                 // Banner and overlayed button(s)
                 StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl,
                                        namespace: namespace)
-//                .overlay {
-//                    if action != nil {
-//                        EllipsisButton {
-//                            viewModel.isShowingMoreProfileOptions.toggle()
-//                            HapticManager.playLightImpact()
-//                        }
-//                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-//                        .padding()
-//                    }
-//                }
                 
                 // Name, age, links, school and bio
                 profileInfo
@@ -141,9 +131,17 @@ extension ProfileView {
                         }
                     }
                     
-                    if let university = viewModel.user.university, university.id != "com" {
-                        DetailRow(text: university.shortName ?? university.name,
-                                  icon: "graduationcap.fill")
+                    HStack {
+                        if let university = viewModel.user.university, university.id != "com" {
+                            DetailRow(text: university.shortName ?? university.name,
+                                      icon: "graduationcap.fill")
+                        }
+                        
+                        Spacer()
+                        
+                        if !viewModel.user.isCurrentUser {
+                            RelationshipButtonsView(viewModel: viewModel)
+                        }
                     }
                     
                     if let memberHosts = viewModel.user.associatedHosts {
@@ -155,10 +153,6 @@ extension ProfileView {
                 }
                 
                 Spacer()
-            }
-            
-            if !viewModel.user.isCurrentUser {
-                RelationshipButtonsView(viewModel: viewModel)
             }
             
             if let bio = viewModel.user.bio {
