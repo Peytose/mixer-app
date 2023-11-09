@@ -16,6 +16,7 @@ struct GuestlistView: View {
     @State private var isShowingUserInfoModal  = false
     @State private var isShowingQRCodeScanView = false
     @State private var isTorchOn               = false
+    @State private var searchText              = ""
     
     var body: some View {
         ZStack {
@@ -39,18 +40,29 @@ struct GuestlistView: View {
                     emptyView
                 case .list:
                     List {
+                        // Section count text
                         Text(viewModel.getGuestlistSectionCountText())
                             .secondaryHeading(color: .secondary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                             .listRowBackground(Color.theme.secondaryBackgroundColor)
                         
-                        ForEach(viewModel.filteredGuests) { guest in
-                            GuestlistRow(guest: guest)
-                                .environmentObject(viewModel)
+                        // Loop over each section in sectionedGuests
+                        ForEach(viewModel.sectionedGuests.keys.sorted(), id: \.self) { key in
+                            Section(header: Text(key)) {
+                                // Loop over each guest in this section
+                                ForEach(viewModel.sectionedGuests[key] ?? []) { guest in
+                                    GuestlistRow(guest: guest)
+                                        .environmentObject(viewModel)
+                                }
+                            }
                         }
                     }
                     .scrollContentBackground(.hidden)
+                    .searchable(text: $searchText, prompt: "Search guests..")
+                    .onChange(of: searchText) { newValue in
+                        viewModel.filterGuests(for: newValue)
+                    }
                 }
                 
                 Spacer()

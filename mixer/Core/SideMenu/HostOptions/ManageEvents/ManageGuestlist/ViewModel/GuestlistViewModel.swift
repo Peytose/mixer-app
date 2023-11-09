@@ -12,17 +12,10 @@ import FirebaseFirestoreSwift
 import CodeScanner
 
 class GuestlistViewModel: ObservableObject {
-    @Published var guests = [EventGuest]() {
-        didSet {
-            self.updateSectionedGuests()
-        }
-    }
-    @Published var filteredGuests: [EventGuest] = []
     @Published private(set) var sectionedGuests: [String: [EventGuest]] = [:]
-
     @Published var selectedGuestSection: GuestStatus = .invited {
         didSet {
-            refreshViewState()
+            refreshViewState(with: self.guests)
         }
     }
     @Published var selectedGuest: EventGuest?
@@ -50,7 +43,9 @@ class GuestlistViewModel: ObservableObject {
     @Published var status                 = GuestStatus.invited
     @Published var gender                 = Gender.man
     @Published var age                    = 18
-
+    
+    @Published private(set) var guests = [EventGuest]()
+    
     private let service = HostService.shared
     private var listener: ListenerRegistration?
     private let host: Host?
@@ -67,10 +62,25 @@ class GuestlistViewModel: ObservableObject {
     }
     
     
-    private func refreshViewState() {
-        let filteredGuests = guests.filter({ $0.status == selectedGuestSection })
-        self.filteredGuests = filteredGuests.sorted(by: { $0.name < $1.name })
-        self.viewState = filteredGuests.isEmpty ? .empty : .list
+    private func refreshViewState(with guests: [EventGuest]) {
+        let statusFilteredGuests = guests.filter({ $0.status == selectedGuestSection })
+        let sortedGuests = statusFilteredGuests.sorted(by: { $0.name < $1.name })
+        self.viewState = sortedGuests.isEmpty ? .empty : .list
+        
+        updateSectionedGuests(sortedGuests)
+    }
+    
+    
+    func filterGuests(for searchText: String) {
+        // If the search text is empty, reset to the full list
+        if searchText.isEmpty {
+            refreshViewState(with: guests)
+        } else {
+            // Filter the guests for names that contain the search text
+            let filtered = guests.filter { $0.name.lowercased().contains(searchText.lowercased()) }
+            // Update your viewState and sectionedGuests accordingly
+            refreshViewState(with: filtered)
+        }
     }
     
     
@@ -84,9 +94,11 @@ class GuestlistViewModel: ObservableObject {
     
     
     func getGuestlistSectionCountText() -> String {
-        let count = self.filteredGuests.count
+        // Calculate the total count of guests by summing up the counts of each section's array
+        let totalGuestCount = self.sectionedGuests.values.reduce(0) { $0 + $1.count }
         
-        return "\(count) guest\(count > 1 ? "s" : "")"
+        // Return the formatted string with correct singular or plural form
+        return "\(totalGuestCount) guest\(totalGuestCount != 1 ? "s" : "")"
     }
     
     
@@ -94,32 +106,6 @@ class GuestlistViewModel: ObservableObject {
         self.selectedUniversity = university
         self.universityName     = university.name
     }
-    
-    
-//    func fetchGuestlistEvents() {
-//        guard let hostId = selectedHost?.id else { return }
-//        
-//        COLLECTION_EVENTS
-//            .whereField("hostId", isEqualTo: hostId)
-//            .getDocuments { snapshot, error in
-//                if let _ = error {
-//                    self.alertItem = AlertContext.unableToGetGuestlistEvents
-//                }
-//                
-//                guard let documents = snapshot?.documents else { return }
-//                let events = documents.compactMap({ try? $0.data(as: Event.self) })
-//                let sortedEvents = events.sortedByStartDate()
-//                
-//                if let closestEvent = sortedEvents.first(where: { $0.startDate >= Timestamp() }) {
-//                    DispatchQueue.main.async {
-//                        self.events = sortedEvents
-//                        self.selectedEvent = closestEvent
-//                    }
-//                } else {
-//                    self.selectedEvent = sortedEvents.first
-//                }
-//            }
-//    }
 }
 
 
@@ -384,7 +370,7 @@ extension GuestlistViewModel {
                 self.fetchAndAssignUniversities(to: guests) { updatedGuests in
                     DispatchQueue.main.async {
                         self.guests = updatedGuests
-                        self.refreshViewState()
+                        self.refreshViewState(with: updatedGuests)
                     }
                 }
             }
@@ -398,11 +384,9 @@ extension GuestlistViewModel {
 
         UserService.shared.fetchUniversities(with: Array(uniqueUniversityIds)) { universities in
             for university in universities {
-                print("DEBUG: university \(university.name)")
                 for (index, guest) in updatedGuests.enumerated() {
                     if guest.universityId == university.id {
                         updatedGuests[index].university = university
-                        print("DEBUG: updated guest \(updatedGuests[index])")
                     }
                 }
             }
@@ -411,7 +395,7 @@ extension GuestlistViewModel {
     }
     
     
-    private func updateSectionedGuests() {
+    private func updateSectionedGuests(_ guests: [EventGuest]) {
         self.sectionedGuests = Dictionary(grouping: guests, by: {
             let name = $0.name
             let normalizedName = name.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
@@ -501,8 +485,6 @@ extension GuestlistViewModel {
                     print("DEBUG: Error \(error.localizedDescription)")
                     return
                 }
-                
-                print("DEBUG: Success uploading the guestlist!")
             }
     }
     
