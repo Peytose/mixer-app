@@ -12,38 +12,53 @@ struct GuestlistRow: View {
     let guest: EventGuest
 
     var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            AvatarView(url: guest.profileImageUrl, size: 30)
-
-            HStack(spacing: 5) {
-                Text(guest.name.capitalized)
-                    .body(color: .white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(alignment: .center, spacing: 8) {
+                AvatarView(url: guest.profileImageUrl, size: 30)
                 
-                if guest.gender.icon != "" {
-                    Image(guest.gender.icon)
-                        .resizable()
-                        .renderingMode(.template)
-                        .foregroundColor(.white)
-                        .frame(width: 20, height: 20)
-                }
-            }
-            
-            Spacer()
-            
-            if let university = guest.university, let icon = university.icon, guest.status != .requested {
                 HStack(spacing: 5) {
-                    Image(systemName: icon)
-                        .foregroundColor(.secondary)
-                        .frame(width: 20, height: 20)
-                    
-                    Text(university.shortName ?? university.name)
-                        .subheadline()
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text(guest.name.capitalized)
+                                .body(color: .white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                            
+                            if guest.gender.icon != "" {
+                                Image(guest.gender.icon)
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .foregroundColor(.white)
+                                    .frame(width: 20, height: 20)
+                            }
+                        }
+                        
+                            if let name = guest.invitedBy {
+                                    Text("Invited by \(name)")
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+                                }
+                    }
+                
+                }
+                
+                Spacer()
+                
+                if let university = guest.university, let icon = university.icon, guest.status != .requested {
+                    HStack(spacing: 5) {
+                        Image(systemName: icon)
+                            .foregroundColor(.secondary)
+                            .frame(width: 20, height: 20)
+                        
+                        Text(university.shortName ?? university.name)
+                            .subheadline()
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
                 }
             }
+            
+
         }
         .contentShape(Rectangle())
         .showUserInfoModal(for: guest, viewModel: viewModel)

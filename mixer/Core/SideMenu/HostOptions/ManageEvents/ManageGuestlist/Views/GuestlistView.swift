@@ -17,119 +17,145 @@ struct GuestlistView: View {
     @State private var isShowingQRCodeScanView = false
     @State private var isTorchOn               = false
     @State private var searchText              = ""
+//    @State private var showPreview             = false
     
     var body: some View {
-        ZStack {
-            Color.theme.backgroundColor
-                .ignoresSafeArea()
-            
-            VStack {
-                Text(viewModel.event.title)
-                    .primaryHeading()
-                    .multilineTextAlignment(.trailing)
-                               .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .leading)
-                               .padding([.leading, .top])
+            ZStack {
+                Color.theme.backgroundColor
+                    .ignoresSafeArea()
                 
-                StickyHeaderView(items: GuestStatus.allCases,
-                                 selectedItem: $viewModel.selectedGuestSection)
-                
-                switch viewModel.viewState {
-                case .loading:
-                    LoadingView()
-                case .empty:
-                    emptyView
-                case .list:
-                    List {
-                        // Section count text
-                        Text(viewModel.getGuestlistSectionCountText())
-                            .secondaryHeading(color: .secondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.75)
-                            .listRowBackground(Color.theme.secondaryBackgroundColor)
-                        
-                        // Loop over each section in sectionedGuests
-                        ForEach(viewModel.sectionedGuests.keys.sorted(), id: \.self) { key in
-                            Section(header: Text(key)) {
-                                // Loop over each guest in this section
-                                ForEach(viewModel.sectionedGuests[key] ?? []) { guest in
-                                    GuestlistRow(guest: guest)
-                                        .environmentObject(viewModel)
+                VStack {
+                    if viewModel.viewState != .list {
+                        Text(viewModel.event.title)
+                            .primaryHeading()
+                            .multilineTextAlignment(.trailing)
+                                       .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .leading)
+                                       .padding([.leading, .top])
+                    }
+                    
+                    StickyHeaderView(items: GuestStatus.allCases,
+                                     selectedItem: $viewModel.selectedGuestSection)
+                    
+                    switch viewModel.viewState {
+                    case .loading:
+                        LoadingView()
+                    case .empty:
+                        emptyView
+                    case .list:
+                        List {
+                            // Section count text
+                            Text(viewModel.getGuestlistSectionCountText())
+                                .secondaryHeading(color: .secondary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.75)
+                                .listRowBackground(Color.theme.secondaryBackgroundColor)
+                            
+                            // Loop over each section in sectionedGuests
+                            ForEach(viewModel.sectionedGuests.keys.sorted(), id: \.self) { key in
+                                Section(header: Text(key)) {
+                                    // Loop over each guest in this section
+                                    ForEach(viewModel.sectionedGuests[key] ?? []) { guest in
+                                        GuestlistRow(guest: guest)
+                                            .environmentObject(viewModel)
+                                    }
                                 }
                             }
                         }
+                        .scrollContentBackground(.hidden)
+                        .searchable(text: $searchText, prompt: "Search guests..")
+                        .navigationTitle(viewModel.event.title)
+                        .navigationBarTitleDisplayMode(.large)
+                        .onChange(of: searchText) { newValue in
+                            viewModel.filterGuests(for: newValue)
+                        }
                     }
-                    .scrollContentBackground(.hidden)
-                    .searchable(text: $searchText, prompt: "Search guests..")
-                    .onChange(of: searchText) { newValue in
-                        viewModel.filterGuests(for: newValue)
-                    }
-                }
-                
-                Spacer()
-            }
-        }
-        .navigationBarBackButtonHidden(true)
-        .overlay(alignment: .bottom) {
-            HStack {
-                Spacer()
-                
-                DownloadGuestlistButton(url: GuestlistPDF(
-                    event: viewModel.event,
-                    guests: viewModel.guests.filter({ $0.status == .checkedIn})).renderPDF(title: viewModel.getPdfTitle())
-                )
-                
-                Spacer()
-                
-                if viewModel.event.endDate > Timestamp() {
-                    QRCodeScannerButton(isShowingQRCodeScanView: $isShowingQRCodeScanView)
-                        .opacity(viewModel.event.endDate < Timestamp() ? 0 : 1)
-                        .disabled(viewModel.event.endDate < Timestamp())
-                    
-                    Spacer()
-                }
-                
-                if viewModel.event.endDate > Timestamp() {
-                    AddToGuestlistButton(viewModel: viewModel)
                     
                     Spacer()
                 }
             }
-            .padding(.horizontal, 30)
-            .padding(.bottom, 50)
-        }
-        .sheet(isPresented: $viewModel.isShowingUserInfoModal) {
-            if let _ = viewModel.selectedGuest {
-                GuestDetailView()
-                    .environmentObject(viewModel)
-                    .presentationDetents([.medium])
+            .navigationBarBackButtonHidden(true)
+            .overlay(alignment: .bottom) {
+                HStack {
+                    Spacer()
+                    
+                    DownloadGuestlistButton(url: GuestlistPDF(
+                        event: viewModel.event,
+                        guests: viewModel.guests.filter({ $0.status == .checkedIn})).renderPDF(title: viewModel.getPdfTitle())
+                    )
+                    
+//                    Image(systemName: "person.2")
+//                        .resizable()
+//                        .scaledToFit()
+//                        .foregroundColor(.black)
+//                        .frame(width: 30, height: 30)
+//                        .padding(13)
+//                        .background {
+//                            Circle()
+//                                .foregroundColor(Color.white)
+//                                .shadow(radius: 20)
+//                        }
+//                        .onTapGesture {
+//                            showPreview.toggle()
+//                        }
+                    
+                    Spacer()
+                    
+                    if viewModel.event.endDate > Timestamp() {
+                        QRCodeScannerButton(isShowingQRCodeScanView: $isShowingQRCodeScanView)
+                            .opacity(viewModel.event.endDate < Timestamp() ? 0 : 1)
+                            .disabled(viewModel.event.endDate < Timestamp())
+                        
+                        Spacer()
+                    }
+                    
+                    if viewModel.event.endDate > Timestamp() {
+                        AddToGuestlistButton(viewModel: viewModel)
+                        
+                        Spacer()
+                    }
+                }
+                .padding(.horizontal, 30)
+                .padding(.bottom, 50)
             }
-        }
-        .fullScreenCover(isPresented: $isShowingQRCodeScanView) {
-            QRCodeScannerView(isShowingQRCodeScanView: $isShowingQRCodeScanView,
-                              isTorchOn: $isTorchOn) { result in
-                isShowingQRCodeScanView = false
-                viewModel.handleScan(result)
+            .sheet(isPresented: $viewModel.isShowingUserInfoModal) {
+                if let _ = viewModel.selectedGuest {
+                    GuestDetailView()
+                        .environmentObject(viewModel)
+                        .presentationDetents([.medium])
+                }
             }
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                PresentationBackArrowButton()
+//            .sheet(isPresented: $showPreview, content: {
+//                GuestlistPDF(
+//                    event: viewModel.event,
+//                    guests: viewModel.guests.filter({ $0.status == .checkedIn}))
+//            })
+            .fullScreenCover(isPresented: $isShowingQRCodeScanView) {
+                QRCodeScannerView(isShowingQRCodeScanView: $isShowingQRCodeScanView,
+                                  isTorchOn: $isTorchOn) { result in
+                    isShowingQRCodeScanView = false
+                    viewModel.handleScan(result)
+                }
             }
-        }
-        .alert(item: $viewModel.currentAlert) { alertType in
-            hideKeyboard()
-            
-            switch alertType {
-            case .regular(let alertItem):
-                guard let item = alertItem else { break }
-                return item.alert
-            case .confirmation(let confirmationAlertItem):
-                guard let item = confirmationAlertItem else { break }
-                return item.alert
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    PresentationBackArrowButton()
+                }
             }
-            
-            return Alert(title: Text("Unexpected Error"))
-        }
+            .alert(item: $viewModel.currentAlert) { alertType in
+                hideKeyboard()
+                
+                switch alertType {
+                case .regular(let alertItem):
+                    guard let item = alertItem else { break }
+                    return item.alert
+                case .confirmation(let confirmationAlertItem):
+                    guard let item = confirmationAlertItem else { break }
+                    return item.alert
+                }
+                
+                return Alert(title: Text("Unexpected Error"))
+            }
+        
     }
 }
 
@@ -153,7 +179,7 @@ fileprivate struct EventTitleView: View {
     let events: [Event]
     let selectedEvent: Event?
     let action: (Event) -> Void
-
+    
     var body: some View {
         if !events.isEmpty, events.count > 1 {
             Menu {
@@ -197,7 +223,7 @@ fileprivate struct DownloadGuestlistButton: View {
 
 fileprivate struct QRCodeScannerButton: View {
     @Binding var isShowingQRCodeScanView: Bool
-
+    
     var body: some View {
         Button {
             HapticManager.playLightImpact()
@@ -220,7 +246,7 @@ fileprivate struct QRCodeScannerButton: View {
 
 fileprivate struct AddToGuestlistButton: View {
     @ObservedObject var viewModel: GuestlistViewModel
-
+    
     var body: some View {
         NavigationLink {
             GuestlistEntryForm()
@@ -241,3 +267,9 @@ fileprivate struct AddToGuestlistButton: View {
     }
 }
 
+
+struct GuestlistView_Previews: PreviewProvider {
+    static var previews: some View {
+        GuestlistView(viewModel: GuestlistViewModel(event: dev.mockEvent, host: dev.mockHost))
+    }
+}
