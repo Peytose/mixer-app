@@ -228,6 +228,9 @@
 		A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */; };
 		A6430453294FC3A00058C0F0 /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430452294FC3A00058C0F0 /* PreferenceKeys.swift */; };
 		A644FB502A03402B0028688E /* FriendRequestSentNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A644FB4F2A03402B0028688E /* FriendRequestSentNotification.swift */; };
+		A66946FB2AFDB86B009E95C0 /* HostSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66946FA2AFDB86B009E95C0 /* HostSettingsView.swift */; };
+		A66B7E022AFD70240026D26F /* HostDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B7E012AFD70240026D26F /* HostDashboardView.swift */; };
+		A66B7E042AFD70590026D26F /* HostLineGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B7E032AFD70590026D26F /* HostLineGraph.swift */; };
 		A66E671E29DF70F800AB355E /* EventFlowTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671D29DF70F800AB355E /* EventFlowTextField.swift */; };
 		A66E672029DF7ED500AB355E /* EventCreationActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671F29DF7ED500AB355E /* EventCreationActionButton.swift */; };
 		A66E672429DFCE9D00AB355E /* EventGuestsAndInvitations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */; };
@@ -473,6 +476,9 @@
 		A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignCodeExtensions.swift; sourceTree = "<group>"; };
 		A6430452294FC3A00058C0F0 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
 		A644FB4F2A03402B0028688E /* FriendRequestSentNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestSentNotification.swift; sourceTree = "<group>"; };
+		A66946FA2AFDB86B009E95C0 /* HostSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostSettingsView.swift; sourceTree = "<group>"; };
+		A66B7E012AFD70240026D26F /* HostDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDashboardView.swift; sourceTree = "<group>"; };
+		A66B7E032AFD70590026D26F /* HostLineGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostLineGraph.swift; sourceTree = "<group>"; };
 		A66E671D29DF70F800AB355E /* EventFlowTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFlowTextField.swift; sourceTree = "<group>"; };
 		A66E671F29DF7ED500AB355E /* EventCreationActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationActionButton.swift; sourceTree = "<group>"; };
 		A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventGuestsAndInvitations.swift; sourceTree = "<group>"; };
@@ -1261,6 +1267,7 @@
 		9CDFA5992A79AF2000EE0370 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A66B7E002AFD70100026D26F /* HostDashboard */,
 				9C05C1C72983BB2B00841100 /* HostDetailView.swift */,
 				A61D12B329B42D3D00AE0EED /* HostInfoView.swift */,
 				A6F003A929807646007E8CCA /* FeaturedHostCell.swift */,
@@ -1375,6 +1382,24 @@
 				A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */,
 			);
 			path = QRCodeAnimation;
+			sourceTree = "<group>";
+		};
+		A66946F92AFDB859009E95C0 /* HostSettings */ = {
+			isa = PBXGroup;
+			children = (
+				A66946FA2AFDB86B009E95C0 /* HostSettingsView.swift */,
+			);
+			path = HostSettings;
+			sourceTree = "<group>";
+		};
+		A66B7E002AFD70100026D26F /* HostDashboard */ = {
+			isa = PBXGroup;
+			children = (
+				A66946F92AFDB859009E95C0 /* HostSettings */,
+				A66B7E012AFD70240026D26F /* HostDashboardView.swift */,
+				A66B7E032AFD70590026D26F /* HostLineGraph.swift */,
+			);
+			path = HostDashboard;
 			sourceTree = "<group>";
 		};
 		A68971CB296E7E2E00289516 /* Tab Bar */ = {
@@ -1721,6 +1746,7 @@
 				9C2B898B299D8C200011FC56 /* UserCache.swift in Sources */,
 				A6D6FC8129DF595700BFCF52 /* MailViewModal.swift in Sources */,
 				9C3D48352987019600116C9E /* Float+Ext.swift in Sources */,
+				A66B7E042AFD70590026D26F /* HostLineGraph.swift in Sources */,
 				9CDFA5642A76DBD000EE0370 /* SideMenuOptionView.swift in Sources */,
 				9CDFA5C92A85BFB400EE0370 /* MapGuestlistButton.swift in Sources */,
 				A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */,
@@ -1730,6 +1756,7 @@
 				9C2091A12A96FF1B000E7664 /* Notification.swift in Sources */,
 				A6B9E65929518AB2009C936E /* StickyDateHeader.swift in Sources */,
 				9C01918729DE9A8B000F3D1F /* SelectionPicker.swift in Sources */,
+				A66B7E022AFD70240026D26F /* HostDashboardView.swift in Sources */,
 				9C3BADD7291F55D1009C8043 /* Constants.swift in Sources */,
 				A66E672029DF7ED500AB355E /* EventCreationActionButton.swift in Sources */,
 				A6C99FC029DA5BA00046D61B /* EnterBirthdayView.swift in Sources */,
@@ -1781,6 +1808,7 @@
 				9CDFC3D42A9F986E00BDFA60 /* ListCellActionButton.swift in Sources */,
 				9C58B3C629C96D650024CB7E /* CustomMapView.swift in Sources */,
 				9C2B899129A2DB2C0011FC56 /* QRCodeView.swift in Sources */,
+				A66946FB2AFDB86B009E95C0 /* HostSettingsView.swift in Sources */,
 				A6430448294FBEC80058C0F0 /* EventCreationViewModel.swift in Sources */,
 				9C8F0A732A92C71100A06D9A /* AlgoliaManager.swift in Sources */,
 			);

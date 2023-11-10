@@ -91,6 +91,8 @@ struct SideMenuView: View {
                     ManageMembersView()
                 case .manageEvents:
                     ManageEventsView()
+                case .dashboard:
+                    HostDashboardView()
                 }
             }
             .navigationDestination(for: SideMenuOption.self) { option in

@@ -11,7 +11,7 @@ enum HostSideMenuOption: Int, CaseIterable, Identifiable, MenuOption {
     case createEvent
     case manageMembers
     case manageEvents
-//    case analytics
+    case dashboard
 //    case settings
     
     var id: Int {
@@ -23,7 +23,7 @@ enum HostSideMenuOption: Int, CaseIterable, Identifiable, MenuOption {
             case .createEvent: return "Create Event"
             case .manageMembers: return "Manage Members"
             case .manageEvents: return "Manage Events"
-//            case .analytics: return "Analytics"
+            case .dashboard: return "Dashboard"
 //            case .settings: return "Settings"
         }
     }
@@ -33,7 +33,7 @@ enum HostSideMenuOption: Int, CaseIterable, Identifiable, MenuOption {
             case .createEvent: return "calendar.badge.plus"
             case .manageMembers: return "person.2.badge.gearshape.fill"
             case .manageEvents: return "calendar.badge.clock"
-//            case .analytics: return "chart.bar.xaxis"
+            case .dashboard: return "chart.bar.xaxis"
 //            case .settings: return "gearshape"
         }
     }
