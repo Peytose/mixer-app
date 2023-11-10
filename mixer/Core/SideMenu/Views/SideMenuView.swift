@@ -59,7 +59,8 @@ struct SideMenuView: View {
             
             // MARK: - Side menu options
             VStack(alignment: .leading) {
-                if settingsViewModel.user?.hostIdToMemberTypeMap != nil {
+                if let hostMap = settingsViewModel.user?.hostIdToMemberTypeMap,
+                   !hostMap.isEmpty {
                     ForEach(HostSideMenuOption.allCases) { option in
                         NavigationLink(value: option) {
                             SideMenuOptionView(option: option)

@@ -17,14 +17,14 @@ class HostService: ObservableObject {
                       for event: Event,
                       by host: Host,
                       completion: FirestoreCompletion) {
-        guard let currentUserId = UserService.shared.user?.id,
+        guard let currentUsername = UserService.shared.user?.username,
               let eventId = event.id else { return }
         
         self.inviteUser(eventId: eventId,
                         uid: uid,
-                        invitedById: currentUserId) { _ in
+                        invitedBy: currentUsername) { _ in
             NotificationsViewModel.uploadNotification(toUid: uid,
-                                                      type: .guestlistJoined,
+                                                      type: .guestlistAdded,
                                                       host: host,
                                                       event: event)
         }
@@ -33,10 +33,10 @@ class HostService: ObservableObject {
     
     func inviteUser(eventId: String,
                     uid: String,
-                    invitedById: String,
+                    invitedBy: String,
                     completion: FirestoreCompletion) {
         let data = ["status": GuestStatus.invited.rawValue,
-                    "invitedBy": invitedById,
+                    "invitedBy": invitedBy,
                     "timestamp": Timestamp()] as [String: Any]
         
         COLLECTION_EVENTS
