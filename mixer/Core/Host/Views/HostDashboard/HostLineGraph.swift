@@ -35,13 +35,6 @@ struct HostLineGraph: View {
             }
             .chartXAxis(.hidden)
             .chartYAxis(.hidden)
-//            .chartYAxis {
-//                AxisMarks(
-//                    values: [0, 100]
-//                ) {
-//                    AxisValueLabel(format: Decimal.FormatStyle.Percent.percent.scale(1))
-//                }
-//            }
         }
     }
 }

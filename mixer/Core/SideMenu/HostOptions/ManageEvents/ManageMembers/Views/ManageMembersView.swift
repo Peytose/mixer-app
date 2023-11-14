@@ -49,16 +49,17 @@ struct ManageMembersView: View {
             } message: {
                 Text("")
             }
+            .padding(.top, 50)
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                PresentationBackArrowButton()
-            }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                AddMemberButton(showAlert: $viewModel.isShowingUsernameInputAlert)
-            }
+        .toolbar(.hidden)
+        .overlay(alignment: .topLeading) {
+            PresentationBackArrowButton()
+                .padding()
+        }
+        .overlay(alignment: .topTrailing) {
+            AddMemberButton(showAlert: $viewModel.isShowingUsernameInputAlert)
+                .padding()
         }
         .alert(item: $viewModel.currentAlert) { alertType in
             hideKeyboard()

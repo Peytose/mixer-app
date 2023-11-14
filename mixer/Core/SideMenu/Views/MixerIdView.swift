@@ -23,7 +23,7 @@ struct MixerIdView: View {
         [Color.pink, Color.purple],
         [Color.mint, Color.green]
     ]
-
+    
     
     var body: some View {
         ZStack {
@@ -55,10 +55,17 @@ struct MixerIdView: View {
                                 .foregroundColor(Color.theme.secondaryBackgroundColor)
                         }
                     
-                    Text(user.firstName)
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
+                    VStack {
+                        Text(user.firstName)
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                        
+                        Text("@\(user.username)")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+                    }
                     
                     image
                         .cornerRadius(30)
@@ -76,10 +83,23 @@ struct MixerIdView: View {
         }
         .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarLeading) {
                 PresentationBackArrowButton()
                     .shadow(color: .black, radius: 2)
+            }
+            
+            ToolbarItem(placement: .topBarTrailing) {
+                ShareLink(item: "https://rococo-gumdrop-0f32da.netlify.app") {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.body)
+                        .foregroundColor(.black)
+                        .padding(6)
+                        .background(.white)
+                        .clipShape(Circle())
+                        .shadow(color: .black, radius: 6)
+                }
             }
         }
     }
 }
+

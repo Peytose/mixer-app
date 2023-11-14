@@ -9,37 +9,57 @@ import SwiftUI
 
 struct HostDashboardView: View {
     @State private var showSettings = false
-    
+
     var body: some View {
-        //        NavigationView {
-        ScrollView(showsIndicators: false) {
-            VStack {
-                tabs
-                
+//        NavigationView {
+            ScrollView(showsIndicators: false) {
                 VStack {
-                    generalInsights
+                    overview
                     
-                    //                        eventAnalytics
+                    VStack {
+                        generalInsights
+                        
+                        //                        eventAnalytics
+                    }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
+                .navigationTitle("MIT Theta Chi")
+                .navigationBarTitleDisplayMode(.large)
+                .padding(.bottom, 100)
             }
-            .navigationTitle("MIT Theta Chi")
-            .navigationBarTitleDisplayMode(.large)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color.theme.backgroundColor)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { showSettings.toggle() }, label: {
-                    Image(systemName: "gearshape")
-                })
-                .buttonStyle(.plain)
+            .background(Color.theme.backgroundColor)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { showSettings.toggle() }, label: {
+                        Image(systemName: "gearshape")
+                    })
+                    .buttonStyle(.plain)
+                }
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    PresentationBackArrowButton()
+                }
             }
-        }
-        .sheet(isPresented: $showSettings) {
-            HostSettingsView()
-        }
-        //        }
+            .sheet(isPresented: $showSettings) {
+                HostSettingsView()
+            }
+            .overlay {
+                NavigationLink(destination: EventCreationFlowView()) {
+                    Image(systemName: "plus")
+                        .font(.title)
+                        .foregroundColor(.black)
+                        .padding()
+                        .background(.white)
+                        .clipShape(Circle())
+                        .shadow(color: .black, radius: 6)
+                }
+                .frame(maxWidth: DeviceTypes.ScreenSize.width,
+                       maxHeight: DeviceTypes.ScreenSize.height,
+                       alignment: .bottomTrailing)
+                .padding()
+            }
+//        }
     }
 }
 
@@ -51,7 +71,7 @@ struct HostDashboardView_Previews: PreviewProvider {
 }
 
 extension HostDashboardView {
-    var tabs: some View {
+    var overview: some View {
         Overview()
     }
     
@@ -63,7 +83,6 @@ extension HostDashboardView {
         } content2: {
             SquareViewContainer(title: "User Ratings", subtitle: "Sep 1 - Now", value: "4.6", valueTitle: "stars") {
                 HostLineGraph()
-                
             }
         } content3: {
             SquareViewContainer(title: "Guests Served", subtitle: "Sep 1 - Now", value: "4500", valueTitle: "guests", width: DeviceTypes.ScreenSize.width * 0.92) {
@@ -147,7 +166,7 @@ private struct Overview: View {
                 NavigationLink(destination: { ManageEventsView() }) {
                     HStack {
                         Spacer()
-                        Text("See more")
+                        Text("See all events")
                             .foregroundStyle(.white)
                         
                         Image(systemName: "chevron.right")
@@ -158,14 +177,6 @@ private struct Overview: View {
             }
             .background(Color.theme.secondaryBackgroundColor)
             .cornerRadius(10)
-            
-            //            Rectangle()
-            //                .overlay {
-            //                    Text("Ratings Graph")
-            //                        .font(.title2)
-            //                        .fontWeight(.semibold)
-            //                        .foregroundColor(.black)
-            //                }
         }
         .padding()
         .frame(width: DeviceTypes.ScreenSize.width, height: 360, alignment: .top)

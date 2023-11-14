@@ -72,6 +72,7 @@ struct GuestlistView: View {
                     
                     Spacer()
                 }
+                .padding(.bottom, 150)
             }
             .navigationBarBackButtonHidden(true)
             .overlay(alignment: .bottom) {

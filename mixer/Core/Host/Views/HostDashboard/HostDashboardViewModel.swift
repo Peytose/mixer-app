@@ -5,4 +5,13 @@
 //  Created by Jose Martinez on 11/13/23.
 //
 
-import Foundation
+import SwiftUI
+import Firebase
+import FirebaseFirestoreSwift
+import CoreLocation
+import MapKit
+
+@MainActor
+final class HostDashboardViewModel: ObservableObject {
+
+}

@@ -86,12 +86,6 @@ struct SideMenuView: View {
             }
             .navigationDestination(for: HostSideMenuOption.self) { option in
                 switch option {
-                case .createEvent:
-                    EventCreationFlowView()
-                case .manageMembers:
-                    ManageMembersView()
-                case .manageEvents:
-                    ManageEventsView()
                 case .dashboard:
                     HostDashboardView()
                 }

@@ -229,6 +229,7 @@
 		A6430453294FC3A00058C0F0 /* PreferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430452294FC3A00058C0F0 /* PreferenceKeys.swift */; };
 		A644FB502A03402B0028688E /* FriendRequestSentNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A644FB4F2A03402B0028688E /* FriendRequestSentNotification.swift */; };
 		A66946FB2AFDB86B009E95C0 /* HostSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66946FA2AFDB86B009E95C0 /* HostSettingsView.swift */; };
+		A66946FD2B0308BB009E95C0 /* HostDashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66946FC2B0308BB009E95C0 /* HostDashboardViewModel.swift */; };
 		A66B7E022AFD70240026D26F /* HostDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B7E012AFD70240026D26F /* HostDashboardView.swift */; };
 		A66B7E042AFD70590026D26F /* HostLineGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66B7E032AFD70590026D26F /* HostLineGraph.swift */; };
 		A66E671E29DF70F800AB355E /* EventFlowTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671D29DF70F800AB355E /* EventFlowTextField.swift */; };
@@ -477,6 +478,7 @@
 		A6430452294FC3A00058C0F0 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
 		A644FB4F2A03402B0028688E /* FriendRequestSentNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendRequestSentNotification.swift; sourceTree = "<group>"; };
 		A66946FA2AFDB86B009E95C0 /* HostSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostSettingsView.swift; sourceTree = "<group>"; };
+		A66946FC2B0308BB009E95C0 /* HostDashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDashboardViewModel.swift; sourceTree = "<group>"; };
 		A66B7E012AFD70240026D26F /* HostDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDashboardView.swift; sourceTree = "<group>"; };
 		A66B7E032AFD70590026D26F /* HostLineGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostLineGraph.swift; sourceTree = "<group>"; };
 		A66E671D29DF70F800AB355E /* EventFlowTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFlowTextField.swift; sourceTree = "<group>"; };
@@ -1398,6 +1400,7 @@
 				A66946F92AFDB859009E95C0 /* HostSettings */,
 				A66B7E012AFD70240026D26F /* HostDashboardView.swift */,
 				A66B7E032AFD70590026D26F /* HostLineGraph.swift */,
+				A66946FC2B0308BB009E95C0 /* HostDashboardViewModel.swift */,
 			);
 			path = HostDashboard;
 			sourceTree = "<group>";
@@ -1801,6 +1804,7 @@
 				9C2B896B298F873E0011FC56 /* EventCache.swift in Sources */,
 				9C2B8986299C55450011FC56 /* Set+Ext.swift in Sources */,
 				9C849A452A54823B006FDCDB /* View+Ext.swift in Sources */,
+				A66946FD2B0308BB009E95C0 /* HostDashboardViewModel.swift in Sources */,
 				9C20AF252A74A4E100F057BD /* University.swift in Sources */,
 				9C58B3AD29C8E5CA0024CB7E /* TextFieldDynamicWidth.swift in Sources */,
 				9C93319F2925B0390079E039 /* AuthFlow.swift in Sources */,

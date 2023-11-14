@@ -22,12 +22,11 @@ struct HostSettingsView: View {
                     addressSection
                 }
                 .scrollContentBackground(.hidden)
+                .scrollIndicators(.hidden)
                 .listStyle(.insetGrouped)
             }
             .background(Color.theme.backgroundColor)
-            .navigationBar(title: "Settings", displayMode: .inline)
-//            .navigationBarBackButtonHidden(true)
-            //        .cropImagePicker(show: $imagePickerPresented, croppedImage: $viewModel.selectedImage)
+            .navigationBar(title: "Host Settings", displayMode: .large)
         }
     }
 }
@@ -35,27 +34,23 @@ struct HostSettingsView: View {
 extension HostSettingsView {
     var nameSection: some View {
         SettingsSection(header: "Name") {
-            SettingsCell(value: "MIT Theta Chi") {
-            }
+            SettingsCell(value: "MIT Theta Chi", isEditable: true) {}
         }
     }
     
     var aboutSection: some View {
         SettingsSection(header: "About") {
-            SettingsCell(title: "Username", value: "@mitthetachi", isLink: false) {}
-            SettingsCell(title: "Instagram", value: "@mitthetachi") {
-                Text("Dog")
-            }
-            SettingsCell(title: "Website", value: "https://ox.mit.edu/main/") {
-                Text("Dog")
-            }
-            SettingsCell(title: "Email", value: "mitthetachi@mit.edu") {
-                Text("Dog")
-            }
-            SettingsCell(value: "Description") {
-                Text("Dog")
-            }
-            SettingsCell(value: "Edit Members") {
+            SettingsCell(title: "Username", value: "@mitthetachi", isEditable: false) {}
+            
+            SettingsCell(title: "Instagram", value: "@mitthetachi", isEditable: true) {}
+            
+            SettingsCell(title: "Website", value: "https://ox.mit.edu/main/", isEditable: true){}
+            
+            SettingsCell(title: "Email", value: "mitthetachi@mit.edu", isEditable: true){}
+            
+            SettingsCell(value: "Description", isLink: true){}
+            
+            SettingsCell(value: "Edit Members", isLink: true){
                 ManageMembersView()
             }
         }
@@ -63,8 +58,7 @@ extension HostSettingsView {
     
     var addressSection: some View {
         SettingsSection(header: "Location", footer: "Choosing public allows mixer to displau your organization's location on the map and on your profile") {
-            SettingsCell(value: "528 Beacon St Boston, MA 02215") {
-            }
+            SettingsCell(value: "528 Beacon St Boston, MA 02215") {}
             HStack {
                 Text("Public")
                 Spacer()
@@ -127,18 +121,43 @@ fileprivate struct SettingsSection<Content: View>: View {
 fileprivate struct SettingsCell<Content: View>: View {
     var title: String
     var value: String
+    var isEditable: Bool
     var isLink: Bool
     var content: Content
     
-    init(title: String = "", value: String, isLink: Bool = true, @ViewBuilder content: () -> Content) {
+    init(title: String = "", value: String, isEditable: Bool = false, isLink: Bool = false, @ViewBuilder content: () -> Content) {
         self.title = title
         self.value = value
+        self.isEditable = isEditable
         self.isLink = isLink
         self.content = content()
     }
     
     var body: some View {
-        if isLink {
+        if isEditable {
+            HStack {
+                if !title.isEmpty {
+                    Text(title)
+                    Spacer()
+                }
+                
+                
+                
+                Text(value)
+                    .foregroundStyle(!title.isEmpty ? .secondary : Color.white)
+                
+                if title.isEmpty {
+                    Spacer()
+                }
+                
+                Image(systemName: "pencil")
+                    .foregroundColor(.secondary)
+                
+            }
+            .lineLimit(1)
+            .minimumScaleFactor(0.8)
+            
+        } else if isLink {
             NavigationLink(destination: content) {
                 HStack {
                     if !title.isEmpty {
@@ -166,48 +185,6 @@ fileprivate struct SettingsCell<Content: View>: View {
             }
             .lineLimit(1)
             .minimumScaleFactor(0.8)
-        }
-    }
-}
-
-fileprivate struct LogoutSection: View {
-    var body: some View {
-        Section {
-            Button { AuthViewModel.shared.signOut() } label: {
-                Text("Logout").foregroundColor(.blue)
-            }
-            .listRowBackground(Color.theme.secondaryBackgroundColor)
-        }
-    }
-}
-
-fileprivate struct FooterSection: View {
-    let text: String
-    
-    var body: some View {
-        Section(footer: EasterEggView(text: text)) { }
-    }
-}
-
-fileprivate struct EasterEggView: View {
-    let text: String
-    
-    var body: some View {
-        HStack {
-            Spacer()
-            
-            VStack {
-                Text(text)
-                
-                Text("🦫 🐏")
-            }
-            .font(.body)
-            .foregroundColor(.secondary)
-            .multilineTextAlignment(.center)
-            .offset(x: 0, y: 110)
-            .background(Color.clear)
-            
-            Spacer()
         }
     }
 }
