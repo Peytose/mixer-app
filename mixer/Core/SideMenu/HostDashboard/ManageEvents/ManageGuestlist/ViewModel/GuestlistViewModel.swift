@@ -97,9 +97,8 @@ class GuestlistViewModel: ObservableObject {
         let totalGuestCount = self.sectionedGuests.values.reduce(0) { $0 + $1.count }
         
         // Return the formatted string with correct singular or plural form
-        return "\(totalGuestCount) guest\(totalGuestCount != 1 ? "s" : "")"
+        return "Invited: \(totalGuestCount)"
     }
-    
     
     func selectUniversity(_ university: University) {
         self.selectedUniversity = university

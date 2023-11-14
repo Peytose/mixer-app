@@ -11,6 +11,8 @@ import Kingfisher
 struct ManageEventCell: View {
     @ObservedObject var viewModel: ManageEventsViewModel
     let event: Event
+    @State private var showActionSheet = false
+    @State private var showEditEventView = false
     
     var body: some View {
         KFImage(URL(string: event.eventImageUrl))
@@ -52,11 +54,25 @@ struct ManageEventCell: View {
             }
             .overlay(alignment: .topTrailing) {
                 EllipsisButton(stroke: 0) {
-                    //
+                    showActionSheet.toggle()
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 13))
             .frame(height: 175)
+            .confirmationDialog("Select an action", isPresented: $showActionSheet, titleVisibility: .hidden) {
+                Button("Edit Event") {
+                    showEditEventView.toggle()
+                }
+
+                Button("Delete Event", role: .destructive) {
+    //                selection = "Green"
+                }
+
+                Button("Cancel", role: .cancel) {}
+            }
+            .sheet(isPresented: $showEditEventView) {
+                EditEventView()
+            }
     }
 }
 

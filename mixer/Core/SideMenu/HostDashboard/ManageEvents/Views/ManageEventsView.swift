@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ManageEventsView: View {
     @StateObject var viewModel = ManageEventsViewModel()
-    
+
     var body: some View {
         ZStack {
             Color.theme.backgroundColor

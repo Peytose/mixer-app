@@ -40,6 +40,23 @@ struct GuestlistView: View {
                     StickyHeaderView(items: GuestStatus.allCases,
                                      selectedItem: $viewModel.selectedGuestSection)
                     
+                    // Section count text
+                    HStack {
+                        Text(viewModel.getGuestlistSectionCountText())
+                        
+                        Spacer()
+                        
+                        Text("Checked-in: 0")
+                        
+                        Spacer()
+                        
+                        Text("Ratio: 8:1")
+                    }
+                    .font(.headline)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
+                    .padding(.horizontal)
+                    
                     switch viewModel.viewState {
                     case .loading:
                         LoadingView()
@@ -47,13 +64,6 @@ struct GuestlistView: View {
                         emptyView
                     case .list:
                         List {
-                            // Section count text
-                            Text(viewModel.getGuestlistSectionCountText())
-                                .secondaryHeading(color: .secondary)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.75)
-                                .listRowBackground(Color.theme.secondaryBackgroundColor)
-                            
                             // Loop over each section in sectionedGuests
                             ForEach(viewModel.sectionedGuests.keys.sorted(), id: \.self) { key in
                                 Section(header: Text(key)) {

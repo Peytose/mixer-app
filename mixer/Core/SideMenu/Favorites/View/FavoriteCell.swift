@@ -15,17 +15,6 @@ struct FavoriteCell: View {
     
     var body: some View {
         HStack {
-            if event.endDate > Timestamp() {
-                ParticleEffectButton(systemImage: "heart.fill",
-                                     status: event.isFavorited ?? false,
-                                     activeTint: .pink,
-                                     inActiveTint: .secondary,
-                                     frameSize: 35) {
-                    viewModel.toggleFavoriteStatus(event)
-                }
-                                     .fixedSize()
-            }
-            
             NavigationLink(value: event) {
                 HStack {
                     KFImage(URL(string: event.eventImageUrl))
@@ -46,18 +35,30 @@ struct FavoriteCell: View {
                             .foregroundColor(event.endDate < Timestamp() ? .pink : .secondary)
                             .lineLimit(2)
                             .minimumScaleFactor(0.8)
+                            .multilineTextAlignment(.leading)
                     }
                 }
             }
             
             Spacer()
             
-            ListCellActionButton(text: EventUserActionState(event: event).favoriteText,
-                                 isSecondaryLabel: EventUserActionState(event: event).isSecondaryLabel) {
-                let state = EventUserActionState(event: event)
-                print("DEBUG: State \(state)")
-                viewModel.actionForState(state, event: event)
+            if event.endDate > Timestamp() {
+                ParticleEffectButton(systemImage: "heart.fill",
+                                     status: event.isFavorited ?? false,
+                                     activeTint: .pink,
+                                     inActiveTint: .secondary,
+                                     frameSize: 35) {
+                    viewModel.toggleFavoriteStatus(event)
+                }
+                                     .fixedSize()
             }
+            
+//            ListCellActionButton(text: EventUserActionState(event: event).favoriteText,
+//                                 isSecondaryLabel: EventUserActionState(event: event).isSecondaryLabel) {
+//                let state = EventUserActionState(event: event)
+//                print("DEBUG: State \(state)")
+//                viewModel.actionForState(state, event: event)
+//            }
         }
         .padding(.horizontal)
     }

@@ -96,7 +96,6 @@ struct MixerIdView: View {
                         .padding(6)
                         .background(.white)
                         .clipShape(Circle())
-                        .shadow(color: .black, radius: 6)
                 }
             }
         }

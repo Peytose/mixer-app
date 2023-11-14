@@ -32,7 +32,7 @@ struct ReviewCreatedEventView: View {
                         EventDetailRow(title: "Event Type",
                                        value: viewModel.type.description)
                         
-                        HStack(alignment: .center) {
+                        HStack(alignment: .top) {
                             Text("Description:")
                                 .secondarySubheading()
                             
@@ -44,7 +44,7 @@ struct ReviewCreatedEventView: View {
                         }
                         
                         if viewModel.note != "" {
-                            HStack(alignment: .center) {
+                            HStack(alignment: .top) {
                                 Text("Note")
                                     .secondarySubheading()
                                 
