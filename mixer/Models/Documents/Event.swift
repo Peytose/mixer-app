@@ -58,6 +58,7 @@ struct Event: Hashable, Identifiable, Codable, Equatable {
 
     // MARK: - Event Details
     var amenities: [EventAmenity]?
+    var bathroomCount: Int?
     var isCheckInViaMixer: Bool
     var containsAlcohol: Bool
 

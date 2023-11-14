@@ -8,6 +8,8 @@
 import SwiftUI
 import FirebaseAuth
 import Kingfisher
+import FirebaseFirestoreSwift
+import FirebaseFirestore
 
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel

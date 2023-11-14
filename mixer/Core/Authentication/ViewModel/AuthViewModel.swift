@@ -196,11 +196,9 @@ extension AuthViewModel {
 
     
     func register() {
-        guard let image = image else { return }
+        guard let image = image, let uid = Auth.auth().currentUser?.uid else { return }
         
         ImageUploader.uploadImage(image: image, type: .profile) { imageUrl in
-            guard let uid = Auth.auth().currentUser?.uid else { return }
-            
             let user = User(dateJoined: Timestamp(),
                             firstName: self.firstName.capitalized,
                             lastName: self.lastName.capitalized,

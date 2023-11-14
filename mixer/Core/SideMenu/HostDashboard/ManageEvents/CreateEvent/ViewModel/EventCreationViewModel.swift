@@ -280,13 +280,17 @@ class EventCreationViewModel: NSObject, ObservableObject {
                               isInviteOnly: self.isInviteOnly,
                               isManualApprovalEnabled: self.isManualApprovalEnabled,
                               cost: nil)
-
+            
             if !self.note.isEmpty {
                 event.note = self.note
             }
-
+            
             if !self.altAddress.isEmpty {
                 event.altAddress = self.altAddress
+            }
+            
+            if self.bathroomCount != 0 {
+                event.bathroomCount = self.bathroomCount
             }
 
             if self.cutoffDate >= Date.now {
