@@ -75,6 +75,22 @@ class UserService: ObservableObject {
     }
     
     
+    func fetchUniversityId(for name: String,
+                           completion: @escaping (String) -> Void) {
+        COLLECTION_UNIVERSITIES
+            .whereField("shortName", isEqualTo: name)
+            .getDocuments { snapshots, error in
+                if let error = error {
+                    print("DEBUG: Error fetching university. \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let document = snapshots?.documents.first else { return }
+                completion(document.documentID)
+            }
+    }
+    
+    
     func fetchUniversity(with id: String,
                          completion: @escaping (University) -> Void) {
         COLLECTION_UNIVERSITIES

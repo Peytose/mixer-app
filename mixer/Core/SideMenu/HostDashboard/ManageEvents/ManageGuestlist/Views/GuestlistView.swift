@@ -12,12 +12,16 @@ import CodeScanner
 import Combine
 
 struct GuestlistView: View {
-    @ObservedObject var viewModel: GuestlistViewModel
+    @StateObject var viewModel: GuestlistViewModel
     @State private var isShowingUserInfoModal  = false
     @State private var isShowingQRCodeScanView = false
     @State private var isTorchOn               = false
     @State private var searchText              = ""
 //    @State private var showPreview             = false
+    
+    init(event: Event) {
+        self._viewModel = StateObject(wrappedValue: GuestlistViewModel(event: event))
+    }
     
     var body: some View {
             ZStack {
@@ -60,6 +64,9 @@ struct GuestlistView: View {
                                     }
                                 }
                             }
+                            
+                            Spacer(minLength: 100)
+                                .listRowBackground(Color.clear)
                         }
                         .scrollContentBackground(.hidden)
                         .searchable(text: $searchText, prompt: "Search guests..")
@@ -72,7 +79,6 @@ struct GuestlistView: View {
                     
                     Spacer()
                 }
-                .padding(.bottom, 150)
             }
             .navigationBarBackButtonHidden(true)
             .overlay(alignment: .bottom) {
@@ -83,21 +89,6 @@ struct GuestlistView: View {
                         event: viewModel.event,
                         guests: viewModel.guests.filter({ $0.status == .checkedIn})).renderPDF(title: viewModel.getPdfTitle())
                     )
-                    
-//                    Image(systemName: "person.2")
-//                        .resizable()
-//                        .scaledToFit()
-//                        .foregroundColor(.black)
-//                        .frame(width: 30, height: 30)
-//                        .padding(13)
-//                        .background {
-//                            Circle()
-//                                .foregroundColor(Color.white)
-//                                .shadow(radius: 20)
-//                        }
-//                        .onTapGesture {
-//                            showPreview.toggle()
-//                        }
                     
                     Spacer()
                     
@@ -271,6 +262,6 @@ fileprivate struct AddToGuestlistButton: View {
 
 struct GuestlistView_Previews: PreviewProvider {
     static var previews: some View {
-        GuestlistView(viewModel: GuestlistViewModel(event: dev.mockEvent, host: dev.mockHost))
+        GuestlistView(event: dev.mockEvent)
     }
 }

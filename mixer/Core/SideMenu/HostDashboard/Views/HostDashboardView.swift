@@ -11,55 +11,53 @@ struct HostDashboardView: View {
     @State private var showSettings = false
 
     var body: some View {
-//        NavigationView {
-            ScrollView(showsIndicators: false) {
-                VStack {
-                    overview
-                    
-                    VStack {
-                        generalInsights
-                        
-                        //                        eventAnalytics
-                    }
-                    .padding(.horizontal)
-                }
-                .navigationTitle("MIT Theta Chi")
-                .navigationBarTitleDisplayMode(.large)
-                .padding(.bottom, 100)
-            }
-            .background(Color.theme.backgroundColor)
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { showSettings.toggle() }, label: {
-                        Image(systemName: "gearshape")
-                    })
-                    .buttonStyle(.plain)
-                }
+        ScrollView(showsIndicators: false) {
+            VStack {
+                overview
                 
-                ToolbarItem(placement: .navigationBarLeading) {
-                    PresentationBackArrowButton()
+                VStack {
+                    generalInsights
+                    
+                    //                        eventAnalytics
                 }
+                .padding(.horizontal)
             }
-            .sheet(isPresented: $showSettings) {
-                HostSettingsView()
+            .navigationTitle("MIT Theta Chi")
+            .navigationBarTitleDisplayMode(.large)
+            .padding(.bottom, 100)
+        }
+        .background(Color.theme.backgroundColor)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: { showSettings.toggle() }, label: {
+                    Image(systemName: "gearshape")
+                })
+                .buttonStyle(.plain)
             }
-            .overlay {
-                NavigationLink(destination: EventCreationFlowView()) {
-                    Image(systemName: "plus")
-                        .font(.title)
-                        .foregroundColor(.black)
-                        .padding()
-                        .background(.white)
-                        .clipShape(Circle())
-                        .shadow(color: .black, radius: 6)
-                }
-                .frame(maxWidth: DeviceTypes.ScreenSize.width,
-                       maxHeight: DeviceTypes.ScreenSize.height,
-                       alignment: .bottomTrailing)
-                .padding()
+            
+            ToolbarItem(placement: .navigationBarLeading) {
+                PresentationBackArrowButton()
             }
-//        }
+        }
+        .sheet(isPresented: $showSettings) {
+            HostSettingsView()
+        }
+        .overlay {
+            NavigationLink(destination: EventCreationFlowView()) {
+                Image(systemName: "plus")
+                    .font(.title)
+                    .foregroundColor(.black)
+                    .padding()
+                    .background(.white)
+                    .clipShape(Circle())
+                    .shadow(color: .black, radius: 6)
+            }
+            .frame(maxWidth: DeviceTypes.ScreenSize.width,
+                   maxHeight: DeviceTypes.ScreenSize.height,
+                   alignment: .bottomTrailing)
+            .padding()
+        }
     }
 }
 
@@ -160,9 +158,11 @@ private struct Overview: View {
                     }
                     .foregroundStyle(.white)
                 }
+                
                 Spacer()
                 
                 Divider()
+                
                 NavigationLink(destination: { ManageEventsView() }) {
                     HStack {
                         Spacer()
@@ -190,7 +190,6 @@ private struct OtherTab: View {
             Text("Overview")
                 .font(.title3.bold())
                 .padding(.bottom, 5)
-            
             
             Text("$12,524")
                 .font(.largeTitle)

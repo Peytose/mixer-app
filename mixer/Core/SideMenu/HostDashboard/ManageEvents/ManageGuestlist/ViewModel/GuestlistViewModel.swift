@@ -46,15 +46,14 @@ class GuestlistViewModel: ObservableObject {
     
     @Published private(set) var guests = [EventGuest]()
     
-    private let service = HostService.shared
+    private let userService = UserService.shared
+    private let hostService = HostService.shared
     private var listener: ListenerRegistration?
-    private let host: Host?
     
-    init(event: Event, host: Host?) {
+    init(event: Event) {
         self.event = event
-        self.host = host
-        
         self.addGuestlistObserverForEvent()
+        print("DEBUG: Initialized guestlist!!")
     }
     
     deinit {
@@ -158,6 +157,8 @@ extension GuestlistViewModel {
     
     @MainActor
     private func fetchAndAddUserToGuestlist(uid: String, status: GuestStatus) {
+        guard let host = self.userService.user?.currentHost else { return }
+        
         COLLECTION_USERS
             .document(uid)
             .getDocument { snapshot, error in
@@ -170,7 +171,7 @@ extension GuestlistViewModel {
                       let eventId = self.event.id,
                       let userId = user.id else { return }
                 
-                self.service.addUserToGuestlist(eventId: eventId,
+                self.hostService.addUserToGuestlist(eventId: eventId,
                                                 user: user,
                                                 status: status) { error in
                     if let error = error {
@@ -180,7 +181,7 @@ extension GuestlistViewModel {
                     
                     NotificationsViewModel.uploadNotification(toUid: userId,
                                                               type: .guestlistAdded,
-                                                              host: self.host,
+                                                              host: host,
                                                               event: self.event)
                 }
             }
@@ -219,9 +220,9 @@ extension GuestlistViewModel {
     
     func approveGuest(_ guest: EventGuest) {
         guard let guestId = guest.id,
-              let host = self.host else { return }
+              let host = UserService.shared.user?.currentHost else { return }
         
-        self.service.approveGuest(with: guestId,
+        self.hostService.approveGuest(with: guestId,
                                   for: self.event,
                                   by: host) { error in
             if let error = error {
@@ -242,6 +243,8 @@ extension GuestlistViewModel {
                                             status: GuestStatus,
                                             invitedBy: String? = nil,
                                             checkedInBy: String? = nil) {
+        guard let host = self.userService.user?.currentHost else { return }
+        
         COLLECTION_USERS
             .whereField("username", isEqualTo: self.username)
             .limit(to: 1)
@@ -254,7 +257,7 @@ extension GuestlistViewModel {
                 guard let user = try? snapshot?.documents.first?.data(as: User.self),
                       let userId = user.id else { return }
                 
-                self.service.addUserToGuestlist(eventId: eventId,
+                self.hostService.addUserToGuestlist(eventId: eventId,
                                                 user: user,
                                                 status: status,
                                                 invitedBy: invitedBy,
@@ -267,10 +270,72 @@ extension GuestlistViewModel {
                     
                     NotificationsViewModel.uploadNotification(toUid: userId,
                                                               type: .guestlistAdded,
-                                                              host: self.host,
+                                                              host: host,
                                                               event: self.event)
                 }
             }
+    }
+    
+    
+    func uploadGuestlistJSON() {
+        print("DEBUG: Uploading json guestlist... ")
+        let eventId = ""
+        
+        guard let fileURL = Bundle.main.url(forResource: "guestlist", withExtension: "json") else {
+            print("File URL not found")
+            return
+        }
+
+        do {
+            let jsonData = try Data(contentsOf: fileURL)
+            if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: String]] {
+                for guestDict in jsonArray {
+                    print("DEBUG: Guest dict: \(guestDict)")
+                    processAndUploadGuest(guestDict, forEvent: eventId)
+                }
+            }
+        } catch {
+            print("Error reading or parsing JSON: \(error)")
+        }
+    }
+
+    private func processAndUploadGuest(_ guestDict: [String: String], forEvent eventId: String) {
+        guard let nameField = guestDict["Name"],
+              let schoolShortName = guestDict["School"],
+              let invitedBy = guestDict["Brother"] else { return }
+
+        let isTwentyOnePlus = (guestDict["21+"] != "N")
+        let age = isTwentyOnePlus ? 21 : 20
+
+        let names = nameField.components(separatedBy: "\n")
+        for name in names {
+            uploadGuestWithName(name, schoolShortName: schoolShortName, age: age, invitedBy: invitedBy, forEvent: eventId)
+        }
+    }
+
+    private func uploadGuestWithName(_ name: String, schoolShortName: String, age: Int, invitedBy: String, forEvent eventId: String) {
+        UserService.shared.fetchUniversityId(for: schoolShortName) { universityId in
+            let guest = EventGuest(name: name.trimmingCharacters(in: .whitespacesAndNewlines).capitalized,
+                                   universityId: universityId,
+                                   age: age,
+                                   gender: .preferNotToSay,  // Replace with actual gender if available
+                                   status: .invited,  // Replace with appropriate status if different
+                                   invitedBy: invitedBy,
+                                   timestamp: Timestamp())
+
+            guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
+            
+            COLLECTION_EVENTS
+                .document(eventId)
+                .collection("guestlist")
+                .addDocument(data: encodedGuest) { error in
+                    if let error = error {
+                        print("Error uploading guest: \(error.localizedDescription)")
+                    }
+                    
+                    print("DEBUG: UPLOADED GUESTS!")
+                }
+        }
     }
 
     
@@ -308,7 +373,7 @@ extension GuestlistViewModel {
     func checkIn() {
         guard let eventId = self.event.id, let guestId = selectedGuest?.id else { return }
         
-        service.checkInUser(eventId: eventId, uid: guestId) { error in
+        hostService.checkInUser(eventId: eventId, uid: guestId) { error in
             if let error = error {
                 print("DEBUG: Error checking guest in. \(error.localizedDescription)")
                 return
@@ -331,10 +396,10 @@ extension GuestlistViewModel {
         
         if selectedGuest.status == .checkedIn && !self.isShowingUserInfoModal {
             confirmationAlertItem = AlertContext.confirmRemoveMember {
-                self.service.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in }
+                self.hostService.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in }
             }
         } else if selectedGuest.status == .invited || selectedGuest.status == .requested || self.isShowingUserInfoModal {
-            self.service.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in
+            self.hostService.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in
                 self.isShowingUserInfoModal = false
             }
         }

@@ -16,7 +16,7 @@ struct ManageEventsView: View {
                 .ignoresSafeArea()
             
             VStack {
-                Text(viewModel.selectedHost?.name ?? "No host found.")
+                Text(UserService.shared.user?.currentHost?.name ?? "No host found.")
                     .primaryHeading()
                     .multilineTextAlignment(.trailing)
                 
@@ -27,8 +27,7 @@ struct ManageEventsView: View {
                     LazyVGrid(columns: Array(repeating: GridItem(spacing: .zero), count: 2), spacing: 10) {
                         ForEach(viewModel.eventsForSelectedState) { event in
                             NavigationLink {
-                                GuestlistView(viewModel: GuestlistViewModel(event: event,
-                                                                            host: viewModel.selectedHost))
+                                GuestlistView(event: event)
                             } label: {
                                 ManageEventCell(viewModel: viewModel, event: event)
                             }

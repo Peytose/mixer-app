@@ -43,12 +43,6 @@ class ManageEventsViewModel: ObservableObject {
     }
     @Published var selectedEvent: Event?
     @Published var eventsForSelectedState: [Event] = []
-    @Published var selectedHost: Host? {
-        didSet {
-            fetchHostEvents()
-        }
-    }
-
     @Published var currentState: EventState = .ongoing {
         didSet {
             updateEventsForSelectedState()
@@ -58,7 +52,7 @@ class ManageEventsViewModel: ObservableObject {
     private var eventManager = EventManager.shared
     
     init() {
-        self.selectedHost = UserService.shared.user?.currentHost
+        self.fetchHostEvents()
     }
     
     
@@ -68,7 +62,7 @@ class ManageEventsViewModel: ObservableObject {
 
     
     private func fetchHostEvents() {
-        guard let host = selectedHost else { return }
+        guard let host = UserService.shared.user?.currentHost else { return }
         eventManager.fetchEvents(for: host) { events in
             // Filter out unconfirmed events
             let confirmedEvents = events.filter { event in

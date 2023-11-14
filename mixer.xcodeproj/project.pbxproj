@@ -608,7 +608,7 @@
 			isa = PBXGroup;
 			children = (
 				9C20AF1C2A737A6000F057BD /* Views */,
-				9C705F742A8D448800F1D0DB /* HostOptions */,
+				A66B7E002AFD70100026D26F /* HostDashboard */,
 				9C20919B2A96A1A3000E7664 /* Notifications */,
 				9CDFA5B02A82B9C300EE0370 /* Favorites */,
 				9C2DC25B2A735C8B00494D7C /* Settings */,
@@ -949,14 +949,6 @@
 			path = AddressSearch;
 			sourceTree = "<group>";
 		};
-		9C705F742A8D448800F1D0DB /* HostOptions */ = {
-			isa = PBXGroup;
-			children = (
-				9CAE8DC42AB35E16004508DF /* ManageEvents */,
-			);
-			path = HostOptions;
-			sourceTree = "<group>";
-		};
 		9C705F752A8D44A900F1D0DB /* ManageGuestlist */ = {
 			isa = PBXGroup;
 			children = (
@@ -1166,6 +1158,24 @@
 			path = Buttons;
 			sourceTree = "<group>";
 		};
+		9C98585C2B032BE10089C9EB /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A66B7E012AFD70240026D26F /* HostDashboardView.swift */,
+				A66B7E032AFD70590026D26F /* HostLineGraph.swift */,
+				A66946FA2AFDB86B009E95C0 /* HostSettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9C98585D2B032BE90089C9EB /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				A66946FC2B0308BB009E95C0 /* HostDashboardViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		9C99EAEB29A6A56D00D66FEB /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -1269,7 +1279,6 @@
 		9CDFA5992A79AF2000EE0370 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A66B7E002AFD70100026D26F /* HostDashboard */,
 				9C05C1C72983BB2B00841100 /* HostDetailView.swift */,
 				A61D12B329B42D3D00AE0EED /* HostInfoView.swift */,
 				A6F003A929807646007E8CCA /* FeaturedHostCell.swift */,
@@ -1386,21 +1395,12 @@
 			path = QRCodeAnimation;
 			sourceTree = "<group>";
 		};
-		A66946F92AFDB859009E95C0 /* HostSettings */ = {
-			isa = PBXGroup;
-			children = (
-				A66946FA2AFDB86B009E95C0 /* HostSettingsView.swift */,
-			);
-			path = HostSettings;
-			sourceTree = "<group>";
-		};
 		A66B7E002AFD70100026D26F /* HostDashboard */ = {
 			isa = PBXGroup;
 			children = (
-				A66946F92AFDB859009E95C0 /* HostSettings */,
-				A66B7E012AFD70240026D26F /* HostDashboardView.swift */,
-				A66B7E032AFD70590026D26F /* HostLineGraph.swift */,
-				A66946FC2B0308BB009E95C0 /* HostDashboardViewModel.swift */,
+				9C98585D2B032BE90089C9EB /* ViewModel */,
+				9C98585C2B032BE10089C9EB /* Views */,
+				9CAE8DC42AB35E16004508DF /* ManageEvents */,
 			);
 			path = HostDashboard;
 			sourceTree = "<group>";
@@ -1871,7 +1871,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1925,7 +1925,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1942,7 +1942,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = mixer/mixer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"mixer/Preview Content\"";
 				DEVELOPMENT_TEAM = H44T2Z74UM;
 				ENABLE_PREVIEWS = YES;
@@ -1958,7 +1958,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1982,7 +1982,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = mixer/mixer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_ASSET_PATHS = "\"mixer/Preview Content\"";
 				DEVELOPMENT_TEAM = H44T2Z74UM;
 				ENABLE_PREVIEWS = YES;
@@ -1998,7 +1998,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
