@@ -264,6 +264,10 @@ struct AlertContext {
     
     
     //MARK: - Guestlist Errors/Messages
+    static let genderRatioInfo                    = AlertItem(title: Text("Ratio Explanation"),
+                                                              message: Text("This ratio represents the number of males to females in the guest list."),
+                                                              dismissButton: .default(Text("Got it")))
+    
     static let duplicateGuestInvite               = AlertItem(title: Text("Duplicate Invite"),
                                                               message: Text("This user has already been invited."),
                                                               dismissButton: .default(Text("Ok")))

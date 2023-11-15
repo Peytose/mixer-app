@@ -95,10 +95,39 @@ class GuestlistViewModel: ObservableObject {
     func getGuestlistSectionCountText() -> String {
         // Calculate the total count of guests by summing up the counts of each section's array
         let totalGuestCount = self.sectionedGuests.values.reduce(0) { $0 + $1.count }
+        let countTitle = selectedGuestSection.guestlistSectionTitle
         
-        // Return the formatted string with correct singular or plural form
-        return "Invited: \(totalGuestCount)"
+        return "\(countTitle): \(totalGuestCount)"
     }
+    
+    
+    func getGenderRatioText() -> String {
+        let maleCount = self.guests.filter { $0.gender == .man }.count
+        let femaleCount = self.guests.filter { $0.gender == .woman }.count
+
+        // Avoid division by zero
+        if maleCount == 0 && femaleCount == 0 {
+            return "0:0"
+        } else if maleCount == 0 {
+            return "0:\(femaleCount)"
+        } else if femaleCount == 0 {
+            return "\(maleCount):0"
+        } else {
+            // Find the greatest common divisor for a simplified ratio
+            let gcd = greatestCommonDivisor(maleCount, femaleCount)
+            return "\(maleCount / gcd):\(femaleCount / gcd)"
+        }
+    }
+
+    
+    private func greatestCommonDivisor(_ a: Int, _ b: Int) -> Int {
+        if b == 0 {
+            return a
+        } else {
+            return greatestCommonDivisor(b, a % b)
+        }
+    }
+    
     
     func selectUniversity(_ university: University) {
         self.selectedUniversity = university

@@ -46,11 +46,11 @@ struct GuestlistView: View {
                         
                         Spacer()
                         
-                        Text("Checked-in: 0")
-                        
-                        Spacer()
-                        
-                        Text("Ratio: 8:1")
+                        HStack {
+                            InfoButton { viewModel.alertItem = AlertContext.genderRatioInfo }
+                            
+                            Text("Ratio: \(viewModel.getGenderRatioText())")
+                        }
                     }
                     .font(.headline)
                     .lineLimit(1)

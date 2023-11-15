@@ -37,6 +37,14 @@ enum GuestStatus: Int, Codable, CustomStringConvertible, CaseIterable {
         }
     }
     
+    var guestlistSectionTitle: String {
+        switch self {
+            case .invited: return "Invited"
+            case .checkedIn: return "Checked-in"
+            case .requested: return "Requested"
+        }
+    }
+    
     var guestlistButtonTitle: String {
         switch self {
             case .invited: "Check in"
