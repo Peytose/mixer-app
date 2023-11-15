@@ -62,10 +62,10 @@ struct EventDetailView: View {
                         EventDetails()
                             .environmentObject(viewModel)
                         
-                        if let amenities = viewModel.event.amenities, !amenities.isEmpty {
-                            AmenitiesView(amenities: amenities)
-                                .environmentObject(viewModel)
-                        }
+                        
+                        AmenitiesView(amenities: viewModel.event.amenities,
+                                      bathroomCount: viewModel.event.bathroomCount)
+                        .environmentObject(viewModel)
                         
                         LocationSection()
                             .environmentObject(viewModel)
@@ -159,7 +159,6 @@ struct HeartView: View {
     }
 }
 
-//Modal
 struct EventHeader: View {
     @ObservedObject var viewModel: EventViewModel
     
@@ -359,63 +358,85 @@ struct EventDetails: View {
 }
 
 struct AmenitiesView: View {
-    let amenities: [EventAmenity]
+    var amenities: [EventAmenity]?
+    var bathroomCount: Int?
     @State private var showAllAmenities = false
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("What this event offers")
-                .primaryHeading()
-            
-            ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
-                let amenitiesInCategory = amenities.filter({ $0.category == category })
-                if !amenitiesInCategory.isEmpty {
-                    Section {
-                        ForEach(amenitiesInCategory, id: \.self) { amenity in
-                            HStack {
-                                amenity.displayIcon
-                                    .font(.body)
-                                    .padding(.trailing, 5)
-                                
-                                Text(amenity.rawValue)
-                                    .font(.body)
-                                
-                                Spacer()
+        if amenities != nil || bathroomCount != nil {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("What this event offers")
+                    .primaryHeading()
+                
+                // Display Bathroom Count
+                if let count = bathroomCount {
+                    HStack {
+                        Image(systemName: "toilet.fill")
+                            .font(.body)
+                            .padding(.trailing, 5)
+                        
+                        Text("Bathrooms: \(count)")
+                            .font(.body)
+                        
+                        Spacer()
+                    }
+                    .foregroundColor(.white)
+                }
+                
+                if let amenities = amenities {
+                    ForEach(showAllAmenities ? AmenityCategory.allCases : Array(AmenityCategory.allCases.prefix(1)), id: \.self) { category in
+                        let amenitiesInCategory = amenities.filter({ $0.category == category })
+                        if !amenitiesInCategory.isEmpty {
+                            Section {
+                                ForEach(amenitiesInCategory, id: \.self) { amenity in
+                                    HStack {
+                                        amenity.displayIcon
+                                            .font(.body)
+                                            .padding(.trailing, 5)
+                                        
+                                        Text(amenity.rawValue)
+                                            .font(.body)
+                                        
+                                        Spacer()
+                                    }
+                                    .foregroundColor(.white)
+                                }
+                            } header: {
+                                Text(category.rawValue)
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                    .padding(.top, 10)
+                                    .padding(.bottom, 2)
                             }
-                            .foregroundColor(.white)
                         }
-                    } header: {
-                        Text(category.rawValue)
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .padding(.top, 10)
-                            .padding(.bottom, 2)
                     }
                 }
-            }
-            
-            HStack {
-                Spacer()
                 
-                Button {
-                    withAnimation(.spring(dampingFraction: 0.8)) {
-                        showAllAmenities.toggle()
-                    }
-                } label: {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 12)
-                            .foregroundColor(.white)
-                            .frame(width: 350, height: 45)
-                            .overlay {
-                                Text(showAllAmenities ? "Show less" : "Show all \(amenities.count) amenities")
-                                    .font(.body)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.black)
+                if let count = amenities?.count, count > 1 {
+                    HStack {
+                        Spacer()
+                        
+                        Button {
+                            withAnimation(.spring(dampingFraction: 0.8)) {
+                                showAllAmenities.toggle()
                             }
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .foregroundColor(.white)
+                                    .frame(width: 350, height: 45)
+                                    .overlay {
+                                        Text(showAllAmenities ? "Show less" : "Show all \(count) amenities")
+                                            .font(.body)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.black)
+                                    }
+                            }
+                        }
+                        
+                        Spacer()
                     }
                 }
-                
-                Spacer()
             }
         }
     }
