@@ -6,23 +6,54 @@
 //
 
 import SwiftUI
+import Kingfisher
 
 struct HostDashboardView: View {
+    @StateObject var viewModel: HostDashboardViewModel
     @State private var showSettings = false
+    
+    init(host: Host) {
+        self._viewModel = StateObject(wrappedValue: HostDashboardViewModel(host: host))
+    }
 
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
-                overview
+                VStack {
+                    DashboardOverview(viewModel: viewModel)
+                    
+                    Spacer()
+                    
+                    Divider()
+                    
+                    Spacer()
+                    
+                    VStack(alignment: .center) {
+                        Text("Most Recent")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        RecentEventInformation(viewModel: viewModel)
+                    }
+                    
+                    Spacer()
+                    
+                    Divider()
+                    
+                    Spacer()
+                }
+                .padding()
+                .frame(width: DeviceTypes.ScreenSize.width * 0.95, height: 360, alignment: .top)
+                .background(Color.theme.secondaryBackgroundColor)
+                .cornerRadius(10)
                 
                 VStack {
                     generalInsights
-                    
-                    //                        eventAnalytics
                 }
                 .padding(.horizontal)
             }
-            .navigationTitle("MIT Theta Chi")
+            .navigationTitle(viewModel.host.name)
             .navigationBarTitleDisplayMode(.large)
             .padding(.bottom, 100)
         }
@@ -40,10 +71,7 @@ struct HostDashboardView: View {
                 PresentationBackArrowButton()
             }
         }
-        .sheet(isPresented: $showSettings) {
-            HostSettingsView()
-        }
-        .overlay {
+        .overlay(alignment: .bottomTrailing) {
             NavigationLink(destination: EventCreationFlowView()) {
                 Image(systemName: "plus")
                     .font(.title)
@@ -53,26 +81,100 @@ struct HostDashboardView: View {
                     .clipShape(Circle())
                     .shadow(color: .black, radius: 6)
             }
-            .frame(maxWidth: DeviceTypes.ScreenSize.width,
-                   maxHeight: DeviceTypes.ScreenSize.height,
-                   alignment: .bottomTrailing)
             .padding()
+        }
+        .sheet(isPresented: $showSettings) {
+            HostSettingsView()
         }
     }
 }
 
-struct HostDashboardView_Previews: PreviewProvider {
-    static var previews: some View {
-        HostDashboardView()
-            .preferredColorScheme(.dark)
+private struct DashboardOverview: View {
+    @ObservedObject var viewModel: HostDashboardViewModel
+    var color: Color = Color.theme.secondaryBackgroundColor
+    
+    var body: some View {
+        HStack(alignment: .center) {
+            NavigationLink(destination: ManageEventsView()) {
+                Label(title: "events",
+                      value: String(viewModel.eventCount),
+                      isButton: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Spacer()
+            
+            Label(title: "earned",
+                  value: "$0",
+                  isFocus: true)
+            .frame(maxWidth: .infinity, alignment: .center)
+            
+            Spacer()
+            
+            NavigationLink(destination: ManageMembersView()) {
+                Label(title: "members",
+                      value: String(viewModel.memberCount),
+                      isButton: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+    }
+}
+
+struct RecentEventInformation: View {
+    @ObservedObject var viewModel: HostDashboardViewModel
+    
+    var body: some View {
+        HStack(alignment: .top) {
+            if let event = viewModel.recentEvent {
+                KFImage(URL(string: event.eventImageUrl))
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 120, height: 180)
+                    .cornerRadius(10, corners: .topRight)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 2) {
+                    if let event = viewModel.recentEvent {
+                        Text(event.title)
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
+                        
+                        Text("Hosted on \(event.startDate.getTimestampString(format: "MMMM dd, yyyy"))")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                
+                VStack(alignment: .leading, spacing: 12) {
+                    if let totalNumGuests = viewModel.totalNumGuests {
+                        TextRow(title: "Total Guests:", value: String(totalNumGuests))
+                    }
+                    
+                    if let mostInvitesUser = viewModel.mostInvitesUser {
+                        TextRow(title: "Most Invites:", value: mostInvitesUser)
+                    }
+                    
+                    if let mostCheckInsUser = viewModel.mostCheckInsUser {
+                        TextRow(title: "Most Check ins:", value: mostCheckInsUser)
+                    }
+                    
+                    if let firstGuestName = viewModel.firstGuestName {
+                        TextRow(title: "First Guest:", value: firstGuestName)
+                    }
+                }
+            }
+            .foregroundStyle(.white)
+        }
     }
 }
 
 extension HostDashboardView {
-    var overview: some View {
-        Overview()
-    }
-    
     var generalInsights: some View {
         SectionViewContainer("General Insights") {
             SquareViewContainer(title: "Avg. Attendance", subtitle: "Sep 1 - Now", value: "342", valueTitle: "guests") {
@@ -83,9 +185,12 @@ extension HostDashboardView {
                 HostLineGraph()
             }
         } content3: {
-            SquareViewContainer(title: "Guests Served", subtitle: "Sep 1 - Now", value: "4500", valueTitle: "guests", width: DeviceTypes.ScreenSize.width * 0.92) {
+            SquareViewContainer(title: "Guests Served",
+                                subtitle: "Sep 1 - Now",
+                                value: "4500",
+                                valueTitle: "guests",
+                                width: DeviceTypes.ScreenSize.width * 0.92) {
                 HostLineGraph(width: 350)
-                
             }
         } navigationDestination: {
             Text("Insights & Analytics")
@@ -111,101 +216,6 @@ extension HostDashboardView {
     }
 }
 
-
-private struct Overview: View {
-    var color: Color = .theme.secondaryBackgroundColor
-    var body: some View {
-        VStack(alignment: .center) {
-            Text("Overview")
-                .font(.title.bold())
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            ZStack(alignment: .bottom) {
-                Label(title: "events", value: "9")
-                .frame(maxWidth: .infinity, alignment: .leading)
-                Spacer()
-                Label(title: "earned", value: "$12,524", isFocus: true)
-                    .frame(maxWidth: .infinity, alignment: .center)
-                Spacer()
-                Label(title: "members", value: "32")
-                .frame(maxWidth: .infinity, alignment: .trailing)
-            }
-            
-            Divider()
-            
-            VStack(alignment: .leading) {
-                HStack(alignment: .top) {
-                    Image("theta-chi-party-poster")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 140, height: 180)
-                    
-                    VStack(alignment: .leading, spacing: 10) {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Neon Party")
-                                .font(.title)
-                                .fontWeight(.bold)
-                            
-                            Text("Hosted by MIT Theta Chi")
-                                .font(.subheadline.weight(.medium))
-                                .foregroundStyle(.secondary)
-                        }
-                        
-                        TextRow(title: "Total Guests:", value: "436")
-                        TextRow(title: "Most Invites:", value: "Andre Hamelburg")
-                        TextRow(title: "Most Check ins:", value: "Jose Martinez")
-                        TextRow(title: "First Guest:", value: "Alysa Stoner")
-                    }
-                    .foregroundStyle(.white)
-                }
-                
-                Spacer()
-                
-                Divider()
-                
-                NavigationLink(destination: { ManageEventsView() }) {
-                    HStack {
-                        Spacer()
-                        Text("See all events")
-                            .foregroundStyle(.white)
-                        
-                        Image(systemName: "chevron.right")
-                            .font(.subheadline)
-                            .foregroundColor(.white)
-                    }
-                }
-            }
-            .background(Color.theme.secondaryBackgroundColor)
-            .cornerRadius(10)
-        }
-        .padding()
-        .frame(width: DeviceTypes.ScreenSize.width, height: 360, alignment: .top)
-        .background(Color.theme.secondaryBackgroundColor)
-    }
-}
-private struct OtherTab: View {
-    var color: Color = .theme.secondaryBackgroundColor
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("Overview")
-                .font(.title3.bold())
-                .padding(.bottom, 5)
-            
-            Text("$12,524")
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-            
-            Text("earned this month")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-        }
-        .padding()
-        .frame(width: DeviceTypes.ScreenSize.width, height: 360, alignment: .top)
-        .background(Color.theme.secondaryBackgroundColor)
-    }
-}
-
-
 struct SquareViewContainer<Content: View>: View {
     let content: Content
     //    let destination: Destination
@@ -227,7 +237,6 @@ struct SquareViewContainer<Content: View>: View {
     }
     
     var body: some View {
-        //        NavigationLink(destination: destination) {
         VStack(alignment: .leading) {
             Text(title)
                 .font(.headline)
@@ -247,16 +256,12 @@ struct SquareViewContainer<Content: View>: View {
             HStack {
                 Text("\(value) \(Text(valueTitle).font(.footnote).foregroundColor(.secondary))")
                 Spacer()
-                //                    Image(systemName: "chevron.right")
-                //                        .font(.subheadline)
             }
         }
         .padding()
         .frame(width: width, height: DeviceTypes.ScreenSize.width * 0.44, alignment: .top)
         .background(Color.theme.secondaryBackgroundColor)
         .cornerRadius(10)
-        //        }
-        //        .buttonStyle(.plain)
     }
 }
 
@@ -311,16 +316,26 @@ private struct Label: View {
     var title: String
     var value: String
     var isFocus: Bool = false
+    var isButton: Bool = false
     
     var body: some View {
-        VStack {
-            Text(value)
-                .font(isFocus ? .largeTitle : .title2)
-                .fontWeight(.semibold)
+        HStack(alignment: .center) {
+            VStack {
+                Text(value)
+                    .font(isFocus ? .largeTitle : .title2)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                
+                Text(title)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
             
-            Text(title)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            if isButton {
+                Image(systemName: "chevron.right")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
         }
     }
 }

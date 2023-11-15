@@ -87,7 +87,9 @@ struct SideMenuView: View {
             .navigationDestination(for: HostSideMenuOption.self) { option in
                 switch option {
                 case .dashboard:
-                    HostDashboardView()
+                    if let host = UserService.shared.user?.currentHost {
+                        HostDashboardView(host: host)
+                    }
                 }
             }
             .navigationDestination(for: SideMenuOption.self) { option in
