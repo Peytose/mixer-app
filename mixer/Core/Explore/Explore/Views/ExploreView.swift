@@ -65,6 +65,9 @@ struct ExploreView: View {
                             }
                         }
                         .padding(.top, 60)
+                        .refreshable {
+                            exploreViewModel.fetchEventsAndHosts()
+                        }
                         
                         
                     case .back, .close:

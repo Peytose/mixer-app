@@ -219,11 +219,12 @@ extension GuestlistViewModel {
     
     func approveGuest(_ guest: EventGuest) {
         guard let guestId = guest.id,
-              let host = UserService.shared.user?.currentHost else { return }
+              let host = UserService.shared.user?.currentHost,
+              let eventId = event.id else { return }
         
         self.hostService.approveGuest(with: guestId,
-                                  for: self.event,
-                                  by: host) { error in
+                                      for: self.event,
+                                      by: host) { error in
             if let error = error {
                 print("DEBUG: Error approving guest. \(error.localizedDescription)")
                 return
@@ -233,7 +234,22 @@ extension GuestlistViewModel {
                 self.selectedGuest = updatedGuest
             }
             
-            HapticManager.playSuccess()
+            if self.event.isPrivate && self.event.isInviteOnly {
+                COLLECTION_USERS
+                    .document(guestId)
+                    .collection("accessible-events")
+                    .document(eventId)
+                    .setData(["timestamp": Timestamp(),
+                              "hostIds": self.event.hostIds]) { error in
+                        if let error = error {
+                            print("DEBUG: Error adding event to user-specific collection: \(error.localizedDescription)")
+                        } else {
+                            HapticManager.playSuccess()
+                        }
+                    }
+            } else {
+                HapticManager.playSuccess()
+            }
         }
     }
 

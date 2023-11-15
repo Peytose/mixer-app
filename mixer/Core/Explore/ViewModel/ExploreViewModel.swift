@@ -38,13 +38,27 @@ final class ExploreViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
+        fetchEventsAndHosts()
+    }
+    
+    
+    func fetchEventsAndHosts() {
+        fetchEvents()
+        fetchHosts()
+    }
+    
+    
+    private func fetchEvents() {
         eventManager.$events
             .sink { [weak self] newEvents in
-                self?.events = newEvents
-                self?.updateEvents(newEvents)
+                self?.events = Array(newEvents)
+                self?.updateEvents(Array(newEvents))
             }
             .store(in: &cancellables)
-        
+    }
+    
+    
+    private func fetchHosts() {
         hostManager.$hosts
             .sink { [weak self] newHosts in
                 self?.hosts = newHosts

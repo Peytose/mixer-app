@@ -11,29 +11,57 @@ struct MapView: View {
     @EnvironmentObject var viewModel: MapViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
     @Binding var mapState: MapViewState
+    @Binding var context: [NavigationContext]
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            ZStack(alignment: .top) {
-                MixerMapViewRepresentable(mapState: $mapState)
-                    .ignoresSafeArea()
-                
-                LogoView(frameWidth: 65)
-                    .shadow(radius: 10)
-                    .allowsHitTesting(false)
+        if let state = context.last?.state {
+            switch state {
+                case .menu:
+                    ZStack(alignment: .bottom) {
+                        ZStack(alignment: .top) {
+                            MixerMapViewRepresentable(mapState: $mapState)
+                                .ignoresSafeArea()
+                            
+                            LogoView(frameWidth: 65)
+                                .shadow(radius: 10)
+                                .allowsHitTesting(false)
+                        }
+                    }
+                    .edgesIgnoringSafeArea(.bottom)
+                    .sheet(isPresented: $viewModel.showLocationDetailsCard) {
+                        EmptyView()
+                            .presentationDetents([.medium])
+                    }
+                    
+                case .back, .close:
+                    hostDetailView()
+                    
+                    eventDetailView()
             }
-        }
-        .edgesIgnoringSafeArea(.bottom)
-        .sheet(isPresented: $viewModel.showLocationDetailsCard) {
-//            LocationDetailsCardView()
-            EmptyView()
-                .presentationDetents([.medium])
         }
     }
 }
 
-struct MapView_Previews: PreviewProvider {
-    static var previews: some View {
-        MapView(mapState: .constant(MapViewState.noInput))
+extension MapView {
+    @ViewBuilder
+    func eventDetailView() -> some View {
+        if let event = context.last?.selectedEvent {
+            EventDetailView(event: event,
+                            action: homeViewModel.navigate)
+        }
+    }
+
+    @ViewBuilder
+    func hostDetailView() -> some View {
+        if let host = context.last?.selectedHost {
+            HostDetailView(host: host,
+                           action: homeViewModel.navigate)
+        }
     }
 }
+
+//struct MapView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        MapView(mapState: .constant(MapViewState.noInput))
+//    }
+//}

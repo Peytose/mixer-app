@@ -63,7 +63,7 @@ struct mixerApp: App {
                         if let event = event {
                             homeViewModel.pushContext(NavigationContext(state: .close, selectedEvent: event))
                         } else {
-                            // Handle errors like token verification failure or private event without token
+                            print("DEBUG: ERROR??")
                         }
                     }
                 }

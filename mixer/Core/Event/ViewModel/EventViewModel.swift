@@ -133,6 +133,7 @@ final class EventViewModel: ObservableObject {
 
 extension EventViewModel {
     func generateShareURL() {
+        print("DEBUG: Generating share url....")
         guard let eventId = event.id else {
             self.shareURL = nil
             return
@@ -148,13 +149,17 @@ extension EventViewModel {
                 }
                 
                 let fullURLString = baseURL + "&token=\(token)"
-                self.shareURL = URL(string: fullURLString)
+                
+                DispatchQueue.main.async {
+                    self.shareURL = URL(string: fullURLString)
+                }
             }
         } else {
-            self.shareURL = URL(string: baseURL)
+            DispatchQueue.main.async {
+                self.shareURL = URL(string: baseURL)
+            }
         }
     }
-    
     
     private func generateEventToken(completion: @escaping (String?) -> Void) {
         guard let eventId = event.id else {
@@ -162,14 +167,20 @@ extension EventViewModel {
             return
         }
         
-        let url = URL(string: "https://us-central1-your-firebase-project-name.cloudfunctions.net/generateEventToken")!
+        guard let url = URL(string: "https://us-central1-mixer-firebase-project.cloudfunctions.net/generateEventToken") else {
+            print("Invalid URL")
+            completion(nil)
+            return
+        }
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
         let requestBody: [String: Any] = ["eventId": eventId]
         request.httpBody = try? JSONSerialization.data(withJSONObject: requestBody)
         
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
+        URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Error:", error)
                 completion(nil)
@@ -182,6 +193,7 @@ extension EventViewModel {
                        let token = jsonResponse["token"] as? String {
                         completion(token)
                     } else {
+                        print("Invalid response format")
                         completion(nil)
                     }
                 } catch {
@@ -189,6 +201,7 @@ extension EventViewModel {
                     completion(nil)
                 }
             } else {
+                print("No data received")
                 completion(nil)
             }
         }.resume()

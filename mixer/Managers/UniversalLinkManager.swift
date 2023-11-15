@@ -32,11 +32,38 @@ class UniversalLinkManager: ObservableObject {
                 }
                 
                 self.verifyToken { success in
-                    completion(success ? event : nil)
+                    if success {
+                        self.addEventToUserSpecificCollection(event: event)
+                        completion(event)
+                    } else {
+                        completion(nil)
+                    }
                 }
             } else {
                 completion(event)
             }
+        }
+    }
+    
+    
+    private func addEventToUserSpecificCollection(event: Event) {
+        guard let currentUserId = UserService.shared.user?.id,
+              let eventId = event.id else { return }
+        
+        // Make sure the event is a private open party
+        if event.isPrivate && !event.isInviteOnly {
+            COLLECTION_USERS
+                .document(currentUserId)
+                .collection("accessible-events")
+                .document(eventId)
+                .setData(["timestamp": Timestamp(),
+                          "hostIds": event.hostIds]) { error in
+                    if let error = error {
+                        print("DEBUG: Error adding event to user-specific collection: \(error.localizedDescription)")
+                    } else {
+                        print("DEBUG: Event added to user-specific collection.")
+                    }
+                }
         }
     }
     
@@ -65,25 +92,50 @@ class UniversalLinkManager: ObservableObject {
             return false
         }
     }
-    
+
     
     private func verifyToken(completion: @escaping (Bool) -> Void) {
-        guard let token = self.incomingToken else { return }
-        let url = URL(string: "https://us-central1-mixer-firebase-project.cloudfunctions.net/verifyEventToken")!
+        guard let eventId = self.incomingEventId, let token = self.incomingToken else {
+            print("DEBUG: Missing eventId or token")
+            completion(false)
+            return
+        }
+
+        guard let url = URL(string: "https://us-central1-mixer-firebase-project.cloudfunctions.net/verifyEventToken") else {
+            print("DEBUG: Invalid URL")
+            completion(false)
+            return
+        }
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
-        URLSession.shared.dataTask(with: request) { (data, response, error) in
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let requestBody: [String: Any] = ["eventId": eventId, "token": token]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: requestBody)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("DEBUG: Error making request: \(error.localizedDescription)")
                 completion(false)
                 return
             }
-            
-            // If you wish, you can also decode the response to get the eventId
-            // and cross-check it with the eventId you have if needed.
-            
-            completion(true)
+
+            if let httpResponse = response as? HTTPURLResponse {
+                print("DEBUG: HTTP Response Status Code: \(httpResponse.statusCode)")
+                if httpResponse.statusCode == 200 {
+                    completion(true)
+                } else {
+                    completion(false)
+                }
+            } else {
+                print("DEBUG: Response is not HTTPURLResponse")
+                completion(false)
+            }
+
+            if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                print("DEBUG: Response Data: \(responseString)")
+            }
         }.resume()
     }
     

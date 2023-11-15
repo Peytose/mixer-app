@@ -42,7 +42,7 @@ final class HostViewModel: ObservableObject {
                                                                      to: Date())!)
         
         COLLECTION_EVENTS
-            .whereField("hostUid", isEqualTo: hostUid)
+            .whereField("hostId", arrayContains: hostUid)
             .whereField("endDate", isLessThan: Timestamp())
             .whereField("endDate", isGreaterThan: thirtyDaysBefore)
             .getDocuments { snapshot, _ in
@@ -61,6 +61,6 @@ final class HostViewModel: ObservableObject {
             $0.endDate > Timestamp()
         })
         
-        self.currentAndFutureEvents = events.sortedByStartDate()
+        self.currentAndFutureEvents = Array(events).sortedByStartDate()
     }
 }

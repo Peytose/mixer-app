@@ -34,7 +34,8 @@ struct HomeView: View {
                                 ZStack {
                                     switch homeViewModel.currentTab {
                                     case .map:
-                                        MapView(mapState: $mapState)
+                                        MapView(mapState: $mapState,
+                                                context: $homeViewModel.selectedNavigationStack)
                                             .environmentObject(MapViewModel())
                                     case .explore:
                                         ExploreView(context: $homeViewModel.selectedNavigationStack)

@@ -73,7 +73,10 @@ class ManageMembersViewModel: ObservableObject {
     
     
     func removeMember(with memberId: String) {
-        guard let memberLink = hostUserLinks.first(where: { $0.id == memberId }), let selectedHost = self.selectedHost else { return }
+        guard let memberLink = hostUserLinks.first(where: { $0.id == memberId }),
+              let selectedHost = self.selectedHost else { return }
+        
+        print("DEBUG: Removing member with id: \(memberId)\nand link: \(memberLink)")
         
         let removeMemberAction = {
             HostService.shared.removeMember(from: selectedHost, memberId: memberId) { [weak self] error in
@@ -242,7 +245,7 @@ extension ManageMembersViewModel {
             .document(userId)
             .setData(encodedData, merge: true) { error in
                 if let error = error {
-                    print("DEBUG: Error assigning role to member.\n\n\(error.localizedDescription)")
+                    print("DEBUG: Error assigning role to member: \(error.localizedDescription)")
                     return
                 }
                 
@@ -312,4 +315,35 @@ extension ManageMembersViewModel {
                 }
             }
     }
+    
+    
+    func addEventsToMembersAccessibleEvents(completion: @escaping (Error?) -> Void) {
+        guard let selectedHost = self.selectedHost, let hostId = selectedHost.id else { return }
+        let firestore = Firestore.firestore()
+        let batch = firestore.batch()
+
+        EventManager.shared.fetchHostCurrentAndFutureEvents(for: hostId) { events in
+            print("DEBUG: Events")
+            for memberId in self.members.compactMap({ $0.id }) {
+                for eventId in events.filter({ $0.isPrivate }).compactMap({ $0.id }) {
+                    let accessibleEventRef = COLLECTION_USERS
+                        .document(memberId)
+                        .collection("accessible-events")
+                        .document(eventId)
+                    batch.setData(["timestamp": Timestamp()], forDocument: accessibleEventRef)
+                }
+            }
+            
+            batch.commit { error in
+                if let error = error {
+                    print("Error adding events to members' accessible-events: \(error.localizedDescription)")
+                    completion(error)
+                    return
+                }
+                print("Successfully added events to members' accessible-events")
+                completion(nil)
+            }
+        }
+    }
+
 }

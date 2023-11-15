@@ -71,14 +71,15 @@ struct EventDetailView: View {
                             .environmentObject(viewModel)
                     }
                     .padding()
-                    .padding(.bottom, !viewModel.event.isInviteOnly ? 180 : 120)
+                    .padding(.bottom, 180)
                 }
                 .ignoresSafeArea()
                 .onTapGesture(count: 2) { location in
                     let wasFavorited = viewModel.event.isFavorited
                     viewModel.toggleFavoriteStatus()
                     
-                    if wasFavorited == false { // If the event was not favorited before and is now favorited
+                    // If the event was not favorited before and is now favorited
+                    if wasFavorited == false {
                         self.doubleTapLocation = location
                         self.heartRotation = Double.random(in: 180..<360)
                         self.showHeart = true
@@ -94,7 +95,7 @@ struct EventDetailView: View {
                         .rotationEffect(Angle(degrees: self.heartRotation))
                         .opacity(self.heartOpacity)
                         .position(x: doubleTapLocation.x,
-                                  y: doubleTapLocation.y - 35) // Adjust the y position to center the heart on the tap
+                                  y: doubleTapLocation.y - 35)
                         .zIndex(1)
                         .id(UUID())
                 }
@@ -123,28 +124,22 @@ struct EventDetailView: View {
                 }
             }
             .overlay(alignment: .bottom) {
-                if !viewModel.event.isPrivate {
-                    GuestlistActionButton(state: EventUserActionState(event: viewModel.event)) {
-                        viewModel.actionForState(EventUserActionState(event: viewModel.event))
-                    }
-                    .padding(.bottom, 80)
+                GuestlistActionButton(state: EventUserActionState(event: viewModel.event)) {
+                    viewModel.actionForState(EventUserActionState(event: viewModel.event))
                 }
+                .padding(.bottom, 80)
             }
             .overlay(alignment: .topTrailing) {
                 if let shareURL = viewModel.shareURL {
-                    let event = viewModel.event
-                    
                     Menu {
-                        //                    Button("Share Event", action: {})
                         ShareLink(item: shareURL,
                                   message: Text("\nCheck out this event on mixer!"),
-                                  preview: SharePreview("\(event.title) by \(event.hostNames.joinedWithCommasAndAnd())",
-                                                        image: viewModel.imageLoader.image ?? Image("AppIcon")),
-                                  label: {
+                                  preview: SharePreview("\(viewModel.event.title) by \(viewModel.event.hostNames.joinedWithCommasAndAnd())",
+                                  image: viewModel.imageLoader.image ?? Image("AppIcon"))) {
                             Label("Share Event", image: "square.and.arrow.up")
-                        })
+                        }
                     } label: {
-                        EllipsisButton(action: {})
+                        EllipsisButton {}
                     }
                     .padding()
                     .padding(.horizontal)
@@ -239,9 +234,6 @@ struct EventHeader: View {
         .padding(EdgeInsets(top: 14, leading: 14, bottom: 14, trailing: 14))
         .background {
             Rectangle()
-//                .fill(Color.theme.secondaryBackgroundColor)
-//                .opacity(0.8)
-//                .cornerRadius(30)
                 .fill(.ultraThinMaterial)
                 .backgroundStyle(cornerRadius: 30)
         }
@@ -253,7 +245,7 @@ struct EventFlyer: View {
     @Binding var isShowingModal: Bool
     
     var body: some View {
-        StretchablePhotoBannerJose(imageUrl: imageUrl)
+        EventPhotoBanner(imageUrl: imageUrl)
             .onLongPressGesture(minimumDuration: 0.1) {
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()

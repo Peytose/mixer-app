@@ -561,29 +561,33 @@ extension UserService {
     func acceptMemberInvite(forHost host: Host,
                             fromUser userId: String,
                             completion: FirestoreCompletion) {
+        print("DEBUG: Tapped button")
+        
         guard let currentUser = self.user,
               let hostId = host.id,
               let memberId = currentUser.id else { return }
         
-        let batch = Firestore.firestore().batch()
-        let data: [String: Any] = ["timestamp": Timestamp(),
-                                   "status": MemberInviteStatus.joined.rawValue]
+        print("DEBUG: not guards")
         
-        let memberReference = COLLECTION_HOSTS.document(hostId).collection("member-list").document(memberId)
-        
-        batch.updateData(data, forDocument: memberReference)
-        
-        guard let currentUserId = currentUser.id else { return }
-        let updatedUserData: [String: Any] = ["hostIdToMemberTypeMap.\(hostId)": HostMemberType.member.rawValue]
-        
-        let currentUserReference = COLLECTION_USERS.document(currentUserId)
-        
-        batch.updateData(updatedUserData, forDocument: currentUserReference)
-        
-        COLLECTION_NOTIFICATIONS
-            .getNotificationDocumentReferences(forUserID: memberId,
-                                               ofTypes: [.memberInvited],
-                                               from: userId) { documentReferences in
+        EventManager.shared.fetchHostCurrentAndFutureEvents(for: hostId) { events in
+            let eventIds = events.filter({ $0.isPrivate }).compactMap { $0.id }
+            print("DEBUG: eventIds \(eventIds)")
+            let batch = Firestore.firestore().batch()
+            let data: [String: Any] = ["timestamp": Timestamp(), "status": MemberInviteStatus.joined.rawValue]
+            let memberReference = COLLECTION_HOSTS.document(hostId).collection("member-list").document(memberId)
+            batch.updateData(data, forDocument: memberReference)
+
+            let updatedUserData: [String: Any] = ["hostIdToMemberTypeMap.\(hostId)": HostMemberType.member.rawValue]
+            let currentUserReference = COLLECTION_USERS.document(memberId)
+            batch.updateData(updatedUserData, forDocument: currentUserReference)
+
+            // Add event IDs to the user's accessible-events collection
+            eventIds.forEach { eventId in
+                let accessibleEventRef = COLLECTION_USERS.document(memberId).collection("accessible-events").document(eventId)
+                batch.setData(["timestamp": Timestamp()], forDocument: accessibleEventRef)
+            }
+
+            COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: memberId, ofTypes: [.memberInvited], from: userId) { documentReferences in
                 if let documentReferences = documentReferences {
                     Firestore.addDeleteOperations(to: batch, for: documentReferences)
                 }
@@ -592,15 +596,14 @@ extension UserService {
                     if let error = error {
                         completion?(error)
                     } else {
-                        NotificationsViewModel.uploadNotification(toUid: host.mainUserId,
-                                                                  type: .memberJoined,
-                                                                  host: host)
+                        NotificationsViewModel.uploadNotification(toUid: host.mainUserId, type: .memberJoined, host: host)
                         completion?(nil)
                     }
                 }
             }
+        }
     }
-    
+
     func rejectMemberInvite(fromUser userId: String,
                             fromHost hostId: String,
                             memberId: String,
