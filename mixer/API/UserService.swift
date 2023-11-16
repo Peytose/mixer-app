@@ -97,12 +97,15 @@ class UserService: ObservableObject {
             .document(id)
             .getDocument { snapshot, error in
                 if let error = error {
-                    print("DEBUG: Error fetching university. \(error.localizedDescription)")
+                    print("ERROR: Fetching university failed. ID: \(id), Error: \(error.localizedDescription)")
                     return
                 }
                 
-                guard let university = try? snapshot?.data(as: University.self) else { return }
-                print("DEBUG: University associated with user: \(university)")
+                guard let university = try? snapshot?.data(as: University.self) else {
+                    print("ERROR: Unable to decode university data. ID: \(id)")
+                    return
+                }
+                print("SUCCESS: Fetched university data for ID: \(id)")
                 completion(university)
             }
     }
