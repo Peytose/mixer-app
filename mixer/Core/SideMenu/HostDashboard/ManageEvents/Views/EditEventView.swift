@@ -33,13 +33,13 @@ struct EditEventView: View {
 
 extension EditEventView {
     var nameSection: some View {
-        SettingsSection(header: "Title") {
+        SettingsSectionContainer(header: "Title") {
             SettingsCell(value: "Neon Party", isEditable: true) {}
         }
     }
     
     var aboutSection: some View {
-        SettingsSection(header: "About") {
+        SettingsSectionContainer(header: "About") {
             SettingsCell(value: "Description", isLink: true) {}
             
             SettingsCell(value: "Notes", isLink: true) {}
@@ -51,7 +51,7 @@ extension EditEventView {
     }
     
     var addressSection: some View {
-        SettingsSection(header: "Location") {
+        SettingsSectionContainer(header: "Location") {
             SettingsCell(value: "528 Beacon St Boston, MA 02215", isLink: true){}
         }
     }
@@ -88,7 +88,7 @@ fileprivate struct EventImageButton: View {
     }
 }
 
-fileprivate struct SettingsSection<Content: View>: View {
+struct SettingsSectionContainer<Content: View>: View {
     var header: String
     var footer: String
     var content: Content
