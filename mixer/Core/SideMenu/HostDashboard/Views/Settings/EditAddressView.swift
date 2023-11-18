@@ -10,7 +10,7 @@ import MapKit
 
 struct EditAddressView: View {
     @State var text = "528 Beacon St Boston, MA 02215"
-    @State private var coordinate = CLLocationCoordinate2D(latitude: 0, longitude: 0)
+    @State private var coordinate = CLLocationCoordinate2D(latitude: 42.3506934, longitude: -71.090978)
     
     var body: some View {
         List {
@@ -36,26 +36,6 @@ extension EditAddressView {
         }
     }
 }
-
-//fileprivate struct MapPickerCell: View {
-//    @State var showPicker = false
-//    @Binding var value: String // Changed to Binding
-//
-//    var body: some View {
-//        Button(action: { showPicker.toggle() }) {
-//            Text(value)
-//                .lineLimit(2, reservesSpace: true)
-//                .lineLimit(1)
-//                .minimumScaleFactor(0.8)
-//        }
-//        .buttonStyle(.plain)
-//        .mapItemPicker(isPresented: $showPicker) { item in
-//            if let name = item?.placemark.title {
-//                self.value = name // Set value to the address of the picked item
-//            }
-//        }
-//    }
-//}
 
 fileprivate struct MapPickerCell: View {
     @State var showPicker = false

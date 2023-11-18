@@ -266,6 +266,7 @@
 		A6C99FC029DA5BA00046D61B /* EnterBirthdayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FBF29DA5BA00046D61B /* EnterBirthdayView.swift */; };
 		A6C99FC229DA5BFF0046D61B /* SelectGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* SelectGenderView.swift */; };
 		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
+		A6CBBDCD2B0839D90029F1EC /* EditEventDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CBBDCC2B0839D90029F1EC /* EditEventDateView.swift */; };
 		A6CD2C84297B201C00AA0B98 /* PlaceHolderColorModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CD2C83297B201C00AA0B98 /* PlaceHolderColorModifier.swift */; };
 		A6CD2C8F297B482A00AA0B98 /* MapItemPicker in Frameworks */ = {isa = PBXBuildFile; productRef = A6CD2C8E297B482A00AA0B98 /* MapItemPicker */; };
 		A6D6FC8129DF595700BFCF52 /* MailViewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */; };
@@ -516,6 +517,7 @@
 		A6C99FBF29DA5BA00046D61B /* EnterBirthdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterBirthdayView.swift; sourceTree = "<group>"; };
 		A6C99FC129DA5BFF0046D61B /* SelectGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectGenderView.swift; sourceTree = "<group>"; };
 		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
+		A6CBBDCC2B0839D90029F1EC /* EditEventDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventDateView.swift; sourceTree = "<group>"; };
 		A6CD2C83297B201C00AA0B98 /* PlaceHolderColorModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceHolderColorModifier.swift; sourceTree = "<group>"; };
 		A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailViewModal.swift; sourceTree = "<group>"; };
 		A6EFA7922B06A30D00DE04E8 /* EditTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTextView.swift; sourceTree = "<group>"; };
@@ -1218,7 +1220,7 @@
 			children = (
 				9CAE8DC72AB35E41004508DF /* ManageEventsView.swift */,
 				9CAE8DCB2AB3840E004508DF /* ManageEventCell.swift */,
-				A6453CAC2B040ABA00F596CE /* EditEventView.swift */,
+				A6CBBDCB2B0839B50029F1EC /* Edit Event */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1472,6 +1474,15 @@
 			path = ImagePickers;
 			sourceTree = "<group>";
 		};
+		A6CBBDCB2B0839B50029F1EC /* Edit Event */ = {
+			isa = PBXGroup;
+			children = (
+				A6453CAC2B040ABA00F596CE /* EditEventView.swift */,
+				A6CBBDCC2B0839D90029F1EC /* EditEventDateView.swift */,
+			);
+			path = "Edit Event";
+			sourceTree = "<group>";
+		};
 		A6EFA7912B06A2D900DE04E8 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -1647,6 +1658,7 @@
 				9C3E2C9C29EA3A5900A74D05 /* SmallCornerNumber.swift in Sources */,
 				9C4B4AF02A993B8000D70454 /* NavigationBackArrowButton.swift in Sources */,
 				A678594A29C647F200A2D884 /* EnterPhoneNumberView.swift in Sources */,
+				A6CBBDCD2B0839D90029F1EC /* EditEventDateView.swift in Sources */,
 				9C4B0E3F2982419F00A9D963 /* EventViewModel.swift in Sources */,
 				9C705F912A8EC62C00F1D0DB /* TabItem.swift in Sources */,
 				9C58B3C329C8EB270024CB7E /* SignUpContinueButton.swift in Sources */,

@@ -196,44 +196,6 @@ fileprivate struct SettingsCell<Content: View>: View {
     }
 }
 
-fileprivate struct EditableCell: View {
-    @EnvironmentObject var viewModel: SettingsViewModel
-    @Binding var content: String
-    @State var staticContent: String
-    let row: SettingsRowModel
-    let saveType: ProfileSaveType
-    @State private var showAlert: Bool = false
-    
-    init(content: Binding<String>, row: SettingsRowModel, saveType: ProfileSaveType) {
-        self._content = content
-        self.staticContent = content.wrappedValue
-        self.row = row
-        self.saveType = saveType
-    }
-    
-    var body: some View {
-        Button { showAlert.toggle() } label: {
-            HStack {
-                ReadOnlySettingsRow(row: row, content: staticContent)
-                
-                SettingIcon(icon: "pencil", color: .secondary)
-            }
-        }
-        .alert(row.alertTitle ?? "", isPresented: $showAlert) {
-            TextField(row.alertPlaceholder ?? "", text: $content)
-                    
-            if #available(iOS 16.0, *) {
-                Button("Save") {
-                    staticContent = content
-                    viewModel.save(for: saveType)
-                }
-                Button("Cancel", role: .cancel, action: {})
-            }
-        } message: { Text(row.alertMessage ?? "") }
-    }
-}
-
-
 struct HostSettingsView_Previews: PreviewProvider {
     static var previews: some View {
         HostSettingsView()

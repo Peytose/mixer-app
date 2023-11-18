@@ -9,15 +9,19 @@ import SwiftUI
 import Kingfisher
 
 struct EditEventView: View {
-    @State var imagePickerPresented      = false
-    @State var locationIsPrivate         = false
+    @State var imagePickerPresented     = false
+    @State var locationIsPrivate        = false
+    @State private var description      = "Example description"
+    @State private var note             = "Example notes"
     
     var body: some View {
         NavigationView {
             VStack(alignment: .leading) {
                 List {
                     EventImageButton()
-                    nameSection
+                    
+                    //MARK: To-do: Use real data
+                    titleSection
                     aboutSection
                     addressSection
                 }
@@ -32,7 +36,7 @@ struct EditEventView: View {
 }
 
 extension EditEventView {
-    var nameSection: some View {
+    var titleSection: some View {
         SettingsSectionContainer(header: "Title") {
             SettingsCell(value: "Neon Party", isEditable: true) {}
         }
@@ -40,13 +44,19 @@ extension EditEventView {
     
     var aboutSection: some View {
         SettingsSectionContainer(header: "About") {
-            SettingsCell(value: "Description", isLink: true) {}
+            SettingsCell(value: "Description", isLink: true) { EditTextView(title: "Description", text: $description, navigationTitle: "Edit Event Description")
+            }
             
-            SettingsCell(value: "Notes", isLink: true) {}
-                        
+            SettingsCell(value: "Notes", isLink: true) {
+                EditTextView(title: "Notes", text: $note, navigationTitle: "Edit Event Notes")
+            }
+            
+            //MARK: To-do: Make the edit amenities view here
             SettingsCell(value: "Amenities", isLink: true) {}
             
-            SettingsCell(value: "Date & Time", isLink: true){}
+            SettingsCell(value: "Date & Time", isLink: true) {
+                EditEventDateView()
+            }
         }
     }
     
@@ -57,14 +67,15 @@ extension EditEventView {
     }
 }
 
+//MARK: To-do: Implement this using the event flyer as the image
 fileprivate struct EventImageButton: View {
-//    @Binding var imagePickerPresented: Bool
-//    let profileImageUrl: URL?
+    //    @Binding var imagePickerPresented: Bool
+    //    let profileImageUrl: URL?
     
     var body: some View {
         VStack(alignment: .center) {
             Button {} label: {
-//                KFImage(profileImageUrl)
+                //                KFImage(profileImageUrl)
                 Image("avatar4")
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -129,8 +140,6 @@ fileprivate struct SettingsCell<Content: View>: View {
                     Text(title)
                     Spacer()
                 }
-                
-                
                 
                 Text(value)
                     .foregroundStyle(!title.isEmpty ? .secondary : Color.white)
