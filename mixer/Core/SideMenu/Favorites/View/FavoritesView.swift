@@ -9,7 +9,6 @@ import SwiftUI
 
 struct FavoritesView: View {
     @StateObject private var viewModel = FavoritesViewModel()
-    
     @Namespace var namespace
     
     var body: some View {
@@ -30,7 +29,8 @@ struct FavoritesView: View {
             }
         }
         .navigationDestination(for: Event.self) { event in
-            EventDetailView(event: event)
+            EventDetailView(event: event,
+                            namespace: namespace)
                 .toolbar(.hidden)
                 .overlay {
                     PresentationBackArrowButton()

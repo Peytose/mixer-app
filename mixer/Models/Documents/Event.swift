@@ -34,7 +34,7 @@ enum EventType: Int, Codable, CaseIterable {
 
 struct Event: Hashable, Identifiable, Codable, Equatable {
     static func ==(lhs: Event, rhs: Event) -> Bool {
-        return lhs.id == rhs.id && lhs.id == rhs.id
+        return lhs.id == rhs.id
     }
     
     // MARK: - Metadata

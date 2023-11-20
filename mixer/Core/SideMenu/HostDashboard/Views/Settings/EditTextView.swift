@@ -8,46 +8,63 @@
 import SwiftUI
 
 struct EditTextView: View {
-    var title: String
-    @Binding var text: String
-    var navigationTitle: String
+    @Environment (\.dismiss) private var dismiss
+    @State var text: String
+    
+    let navigationTitle: String
+    let title: String
+    let initialText: String
+    let saveFunc: (String) -> Void
+    var limit: Int = 200
+
+    init(navigationTitle: String,
+         title: String,
+         text: String,
+         limit: Int = 200,
+         saveFunc: @escaping (String) -> Void) {
+        self.navigationTitle = navigationTitle
+        self.title           = title
+        self._text           = State(initialValue: text)
+        self.initialText     = text
+        self.limit           = limit
+        self.saveFunc        = saveFunc
+    }
     
     var body: some View {
+        ZStack {
+            Color.theme.backgroundColor
+                .ignoresSafeArea()
+            
             List {
-                textCell
+                SettingsSectionContainer(header: title) {
+                    TextField("Start typing here...", text: $text, axis: .vertical)
+                        .lineLimit(8, reservesSpace: true)
+                    
+                    HStack {
+                        CharactersRemainView(currentCount: text.count,
+                                             limit: limit)
+                        
+                        Spacer()
+                        
+                        ListCellActionButton(text: "Save",
+                                             isSecondaryLabel: text.count > limit || text == initialText) {
+                            if text.count <= limit || text != initialText {
+                                saveFunc(text)
+                                dismiss()
+                            }
+                        }
+                    }
+                }
             }
-            .scrollContentBackground(.hidden)
             .scrollIndicators(.hidden)
-            .listStyle(.insetGrouped)
-            .background(Color.theme.backgroundColor)
+            .scrollContentBackground(.hidden)
             .navigationBar(title: navigationTitle, displayMode: .inline)
-    }
-}
-
-extension EditTextView {
-    var textCell: some View {
-        SettingsSectionContainer(header: title) {
-            TextFieldCell(value: $text)
         }
-    }
-}
-
-fileprivate struct TextFieldCell: View {
-    @Binding var value: String
-    
-    var body: some View {
-        HStack(alignment: .top) {
-            TextField("New Text", text: $value, axis: .vertical)
-                .lineLimit(8, reservesSpace: true)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                PresentationBackArrowButton()
+            }
         }
-        .lineLimit(1)
-        .minimumScaleFactor(0.8)
-    }
-}
-
-struct EditTextView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditTextView(title: "Title", text: .constant("Example Description"), navigationTitle: "Navigation Bar Title")
-            .preferredColorScheme(.dark)
     }
 }

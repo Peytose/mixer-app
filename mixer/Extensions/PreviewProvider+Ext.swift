@@ -83,5 +83,6 @@ class DeveloperPreview {
                         tagline: "The best frat in the greater Boston area",
                         address: "528 Beacon St, Boston, MA 02215",
                         location: GeoPoint(latitude: 42.35071,
-                                           longitude: -71.09097))
+                                           longitude: -71.09097),
+                        showLocationOnProfile: false)
 }

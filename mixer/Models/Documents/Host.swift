@@ -34,17 +34,21 @@ enum HostType: Int, Codable {
     }
 }
 
-struct Host: Hashable, Identifiable, Codable {
+struct Host: Hashable, Identifiable, Codable, Equatable {
+    static func ==(lhs: Host, rhs: Host) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     // MARK: - Metadata
     @DocumentID var id: String?
     var mainUserId: String
     let dateJoined: Timestamp
 
     // MARK: - Basic Information
-    let name: String
+    var name: String
     let username: String
     var description: String
-    let hostImageUrl: String
+    var hostImageUrl: String
     let universityId: String
 
     // MARK: - Host Type & Types of Events Held
@@ -61,6 +65,7 @@ struct Host: Hashable, Identifiable, Codable {
     var location: GeoPoint
     
     // MARK: - Flags
+    var showLocationOnProfile: Bool
     var hasCurrentEvent: Bool?
     var isFollowed: Bool?
     

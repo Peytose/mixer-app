@@ -13,7 +13,7 @@ import Combine
 struct HostInfoView: View {
     @State private var bioHeight: CGFloat = 65
     @State private var contentHeight: CGFloat = 0
-    var namespace: Namespace.ID?
+    var namespace: Namespace.ID
     @State private var showMoreEvents = false
     @ObservedObject var viewModel: HostViewModel
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
@@ -23,7 +23,6 @@ struct HostInfoView: View {
             // Host name, links and tagline section
             NameAndTaglineView(namespace: namespace,
                                host: $viewModel.host)
-//                .padding(.bottom, 8)
             
             // Upcoming events section
             if !viewModel.currentAndFutureEvents.filter({ $0.startDate > Timestamp() }).isEmpty {
@@ -45,7 +44,8 @@ struct HostInfoView: View {
                                 }
                             } else  {
                                 NavigationLink {
-                                    EventDetailView(event: event)
+                                    EventDetailView(event: event,
+                                                    namespace: namespace)
                                 } label: {
                                     SmallEventCell(title: event.title,
                                                    duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
@@ -78,19 +78,21 @@ struct HostInfoView: View {
             }
             
             // Map section
-            let location = CLLocationCoordinate2D(latitude: viewModel.host.location.latitude,
-                                                  longitude: viewModel.host.location.longitude)
-            
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Located At")
-                    .primaryHeading()
+            if viewModel.host.showLocationOnProfile {
+                let location = CLLocationCoordinate2D(latitude: viewModel.host.location.latitude,
+                                                      longitude: viewModel.host.location.longitude)
                 
-                VStack(alignment: .leading, spacing: 4) {
-                    MapSnapshotView(location: .constant(location))
-                    .onTapGesture { viewModel.getDirectionsToLocation(coordinates: location) }
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Located At")
+                        .primaryHeading()
                     
-                    Text("Tap the map for directions to this host!")
-                        .footnote()
+                    VStack(alignment: .leading, spacing: 4) {
+                        MapSnapshotView(location: .constant(location))
+                            .onTapGesture { viewModel.getDirectionsToLocation(coordinates: location) }
+                        
+                        Text("Tap the map for directions to this host!")
+                            .footnote()
+                    }
                 }
             }
         }
@@ -99,7 +101,7 @@ struct HostInfoView: View {
 }
 
 fileprivate struct NameAndTaglineView: View {
-    var namespace: Namespace.ID?
+    var namespace: Namespace.ID
     @Binding var host: Host
     
     var body: some View {
@@ -113,7 +115,7 @@ fileprivate struct NameAndTaglineView: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
                     .matchedGeometryEffect(id: "tagline-\(host.username)",
-                                           in: namespace ?? Namespace().wrappedValue)
+                                           in: namespace)
             }
         }
     }

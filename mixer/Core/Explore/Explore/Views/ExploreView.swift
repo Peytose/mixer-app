@@ -89,7 +89,8 @@ extension ExploreView {
     func eventDetailView() -> some View {
         if let event = context.last?.selectedEvent {
             EventDetailView(event: event,
-                            action: homeViewModel.navigate)
+                            action: homeViewModel.navigate,
+                            namespace: namespace)
         }
     }
 
@@ -97,7 +98,8 @@ extension ExploreView {
     func hostDetailView() -> some View {
         if let host = context.last?.selectedHost {
             HostDetailView(host: host,
-                           action: homeViewModel.navigate)
+                           action: homeViewModel.navigate,
+                           namespace: namespace)
         }
     }
 }

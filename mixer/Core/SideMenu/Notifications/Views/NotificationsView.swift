@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NotificationsView: View {
     @ObservedObject var viewModel: NotificationsViewModel
+    @Namespace var namespace
     
     var body: some View {
         ZStack {
@@ -44,12 +45,14 @@ struct NotificationsView: View {
                 case .memberInvited,
                         .guestlistAdded:
                     if let host = notification.host {
-                        HostDetailView(host: host)
+                        HostDetailView(host: host,
+                                       namespace: namespace)
                     }
                 case .eventLiked,
                         .eventPostedWithoutPlanner:
                     if let event = notification.event {
-                        EventDetailView(event: event)
+                        EventDetailView(event: event,
+                                        namespace: namespace)
                     }
                 default:
                     EmptyView()

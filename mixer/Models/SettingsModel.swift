@@ -14,6 +14,7 @@ enum RowType: String, Codable {
     case toggle   = "toggle"
     case mail     = "mail"
     case link     = "link"
+    case navigate = "navigate"
 }
 
 struct SettingsSectionModel: Codable, Identifiable {

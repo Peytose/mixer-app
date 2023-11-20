@@ -1,0 +1,93 @@
+[
+    {
+        "id": 6001,
+        "header": "Host Profile",
+        "footer": "Manage your host profile settings here.",
+        "rows": [
+            {
+                "id": 6002,
+                "type": "editable",
+                "title": "Display Name",
+                "icon": "person.fill",
+                "alertTitle": "Display Name Change",
+                "alertMessage": "Please enter the host name.",
+                "alertPlaceholder": "Host name"
+            },
+            {
+                "id": 6003,
+                "type": "readOnly",
+                "title": "Username",
+                "icon": "a.magnify"
+            },
+            {
+                "id": 6004,
+                "type": "editable",
+                "title": "Instagram",
+                "icon": "instagram",
+                "alertTitle": "Instagram Username Change",
+                "alertMessage": "Please enter the host's Instagram username.",
+                "alertPlaceholder": "Instagram username"
+            },
+            {
+                "id": 6005,
+                "type": "editable",
+                "title": "Website",
+                "icon": "globe",
+                "alertTitle": "Website Change",
+                "alertMessage": "Please enter the host's website URL.",
+                "alertPlaceholder": "Website URL"
+            },
+            {
+                "id": 6006,
+                "type": "navigate",
+                "title": "Description",
+                "icon": "text.bubble"
+            },
+            {
+                "id": 6007,
+                "type": "navigate",
+                "title": "Edit Members",
+                "icon": "person.3.fill"
+            }
+        ]
+    },
+    {
+        "id": 7001,
+        "header": "Host Location",
+        "footer": "Set and manage your host location.",
+        "rows": [
+            {
+                "id": 7002,
+                "type": "navigate",
+                "title": "Address",
+                "icon": "map.fill"
+            },
+            {
+                "id": 7003,
+                "type": "toggle",
+                "title": "Show location on profile?",
+                "icon": "eye.fill"
+            }
+        ]
+    },
+    {
+        "id": 8001,
+        "header": "Legal & Policies for Hosts",
+        "rows": [
+            {
+                "id": 8002,
+                "type": "link",
+                "title": "Host Agreement",
+                "icon": "doc.text.fill",
+                "url": ""
+            },
+            {
+                "id": 8003,
+                "type": "link",
+                "title": "Privacy Policy",
+                "icon": "lock.doc.fill",
+                "url": ""
+            }
+        ]
+    }
+]

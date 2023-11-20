@@ -44,11 +44,20 @@ extension EditEventView {
     
     var aboutSection: some View {
         SettingsSectionContainer(header: "About") {
-            SettingsCell(value: "Description", isLink: true) { EditTextView(title: "Description", text: $description, navigationTitle: "Edit Event Description")
+            SettingsCell(value: "Description", isLink: true) {
+                EditTextView(navigationTitle: "Edit Event Description",
+                             title: "Description",
+                             text: description) { _ in
+                    
+                }
             }
             
             SettingsCell(value: "Notes", isLink: true) {
-                EditTextView(title: "Notes", text: $note, navigationTitle: "Edit Event Notes")
+                EditTextView(navigationTitle: "Edit Event Notes",
+                             title: "Notes",
+                             text: note) { _ in
+                    
+                }
             }
             
             //MARK: To-do: Make the edit amenities view here

@@ -38,13 +38,14 @@ final class ExploreViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        fetchEventsAndHosts()
+        fetchEvents()
+        fetchHosts()
     }
     
     
     func fetchEventsAndHosts() {
-        fetchEvents()
-        fetchHosts()
+        EventManager.shared.fetchExploreEvents()
+        HostManager.shared.fetchHosts()
     }
     
     

@@ -12,6 +12,7 @@ struct MapView: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     @Binding var mapState: MapViewState
     @Binding var context: [NavigationContext]
+    @Namespace var namespace
     
     var body: some View {
         if let state = context.last?.state {
@@ -47,7 +48,8 @@ extension MapView {
     func eventDetailView() -> some View {
         if let event = context.last?.selectedEvent {
             EventDetailView(event: event,
-                            action: homeViewModel.navigate)
+                            action: homeViewModel.navigate,
+                            namespace: namespace)
         }
     }
 
@@ -55,7 +57,8 @@ extension MapView {
     func hostDetailView() -> some View {
         if let host = context.last?.selectedHost {
             HostDetailView(host: host,
-                           action: homeViewModel.navigate)
+                           action: homeViewModel.navigate,
+                           namespace: namespace)
         }
     }
 }

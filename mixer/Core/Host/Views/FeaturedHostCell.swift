@@ -49,7 +49,7 @@ extension FeaturedHostCell {
             .padding(-10)
             .padding(.horizontal, -15)
             .blur(radius: 30)
-            .matchedGeometryEffect(id: "blur-\(namespace)", in: namespace)
+            .matchedGeometryEffect(id: "blur-\(host.username)", in: namespace)
     }
     
     var backgroundImage: some View {

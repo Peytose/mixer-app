@@ -77,7 +77,8 @@ struct NotificationCell: View {
                     case .eventLiked:
                         if let event = cellViewModel.notification.event {
                             NotificationSecondaryImage(imageUrl: event.eventImageUrl) {
-                                EventDetailView(event: event)
+                                EventDetailView(event: event,
+                                                namespace: namespace)
                             }
                         }
                     case .guestlistJoined:
@@ -86,7 +87,8 @@ struct NotificationCell: View {
                     case .guestlistAdded:
                         if let event = cellViewModel.notification.event {
                             NotificationSecondaryImage(imageUrl: event.eventImageUrl) {
-                                EventDetailView(event: event)
+                                EventDetailView(event: event,
+                                                namespace: namespace)
                             }
                         }
                     case .plannerInvited, .plannerPendingReminder:

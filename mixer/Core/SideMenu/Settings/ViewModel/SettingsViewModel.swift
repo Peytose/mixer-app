@@ -13,16 +13,21 @@ import Combine
 enum ProfileSaveType {
     case displayName
     case image
-    case bio
+    case bio(String)
     case instagram
     case gender
     case relationship
     case major
     case ageToggle
+    // Host-specific save types
+    case website
+    case description(String)
+    case address
+    case locationToggle
     case unknown
 }
 
-class SettingsViewModel: ObservableObject {
+class SettingsViewModel: SettingsConfigurable {
     @Published var user: User?
     @Published var displayName: String     = ""
     @Published var bio: String             = ""
@@ -65,6 +70,7 @@ class SettingsViewModel: ObservableObject {
     
     func save(for type: ProfileSaveType) {
         self.save(for: type) {
+            print("DEBUG: \(type.self) saved!")
             HapticManager.playSuccess()
         }
     }
@@ -97,8 +103,8 @@ class SettingsViewModel: ObservableObject {
                     }
             }
             
-        case .bio:
-            guard self.bio != "" else { return }
+        case .bio(let updatedBio):
+            guard updatedBio != self.bio, updatedBio != "" else { return }
             
             COLLECTION_USERS
                 .document(uid)
@@ -152,7 +158,7 @@ class SettingsViewModel: ObservableObject {
                     completion()
                 }
             
-        case .unknown:
+        default:
             break
         }
     }
@@ -214,13 +220,12 @@ extension SettingsViewModel {
         }
     }
     
+    
     // Mapping saveType based on the row title
     func saveType(for title: String) -> ProfileSaveType {
         switch title {
             case "Display Name":
                 return .displayName
-            case "Bio":
-                return .bio
             case "Instagram":
                 return .instagram
             case "Gender":
@@ -236,6 +241,7 @@ extension SettingsViewModel {
         }
     }
     
+    
     // Mapping toggle based on the row title
     func toggle(for title: String) -> Binding<Bool> {
         switch title {
@@ -249,6 +255,7 @@ extension SettingsViewModel {
         }
     }
     
+    
     // Mapping URLs based on the row title
     func url(for title: String) -> String {
         switch title {
@@ -258,6 +265,21 @@ extension SettingsViewModel {
             return termsOfServiceLink
         default:
             return ""
+        }
+    }
+    
+    
+    // Mapping destination based on the row title
+    func destination(for title: String) -> AnyView {
+        switch title {
+        case "Bio":
+            return AnyView(EditTextView(navigationTitle: "Edit Bio",
+                                        title: "Bio",
+                                        text: bio,
+                                        limit: 150) { updatedText in
+                self.save(for: .bio(updatedText))
+            })
+            default: return AnyView(EmptyView())
         }
     }
 }

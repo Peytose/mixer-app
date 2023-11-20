@@ -55,7 +55,7 @@ fileprivate struct CellDateView: View {
             .fill(Color.theme.backgroundColor)
             .ignoresSafeArea()
             .overlay {
-                VStack(alignment: .center, spacing: 12) {
+                VStack(alignment: .center, spacing: 5) {
                     VStack {
                         Text(hasStarted ? event.startDate.getTimestampString(format: "h:mm") : event.startDate.getTimestampString(format: "MMM"))
                             .font(.headline)
@@ -74,7 +74,6 @@ fileprivate struct CellDateView: View {
                     
                     Image(systemName: event.isInviteOnly ? "door.left.hand.closed" : "door.left.hand.open")
                         .imageScale(.large)
-                        .padding(.top, -7)
                 }
                 .padding(.top, 10)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

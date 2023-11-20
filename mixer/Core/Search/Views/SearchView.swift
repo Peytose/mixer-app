@@ -11,6 +11,7 @@ struct SearchView: View {
     @EnvironmentObject private var viewModel: SearchViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
     @Binding var context: [NavigationContext]
+    @Namespace var namespace
     
     var body: some View {
         if let state = context.last?.state {
@@ -142,7 +143,8 @@ extension SearchView {
     func eventDetailView() -> some View {
         if let event = context.last?.selectedEvent {
             EventDetailView(event: event,
-                            action: homeViewModel.navigate)
+                            action: homeViewModel.navigate,
+                            namespace: namespace)
         }
     }
     
@@ -150,7 +152,8 @@ extension SearchView {
     func hostDetailView() -> some View {
         if let host = context.last?.selectedHost {
             HostDetailView(host: host,
-                           action: homeViewModel.navigate)
+                           action: homeViewModel.navigate,
+                           namespace: namespace)
         }
     }
     

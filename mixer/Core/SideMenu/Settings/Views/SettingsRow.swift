@@ -7,31 +7,37 @@
 
 import SwiftUI
 
-struct SettingsRow: View {
+struct SettingsRow<ViewModel: SettingsConfigurable>: View {
     let row: SettingsRowModel
-    @EnvironmentObject var viewModel: SettingsViewModel
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         switch row.type {
             case .editable:
                 EditableSettingsRow(content: viewModel.content(for: row.title),
-                                    row: row,
-                                    saveType: viewModel.saveType(for: row.title))
+                                    row: row) { [saveType = viewModel.saveType(for: row.title)] in
+                    viewModel.save(for: saveType)
+                }
             case .menu:
                 MenuSettingsRow(content: viewModel.content(for: row.title),
                                 row: row,
                                 saveType: viewModel.saveType(for: row.title))
             case .readOnly:
-                ReadOnlySettingsRow(row: row, content: viewModel.content(for: row.title).wrappedValue)
+                ReadOnlySettingsRow(row: row,
+                                    content: viewModel.content(for: row.title).wrappedValue)
             case .toggle:
                 ToggleSettingsRow(isOn: viewModel.toggle(for: row.title),
-                                  row: row,
-                                  saveType: viewModel.saveType(for: row.title))
+                                  row: row) { [saveType = viewModel.saveType(for: row.title)] in
+                    viewModel.save(for: saveType)
+                }
             case .mail:
                 MailSettingsRow(row: row)
             case .link:
                 LinkSettingsRow(row: row,
                                 url: viewModel.url(for: row.title))
+            case .navigate:
+                NavigableSettingsRow(row: row,
+                                     destination: viewModel.destination(for: row.title))
         }
     }
 }
@@ -60,6 +66,23 @@ struct MailSettingsRow: View {
     }
 }
 
+struct NavigableSettingsRow<Content:View>: View {
+    let row: SettingsRowModel
+    var destination: Content
+    
+    var body: some View {
+        NavigationLink(destination: destination) {
+            HStack {
+                if let icon = row.icon {
+                    SettingsIconAndTitle(icon: icon, title: row.title)
+                }
+                
+                Spacer()
+            }
+        }
+    }
+}
+
 struct LinkSettingsRow: View {
     let row: SettingsRowModel
     let url: String
@@ -82,18 +105,19 @@ struct LinkSettingsRow: View {
 }
 
 struct EditableSettingsRow: View {
-    @EnvironmentObject var viewModel: SettingsViewModel
     @Binding var content: String
     @State var staticContent: String
     let row: SettingsRowModel
-    let saveType: ProfileSaveType
+    let saveAction: () -> Void
     @State private var showAlert: Bool = false
     
-    init(content: Binding<String>, row: SettingsRowModel, saveType: ProfileSaveType) {
+    init(content: Binding<String>,
+         row: SettingsRowModel,
+         saveAction: @escaping () -> Void) {
         self._content = content
         self.staticContent = content.wrappedValue
         self.row = row
-        self.saveType = saveType
+        self.saveAction = saveAction
     }
     
     var body: some View {
@@ -110,7 +134,7 @@ struct EditableSettingsRow: View {
             if #available(iOS 16.0, *) {
                 Button("Save") {
                     staticContent = content
-                    viewModel.save(for: saveType)
+                    saveAction()
                 }
                 Button("Cancel", role: .cancel, action: {})
             }
@@ -168,7 +192,6 @@ extension MenuSettingsRow {
 }
 
 struct ReadOnlySettingsRow: View {
-    @EnvironmentObject var viewModel: SettingsViewModel
     let row: SettingsRowModel
     var content = ""
     
@@ -191,19 +214,17 @@ struct ReadOnlySettingsRow: View {
 }
 
 struct ToggleSettingsRow: View {
-    @EnvironmentObject var viewModel: SettingsViewModel
     @Binding var isOn: Bool
     let row: SettingsRowModel
-    let saveType: ProfileSaveType
+    let saveAction: () -> Void
     
     var body: some View {
         Toggle(row.title, isOn: $isOn)
             .font(.body)
             .fontWeight(.medium)
             .foregroundColor(.white)
-            .onChange(of: isOn) { newValue in
-                viewModel.showAgeOnProfile = newValue
-                viewModel.save(for: saveType)
+            .onChange(of: isOn) { _ in
+                saveAction()
             }
     }
 }

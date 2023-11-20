@@ -13,14 +13,15 @@ import FirebaseFirestore
 struct HostDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject private var viewModel: HostViewModel
-    var namespace: Namespace.ID?
+    var namespace: Namespace.ID
     
     @State var showBackArrow = false
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
-    init(host: Host, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
+    init(host: Host, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil, namespace: Namespace.ID) {
         self._viewModel = StateObject(wrappedValue: HostViewModel(host: host))
         self.action     = action
+        self.namespace  = namespace
     }
     
     var body: some View {

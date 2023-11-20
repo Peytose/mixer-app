@@ -20,14 +20,14 @@ class HostManager: ObservableObject {
     
     
     func fetchHosts() {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
+        guard let _ = Auth.auth().currentUser?.uid else { return }
         
-        COLLECTION_HOSTS.getDocuments { snapshot, _ in
-            print("DEBUG: Did fetch user from firestore.")
-            guard let documents = snapshot?.documents else { return }
-            let hosts = documents.compactMap({ try? $0.data(as: Host.self) })
-            self.hosts = hosts
-        }
+        COLLECTION_HOSTS
+            .getDocuments { snapshot, _ in
+                guard let documents = snapshot?.documents else { return }
+                let hosts = documents.compactMap({ try? $0.data(as: Host.self) })
+                self.hosts = hosts
+            }
     }
     
     

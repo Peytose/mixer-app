@@ -42,7 +42,7 @@ final class HostViewModel: ObservableObject {
                                                                      to: Date())!)
         
         COLLECTION_EVENTS
-            .whereField("hostId", arrayContains: hostUid)
+            .whereField("hostIds", arrayContains: hostUid)
             .whereField("endDate", isLessThan: Timestamp())
             .whereField("endDate", isGreaterThan: thirtyDaysBefore)
             .getDocuments { snapshot, _ in

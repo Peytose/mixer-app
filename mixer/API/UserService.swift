@@ -584,12 +584,6 @@ extension UserService {
             let currentUserReference = COLLECTION_USERS.document(memberId)
             batch.updateData(updatedUserData, forDocument: currentUserReference)
 
-            // Add event IDs to the user's accessible-events collection
-            eventIds.forEach { eventId in
-                let accessibleEventRef = COLLECTION_USERS.document(memberId).collection("accessible-events").document(eventId)
-                batch.setData(["timestamp": Timestamp()], forDocument: accessibleEventRef)
-            }
-
             COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: memberId, ofTypes: [.memberInvited], from: userId) { documentReferences in
                 if let documentReferences = documentReferences {
                     Firestore.addDeleteOperations(to: batch, for: documentReferences)

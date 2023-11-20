@@ -17,56 +17,56 @@ struct HostDashboardView: View {
     }
 
     var body: some View {
-//        NavigationView {
-            ScrollView(showsIndicators: false) {
+        ScrollView(showsIndicators: false) {
+            VStack {
                 VStack {
-                    VStack {
-                        dashboardOverview
-                        
-                        Spacer()
-                        
-                        VStack(alignment: .leading) {
-                            Text("Most Recent")
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            
-                            recentEventInformation
-                        }
-                                                
-                        Divider()
-                        
-                        seeReportButton
-                    }
-                    .frame(width: DeviceTypes.ScreenSize.width * 0.95, height: 360, alignment: .top)
-                    .padding()
-                    .background(Color.theme.secondaryBackgroundColor)
-                    .cornerRadius(10)
+                    dashboardOverview
                     
-                    VStack {
-                        generalInsights
+                    Spacer()
+                    
+                    VStack(alignment: .leading) {
+                        Text("Most Recent")
+                            .font(.title)
+                            .fontWeight(.bold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        recentEventInformation
                     }
-                    .padding(.horizontal)
+                    
+                    Divider()
+                    
+                    seeReportButton
                 }
-                .navigationTitle(viewModel.host.name)
-                .navigationBarTitleDisplayMode(.large)
-                .padding(.bottom, 100)
-            }
-            .background(Color.theme.backgroundColor)
-            .navigationBarBackButtonHidden(true)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { showSettings.toggle() }, label: {
-                        Image(systemName: "gearshape")
-                    })
-                    .buttonStyle(.plain)
-                }
+                .frame(width: DeviceTypes.ScreenSize.width * 0.90, height: 360, alignment: .top)
+                .padding()
+                .background(Color.theme.secondaryBackgroundColor)
+                .cornerRadius(10)
                 
-                ToolbarItem(placement: .navigationBarLeading) {
-                    PresentationBackArrowButton()
+                VStack {
+                    generalInsights
                 }
+                .padding(.horizontal)
             }
-            .overlay(alignment: .bottomTrailing) {
+            .navigationTitle(viewModel.host.name)
+            .navigationBarTitleDisplayMode(.large)
+            .padding(.bottom, 100)
+        }
+        .background(Color.theme.backgroundColor)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: { showSettings.toggle() }, label: {
+                    Image(systemName: "gearshape")
+                })
+                .buttonStyle(.plain)
+            }
+            
+            ToolbarItem(placement: .navigationBarLeading) {
+                PresentationBackArrowButton()
+            }
+        }
+        .overlay(alignment: .bottomTrailing) {
+            if let hostId = viewModel.host.id, (UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privilege ?? .basic).rawValue > PrivilegeLevel.basic.rawValue {
                 NavigationLink(destination: EventCreationFlowView()) {
                     Image(systemName: "plus")
                         .font(.title)
@@ -78,10 +78,12 @@ struct HostDashboardView: View {
                 }
                 .padding()
             }
-            .sheet(isPresented: $showSettings) {
-                HostSettingsView()
+        }
+        .sheet(isPresented: $showSettings) {
+            if let host = UserService.shared.user?.currentHost {
+                HostSettingsView(host: host)
             }
-//        }
+        }
     }
 }
 
@@ -289,12 +291,6 @@ struct SectionViewContainer<Content: View, Content2: View>: View {
                     .font(.title2.bold())
                 
                 Spacer()
-                
-//                NavigationLink(destination: navigationDestination) {
-//                    Text("See all")
-//                        .fontWeight(.medium)
-//                }
-//                .accentColor(Color.theme.mixerIndigo)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             

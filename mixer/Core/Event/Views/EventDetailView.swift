@@ -13,7 +13,7 @@ import PopupView
 
 struct EventDetailView: View {
     @StateObject private var viewModel: EventViewModel
-    var namespace: Namespace.ID?
+    var namespace: Namespace.ID
     @State private var isShowingModal: Bool = false
     @State private var doubleTapLocation: CGPoint = CGPoint.zero
     @State private var showHeart = false
@@ -21,9 +21,10 @@ struct EventDetailView: View {
     @State private var heartOpacity: Double = 1
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
-    init(event: Event, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
+    init(event: Event, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil, namespace: Namespace.ID) {
         self._viewModel = StateObject(wrappedValue: EventViewModel(event: event))
         self.action     = action
+        self.namespace  = namespace
     }
     
     var body: some View {
@@ -51,7 +52,7 @@ struct EventDetailView: View {
                                         }
                                 } else {
                                     NavigationLink {
-                                        HostDetailView(host: host)
+                                        HostDetailView(host: host, namespace: namespace)
                                     } label: {
                                         HostSection(host: host)
                                     }
@@ -242,9 +243,10 @@ struct EventHeader: View {
 struct EventFlyer: View {
     @Binding var imageUrl: String
     @Binding var isShowingModal: Bool
+    @Namespace var namespace
     
     var body: some View {
-        EventPhotoBanner(imageUrl: imageUrl)
+        EventPhotoBanner(imageUrl: imageUrl, namespace: namespace)
             .onLongPressGesture(minimumDuration: 0.1) {
                 let impact = UIImpactFeedbackGenerator(style: .heavy)
                 impact.impactOccurred()
@@ -532,8 +534,8 @@ fileprivate struct GuestlistActionButton: View {
     }
 }
 
-struct EventDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        EventDetailView(event: dev.mockEvent)
-    }
-}
+//struct EventDetailView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EventDetailView(event: dev.mockEvent)
+//    }
+//}

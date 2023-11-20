@@ -17,8 +17,25 @@ class EventManager: ObservableObject {
     @Published var userPastEvents = [Event]()
     
     init() {
+        self.fetchExploreEvents()
+    }
+    
+    
+    func fetchExploreEvents() {
         self.fetchAvailableEvents()
         self.fetchUserSpecificEvents()
+        self.fetchHostMemberEvents()
+    }
+    
+    
+    func fetchHostMemberEvents() {
+        guard let hostId = UserService.shared.user?.currentHost?.id else { return }
+        
+        let eventsQuery = COLLECTION_EVENTS.whereField("hostIds", arrayContains: hostId).whereField("endDate", isGreaterThan: Timestamp())
+        
+        self.fetchAndFilterEvents(from: eventsQuery) { events in
+            self.events.formUnion(events)
+        }
     }
     
     
@@ -37,16 +54,13 @@ class EventManager: ObservableObject {
                 guard let documents = snapshot?.documents else { return }
                 let eventIds = documents.map { $0.documentID }
 
-                self.fetchEventsByIds(eventIds) { events in
-                    self.events.formUnion(events)
-                }
+                self.fetchEventsByIds(eventIds)
             }
     }
 
     
-    private func fetchEventsByIds(_ ids: [String], completion: @escaping ([Event]) -> Void) {
+    private func fetchEventsByIds(_ ids: [String]) {
         let chunks = ids.chunked(into: 10) // Chunk the array into subarrays of size 10
-        var events = [Event]()
         let dispatchGroup = DispatchGroup()
 
         for chunk in chunks {
@@ -57,10 +71,6 @@ class EventManager: ObservableObject {
             fetchAndFilterEvents(from: eventsQuery) { events in
                 self.events.formUnion(events)
             }
-        }
-
-        dispatchGroup.notify(queue: .main) {
-            completion(events)
         }
     }
 
@@ -96,6 +106,7 @@ class EventManager: ObservableObject {
                 return true
             }
             
+            // Ensure to remove events that have ended
             filteredEvents.removeAll(where: { $0.endDate < Timestamp() })
 
             completion(filteredEvents)

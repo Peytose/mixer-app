@@ -16,7 +16,7 @@ struct ManageMembersView: View {
                 .ignoresSafeArea()
             
             VStack {
-                Text("Members of \(viewModel.selectedHost?.name ?? "")")
+                Text("Members of \(viewModel.selectedHost?.name ?? "n/a")")
                     .primaryHeading()
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .leading)
@@ -58,8 +58,10 @@ struct ManageMembersView: View {
                 .padding()
         }
         .overlay(alignment: .topTrailing) {
-            AddMemberButton(showAlert: $viewModel.isShowingUsernameInputAlert)
-                .padding()
+            if let hostId = viewModel.selectedHost?.id, (UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privilege ?? .basic).rawValue > PrivilegeLevel.basic.rawValue {
+                AddMemberButton(showAlert: $viewModel.isShowingUsernameInputAlert)
+                    .padding()
+            }
         }
         .alert(item: $viewModel.currentAlert) { alertType in
             hideKeyboard()
