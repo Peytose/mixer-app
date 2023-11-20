@@ -31,7 +31,10 @@ class EventManager: ObservableObject {
     func fetchHostMemberEvents() {
         guard let hostId = UserService.shared.user?.currentHost?.id else { return }
         
-        let eventsQuery = COLLECTION_EVENTS.whereField("hostIds", arrayContains: hostId).whereField("endDate", isGreaterThan: Timestamp())
+        let eventsQuery = COLLECTION_EVENTS
+            .whereField("hostIds", arrayContains: hostId)
+            .whereField("endDate", isGreaterThan: Timestamp())
+            .whereField("isPrivate", isEqualTo: true)
         
         self.fetchAndFilterEvents(from: eventsQuery) { events in
             self.events.formUnion(events)
