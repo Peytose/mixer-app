@@ -111,23 +111,40 @@ class UserService: ObservableObject {
     }
     
     
-    func fetchUniversities(with ids: [String] = [],
-                           completion: @escaping ([University]) -> Void) {
-        let chunks = ids.chunked(into: 10)
-        
-        for chunk in chunks {
+    func fetchUniversities(with ids: [String], completion: @escaping ([University]) -> Void) {
+        print("DEBUG: Fetching universities")
+        guard !ids.isEmpty else {
+            completion([])
+            return
+        }
+
+        var allUniversities: [University] = []
+        let dispatchGroup = DispatchGroup()
+
+        for id in ids {
+            dispatchGroup.enter()
             COLLECTION_UNIVERSITIES
-                .whereField(FieldPath.documentID(), in: chunk)
-                .getDocuments { snapshot, error in
+                .document(id)
+                .getDocument { snapshot, error in
+                    defer { dispatchGroup.leave() }
+
                     if let error = error {
-                        print("DEBUG: Error fetching university. \(error.localizedDescription)")
+                        print("DEBUG: Error fetching university: \(error.localizedDescription)")
                         return
                     }
+
+                    guard let university = try? snapshot?.data(as: University.self) else { return }
+                    // Manually setting the id of the university
+                    var universityWithId = university
+                    universityWithId.id = snapshot?.documentID
                     
-                    guard let documents = snapshot?.documents else { return }
-                    let universities = documents.compactMap({ try? $0.data(as: University.self) })
-                    completion(universities)
+                    allUniversities.append(universityWithId)
                 }
+        }
+
+        dispatchGroup.notify(queue: .main) {
+            print("DEBUG: Fetched \(allUniversities.count) universities")
+            completion(allUniversities)
         }
     }
     

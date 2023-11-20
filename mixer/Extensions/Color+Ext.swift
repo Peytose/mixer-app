@@ -9,6 +9,21 @@ import SwiftUI
 
 extension Color {
     static let theme = ColorTheme()
+    
+    static let chartPalette = [
+        Color.red,
+        Color.blue,
+        Color.green,
+        Color.orange,
+        Color.purple
+    ]
+    
+    
+    static func random() -> Color {
+        return Color(red: Double.random(in: 0...1),
+                     green: Double.random(in: 0...1),
+                     blue: Double.random(in: 0...1))
+    }
 }
 
 struct ColorTheme {
@@ -101,5 +116,3 @@ struct ColorTheme {
     let harvardCrimson = Color(red: 165/255, green: 28/255, blue: 48/255)
     let girlPink = Color(red: 255/255, green: 105/255, blue: 180/255)
 }
-
-

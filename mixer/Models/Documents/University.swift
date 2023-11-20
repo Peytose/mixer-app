@@ -10,7 +10,7 @@ import Firebase
 import SwiftUI
 
 struct University: Hashable, Identifiable, Codable {
-    @DocumentID var id: String?
+    var id: String?
     let domain: String
     var name: String
     var shortName: String?

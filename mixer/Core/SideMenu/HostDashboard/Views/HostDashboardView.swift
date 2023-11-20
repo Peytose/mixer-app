@@ -55,9 +55,11 @@ struct HostDashboardView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { showSettings.toggle() }, label: {
+                Button {
+                    showSettings.toggle()
+                } label: {
                     Image(systemName: "gearshape")
-                })
+                }
                 .buttonStyle(.plain)
             }
             
@@ -168,10 +170,13 @@ extension HostDashboardView {
         HStack {
             Spacer()
             
-            NavigationLink(destination: { EventAfterActionView(host: viewModel.host) }) {
+            NavigationLink {
+                EventAfterActionView(viewModel: viewModel)
+            } label: {
                 Text("See full report")
                     .fontWeight(.medium)
                     .foregroundStyle(Color.theme.mixerIndigo)
+                    .padding(.vertical)
             }
         }
     }

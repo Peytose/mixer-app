@@ -33,6 +33,51 @@ final class HostDashboardViewModel: ObservableObject {
     }
     
     
+    func generateCharts() -> [PieChartModel] {
+        guard let guests = self.guests else {
+            print("DEBUG: No guests found")
+            return []
+        }
+
+        // University distributions
+        let universityDistribution = Dictionary(grouping: guests, by: { $0.university })
+            .mapValues { $0.count }
+            .sorted { $0.value > $1.value }
+        
+        var colorIndex = 0
+            let schoolDistributionSegments = universityDistribution.map { university -> PieChartSegment in
+                let segment = PieChartSegment(
+                    value: university.value,
+                    color: Color.chartPalette[colorIndex % Color.chartPalette.count],
+                    label: (university.key?.shortName ?? university.key?.name) ?? "n/a"
+                )
+                colorIndex += 1
+                return segment
+            }
+        
+        // Gender distribution
+        let genderDistribution = Dictionary(grouping: guests, by: { $0.gender })
+            .mapValues { $0.count }
+            .sorted { $0.value > $1.value }
+        
+        colorIndex = 0 // Reset color index for gender distribution
+        let genderDistributionSegments = genderDistribution.map { gender -> PieChartSegment in
+            let segment = PieChartSegment(
+                value: gender.value,
+                color: Color.chartPalette[colorIndex % Color.chartPalette.count],
+                label: gender.key.description
+            )
+            colorIndex += 1
+            return segment
+        }
+
+        let schoolDistributionChart = PieChartModel(title: "School Distribution", segments: schoolDistributionSegments)
+        let genderDistributionChart = PieChartModel(title: "Gender Distribution", segments: genderDistributionSegments)
+
+        return [schoolDistributionChart, genderDistributionChart]
+    }
+    
+    
     func calculateStatistics() {
         guard let guests = self.guests else {
             print("DEBUG: No guests found")
@@ -113,10 +158,25 @@ final class HostDashboardViewModel: ObservableObject {
                         
                         guard let documents = snapshot?.documents else { return }
                         let guests = documents.compactMap({ try? $0.data(as: EventGuest.self )})
-                        
-                        DispatchQueue.main.async {
-                            self.guests = guests
-                            self.calculateStatistics()
+                        // Fetching unique university IDs from guests
+                        let uniqueUniversityIds = Set(guests.map { $0.universityId })
+
+                        // Fetch universities and then associate them with guests
+                        UserService.shared.fetchUniversities(with: Array(uniqueUniversityIds)) { universities in
+                            // Associate each guest with their respective university
+                            let updatedGuests = guests.map { guest -> EventGuest in
+                                var guest = guest
+                                let universityId = guest.universityId
+                                if let university = universities.first(where: { $0.id == universityId }) {
+                                    guest.university = university
+                                }
+                                return guest
+                            }
+
+                            DispatchQueue.main.async {
+                                self.guests = updatedGuests
+                                self.calculateStatistics()
+                            }
                         }
                     }
             }
