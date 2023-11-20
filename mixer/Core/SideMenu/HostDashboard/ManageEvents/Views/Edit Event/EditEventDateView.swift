@@ -39,8 +39,8 @@ extension EditEventDateView {
     
     var selectedDate: some View {
         SettingsSectionContainer(header: "Start Date") {
-            Text("\(Text("Starts: ").fontWeight(.bold)) \(startDate)")
-            Text("\(Text("Ends: ").fontWeight(.bold)) \(endDate)")
+            Text("\(Text("Starts: ").fontWeight(.bold)) \(startDate.formatted(date: .long, time: .shortened))")
+            Text("\(Text("Ends: ").fontWeight(.bold)) \(endDate.formatted(date: .long, time: .shortened))")
         }
     }
 }

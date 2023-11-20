@@ -237,6 +237,7 @@
 		A66E671E29DF70F800AB355E /* EventFlowTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671D29DF70F800AB355E /* EventFlowTextField.swift */; };
 		A66E672029DF7ED500AB355E /* EventCreationActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671F29DF7ED500AB355E /* EventCreationActionButton.swift */; };
 		A66E672429DFCE9D00AB355E /* EventGuestsAndInvitations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */; };
+		A6744C7E2B0981B100E30631 /* EventAfterActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6744C7D2B0981B100E30631 /* EventAfterActionView.swift */; };
 		A678594A29C647F200A2D884 /* EnterPhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A678594929C647F200A2D884 /* EnterPhoneNumberView.swift */; };
 		A682CC562970915B008EA546 /* DetailRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A682CC552970915B008EA546 /* DetailRowView.swift */; };
 		A68971CA296E7E1900289516 /* TabBar in Frameworks */ = {isa = PBXBuildFile; productRef = A68971C9296E7E1900289516 /* TabBar */; };
@@ -490,6 +491,7 @@
 		A66E671D29DF70F800AB355E /* EventFlowTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFlowTextField.swift; sourceTree = "<group>"; };
 		A66E671F29DF7ED500AB355E /* EventCreationActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationActionButton.swift; sourceTree = "<group>"; };
 		A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventGuestsAndInvitations.swift; sourceTree = "<group>"; };
+		A6744C7D2B0981B100E30631 /* EventAfterActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventAfterActionView.swift; sourceTree = "<group>"; };
 		A678594929C647F200A2D884 /* EnterPhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPhoneNumberView.swift; sourceTree = "<group>"; };
 		A682CC552970915B008EA546 /* DetailRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailRowView.swift; sourceTree = "<group>"; };
 		A68971CC296E7E5D00289516 /* CustomTabBarStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarStyle.swift; sourceTree = "<group>"; };
@@ -1169,6 +1171,7 @@
 		9C98585C2B032BE10089C9EB /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A6744C7C2B09818900E30631 /* AfterAction */,
 				A66B7E012AFD70240026D26F /* HostDashboardView.swift */,
 				A66B7E032AFD70590026D26F /* HostLineGraph.swift */,
 				A6EFA7912B06A2D900DE04E8 /* Settings */,
@@ -1412,6 +1415,14 @@
 				9CAE8DC42AB35E16004508DF /* ManageEvents */,
 			);
 			path = HostDashboard;
+			sourceTree = "<group>";
+		};
+		A6744C7C2B09818900E30631 /* AfterAction */ = {
+			isa = PBXGroup;
+			children = (
+				A6744C7D2B0981B100E30631 /* EventAfterActionView.swift */,
+			);
+			path = AfterAction;
 			sourceTree = "<group>";
 		};
 		A68971CB296E7E2E00289516 /* Tab Bar */ = {
@@ -1695,6 +1706,7 @@
 				A68DAA032A12DFDB0069A5E7 /* Button+Ext.swift in Sources */,
 				9CFB25F32AEC111800F090E6 /* UniversitySearchViewModel.swift in Sources */,
 				9C705F9B2A8FCB3600F1D0DB /* EventManager.swift in Sources */,
+				A6744C7E2B0981B100E30631 /* EventAfterActionView.swift in Sources */,
 				9C20AF2B2A75928900F057BD /* EventCreationFlowView.swift in Sources */,
 				9C567A98292FFF1800EA5FCB /* String+Ext.swift in Sources */,
 				9C849A432A5367BF006FDCDB /* EventArray+Ext.swift in Sources */,

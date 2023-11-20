@@ -86,7 +86,8 @@ struct ColorTheme {
     let DesignCodeWhite = Color(red: 242/255, green: 246/255, blue: 255/255)
     let Offwhite2 = Color(red: 245/255, green: 246/255, blue: 250/255)
     let QRCodeBackground = Color(red: 15/255, green: 18/255, blue: 28/255)
-    
+    let tertiaryBackground = Color(red: 39/255, green: 38/255, blue: 44/255)
+
     
     //MARK: Chosen Colors
     let mixerPurple = Color(red: 90/255, green: 60/255, blue: 196/255) //MARK: The main purple we are using s more of an indigo)

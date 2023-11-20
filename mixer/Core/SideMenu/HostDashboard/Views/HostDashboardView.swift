@@ -17,83 +17,76 @@ struct HostDashboardView: View {
     }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack {
+//        NavigationView {
+            ScrollView(showsIndicators: false) {
                 VStack {
-                    DashboardOverview(viewModel: viewModel)
-                    
-                    Spacer()
-                    
-                    Divider()
-                    
-                    Spacer()
-                    
-                    VStack(alignment: .center) {
-                        Text("Most Recent")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack {
+                        dashboardOverview
                         
-                        RecentEventInformation(viewModel: viewModel)
+                        Spacer()
+                        
+                        VStack(alignment: .leading) {
+                            Text("Most Recent")
+                                .font(.title)
+                                .fontWeight(.bold)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            recentEventInformation
+                        }
+                                                
+                        Divider()
+                        
+                        seeReportButton
                     }
+                    .frame(width: DeviceTypes.ScreenSize.width * 0.95, height: 360, alignment: .top)
+                    .padding()
+                    .background(Color.theme.secondaryBackgroundColor)
+                    .cornerRadius(10)
                     
-                    Spacer()
-                    
-                    Divider()
-                    
-                    Spacer()
+                    VStack {
+                        generalInsights
+                    }
+                    .padding(.horizontal)
+                }
+                .navigationTitle(viewModel.host.name)
+                .navigationBarTitleDisplayMode(.large)
+                .padding(.bottom, 100)
+            }
+            .background(Color.theme.backgroundColor)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: { showSettings.toggle() }, label: {
+                        Image(systemName: "gearshape")
+                    })
+                    .buttonStyle(.plain)
+                }
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    PresentationBackArrowButton()
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                NavigationLink(destination: EventCreationFlowView()) {
+                    Image(systemName: "plus")
+                        .font(.title)
+                        .foregroundColor(.black)
+                        .padding()
+                        .background(.white)
+                        .clipShape(Circle())
+                        .shadow(color: .black, radius: 6)
                 }
                 .padding()
-                .frame(width: DeviceTypes.ScreenSize.width * 0.95, height: 360, alignment: .top)
-                .background(Color.theme.secondaryBackgroundColor)
-                .cornerRadius(10)
-                
-                VStack {
-                    generalInsights
-                }
-                .padding(.horizontal)
             }
-            .navigationTitle(viewModel.host.name)
-            .navigationBarTitleDisplayMode(.large)
-            .padding(.bottom, 100)
-        }
-        .background(Color.theme.backgroundColor)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: { showSettings.toggle() }, label: {
-                    Image(systemName: "gearshape")
-                })
-                .buttonStyle(.plain)
+            .sheet(isPresented: $showSettings) {
+                HostSettingsView()
             }
-            
-            ToolbarItem(placement: .navigationBarLeading) {
-                PresentationBackArrowButton()
-            }
-        }
-        .overlay(alignment: .bottomTrailing) {
-            NavigationLink(destination: EventCreationFlowView()) {
-                Image(systemName: "plus")
-                    .font(.title)
-                    .foregroundColor(.black)
-                    .padding()
-                    .background(.white)
-                    .clipShape(Circle())
-                    .shadow(color: .black, radius: 6)
-            }
-            .padding()
-        }
-        .sheet(isPresented: $showSettings) {
-            HostSettingsView()
-        }
+//        }
     }
 }
 
-private struct DashboardOverview: View {
-    @ObservedObject var viewModel: HostDashboardViewModel
-    var color: Color = Color.theme.secondaryBackgroundColor
-    
-    var body: some View {
+extension HostDashboardView {
+    var dashboardOverview: some View {
         HStack(alignment: .center) {
             NavigationLink(destination: ManageEventsView()) {
                 Label(title: "events",
@@ -119,12 +112,8 @@ private struct DashboardOverview: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
-}
-
-struct RecentEventInformation: View {
-    @ObservedObject var viewModel: HostDashboardViewModel
     
-    var body: some View {
+    var recentEventInformation: some View {
         HStack(alignment: .top) {
             if let event = viewModel.recentEvent {
                 KFImage(URL(string: event.eventImageUrl))
@@ -172,23 +161,34 @@ struct RecentEventInformation: View {
             .foregroundStyle(.white)
         }
     }
-}
+    
+    var seeReportButton: some View {
+        HStack {
+            Spacer()
+            
+            NavigationLink(destination: { EventAfterActionView(host: viewModel.host) }) {
+                Text("See full report")
+                    .fontWeight(.medium)
+                    .foregroundStyle(Color.theme.mixerIndigo)
+            }
+        }
+    }
 
-extension HostDashboardView {
+    
     var generalInsights: some View {
         SectionViewContainer("General Insights") {
-            SquareViewContainer(title: "Avg. Attendance", subtitle: "Sep 1 - Now", value: "342", valueTitle: "guests") {
+            SquareViewContainer(title: "Avg. Attendance", subtitle: "Sep 1 - Now", value: "342", valueTitle: "Guests") {
                 HostLineGraph()
             }
         } content2: {
-            SquareViewContainer(title: "User Ratings", subtitle: "Sep 1 - Now", value: "4.6", valueTitle: "stars") {
+            SquareViewContainer(title: "User Ratings", subtitle: "Sep 1 - Now", value: "4.6", valueTitle: "Stars") {
                 HostLineGraph()
             }
         } content3: {
             SquareViewContainer(title: "Guests Served",
                                 subtitle: "Sep 1 - Now",
                                 value: "4500",
-                                valueTitle: "guests",
+                                valueTitle: "Guests",
                                 width: DeviceTypes.ScreenSize.width * 0.92) {
                 HostLineGraph(width: 350)
             }
@@ -199,15 +199,15 @@ extension HostDashboardView {
     
     var eventAnalytics: some View {
         SectionViewContainer("Recent Event Analytics") {
-            SquareViewContainer(title: "Gender", subtitle: "Sep 1 - Now", value: "8:4:1", valueTitle: "ratio") {
+            SquareViewContainer(title: "Gender", subtitle: "Sep 1 - Now", value: "8:4:1", valueTitle: "Ratio") {
                 HostLineGraph()
             }
         } content2: {
-            SquareViewContainer(title: "Schools", subtitle: "Sep 1 - Now", value: "8", valueTitle: "schools") {
+            SquareViewContainer(title: "Schools", subtitle: "Sep 1 - Now", value: "8", valueTitle: "Schools") {
                 HostLineGraph()
             }
         } content3: {
-            SquareViewContainer(title: "Attendance Over Time", subtitle: "Sep 1 - Now", value: "427", valueTitle: "guests", width: DeviceTypes.ScreenSize.width * 0.92) {
+            SquareViewContainer(title: "Attendance Over Time", subtitle: "Sep 1 - Now", value: "427", valueTitle: "Guests", width: DeviceTypes.ScreenSize.width * 0.92) {
                 HostLineGraph()
             }
         } navigationDestination: {
@@ -225,8 +225,9 @@ struct SquareViewContainer<Content: View>: View {
     var value: String
     var valueTitle: String
     var width: CGFloat
+    var isQuickFact: Bool
     
-    init(title: String, subtitle: String, value: String, valueTitle: String, width: CGFloat = DeviceTypes.ScreenSize.width * 0.44, @ViewBuilder content: () -> Content) {
+    init(title: String, subtitle: String = "", value: String, valueTitle: String, width: CGFloat = DeviceTypes.ScreenSize.width * 0.44, isQuickFact: Bool = false, @ViewBuilder content: () -> Content) {
         self.content = content()
         //        self.destination = destination()
         self.title = title
@@ -234,22 +235,22 @@ struct SquareViewContainer<Content: View>: View {
         self.value = value
         self.valueTitle = valueTitle
         self.width = width
+        self.isQuickFact = isQuickFact
     }
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: isQuickFact ? .center : .leading) {
             Text(title)
                 .font(.headline)
             
             Text(subtitle)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-            
+                       
             Spacer()
-            
+
             content
-            
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .center)
             
             Divider()
             
@@ -259,7 +260,7 @@ struct SquareViewContainer<Content: View>: View {
             }
         }
         .padding()
-        .frame(width: width, height: DeviceTypes.ScreenSize.width * 0.44, alignment: .top)
+        .frame(width: width, height: DeviceTypes.ScreenSize.width * 0.42, alignment: .top)
         .background(Color.theme.secondaryBackgroundColor)
         .cornerRadius(10)
     }
@@ -289,11 +290,11 @@ struct SectionViewContainer<Content: View, Content2: View>: View {
                 
                 Spacer()
                 
-                NavigationLink(destination: navigationDestination) {
-                    Text("See all")
-                        .fontWeight(.medium)
-                }
-                .accentColor(Color.theme.mixerIndigo)
+//                NavigationLink(destination: navigationDestination) {
+//                    Text("See all")
+//                        .fontWeight(.medium)
+//                }
+//                .accentColor(Color.theme.mixerIndigo)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             
@@ -330,13 +331,11 @@ private struct Label: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }
-            
-            if isButton {
-                Image(systemName: "chevron.right")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
         }
+        .frame(width: 80)
+        .padding(4)
+        .background(isButton ? Color.theme.tertiaryBackground : nil)
+        .cornerRadius(12)
     }
 }
 
@@ -355,5 +354,11 @@ private struct TextRow: View {
         }
         .lineLimit(1)
         .minimumScaleFactor(0.8)
+    }
+}
+
+struct HostDashboardView_Previews: PreviewProvider {
+    static var previews: some View {
+        HostDashboardView(host: dev.mockHost)
     }
 }
