@@ -60,14 +60,12 @@ final class HostDashboardViewModel: ObservableObject {
             .mapValues { $0.count }
             .sorted { $0.value > $1.value }
         
-        colorIndex = 0 // Reset color index for gender distribution
         let genderDistributionSegments = genderDistribution.map { gender -> PieChartSegment in
             let segment = PieChartSegment(
                 value: gender.value,
-                color: Color.chartPalette[colorIndex % Color.chartPalette.count],
+                color: Color.genderChartPallete[gender.key.rawValue],
                 label: gender.key.description
             )
-            colorIndex += 1
             return segment
         }
 

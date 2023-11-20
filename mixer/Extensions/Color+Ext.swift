@@ -18,6 +18,13 @@ extension Color {
         Color.purple
     ]
     
+    static let genderChartPallete = [
+        Color.theme.girlPink,
+        Color.teal,
+        Color.purple,
+        Color.gray
+    ]
+    
     
     static func random() -> Color {
         return Color(red: Double.random(in: 0...1),
