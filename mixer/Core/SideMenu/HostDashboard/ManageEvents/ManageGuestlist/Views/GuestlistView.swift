@@ -17,7 +17,6 @@ struct GuestlistView: View {
     @State private var isShowingQRCodeScanView = false
     @State private var isTorchOn               = false
     @State private var searchText              = ""
-//    @State private var showPreview             = false
     
     init(event: Event) {
         self._viewModel = StateObject(wrappedValue: GuestlistViewModel(event: event))
@@ -92,32 +91,11 @@ struct GuestlistView: View {
             }
             .navigationBarBackButtonHidden(true)
             .overlay(alignment: .bottom) {
-                HStack {
-                    Spacer()
-                    
-                    DownloadGuestlistButton(url: GuestlistPDF(
-                        event: viewModel.event,
-                        guests: viewModel.guests.filter({ $0.status == .checkedIn})).renderPDF(title: viewModel.getPdfTitle())
-                    )
-                    
-                    Spacer()
-                    
                     if viewModel.event.endDate > Timestamp() {
                         QRCodeScannerButton(isShowingQRCodeScanView: $isShowingQRCodeScanView)
                             .opacity(viewModel.event.endDate < Timestamp() ? 0 : 1)
                             .disabled(viewModel.event.endDate < Timestamp())
-                        
-                        Spacer()
                     }
-                    
-                    if viewModel.event.endDate > Timestamp() {
-                        AddToGuestlistButton(viewModel: viewModel)
-                        
-                        Spacer()
-                    }
-                }
-                .padding(.horizontal, 30)
-                .padding(.bottom, 50)
             }
             .sheet(isPresented: $viewModel.isShowingUserInfoModal) {
                 if let _ = viewModel.selectedGuest {
@@ -126,11 +104,6 @@ struct GuestlistView: View {
                         .presentationDetents([.medium])
                 }
             }
-//            .sheet(isPresented: $showPreview, content: {
-//                GuestlistPDF(
-//                    event: viewModel.event,
-//                    guests: viewModel.guests.filter({ $0.status == .checkedIn}))
-//            })
             .fullScreenCover(isPresented: $isShowingQRCodeScanView) {
                 QRCodeScannerView(isShowingQRCodeScanView: $isShowingQRCodeScanView,
                                   isTorchOn: $isTorchOn) { result in
@@ -139,8 +112,21 @@ struct GuestlistView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .topBarLeading) {
                     PresentationBackArrowButton()
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    HStack(spacing: 0) {
+                        DownloadGuestlistButton(url: GuestlistPDF(
+                            event: viewModel.event,
+                            guests: viewModel.guests.filter({ $0.status == .checkedIn})).renderPDF(title: viewModel.getPdfTitle())
+                        )
+                        
+                        if viewModel.event.endDate > Timestamp() {
+                            AddToGuestlistButton(viewModel: viewModel)
+                        }
+                    }
                 }
             }
             .alert(item: $viewModel.currentAlert) { alertType in
@@ -209,16 +195,11 @@ fileprivate struct DownloadGuestlistButton: View {
                   subject: Text(""),
                   message: Text("")) {
             Image(systemName: "square.and.arrow.down.fill")
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.black)
-                .frame(width: 30, height: 30)
-                .padding(13)
-                .background {
-                    Circle()
-                        .foregroundColor(Color.white)
-                        .shadow(radius: 20)
-                }
+                .font(.title2)
+                .imageScale(.medium)
+                .foregroundColor(.white)
+                .padding(5)
+                .contentShape(Rectangle())
         }
     }
 }
@@ -255,16 +236,11 @@ fileprivate struct AddToGuestlistButton: View {
                 .environmentObject(viewModel)
         } label: {
             Image(systemName: "plus")
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.black)
-                .frame(width: 30, height: 30)
-                .padding(13)
-                .background {
-                    Circle()
-                        .foregroundColor(Color.white)
-                        .shadow(radius: 20)
-                }
+                .font(.title2)
+                .imageScale(.medium)
+                .foregroundColor(.white)
+                .padding(5)
+                .contentShape(Rectangle())
         }
     }
 }

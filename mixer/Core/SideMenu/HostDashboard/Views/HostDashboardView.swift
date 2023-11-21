@@ -37,19 +37,19 @@ struct HostDashboardView: View {
                     
                     seeReportButton
                 }
-                .frame(width: DeviceTypes.ScreenSize.width * 0.90, height: 360, alignment: .top)
+                .frame(minHeight: 360)
                 .padding()
                 .background(Color.theme.secondaryBackgroundColor)
                 .cornerRadius(10)
                 
                 VStack {
-                    generalInsights
+                    overviewSection
                 }
-                .padding(.horizontal)
             }
             .navigationTitle(viewModel.host.name)
             .navigationBarTitleDisplayMode(.large)
             .padding(.bottom, 100)
+            .padding(.horizontal)
         }
         .background(Color.theme.backgroundColor)
         .navigationBarBackButtonHidden(true)
@@ -176,52 +176,30 @@ extension HostDashboardView {
                 Text("See full report")
                     .fontWeight(.medium)
                     .foregroundStyle(Color.theme.mixerIndigo)
-                    .padding(.vertical)
             }
         }
     }
-
     
-    var generalInsights: some View {
-        SectionViewContainer("General Insights") {
-            SquareViewContainer(title: "Avg. Attendance", subtitle: "Sep 1 - Now", value: "342", valueTitle: "Guests") {
-                HostLineGraph()
+    var overviewSection: some View {
+        SectionViewContainer("Overview") {
+            SquareViewContainer(title: "Total Attendance", value: "2709", valueTitle: "Invited", isQuickFact: true) {
+                Text("1305")
+                    .largeTitle()
             }
         } content2: {
-            SquareViewContainer(title: "User Ratings", subtitle: "Sep 1 - Now", value: "4.6", valueTitle: "Stars") {
-                HostLineGraph()
+            SquareViewContainer(title: "Total Schools", value: "11", valueTitle: "schools", isQuickFact: true) {
+                Text("11")
+                    .largeTitle()
             }
         } content3: {
-            SquareViewContainer(title: "Guests Served",
-                                subtitle: "Sep 1 - Now",
-                                value: "4500",
-                                valueTitle: "Guests",
-                                width: DeviceTypes.ScreenSize.width * 0.92) {
-                HostLineGraph(width: 350)
-            }
-        } navigationDestination: {
-            Text("Insights & Analytics")
-        }
-    }
-    
-    var eventAnalytics: some View {
-        SectionViewContainer("Recent Event Analytics") {
-            SquareViewContainer(title: "Gender", subtitle: "Sep 1 - Now", value: "8:4:1", valueTitle: "Ratio") {
-                HostLineGraph()
-            }
-        } content2: {
-            SquareViewContainer(title: "Schools", subtitle: "Sep 1 - Now", value: "8", valueTitle: "Schools") {
-                HostLineGraph()
-            }
-        } content3: {
-            SquareViewContainer(title: "Attendance Over Time", subtitle: "Sep 1 - Now", value: "427", valueTitle: "Guests", width: DeviceTypes.ScreenSize.width * 0.92) {
-                HostLineGraph()
+            SquareViewContainer(title: "Most Frequent Guest", value: "5", valueTitle: "events attended", width: DeviceTypes.ScreenSize.width * 0.92, isQuickFact: true) {
+                Text("Ashley Hoesmith")
+                    .largeTitle()
             }
         } navigationDestination: {
             Text("Recent Event Analytics")
         }
-    }
-}
+    }}
 
 struct SquareViewContainer<Content: View>: View {
     let content: Content

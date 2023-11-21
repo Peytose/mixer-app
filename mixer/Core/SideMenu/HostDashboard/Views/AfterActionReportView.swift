@@ -24,8 +24,7 @@ struct EventAfterActionView: View {
                                  charts: charts,
                                  currentIndex: $currentIndex)
                 }
-                
-                ChartKeyPanel(slices: charts[currentIndex].segments)
+                ChartKeyPanel(slices: charts[currentIndex].segments, chart: charts[currentIndex])
                 
                 quickFacts
             }
@@ -140,6 +139,7 @@ fileprivate struct PieChartViewWrapper: View {
 
 fileprivate struct ChartKeyPanel: View {
     let slices: [PieChartSegment]
+    let chart: PieChartModel
     private var totalValue: Int {
         slices.reduce(0) { $0 + $1.value }
     }
