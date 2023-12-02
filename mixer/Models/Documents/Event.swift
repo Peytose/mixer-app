@@ -10,28 +10,6 @@ import Firebase
 import FirebaseFirestoreSwift
 import FirebaseFirestore
 
-enum EventType: Int, Codable, CaseIterable {
-    case school
-    case club
-    case party
-    case mixer
-    case rager
-    case darty
-    case kickback
-    
-    var description: String {
-        switch self {
-            case .school: return "School event"
-            case .club: return "Club event"
-            case .party: return "Party"
-            case .mixer: return "Mixer"
-            case .rager: return "Rager"
-            case .darty: return "Darty"
-            case .kickback: return "Kickback"
-        }
-    }
-}
-
 struct Event: Hashable, Identifiable, Codable, Equatable {
     static func ==(lhs: Event, rhs: Event) -> Bool {
         return lhs.id == rhs.id

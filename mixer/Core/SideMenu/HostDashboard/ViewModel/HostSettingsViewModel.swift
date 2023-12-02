@@ -15,7 +15,6 @@ class HostSettingsViewModel: SettingsConfigurable {
     @Published var website: String
     @Published var address: String
     @Published var showLocationOnProfile: Bool
-    @Published var selectedImage: UIImage?
     
     private var description: String
     let hostAgreementLink = ""
@@ -57,13 +56,8 @@ extension HostSettingsViewModel {
                     completion()
                 }
             
-        case .image:
-            guard let image = self.selectedImage else {
-                print("DEBUG: image not found.")
-                return
-            }
-            
-            ImageUploader.uploadImage(image: image, type: .profile) { imageUrl in
+        case .image(let selectedImage):
+            ImageUploader.uploadImage(image: selectedImage, type: .profile) { imageUrl in
                 COLLECTION_HOSTS
                     .document(uid)
                     .updateData(["hostImageUrl": imageUrl]) { _ in

@@ -22,8 +22,8 @@ struct HostSettingsView: View {
         NavigationView {
             VStack(alignment: .leading) {
                 List {
-                    ChangeProfileImageButton(imagePickerPresented: $imagePickerPresented,
-                                             profileImageUrl: URL(string: viewModel.hostImageUrl))
+                    ChangeProfileImageButton(profileImageUrl: URL(string: viewModel.hostImageUrl),
+                                             saveFunc: viewModel.save(for:))
                     
                     ForEach(settings) { setting in
                         SettingsSection(setting: setting, viewModel: viewModel)
@@ -35,8 +35,6 @@ struct HostSettingsView: View {
             }
             .background(Color.theme.backgroundColor)
             .navigationBar(title: "Host Settings", displayMode: .inline)
-            .cropImagePicker(show: $imagePickerPresented, croppedImage: $viewModel.selectedImage)
-            .onChange(of: viewModel.selectedImage) { _ in viewModel.save(for: .image) }
         }
     }
 }

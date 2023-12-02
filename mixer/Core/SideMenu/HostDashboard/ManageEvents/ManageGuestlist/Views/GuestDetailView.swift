@@ -25,10 +25,13 @@ struct GuestDetailView: View {
                     
                     Spacer()
                     
-                    actionButton(guest: guest)
+                    actionButton()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .padding(.top)
+                .onAppear {
+                    print("DEBUG: guest status: \(guest.status.description)")
+                }
             }
         }
     }
@@ -94,15 +97,19 @@ private extension GuestDetailView {
     
     
     @ViewBuilder
-    func actionButton(guest: EventGuest) -> some View {
+    func actionButton() -> some View {
         Button {
-            switch guest.status {
+            print("DEBUG: status: \(viewModel.selectedGuest?.status)")
+            
+            switch viewModel.selectedGuest?.status {
             case .checkedIn:
                 viewModel.remove()
             case .invited:
                 viewModel.checkIn()
             case .requested:
-                viewModel.approveGuest(guest)
+                viewModel.approveGuest()
+            case .none:
+                break
             }
         } label: {
             Capsule()
@@ -112,11 +119,11 @@ private extension GuestDetailView {
                 .shadow(radius: 20, x: 8, y: 8)
                 .overlay {
                     HStack {
-                        Image(systemName: guest.status.icon)
+                        Image(systemName: viewModel.selectedGuest?.status.icon ?? "")
                             .imageScale(.large)
                             .foregroundColor(.white)
                         
-                        Text(guest.status.guestlistButtonTitle)
+                        Text(viewModel.selectedGuest?.status.guestlistButtonTitle ?? "")
                             .body(color: .white)
                     }
                 }

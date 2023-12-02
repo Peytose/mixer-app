@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct MapView: View {
     @EnvironmentObject var viewModel: MapViewModel
@@ -20,8 +21,27 @@ struct MapView: View {
                 case .menu:
                     ZStack(alignment: .bottom) {
                         ZStack(alignment: .top) {
-                            MixerMapViewRepresentable(mapState: $mapState)
-                                .ignoresSafeArea()
+                            Map {
+                                ForEach(Array(viewModel.mapItems)) { item in
+                                    if let itemId = item.id {
+                                        Annotation(item.title, coordinate: item.coordinate) {
+                                            MixerAnnotation(item: item,
+                                                            number: viewModel.hostEventCounts[itemId] ?? 0)
+                                        }
+                                        .annotationTitles(.hidden)
+                                    }
+                                }
+                                
+                                UserAnnotation()
+                            }
+                            .tint(Color.theme.mixerIndigo)
+                            .mapStyle(.standard)
+                            .mapControls {
+                                MapCompass()
+                                MapUserLocationButton()
+                                MapPitchToggle()
+                                MapScaleView()
+                            }
                             
                             LogoView(frameWidth: 65)
                                 .shadow(radius: 10)
@@ -29,10 +49,6 @@ struct MapView: View {
                         }
                     }
                     .edgesIgnoringSafeArea(.bottom)
-                    .sheet(isPresented: $viewModel.showLocationDetailsCard) {
-                        EmptyView()
-                            .presentationDetents([.medium])
-                    }
                     
                 case .back, .close:
                     hostDetailView()

@@ -145,20 +145,10 @@ extension HostDashboardView {
                 }
                 
                 VStack(alignment: .leading, spacing: 12) {
-                    if let totalNumGuests = viewModel.totalNumGuests {
-                        TextRow(title: "Total Guests:", value: String(totalNumGuests))
-                    }
-                    
-                    if let mostInvitesUser = viewModel.mostInvitesUser {
-                        TextRow(title: "Most Invites:", value: mostInvitesUser)
-                    }
-                    
-                    if let mostCheckInsUser = viewModel.mostCheckInsUser {
-                        TextRow(title: "Most Check ins:", value: mostCheckInsUser)
-                    }
-                    
-                    if let firstGuestName = viewModel.firstGuestName {
-                        TextRow(title: "First Guest:", value: firstGuestName)
+                    ForEach(viewModel.statistics.keys.sorted(), id: \.self) { key in
+                        if let value = viewModel.statistics[key] {
+                            TextRow(title: key, value: value)
+                        }
                     }
                 }
             }

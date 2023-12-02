@@ -10,10 +10,10 @@ import FirebaseAuth
 import Kingfisher
 import FirebaseFirestoreSwift
 import FirebaseFirestore
+import PhotosUI
 
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
-    @State var imagePickerPresented      = false
     let settings: [SettingsSectionModel] = DataLoader.load("profile_settings.json")
     
     var body: some View {
@@ -24,8 +24,8 @@ struct SettingsView: View {
             VStack(alignment: .leading) {
                 List {
                     if let imageUrl = viewModel.user?.profileImageUrl {
-                        ChangeProfileImageButton(imagePickerPresented: $imagePickerPresented,
-                                                 profileImageUrl: URL(string: imageUrl))
+                        ChangeProfileImageButton(profileImageUrl: URL(string: imageUrl),
+                                                 saveFunc: viewModel.save(for:))
                     }
                     
                     ForEach(settings) { setting in
@@ -44,8 +44,6 @@ struct SettingsView: View {
         }
         .navigationBar(title: "Settings", displayMode: .inline)
         .navigationBarBackButtonHidden(true)
-        .cropImagePicker(show: $imagePickerPresented, croppedImage: $viewModel.selectedImage)
-        .onChange(of: viewModel.selectedImage) { _ in viewModel.save(for: .image) }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 PresentationBackArrowButton()

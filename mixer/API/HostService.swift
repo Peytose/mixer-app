@@ -22,11 +22,13 @@ class HostService: ObservableObject {
         
         self.inviteUser(eventId: eventId,
                         uid: uid,
-                        invitedBy: currentUsername) { _ in
+                        invitedBy: currentUsername) { error in
             NotificationsViewModel.uploadNotification(toUid: uid,
                                                       type: .guestlistAdded,
                                                       host: host,
                                                       event: event)
+            
+            completion?(error)
         }
     }
     
@@ -47,10 +49,11 @@ class HostService: ObservableObject {
     }
     
     
-    func checkInUser(eventId: String,
-                     uid: String,
-                     completion: FirestoreCompletion) {
-        guard let currentUserName = UserService.shared.user?.fullName else { return }
+    func checkIn(guest: EventGuest,
+                 eventId: String,
+                 completion: FirestoreCompletion) {
+        guard let currentUserName = UserService.shared.user?.fullName,
+              let uid = guest.id else { return }
         
         let data = ["status": GuestStatus.checkedIn.rawValue,
                     "checkedInBy": currentUserName,
@@ -60,13 +63,17 @@ class HostService: ObservableObject {
             .document(eventId)
             .collection("guestlist")
             .document(uid)
-            .updateData(data) { _ in
-                COLLECTION_USERS
-                    .document(uid)
-                    .collection("events-attended")
-                    .document(eventId)
-                    .setData(["timestamp": Timestamp()],
-                             completion: completion)
+            .updateData(data) { error in
+                if guest.username != nil {
+                    COLLECTION_USERS
+                        .document(uid)
+                        .collection("events-attended")
+                        .document(eventId)
+                        .setData(["timestamp": Timestamp()],
+                                 completion: completion)
+                } else {
+                    completion?(error)
+                }
             }
     }
     

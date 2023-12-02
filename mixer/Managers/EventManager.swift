@@ -29,10 +29,11 @@ class EventManager: ObservableObject {
     
     
     func fetchHostMemberEvents() {
-        guard let hostId = UserService.shared.user?.currentHost?.id else { return }
+        guard let hostIdToMemberTypeMap = UserService.shared.user?.hostIdToMemberTypeMap else { return }
+        let hostIds = Array(hostIdToMemberTypeMap.keys)
         
         let eventsQuery = COLLECTION_EVENTS
-            .whereField("hostIds", arrayContains: hostId)
+            .whereField("hostIds", arrayContainsAny: hostIds)
             .whereField("endDate", isGreaterThan: Timestamp())
             .whereField("isPrivate", isEqualTo: true)
         

@@ -223,14 +223,16 @@ extension GuestlistViewModel {
         guard let eventId = self.event.id,
               let currentUserName = UserService.shared.user?.fullName else { return }
         
-        if let guest = self.guests.first(where: { $0.username == username }) {
+        self.selectedGuest = self.guests.first(where: { $0.username == username })
+        
+        if let guest = selectedGuest {
             switch guest.status {
                 case .invited:
                     self.alertItem = AlertContext.duplicateGuestInvite
                 case .checkedIn:
                     self.alertItem = AlertContext.guestAlreadyJoined
                 case .requested:
-                    self.approveGuest(guest)
+                    self.approveGuest()
             }
         } else {
             if username != "" {
@@ -246,24 +248,46 @@ extension GuestlistViewModel {
     }
     
     
-    func approveGuest(_ guest: EventGuest) {
-        guard let guestId = guest.id,
-              let host = UserService.shared.user?.currentHost,
-              let eventId = event.id else { return }
-        
-        self.hostService.approveGuest(with: guestId,
-                                      for: self.event,
-                                      by: host) { error in
+    func approveGuest() {
+        print("DEBUG: Starting to approve guest...")
+
+        guard let guestId = selectedGuest?.id else {
+            print("DEBUG: Failed to retrieve selected guest ID.")
+            return
+        }
+        print("DEBUG: Selected guest ID: \(guestId)")
+
+        guard let host = UserService.shared.user?.currentHost else {
+            print("DEBUG: Failed to retrieve current host from user service.")
+            return
+        }
+        print("DEBUG: Current host: \(host.name)")
+
+        guard let eventId = event.id else {
+            print("DEBUG: Failed to retrieve event ID.")
+            return
+        }
+        print("DEBUG: Event ID: \(eventId)")
+
+        print("DEBUG: Attempting to approve guest with ID \(guestId) for event \(eventId) by host \(host.name)...")
+
+        self.hostService.approveGuest(with: guestId, for: self.event, by: host) { error in
             if let error = error {
                 print("DEBUG: Error approving guest. \(error.localizedDescription)")
                 return
             }
             
+            print("DEBUG: Guest approved successfully.")
+            
             if let updatedGuest = self.guests.first(where: { $0.id == guestId }) {
+                print("DEBUG: Updated guest: \(updatedGuest.name)")
                 self.selectedGuest = updatedGuest
+            } else {
+                print("DEBUG: Failed to find updated guest in the list.")
             }
             
             if self.event.isPrivate && self.event.isInviteOnly {
+                print("DEBUG: Event is private and invite-only. Adding event to accessible events for guest \(guestId)...")
                 COLLECTION_USERS
                     .document(guestId)
                     .collection("accessible-events")
@@ -272,15 +296,18 @@ extension GuestlistViewModel {
                               "hostIds": self.event.hostIds]) { error in
                         if let error = error {
                             print("DEBUG: Error adding event to user-specific collection: \(error.localizedDescription)")
-                        } else {
-                            HapticManager.playSuccess()
+                            return
                         }
+                        print("DEBUG: Added event to guest's list.")
+                        HapticManager.playSuccess()
                     }
             } else {
+                print("DEBUG: Event is not private and invite-only, proceeding to play success haptic.")
                 HapticManager.playSuccess()
             }
         }
     }
+
 
     
     private func fetchUserAndAddToGuestlist(eventId: String,
@@ -415,9 +442,11 @@ extension GuestlistViewModel {
     
     @MainActor
     func checkIn() {
-        guard let eventId = self.event.id, let guestId = selectedGuest?.id else { return }
+        guard let eventId = self.event.id,
+              let guest = selectedGuest,
+              let guestId = guest.id else { return }
         
-        hostService.checkInUser(eventId: eventId, uid: guestId) { error in
+        hostService.checkIn(guest: guest, eventId: eventId) { error in
             if let error = error {
                 print("DEBUG: Error checking guest in. \(error.localizedDescription)")
                 return

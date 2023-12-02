@@ -16,13 +16,7 @@ final class HostDashboardViewModel: ObservableObject {
     @Published var recentEvent: Event?
     @Published var guests: [EventGuest]?
     
-    @Published var totalNumGuests: Int?
-    @Published var mostInvitesUser: String?
-    @Published var mostInvitesCount: Int?
-    @Published var mostCheckInsUser: String?
-    @Published var mostCheckInsCount: Int?
-    @Published var firstGuestName: String?
-    @Published var firstGuestTime: Timestamp?
+    @Published var statistics: [String: String] = [:]
     
     init(host: Host) {
         self.host = host
@@ -82,43 +76,39 @@ final class HostDashboardViewModel: ObservableObject {
             return
         }
         
+        var stats = [String: String]()
+        
         // Total Guests
-        self.totalNumGuests = guests.count
-        print("DEBUG: Total number of guests - \(self.totalNumGuests ?? 0)")
+        stats["Total Guests:"] = "\(guests.count)"
+        print("DEBUG: Total number of guests - \(guests.count)")
 
         // Most Invites
         let invitesCount = Dictionary(grouping: guests, by: { $0.invitedBy })
             .mapValues { $0.count }
         if let mostInvites = invitesCount.max(by: { $0.value < $1.value }) {
-            self.mostInvitesUser = mostInvites.key
-            self.mostInvitesCount = mostInvites.value
+            stats["Most Invites:"] = "\(mostInvites.key) (\(mostInvites.value))"
             print("DEBUG: Most invites by \(mostInvites.key) with count \(mostInvites.value)")
-        } else {
-            print("DEBUG: No data found for most invites")
         }
 
         // Most Check-ins
         let validCheckIns = guests.filter { $0.checkedInBy != nil }
         let checkInsCount = Dictionary(grouping: validCheckIns, by: { $0.checkedInBy! })
             .mapValues { $0.count }
-
         if let mostCheckIns = checkInsCount.max(by: { $0.value < $1.value }) {
-            self.mostCheckInsUser = mostCheckIns.key
-            self.mostCheckInsCount = mostCheckIns.value
+            stats["Most Check-ins:"] = "\(mostCheckIns.key) (\(mostCheckIns.value))"
             print("DEBUG: Most check-ins by \(mostCheckIns.key) with count \(mostCheckIns.value)")
-        } else {
-            print("DEBUG: No data found for most check-ins")
         }
 
         // First Guest
         if let firstGuest = validCheckIns.min(by: { $0.timestamp ?? Timestamp() < $1.timestamp ?? Timestamp() }) {
-            self.firstGuestName = firstGuest.name
-            self.firstGuestTime = firstGuest.timestamp
+            stats["First Guest:"] = "\(firstGuest.name) at \(firstGuest.timestamp?.dateValue())"
             print("DEBUG: First guest is \(firstGuest.name) at \(firstGuest.timestamp?.dateValue())")
-        } else {
-            print("DEBUG: No data found for first guest")
         }
+        
+        // Update the view model's statistics dictionary
+        self.statistics = stats
     }
+
 
     
     

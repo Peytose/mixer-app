@@ -7,14 +7,17 @@
 
 import Kingfisher
 import SwiftUI
+import PhotosUI
 
 struct ChangeProfileImageButton: View {
-    @Binding var imagePickerPresented: Bool
+    
     let profileImageUrl: URL?
+    @State private var selectedImage: PhotosPickerItem?
+    let saveFunc: (ProfileSaveType) -> Void
     
     var body: some View {
         VStack(alignment: .center) {
-            Button { imagePickerPresented = true } label: {
+            PhotosPicker(selection: $selectedImage, matching: .images) {
                 KFImage(profileImageUrl)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
@@ -35,5 +38,15 @@ struct ChangeProfileImageButton: View {
         }
         .frame(maxWidth: .infinity)
         .listRowBackground(Color.clear)
+        .onChange(of: selectedImage) { _ in
+            Task {
+                if let pickerItem = selectedImage,
+                   let data = try? await pickerItem.loadTransferable(type: Data.self) {
+                    if let image = UIImage(data: data) {
+                        saveFunc(.image(image))
+                    }
+                }
+            }
+        }
     }
 }

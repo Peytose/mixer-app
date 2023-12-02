@@ -12,7 +12,7 @@ import Combine
 
 enum ProfileSaveType {
     case displayName
-    case image
+    case image(UIImage)
     case bio(String)
     case instagram
     case gender
@@ -36,7 +36,6 @@ class SettingsViewModel: SettingsConfigurable {
     @Published var genderStr: String       = ""
     @Published var datingStatusStr: String = ""
     @Published var majorStr: String        = ""
-    @Published var selectedImage: UIImage?
     private var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
     
     let privacyLink = "https://rococo-gumdrop-0f32da.netlify.app"
@@ -89,13 +88,8 @@ class SettingsViewModel: SettingsConfigurable {
                     completion()
                 }
             
-        case .image:
-            guard let image = self.selectedImage else {
-                print("DEBUG: image not found.")
-                return
-            }
-            
-            ImageUploader.uploadImage(image: image, type: .profile) { imageUrl in
+        case .image(let selectedImage):
+            ImageUploader.uploadImage(image: selectedImage, type: .profile) { imageUrl in
                 COLLECTION_USERS
                     .document(uid)
                     .updateData(["profileImageUrl": imageUrl]) { _ in
