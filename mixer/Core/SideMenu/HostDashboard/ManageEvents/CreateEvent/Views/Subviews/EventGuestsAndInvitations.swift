@@ -37,11 +37,11 @@ struct EventGuestsAndInvitations: View {
                     HStack {
                         InfoButton { viewModel.alertItem = AlertContext.alcoholInfo }
 
-                        Toggle("Serving Alcohol", isOn: $viewModel.hasAlcohol.animation())
+                        Toggle("Serving Alcohol", isOn: $viewModel.containsAlcohol.animation())
                             .font(.body.weight(.semibold))
                     }
 
-                    Picker("", selection: $viewModel.hasAlcohol.animation()) {
+                    Picker("", selection: $viewModel.containsAlcohol.animation()) {
                         Text("Dry").tag(false)
                         Text("Wet").tag(true)
                     }
@@ -51,8 +51,12 @@ struct EventGuestsAndInvitations: View {
                     Text("Event Alcohol Status")
                 }
                 .listRowBackground(Color.theme.secondaryBackgroundColor)
-                .onChange(of: viewModel.hasAlcohol) { _ in
-                    viewModel.toggleAmenity(EventAmenity.alcohol)
+                .onChange(of: viewModel.containsAlcohol) { newValue in
+                    if newValue {
+                        viewModel.selectedAmenities.insert(EventAmenity.alcohol)
+                    } else {
+                        viewModel.selectedAmenities.remove(EventAmenity.alcohol)
+                    }
                 }
                 
                 // MARK: Guestlist settings

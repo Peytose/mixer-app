@@ -60,18 +60,22 @@ struct ManageEventCell: View {
             .clipShape(RoundedRectangle(cornerRadius: 13))
             .frame(height: 175)
             .confirmationDialog("Select an action", isPresented: $showActionSheet, titleVisibility: .hidden) {
-                Button("Edit Event") {
-                    showEditEventView.toggle()
-                }
+                Button("Edit Event") { showEditEventView.toggle() }
 
                 Button("Delete Event", role: .destructive) {
-    //                selection = "Green"
+                    viewModel.delete(event: event)
                 }
 
-                Button("Cancel", role: .cancel) {}
+                Button("Cancel", role: .cancel) { }
             }
             .sheet(isPresented: $showEditEventView) {
-                EditEventView()
+                EditEventView(viewModel: EditEventViewModel(event: event))
+                    .multilineTextAlignment(.leading)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            XDismissButton { showEditEventView.toggle() }
+                        }
+                    }
             }
     }
 }

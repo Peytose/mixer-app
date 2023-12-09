@@ -11,7 +11,7 @@ import Firebase
 import FirebaseFirestore
 import MapKit
 
-class EventCreationViewModel: NSObject, ObservableObject {
+class EventCreationViewModel: NSObject, ObservableObject, AmenityHandling {
     @Published var title                       = ""
     @Published var eventDescription            = "" // Renamed because NSObject has 'description' property
     @Published var plannerUsername             = ""
@@ -35,7 +35,7 @@ class EventCreationViewModel: NSObject, ObservableObject {
     @Published var isInviteOnly                = false
     @Published var isPrivate                   = false
     @Published var isManualApprovalEnabled     = false
-    @Published var hasAlcohol                  = false
+    @Published var containsAlcohol                  = false
     @Published var isCheckInViaMixer           = true
     @Published var isLoading                   = false
     
@@ -156,19 +156,6 @@ class EventCreationViewModel: NSObject, ObservableObject {
             case .costAndAmenities: return AnyView(EventAmenityAndCost())
             case .review: return AnyView(ReviewCreatedEventView())
         }
-    }
-    
-    
-    func toggleAmenity(_ amenity: EventAmenity) {
-        guard amenity != .bathrooms else { return }
-
-        if self.selectedAmenities.contains(amenity) {
-            self.selectedAmenities.remove(amenity)
-        } else {
-            self.selectedAmenities.insert(amenity)
-        }
-
-        self.hasAlcohol = selectedAmenities.contains(.alcohol) || selectedAmenities.contains(.beer)
     }
     
     

@@ -71,6 +71,26 @@ class ManageEventsViewModel: ObservableObject {
             self.events = confirmedEvents
         }
     }
+    
+    
+    func delete(event: Event) {
+        print("DEBUG: Deleting event......")
+        guard let eventId = event.id else { return }
+        
+        COLLECTION_EVENTS
+            .document(eventId)
+            .delete { error in
+                if let error = error {
+                    print("DEBUG: Error deleting event. \(error.localizedDescription)")
+                    return
+                }
+                
+                self.events.removeAll { $0.id == eventId }
+                
+                print("DEBUG: Deleted event!")
+                HapticManager.playSuccess()
+            }
+    }
 }
 
 // IDEA: Put a cap on the # of times a user can edit their event, but a future

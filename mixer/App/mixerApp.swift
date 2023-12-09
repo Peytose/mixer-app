@@ -73,3 +73,23 @@ struct mixerApp: App {
         }
     }
 }
+
+struct HomeView_Previews: PreviewProvider {
+    static var viewModel = MapViewModel()
+    static var dataController = DataController()
+    static var authViewModel  = AuthViewModel.shared
+    static var homeViewModel  = HomeViewModel()
+    static var algoliaManager = AlgoliaManager.shared
+    static var linkManager    = UniversalLinkManager.shared
+    
+    static var previews: some View {
+        HomeView()
+            .environment(\.managedObjectContext, dataController.container.viewContext)
+            .preferredColorScheme(.dark)
+            .environmentObject(authViewModel)
+            .environmentObject(homeViewModel)
+            .environmentObject(algoliaManager)
+            .environmentObject(linkManager)
+    }
+}
+

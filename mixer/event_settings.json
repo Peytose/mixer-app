@@ -1,0 +1,59 @@
+[
+    {
+        "id": 1001,
+        "header": "Basic Details",
+        "rows": [
+            {
+                "id": 1002,
+                "type": "editable",
+                "title": "Title",
+                "icon": "rectangle.and.pencil.and.ellipsis",
+                "alertTitle": "Event Title Change",
+                "alertMessage": "Please enter your preferred title.",
+                "alertPlaceholder": "Event title"
+            }
+        ]
+    },
+    {
+        "id": 2001,
+        "header": "About",
+        "rows": [
+            {
+                "id": 2002,
+                "type": "navigate",
+                "title": "Description",
+                "icon": "text.word.spacing"
+            },
+            {
+                "id": 2003,
+                "type": "navigate",
+                "title": "Note",
+                "icon": "captions.bubble"
+            },
+            {
+                "id": 2004,
+                "type": "navigate",
+                "title": "Amenities",
+                "icon": "sparkles"
+            },
+            {
+                "id": 2005,
+                "type": "navigate",
+                "title": "Date & Time",
+                "icon": "calendar.badge.clock"
+            }
+        ]
+    },
+    {
+        "id": 3001,
+        "header": "Location",
+        "rows": [
+            {
+                "id": 3002,
+                "type": "navigate",
+                "title": "Edit Location",
+                "icon": "map.fill",
+            }
+        ]
+    }
+]

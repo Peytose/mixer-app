@@ -23,9 +23,9 @@ struct SettingsView: View {
             
             VStack(alignment: .leading) {
                 List {
-                    if let imageUrl = viewModel.user?.profileImageUrl {
-                        ChangeProfileImageButton(profileImageUrl: URL(string: imageUrl),
-                                                 saveFunc: viewModel.save(for:))
+                    ChangeImageButton(imageUrl: viewModel.user?.profileImageUrl,
+                                      imageContext: .profile) { uiImage in
+                        viewModel.save(for: .image(uiImage))
                     }
                     
                     ForEach(settings) { setting in

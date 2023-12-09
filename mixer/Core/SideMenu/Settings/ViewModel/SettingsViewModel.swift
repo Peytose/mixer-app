@@ -10,20 +10,28 @@ import SwiftUI
 import Firebase
 import Combine
 
-enum ProfileSaveType {
+enum SettingSaveType {
     case displayName
     case image(UIImage)
     case bio(String)
     case instagram
+    case description(String)
+    case address
+    case locationToggle
+    case location
+    // User-specific save types
     case gender
     case relationship
     case major
     case ageToggle
     // Host-specific save types
     case website
-    case description(String)
-    case address
-    case locationToggle
+    // Event-specific save types
+    case title
+    case note(String)
+    case amenities
+    case startDate
+    case endDate
     case unknown
 }
 
@@ -67,7 +75,7 @@ class SettingsViewModel: SettingsConfigurable {
     }
     
     
-    func save(for type: ProfileSaveType) {
+    func save(for type: SettingSaveType) {
         self.save(for: type) {
             print("DEBUG: \(type.self) saved!")
             HapticManager.playSuccess()
@@ -75,7 +83,7 @@ class SettingsViewModel: SettingsConfigurable {
     }
     
     
-    private func save(for type: ProfileSaveType, completion: @escaping () -> Void) {
+    private func save(for type: SettingSaveType, completion: @escaping () -> Void) {
         guard let uid = UserService.shared.user?.id else { return }
         
         switch type {
@@ -216,7 +224,7 @@ extension SettingsViewModel {
     
     
     // Mapping saveType based on the row title
-    func saveType(for title: String) -> ProfileSaveType {
+    func saveType(for title: String) -> SettingSaveType {
         switch title {
             case "Display Name":
                 return .displayName
@@ -264,16 +272,17 @@ extension SettingsViewModel {
     
     
     // Mapping destination based on the row title
-    func destination(for title: String) -> AnyView {
+    @ViewBuilder
+    func destination(for title: String) -> some View {
         switch title {
         case "Bio":
-            return AnyView(EditTextView(navigationTitle: "Edit Bio",
+            EditTextView(navigationTitle: "Edit Bio",
                                         title: "Bio",
                                         text: bio,
                                         limit: 150) { updatedText in
                 self.save(for: .bio(updatedText))
-            })
-            default: return AnyView(EmptyView())
+            }
+            default: EmptyView()
         }
     }
 }

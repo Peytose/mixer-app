@@ -36,8 +36,9 @@ struct SettingsRow<ViewModel: SettingsConfigurable>: View {
                 LinkSettingsRow(row: row,
                                 url: viewModel.url(for: row.title))
             case .navigate:
-                NavigableSettingsRow(row: row,
-                                     destination: viewModel.destination(for: row.title))
+                NavigableSettingsRow(row: row) {
+                    viewModel.destination(for: row.title)
+                }
         }
     }
 }
@@ -68,10 +69,10 @@ struct MailSettingsRow: View {
 
 struct NavigableSettingsRow<Content:View>: View {
     let row: SettingsRowModel
-    var destination: Content
+    var destination: () -> Content
     
     var body: some View {
-        NavigationLink(destination: destination) {
+        NavigationLink(destination: destination()) {
             HStack {
                 if let icon = row.icon {
                     SettingsIconAndTitle(icon: icon, title: row.title)
@@ -146,7 +147,7 @@ struct MenuSettingsRow: View {
     @EnvironmentObject var viewModel: SettingsViewModel
     @Binding var content: String
     let row: SettingsRowModel
-    let saveType: ProfileSaveType
+    let saveType: SettingSaveType
     
     var body: some View {
         HStack {

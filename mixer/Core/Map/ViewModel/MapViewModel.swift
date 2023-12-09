@@ -11,29 +11,61 @@ import FirebaseFirestoreSwift
 import Combine
 import MapKit
 
-class MapViewModel: ObservableObject {
+class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     // MARK: - Properties
     @Published var shownMapTypes   = [MapItemType.event, MapItemType.host]
-    @Published var mapItems        = Set<MixerMapItem>()
+    @Published var mapItems        = [MixerMapItem]() {
+        didSet {
+            print("DEBUG: Map Items: \(mapItems)")
+        }
+    }
     @Published var hostEventCounts = [String: Int]()
-    @Published var selectedMixerMapItem: MixerMapItem?
     @Published var pickupTime: String?
     @Published var dropOffTime: String?
     @Published var alertItem: AlertItem?
+    @Published var isCenteredOnUserLocation = false
+    @Published var isShowingLookAround = false
     
     private let hostManager        = HostManager.shared
     private let eventManager       = EventManager.shared
     private var cancellable        = Set<AnyCancellable>()
     
-    var userLocation: CLLocationCoordinate2D?
+    @Published var route: MKRoute?
+    @Published var cameraPostition: MapCameraPosition = .region(.init(center: CLLocationCoordinate2D(latitude: 37.331516,
+                                                                                          longitude: -121.891054),
+                                                           latitudinalMeters: 1200,
+                                                           longitudinalMeters: 1200))
+    @Published var userLocation: CLLocationCoordinate2D?
+
+
+    var lookAroundScene: MKLookAroundScene? {
+        didSet {
+            if let _ = lookAroundScene {
+                isShowingLookAround = true
+            }
+        }
+    }
+
+    let deviceLocationManager = CLLocationManager()
     
-    init() {
+    override init() {
+        super.init()
+        deviceLocationManager.delegate = self
+        // Requesting authorization here will result in the `locationManagerDidChangeAuthorization` being called
+        if deviceLocationManager.authorizationStatus == .notDetermined {
+            deviceLocationManager.requestWhenInUseAuthorization()
+        } else {
+            // If authorization has already been determined, proceed accordingly without blocking the main thread
+            locationManagerDidChangeAuthorization(deviceLocationManager)
+        }
+        
         // Subscribe to hosts from HostManager
         hostManager.$hosts
             .sink { [weak self] hosts in
                 // Update mapItems with hosts
+                self?.mapItems = []
                 let locations = hosts.compactMap { MixerMapItem(host: $0) }
-                self?.mapItems.formUnion(locations)
+                self?.mapItems.append(contentsOf: locations)
                 
                 // Reset and calculate event counts for each host
                 self?.hostEventCounts = [:]
@@ -46,132 +78,102 @@ class MapViewModel: ObservableObject {
             .store(in: &cancellable)
     }
     
-    
     private func countEventsForHost(hostId: String) -> Int {
         return eventManager.events.filter { $0.hostIds.contains(hostId) }.count
     }
+
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        switch manager.authorizationStatus {
+            case .notDetermined:
+                manager.requestWhenInUseAuthorization()
+            case .restricted, .denied:
+                alertItem = AlertItem(title: Text("Location Services Denied"),
+                                      message: Text("Please enable location services in your device settings."),
+                                      dismissButton: .default(Text("OK")))
+            case .authorizedWhenInUse:
+                manager.startUpdatingLocation()
+                manager.requestAlwaysAuthorization()
+            case .authorizedAlways:
+                manager.startUpdatingLocation()
+            @unknown default:
+                break
+        }
+    }
+    
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let currentLocation = locations.last else {
+            print("DEBUG: No location received")
+            return
+        }
+        
+        withAnimation(.easeInOut) {
+            userLocation = currentLocation.coordinate
+            isCenteredOnUserLocation = isMapCentered(on: currentLocation.coordinate)
+        }
+    }
+    
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Location Error: \(error.localizedDescription)")
+        alertItem = AlertItem(title: Text("Location Error"),
+                              message: Text("Failed to update the location."),
+                              dismissButton: .default(Text("OK")))
+    }
+    
+
+    func centerMapOnUserLocation() {
+        guard let userLocation = self.userLocation else {
+            alertItem = AlertItem(title: Text("Location Error"),
+                                  message: Text("Unable to find your location."),
+                                  dismissButton: .default(Text("OK")))
+            return
+        }
+
+        let region = MKCoordinateRegion(center: userLocation, latitudinalMeters: 1200, longitudinalMeters: 1200)
+        cameraPostition = .region(region)
+        isCenteredOnUserLocation = true
+    }
+    
+    
+    private func isMapCentered(on coordinate: CLLocationCoordinate2D) -> Bool {
+        guard let userLocation = self.userLocation, let region = self.cameraPostition.region else {
+            return false
+        }
+
+        let tolerance: CLLocationDistance = 50 // meters
+        let center = region.center
+        let distance = CLLocation(latitude: center.latitude, longitude: center.longitude)
+            .distance(from: CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude))
+
+        return distance <= tolerance
+    }
+
+
+    
+    
+    @MainActor
+    func getLookAroundScene(for item: MixerMapItem) {
+        Task {
+            let request = MKLookAroundSceneRequest(coordinate: item.coordinate)
+            lookAroundScene = try? await request.scene
+        }
+    }
+
+    @MainActor
+    func getDirections(to item: MixerMapItem) {
+        guard let userLocation = deviceLocationManager.location?.coordinate else { return }
+        let destination = item.coordinate
+
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: .init(coordinate: userLocation))
+        request.destination = MKMapItem(placemark: .init(coordinate: destination))
+        request.transportType = .walking
+
+        Task {
+            let directions = try? await MKDirections(request: request).calculate()
+            route = directions?.routes.first
+        }
+    }
 }
-
-//extension MapView {
-//    
-//    @Observable
-//    final class MapViewModel: NSObject, CLLocationManagerDelegate {
-//        var isShowingDetailView = false
-//        var isShowingLookAround = false
-//        var alertItem: AlertItem?
-//        var route: MKRoute?
-//
-//        var cameraPostition: MapCameraPosition = .region(.init(center: CLLocationCoordinate2D(latitude: 37.331516,
-//                                                                                              longitude: -121.891054),
-//                                                               latitudinalMeters: 1200,
-//                                                               longitudinalMeters: 1200))
-//
-//        var lookAroundScene: MKLookAroundScene? {
-//            didSet {
-//                if let _ = lookAroundScene {
-//                    isShowingLookAround = true
-//                }
-//            }
-//        }
-//
-//        let deviceLocationManager = CLLocationManager()
-//        
-//        override init() {
-//            super.init()
-//            deviceLocationManager.delegate = self
-//        }
-//        
-//        func requestAllowOnceLocationPermission() {
-//            deviceLocationManager.requestLocation()
-//        }
-//        
-//        func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-//            guard let currentLocation = locations.last else { return }
-//            
-//            withAnimation {
-//                cameraPostition = .region(.init(center: currentLocation.coordinate,
-//                                                latitudinalMeters: 1200, longitudinalMeters: 1200))
-//            }
-//        }
-//        
-//        func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-//            print("Did Fail With Error")
-//        }
-//        
-//        @MainActor
-//        func getLocations(for locationManager: LocationManager) {
-//            Task {
-//                do {
-//                    locationManager.locations = try await CloudKitManager.shared.getLocations()
-//                } catch {
-//                    alertItem = AlertContext.unableToGetLocations
-//                }
-//            }
-//        }
-//        
-//        @MainActor
-//        func getCheckedInCounts() {
-//            Task {
-//                do {
-//                    checkedInProfiles = try await CloudKitManager.shared.getCheckedInProfilesCount()
-//                } catch {
-//                    alertItem = AlertContext.checkedInCount
-//                }
-//            }
-//        }
-//        
-//        @MainActor
-//        @ViewBuilder func createLocationDetailView(for location: DDGLocation, in dynamicTypeSize: DynamicTypeSize) -> some View {
-//            if dynamicTypeSize >= .accessibility3 {
-//                LocationDetailView(viewModel: LocationDetailViewModel(location: location)).embedInScrollView()
-//            } else {
-//                LocationDetailView(viewModel: LocationDetailViewModel(location: location))
-//            }
-//        }
-//
-//        @MainActor
-//        func getLookAroundScene(for location: DDGLocation) {
-//            Task {
-//                let request = MKLookAroundSceneRequest(coordinate: location.location.coordinate)
-//                lookAroundScene = try? await request.scene
-//            }
-//        }
-//
-//        @MainActor
-//        func getDirections(to location: DDGLocation) {
-//            guard let userLocation = deviceLocationManager.location?.coordinate else { return }
-//            let destination = location.location.coordinate
-//
-//            let request = MKDirections.Request()
-//            request.source = MKMapItem(placemark: .init(coordinate: userLocation))
-//            request.destination = MKMapItem(placemark: .init(coordinate: destination))
-//            request.transportType = .walking
-//
-//            Task {
-//                let directions = try? await MKDirections(request: request).calculate()
-//                route = directions?.routes.first
-//            }
-//        }
-//    }
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

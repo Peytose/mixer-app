@@ -22,8 +22,10 @@ struct HostSettingsView: View {
         NavigationView {
             VStack(alignment: .leading) {
                 List {
-                    ChangeProfileImageButton(profileImageUrl: URL(string: viewModel.hostImageUrl),
-                                             saveFunc: viewModel.save(for:))
+                    ChangeImageButton(imageUrl: viewModel.hostImageUrl,
+                                      imageContext: .eventFlyer) { uiImage in
+                        viewModel.save(for: .image(uiImage))
+                    }
                     
                     ForEach(settings) { setting in
                         SettingsSection(setting: setting, viewModel: viewModel)

@@ -120,6 +120,8 @@ class AuthViewModel: ObservableObject {
             return !code.isEmpty
         case .enterEmail:
             return email.isValidEmail
+        case .uploadProfilePicAndBio:
+            return image != nil
         case .enterBirthday:
             return isBirthdayValid
         case .chooseUsername:

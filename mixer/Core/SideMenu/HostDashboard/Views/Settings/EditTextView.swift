@@ -39,6 +39,7 @@ struct EditTextView: View {
                 SettingsSectionContainer(header: title) {
                     TextField("Start typing here...", text: $text, axis: .vertical)
                         .lineLimit(8, reservesSpace: true)
+                        .frame(alignment: .leading)
                     
                     HStack {
                         CharactersRemainView(currentCount: text.count,

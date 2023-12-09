@@ -34,7 +34,7 @@ class HostSettingsViewModel: SettingsConfigurable {
 
 // Helper functions
 extension HostSettingsViewModel {
-    func save(for type: ProfileSaveType) {
+    func save(for type: SettingSaveType) {
         self.save(for: type) {
             print("DEBUG: \(type.self) saved!")
             HapticManager.playSuccess()
@@ -42,7 +42,7 @@ extension HostSettingsViewModel {
     }
     
     
-    private func save(for type: ProfileSaveType, completion: @escaping () -> Void) {
+    private func save(for type: SettingSaveType, completion: @escaping () -> Void) {
         guard let uid = UserService.shared.user?.currentHost?.id else { return }
         
         switch type {
@@ -145,7 +145,7 @@ extension HostSettingsViewModel {
     
     
     // Mapping saveType based on the row title
-    func saveType(for title: String) -> ProfileSaveType {
+    func saveType(for title: String) -> SettingSaveType {
         switch title {
             case "Display Name":
                 return .displayName
@@ -191,20 +191,21 @@ extension HostSettingsViewModel {
     
     
     // Mapping destination based on the row title
-    func destination(for title: String) -> AnyView {
+    @ViewBuilder
+    func destination(for title: String) -> some View {
         switch title {
             case "Description":
-                return AnyView(EditTextView(navigationTitle: "Edit Description",
+                EditTextView(navigationTitle: "Edit Description",
                                             title: "Description",
                                             text: description,
                                             limit: 200) { updatedText in
                     self.save(for: .description(updatedText))
-                })
+                }
             case "Edit Members":
-                return AnyView(ManageMembersView())
+                ManageMembersView()
             case "Address":
-                return AnyView(EditAddressView())
-            default: return AnyView(EmptyView())
+                EditAddressView()
+            default: EmptyView()
         }
     }
 }

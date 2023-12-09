@@ -81,7 +81,6 @@ fileprivate struct BioTextField: View {
 fileprivate struct SignUpPictureView: View {
     var title: String?
     @Binding var selectedImage: UIImage?
-    @State private var image: Image?
     @State var imagePickerPresented = false
     
     var body: some View {
@@ -99,37 +98,14 @@ fileprivate struct SignUpPictureView: View {
             HStack {
                 Spacer()
                 
-                Button { self.imagePickerPresented.toggle() } label: {
-                    if let image = image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 140, height: 140)
-                            .clipShape(Circle())
-                    } else {
-                        Image(systemName: "person.crop.circle.badge.plus")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 140, height: 140)
-                            .foregroundColor(.white)
-                    }
+                ChangeImageButton(imageContext: .profile) { uiImage in
+                    selectedImage = uiImage
                 }
-                .sheet(isPresented: $imagePickerPresented) {
-                    ImagePicker(image: $selectedImage)
-                }
-                .onChange(of: selectedImage) { _ in loadImage() }
                 .padding(.bottom, -5)
                 
                 Spacer()
             }
         }
         .frame(width: DeviceTypes.ScreenSize.width / 1.2)
-    }
-}
-
-extension SignUpPictureView {
-    func loadImage() {
-        guard let selectedImage = selectedImage else { return }
-        image = Image(uiImage: selectedImage)
     }
 }

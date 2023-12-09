@@ -13,9 +13,9 @@ struct EditEventDateView: View {
 
     var body: some View {
         List {
-            dateAndTimeSection
-            
-            selectedDate
+//            dateAndTimeSection
+//            
+//            selectedDate
         }
         .scrollContentBackground(.hidden)
         .scrollIndicators(.hidden)
@@ -25,25 +25,25 @@ struct EditEventDateView: View {
     }
 }
 
-extension EditEventDateView {
-    var dateAndTimeSection: some View {
-        SettingsSectionContainer(header: "Date & Time") {
-            DatePicker(selection: $startDate, in: ...Date.now, displayedComponents: [.date, .hourAndMinute]) {
-                Text("Start Time")
-            }
-            DatePicker(selection: $endDate, in: ...Date.now, displayedComponents: [.date, .hourAndMinute]) {
-                Text("End Time")
-            }
-        }
-    }
-    
-    var selectedDate: some View {
-        SettingsSectionContainer(header: "Start Date") {
-            Text("\(Text("Starts: ").fontWeight(.bold)) \(startDate.formatted(date: .long, time: .shortened))")
-            Text("\(Text("Ends: ").fontWeight(.bold)) \(endDate.formatted(date: .long, time: .shortened))")
-        }
-    }
-}
+//extension EditEventDateView {
+//    var dateAndTimeSection: some View {
+//        SettingsSectionContainer(header: "Date & Time") {
+//            DatePicker(selection: $startDate, in: ...Date.now, displayedComponents: [.date, .hourAndMinute]) {
+//                Text("Start Time")
+//            }
+//            DatePicker(selection: $endDate, in: ...Date.now, displayedComponents: [.date, .hourAndMinute]) {
+//                Text("End Time")
+//            }
+//        }
+//    }
+//    
+//    var selectedDate: some View {
+//        SettingsSectionContainer(header: "Start Date") {
+//            Text("\(Text("Starts: ").fontWeight(.bold)) \(startDate.formatted(date: .long, time: .shortened))")
+//            Text("\(Text("Ends: ").fontWeight(.bold)) \(endDate.formatted(date: .long, time: .shortened))")
+//        }
+//    }
+//}
 
 #Preview {
     EditEventDateView()

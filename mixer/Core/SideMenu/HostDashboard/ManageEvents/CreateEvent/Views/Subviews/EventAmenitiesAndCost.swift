@@ -24,54 +24,7 @@ struct EventAmenityAndCost: View {
                 }
                 .padding(.bottom, 15)
                 
-                ForEach(AmenityCategory.allCases, id: \.self) { category in
-                    let amenitiesInCategory = EventAmenity.allCases.filter { $0.category == category }
-                    if !amenitiesInCategory.isEmpty {
-                        Section {
-                            VStack(alignment: .leading) {
-                                ForEach(amenitiesInCategory, id: \.self) { amenity in
-                                    Button {
-                                        viewModel.toggleAmenity(amenity)
-                                    } label: {
-                                        HStack {
-                                            amenity.displayIcon
-                                                .padding(2)
-                                                .frame(width: 20, height: 20, alignment: .center)
-                                                .padding(.trailing, 5)
-                                            
-                                            Text(amenity.rawValue)
-                                                .font(.body)
-                                            
-                                            Spacer()
-                                            
-                                            accessoryView(for: amenity)
-                                        }
-                                        .padding(.horizontal)
-                                        .foregroundColor(.white)
-                                    }
-                                    
-                                    if amenitiesInCategory.last != amenity {
-                                        Divider()
-                                            .foregroundColor(.secondary)
-                                            .padding(.leading, 50)
-                                            .padding(.trailing, 20)
-                                    }
-                                }
-                            }
-                            .padding(.vertical)
-                            .background {
-                                Color.theme.secondaryBackgroundColor
-                                    .cornerRadius(10)
-                            }
-                        } header: {
-                            Text(category.rawValue)
-                                .font(.title3)
-                                .fontWeight(.semibold)
-                                .padding(.top, 10)
-                                .padding(.bottom, 2)
-                        }
-                    }
-                }
+                ToggleAmenityView(viewModel: viewModel)
             }
             .padding()
             .padding(.bottom, 80)
@@ -81,7 +34,59 @@ struct EventAmenityAndCost: View {
     }
 }
 
-extension EventAmenityAndCost {
+
+struct ToggleAmenityView<ViewModel: AmenityHandling>: View {
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        ForEach(AmenityCategory.allCases, id: \.self) { category in
+            let amenitiesInCategory = EventAmenity.allCases.filter { $0.category == category }
+            if !amenitiesInCategory.isEmpty {
+                Section {
+                    VStack(alignment: .leading) {
+                        ForEach(amenitiesInCategory, id: \.self) { amenity in
+                            Button { toggleAmenity(amenity) } label: {
+                                HStack {
+                                    amenity.displayIcon
+                                        .padding(2)
+                                        .frame(width: 20, height: 20, alignment: .center)
+                                        .padding(.trailing, 5)
+                                    
+                                    Text(amenity.rawValue)
+                                        .font(.body)
+                                    
+                                    Spacer()
+                                    
+                                    accessoryView(for: amenity)
+                                }
+                                .padding(.horizontal)
+                                .foregroundColor(.white)
+                            }
+                            
+                            if amenitiesInCategory.last != amenity {
+                                Divider()
+                                    .foregroundColor(.secondary)
+                                    .padding(.leading, 50)
+                                    .padding(.trailing, 20)
+                            }
+                        }
+                    }
+                    .padding(.vertical)
+                    .background {
+                        Color.theme.secondaryBackgroundColor
+                            .cornerRadius(10)
+                    }
+                } header: {
+                    Text(category.rawValue)
+                        .font(.title3)
+                        .fontWeight(.semibold)
+                        .padding(.top, 10)
+                        .padding(.bottom, 2)
+                }
+            }
+        }
+    }
+    
     private func accessoryView(for amenity: EventAmenity) -> some View {
         if amenity == .bathrooms {
             return AnyView(AmenityCountView(count: $viewModel.bathroomCount))
@@ -92,6 +97,19 @@ extension EventAmenityAndCost {
         } else {
             return AnyView(EmptyView())
         }
+    }
+    
+    
+    private func toggleAmenity(_ amenity: EventAmenity) {
+        guard amenity != .bathrooms else { return }
+
+        if viewModel.selectedAmenities.contains(amenity) {
+            viewModel.selectedAmenities.remove(amenity)
+        } else {
+            viewModel.selectedAmenities.insert(amenity)
+        }
+
+        viewModel.containsAlcohol = viewModel.selectedAmenities.contains(.alcohol) || viewModel.selectedAmenities.contains(.beer)
     }
 }
 
