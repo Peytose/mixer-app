@@ -10,6 +10,7 @@ import Kingfisher
 
 struct EditEventView: View {
     @ObservedObject var viewModel: EditEventViewModel
+    @Binding var showEditEventView: Bool
     @State var imagePickerPresented     = false
     @State var locationIsPrivate        = false
     let settings: [SettingsSectionModel] = DataLoader.load("event_settings.json")
@@ -32,7 +33,13 @@ struct EditEventView: View {
                 .listStyle(.insetGrouped)
             }
             .background(Color.theme.backgroundColor)
+            .navigationBarBackButtonHidden(true)
             .navigationBar(title: "Edit Event", displayMode: .inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    XDismissButton { showEditEventView.toggle() }
+                }
+            }
         }
     }
 }

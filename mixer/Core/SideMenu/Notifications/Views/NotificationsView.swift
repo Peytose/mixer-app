@@ -55,7 +55,7 @@ struct NotificationsView: View {
                                         namespace: namespace)
                     }
                 default:
-                    EmptyView()
+                    ComingSoonView()
                 }
             }
         }

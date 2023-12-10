@@ -282,7 +282,7 @@ extension SettingsViewModel {
                                         limit: 150) { updatedText in
                 self.save(for: .bio(updatedText))
             }
-            default: EmptyView()
+            default: ComingSoonView()
         }
     }
 }

@@ -87,15 +87,16 @@ struct ToggleAmenityView<ViewModel: AmenityHandling>: View {
         }
     }
     
+    @ViewBuilder
     private func accessoryView(for amenity: EventAmenity) -> some View {
         if amenity == .bathrooms {
-            return AnyView(AmenityCountView(count: $viewModel.bathroomCount))
+            AmenityCountView(count: $viewModel.bathroomCount)
         } else if viewModel.selectedAmenities.contains(amenity) {
-            return AnyView(Image(systemName: "checkmark")
+            Image(systemName: "checkmark")
                 .fontWeight(.medium)
-                .foregroundColor(Color.theme.mixerPurple))
+                .foregroundColor(Color.theme.mixerPurple)
         } else {
-            return AnyView(EmptyView())
+            EmptyView()
         }
     }
     

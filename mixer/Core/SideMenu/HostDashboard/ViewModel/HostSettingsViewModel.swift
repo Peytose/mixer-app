@@ -205,7 +205,7 @@ extension HostSettingsViewModel {
                 ManageMembersView()
             case "Address":
                 EditAddressView()
-            default: EmptyView()
+            default: ComingSoonView()
         }
     }
 }

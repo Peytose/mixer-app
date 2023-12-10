@@ -23,6 +23,8 @@ struct ListCellActionButton: View {
                 Text(text)
                     .font(.footnote)
                     .foregroundColor(isSecondaryLabel ? .secondary : .white)
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 18)
             }
         }
         .frame(width: 100, height: 32)

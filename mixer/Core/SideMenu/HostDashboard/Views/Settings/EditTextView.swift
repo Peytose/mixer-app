@@ -49,7 +49,7 @@ struct EditTextView: View {
                         
                         ListCellActionButton(text: "Save",
                                              isSecondaryLabel: text.count > limit || text == initialText) {
-                            if text.count <= limit || text != initialText {
+                            if text.count <= limit && text != initialText {
                                 saveFunc(text)
                                 dismiss()
                             }

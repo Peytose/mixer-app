@@ -10,7 +10,7 @@ import Firebase
 
 class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandling {
     
-    private var eventId: String?
+    private var event: Event
     @Published var eventImageUrl: String
     @Published var title: String
     @Published var description: String
@@ -22,16 +22,16 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
     @Published var endDate: Timestamp
     
     init(event: Event) {
-        eventId           = event.id
-        eventImageUrl     = event.eventImageUrl
-        title             = event.title
-        description       = event.description
-        note              = event.note ?? ""
-        selectedAmenities = Set(event.amenities ?? [])
-        bathroomCount     = event.bathroomCount ?? 0
-        containsAlcohol   = event.containsAlcohol
-        startDate         = event.startDate
-        endDate           = event.endDate
+        self.event             = event
+        self.eventImageUrl     = event.eventImageUrl
+        self.title             = event.title
+        self.description       = event.description
+        self.note              = event.note ?? ""
+        self.selectedAmenities = Set(event.amenities ?? [])
+        self.bathroomCount     = event.bathroomCount ?? 0
+        self.containsAlcohol   = event.containsAlcohol
+        self.startDate         = event.startDate
+        self.endDate           = event.endDate
         
         print("DEBUG: Initialized edit event vm!")
     }
@@ -39,14 +39,14 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
     
     func save(for type: SettingSaveType) {
         self.save(for: type) {
-            print("DEBUG: \(type.self) saved!")
+            EventManager.shared.updateEvent(self.event)
             HapticManager.playSuccess()
         }
     }
     
     
     private func save(for type: SettingSaveType, completion: @escaping () -> Void) {
-        guard let eventId = eventId else { return }
+        guard let eventId = event.id else { return }
         
         switch type {
         case .image(let selectedImage):
@@ -55,6 +55,7 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
                     .document(eventId)
                     .updateData(["hostImageUrl": imageUrl]) { _ in
                         self.eventImageUrl = imageUrl
+                        self.event.eventImageUrl = imageUrl
                         completion()
                     }
             }
@@ -65,6 +66,7 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
             COLLECTION_EVENTS
                 .document(eventId)
                 .updateData(["title": self.title]) { _ in
+                    self.event.title = self.title
                     completion()
                 }
             
@@ -74,6 +76,29 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
             COLLECTION_EVENTS
                 .document(eventId)
                 .updateData(["description": updatedDescription]) { _ in
+                    self.event.description = self.description
+                    completion()
+                }
+        
+        case .amenities:
+            let amenitiesStrings = selectedAmenities.map { $0.rawValue }
+            
+            var data: [String: Any] = [:]
+            
+            if Array(selectedAmenities) != event.amenities {
+                data["amenities"] = amenitiesStrings
+            }
+            
+            data["containsAlcohol"] = selectedAmenities.contains(where: { $0 == .alcohol || $0 == .beer })
+            
+            if bathroomCount != event.bathroomCount {
+                data["bathroomCount"] = bathroomCount
+            }
+
+            COLLECTION_EVENTS
+                .document(eventId)
+                .updateData(data) { _ in
+                    self.event.amenities = Array(self.selectedAmenities)
                     completion()
                 }
             
@@ -137,15 +162,24 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
         case "Note":
             EditTextView(navigationTitle: "Edit Note",
                                         title: "Note",
-                                        text: description,
+                                        text: note,
                                         limit: 250) { updatedText in
                 self.save(for: .note(updatedText))
             }
         case "Amenities":
-            List{ ToggleAmenityView(viewModel: self) }
+            EditAmenitiesView(viewModel: self,
+                              amenities: event.amenities,
+                              bathroomCount: event.bathroomCount)
         case "Address":
             EditAddressView()
-        default: EmptyView()
+        default: ComingSoonView()
         }
+    }
+    
+    
+    func isSecondaryButton() -> Bool {
+        let isAmenitiesChanged = Set(event.amenities ?? []) != selectedAmenities
+        let isBathroomCountChanged = bathroomCount != event.bathroomCount
+        return !isAmenitiesChanged && !isBathroomCountChanged
     }
 }

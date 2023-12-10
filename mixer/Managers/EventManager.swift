@@ -232,5 +232,12 @@ class EventManager: ObservableObject {
                 
             }
     }
+    
+    
+    func updateEvent(_ updatedEvent: Event) {
+        if let index = events.firstIndex(where: { $0.id == updatedEvent.id }) {
+            events.remove(at: index)
+            events.insert(updatedEvent)
+        }
+    }
 }
-

@@ -46,12 +46,6 @@ struct ManageEventsView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 PresentationBackArrowButton()
             }
-            
-//            if !viewModel.hosts.isEmpty {
-//                ToolbarItem(placement: .navigationBarTrailing) {
-//                    EditNotificationsButton(viewModel: viewModel)
-//                }
-//            }
         }
     }
 }

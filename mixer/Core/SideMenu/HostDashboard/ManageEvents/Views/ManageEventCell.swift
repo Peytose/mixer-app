@@ -60,7 +60,10 @@ struct ManageEventCell: View {
             .clipShape(RoundedRectangle(cornerRadius: 13))
             .frame(height: 175)
             .confirmationDialog("Select an action", isPresented: $showActionSheet, titleVisibility: .hidden) {
-                Button("Edit Event") { showEditEventView.toggle() }
+                // TO-DO: Add condiiton for member type
+                if viewModel.currentState != .past {
+                    Button("Edit Event") { showEditEventView.toggle() }
+                }
 
                 Button("Delete Event", role: .destructive) {
                     viewModel.delete(event: event)
@@ -68,14 +71,10 @@ struct ManageEventCell: View {
 
                 Button("Cancel", role: .cancel) { }
             }
-            .sheet(isPresented: $showEditEventView) {
-                EditEventView(viewModel: EditEventViewModel(event: event))
+            .fullScreenCover(isPresented: $showEditEventView) {
+                EditEventView(viewModel: EditEventViewModel(event: event),
+                              showEditEventView: $showEditEventView)
                     .multilineTextAlignment(.leading)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            XDismissButton { showEditEventView.toggle() }
-                        }
-                    }
             }
     }
 }

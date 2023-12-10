@@ -65,6 +65,8 @@
 		9C3E2CA529EE602A00A74D05 /* EventGuest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3E2CA429EE602A00A74D05 /* EventGuest.swift */; };
 		9C3E40EC2B23C80100977B54 /* EditEventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3E40EB2B23C80100977B54 /* EditEventViewModel.swift */; };
 		9C3E40EE2B23D44000977B54 /* event_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 9C3E40ED2B23D44000977B54 /* event_settings.json */; };
+		9C3E40F02B25859700977B54 /* EditAmenitiesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3E40EF2B25859700977B54 /* EditAmenitiesView.swift */; };
+		9C3E40F22B2637B600977B54 /* ComingSoonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3E40F12B2637B600977B54 /* ComingSoonView.swift */; };
 		9C4B0E322982410600A9D963 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B0E312982410600A9D963 /* Feedback.swift */; };
 		9C4B0E3E2982419F00A9D963 /* HostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B0E3B2982419F00A9D963 /* HostViewModel.swift */; };
 		9C4B0E3F2982419F00A9D963 /* EventViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B0E3D2982419F00A9D963 /* EventViewModel.swift */; };
@@ -340,6 +342,8 @@
 		9C3E2CA429EE602A00A74D05 /* EventGuest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventGuest.swift; sourceTree = "<group>"; };
 		9C3E40EB2B23C80100977B54 /* EditEventViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventViewModel.swift; sourceTree = "<group>"; };
 		9C3E40ED2B23D44000977B54 /* event_settings.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = event_settings.json; sourceTree = "<group>"; };
+		9C3E40EF2B25859700977B54 /* EditAmenitiesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditAmenitiesView.swift; sourceTree = "<group>"; };
+		9C3E40F12B2637B600977B54 /* ComingSoonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComingSoonView.swift; sourceTree = "<group>"; };
 		9C4B0E312982410600A9D963 /* Feedback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
 		9C4B0E3B2982419F00A9D963 /* HostViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HostViewModel.swift; sourceTree = "<group>"; };
 		9C4B0E3D2982419F00A9D963 /* EventViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventViewModel.swift; sourceTree = "<group>"; };
@@ -867,6 +871,7 @@
 				9C67D1A12AED8AF0007BB6F4 /* NotesSection.swift */,
 				9C67D1A52AED8BEC007BB6F4 /* TextFieldItem.swift */,
 				9C1D952C2B22910A0052F72D /* LocationPreviewLookAroundView.swift */,
+				9C3E40F12B2637B600977B54 /* ComingSoonView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -1211,6 +1216,7 @@
 			isa = PBXGroup;
 			children = (
 				9CAE8DC92AB38318004508DF /* ManageEventsViewModel.swift */,
+				9C3E40EB2B23C80100977B54 /* EditEventViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -1220,7 +1226,7 @@
 			children = (
 				9CAE8DC72AB35E41004508DF /* ManageEventsView.swift */,
 				9CAE8DCB2AB3840E004508DF /* ManageEventCell.swift */,
-				A6CBBDCB2B0839B50029F1EC /* Edit Event */,
+				A6CBBDCB2B0839B50029F1EC /* EditEvent */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1534,14 +1540,14 @@
 			path = ImagePickers;
 			sourceTree = "<group>";
 		};
-		A6CBBDCB2B0839B50029F1EC /* Edit Event */ = {
+		A6CBBDCB2B0839B50029F1EC /* EditEvent */ = {
 			isa = PBXGroup;
 			children = (
 				A6453CAC2B040ABA00F596CE /* EditEventView.swift */,
 				A6CBBDCC2B0839D90029F1EC /* EditEventDateView.swift */,
-				9C3E40EB2B23C80100977B54 /* EditEventViewModel.swift */,
+				9C3E40EF2B25859700977B54 /* EditAmenitiesView.swift */,
 			);
-			path = "Edit Event";
+			path = EditEvent;
 			sourceTree = "<group>";
 		};
 		A6EFA7912B06A2D900DE04E8 /* Settings */ = {
@@ -1686,6 +1692,7 @@
 				9C8F0A9D2A940E3600A06D9A /* SearchView.swift in Sources */,
 				A6B9E65729518A3C009C936E /* EventCellView.swift in Sources */,
 				9C89F2C52B17DC89003F2C52 /* MapBalloon.swift in Sources */,
+				9C3E40F22B2637B600977B54 /* ComingSoonView.swift in Sources */,
 				9C8937A32AACFBB800C7C187 /* CustomDateSelector.swift in Sources */,
 				9CDFC3CA2A9D64BF00BDFA60 /* CustomBadgeModifier.swift in Sources */,
 				A6AB6C7E2960EFE7007E9BF0 /* CustomPopUpView.swift in Sources */,
@@ -1734,6 +1741,7 @@
 				9C705F912A8EC62C00F1D0DB /* TabItem.swift in Sources */,
 				9C58B3C329C8EB270024CB7E /* SignUpContinueButton.swift in Sources */,
 				A6BF68232A023912000FF54B /* SmallEventCell.swift in Sources */,
+				9C3E40F02B25859700977B54 /* EditAmenitiesView.swift in Sources */,
 				9CB3120A2B0BED1C0097A1BA /* PieChartModel.swift in Sources */,
 				9CDFC3D22A9F91C400BDFA60 /* CheckInMethod.swift in Sources */,
 				9C58B3AF29C8E5CA0024CB7E /* CharactersRemainView.swift in Sources */,
