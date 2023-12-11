@@ -16,6 +16,8 @@ struct ButtonData {
 }
 
 struct MapView: View {
+    
+    @Environment(\.openURL) private var openURL
     @State private var selectedTag: Int?
     @State private var isSheetPresented = false
     @EnvironmentObject var viewModel: MapViewModel
@@ -99,7 +101,7 @@ struct MapView: View {
                                                     .scaledToFit()
                                                     .foregroundStyle(.white)
                                                     .frame(width: 20, height: 20)
-
+                                                
                                                 Text(buttons[index].title)
                                                     .foregroundStyle(.white)
                                                     .font(.footnote)
@@ -140,11 +142,23 @@ struct MapView: View {
                                     }
                                 }
                                 .padding(.horizontal)
-
-                                LocationPreviewLookAroundView(selectedItem: viewModel.mapItems[index])
-                                    .frame(height: DeviceTypes.ScreenSize.height * 0.2)
+                                
+                                if #available(iOS 17.0, *) {
+                                    LocationPreviewLookAroundView(selectedItem: viewModel.mapItems[index])
+                                        .frame(height: DeviceTypes.ScreenSize.height * 0.2)
+                                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                                        .padding([.top, .horizontal])
+                                } else {
+                                    MapSnapshotView(location: .constant(viewModel.mapItems[index].coordinate),
+                                                    snapshotWidth: DeviceTypes.ScreenSize.width - 16,
+                                                    snapshotHeight: DeviceTypes.ScreenSize.height * 0.2)
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                                     .padding([.top, .horizontal])
+                                    .onTapGesture {
+                                        viewModel.getDirectionsToLocation(with: viewModel.mapItems[index].title,
+                                                                          coordinates: viewModel.mapItems[index].coordinate)
+                                    }
+                                }
                             }
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -197,7 +211,10 @@ extension MapView {
         }
 
         let instagramButton = ButtonData(title: "Instagram", symbol: "instagram") {
-            // Instagram navigation logic
+            guard let hostId = viewModel.mapItems[selectedTag].id,
+                  let host = HostManager.shared.hosts.first(where: { $0.id == hostId }),
+                  let instagramUrl = URL(string: "https://www.instagram.com/\(host.instagramHandle ?? "mixerpartyapp")/") else { return }
+            openURL(instagramUrl)
         }
 
         return [hostDetailsButton, instagramButton] // Add more buttons to this array

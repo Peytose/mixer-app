@@ -203,8 +203,6 @@ extension HostSettingsViewModel {
                 }
             case "Edit Members":
                 ManageMembersView()
-            case "Address":
-                EditAddressView()
             default: ComingSoonView()
         }
     }

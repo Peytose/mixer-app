@@ -31,8 +31,8 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var cancellable        = Set<AnyCancellable>()
     
     @Published var route: MKRoute?
-    @Published var cameraPostition: MapCameraPosition = .region(.init(center: CLLocationCoordinate2D(latitude: 37.331516,
-                                                                                          longitude: -121.891054),
+    @Published var cameraPostition: MapCameraPosition = .region(.init(center: CLLocationCoordinate2D(latitude: 42.3506934,
+                                                                                                     longitude: -71.090978),
                                                            latitudinalMeters: 1200,
                                                            longitudinalMeters: 1200))
     @Published var userLocation: CLLocationCoordinate2D?
@@ -99,6 +99,15 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             @unknown default:
                 break
         }
+    }
+    
+    
+    func getDirectionsToLocation(with name: String, coordinates: CLLocationCoordinate2D) {
+        let placemark = MKPlacemark(coordinate: coordinates)
+        let mapItem   = MKMapItem(placemark: placemark)
+        mapItem.name = name
+        
+        mapItem.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault])
     }
     
     
