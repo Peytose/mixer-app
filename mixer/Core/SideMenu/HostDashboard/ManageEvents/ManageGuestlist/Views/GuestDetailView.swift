@@ -68,6 +68,13 @@ private extension GuestDetailView {
                 Text("Gender: \(guest.gender.description)")
                     .font(.headline)
                     .foregroundColor(.secondary)
+                
+                if let note = guest.note {
+                    Text("Note: \(note)")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
             }
         }
     }

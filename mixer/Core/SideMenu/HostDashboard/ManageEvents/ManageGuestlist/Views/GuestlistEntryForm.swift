@@ -10,6 +10,7 @@ import SwiftUI
 struct GuestlistEntryForm: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var viewModel: GuestlistViewModel
+    @State private var isWithoutUniversity: Bool = false
     @StateObject private var universitySearchViewModel = UniversitySearchViewModel()
 
     var body: some View {
@@ -76,9 +77,27 @@ struct GuestlistEntryForm: View {
             TextField("Name", text: $viewModel.name)
                 .disabled(viewModel.username != "")
             
+            HStack {
+                Toggle("No university?", isOn: $isWithoutUniversity)
+                    .toggleStyle(iOSCheckboxToggleStyle())
+                    .buttonStyle(.plain)
+                    .onChange(of: isWithoutUniversity) {
+                        if isWithoutUniversity {
+                            let university = University(id: "com",
+                                                        domain: ".com",
+                                                        name: "Non-university",
+                                                        shortName: "Non-university",
+                                                        url: "https://www.partywithmixer.com")
+                            viewModel.selectUniversity(university)
+                        }
+                    }
+                
+                Spacer()
+            }
+            
             UniversitySearchView(viewModel: universitySearchViewModel,
                                  action: viewModel.selectUniversity(_:))
-            .disabled(viewModel.username != "")
+            .disabled(viewModel.username != "" || isWithoutUniversity)
             
             if viewModel.universityName != "" {
                 Text(viewModel.universityName)
@@ -94,7 +113,18 @@ struct GuestlistEntryForm: View {
             Stepper("Age: \(viewModel.age)", value: $viewModel.age, in: 17...100)
                 .disabled(viewModel.username != "")
             
-            NotesSection(note: $viewModel.note)
+            VStack {
+                TextField("You can optionally add a note here ...", text: $viewModel.note, axis: .vertical)
+                    .lineLimit(4, reservesSpace: true)
+                    .frame(alignment: .leading)
+                
+                HStack {
+                    CharactersRemainView(currentCount: viewModel.note.count,
+                                         limit: 100)
+                    
+                    Spacer()
+                }
+            }
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)
     }
@@ -102,7 +132,9 @@ struct GuestlistEntryForm: View {
     private var genderField: some View {
         HStack {
             Text(viewModel.gender.description)
+            
             Spacer()
+            
             Menu("Select Gender") {
                 ForEach(Gender.allCases, id: \.self) { gender in
                     Button(gender.description) {

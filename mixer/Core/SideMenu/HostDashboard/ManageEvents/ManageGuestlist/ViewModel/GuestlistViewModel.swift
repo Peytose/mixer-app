@@ -43,6 +43,7 @@ class GuestlistViewModel: ObservableObject {
     @Published var status                 = GuestStatus.invited
     @Published var gender                 = Gender.man
     @Published var age                    = 18
+    @Published var isWithoutUniversity: Bool    = false
     
     @Published private(set) var guests = [EventGuest]()
     
@@ -218,6 +219,11 @@ extension GuestlistViewModel {
 
 // MARK: - CRUD Operations on Guests
 extension GuestlistViewModel {
+    func saveNote(_ note: String) {
+        self.note = note
+    }
+    
+    
     @MainActor
     func createGuest() {
         guard let eventId = self.event.id,

@@ -40,4 +40,16 @@ struct University: Hashable, Identifiable, Codable {
         shortName = try? container.decode(String.self, forKey: .shortName)
         url = try? container.decode(String.self, forKey: .url)
     }
+    
+    init(id: String? = nil,
+         domain: String,
+         name: String,
+         shortName: String? = nil,
+         url: String) {
+        self.id = id
+        self.domain = domain
+        self.name = name
+        self.shortName = shortName
+        self.url = url
+    }
 }
