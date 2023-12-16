@@ -91,11 +91,11 @@ struct GuestlistView: View {
             }
             .navigationBarBackButtonHidden(true)
             .overlay(alignment: .bottom) {
-                    if viewModel.event.endDate > Timestamp() {
-                        QRCodeScannerButton(isShowingQRCodeScanView: $isShowingQRCodeScanView)
-                            .opacity(viewModel.event.endDate < Timestamp() ? 0 : 1)
-                            .disabled(viewModel.event.endDate < Timestamp())
-                    }
+                if viewModel.event.endDate > Timestamp() {
+                    QRCodeScannerButton(isShowingQRCodeScanView: $isShowingQRCodeScanView)
+                        .opacity(viewModel.event.endDate < Timestamp() ? 0 : 1)
+                        .disabled(viewModel.event.endDate < Timestamp())
+                }
             }
             .sheet(isPresented: $viewModel.isShowingUserInfoModal) {
                 if let _ = viewModel.selectedGuest {

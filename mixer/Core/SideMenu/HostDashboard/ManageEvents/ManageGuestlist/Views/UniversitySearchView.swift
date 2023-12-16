@@ -14,10 +14,18 @@ struct UniversitySearchView: View {
     
     var body: some View {
         VStack {
-            TextField("Search universities..", text: $viewModel.searchText)
-            .focused($isTextFieldFocused)
-            .onChange(of: isTextFieldFocused) { newValue in
-                viewModel.isShowingSearchResults = newValue
+            HStack {
+                Image(systemName: "text.magnifyingglass")
+                    .imageScale(.small)
+                    .foregroundStyle(Color.secondary)
+                
+                TextField("Search universities..", text: $viewModel.searchText)
+                    .focused($isTextFieldFocused)
+                    .onChange(of: isTextFieldFocused) { newValue in
+                        viewModel.isShowingSearchResults = newValue
+                    }
+                
+                Spacer()
             }
             
             if viewModel.isShowingSearchResults {

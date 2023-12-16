@@ -64,7 +64,7 @@ class HostService: ObservableObject {
             .collection("guestlist")
             .document(uid)
             .updateData(data) { error in
-                if guest.username != nil {
+                if let username = guest.username, !username.isEmpty {
                     COLLECTION_USERS
                         .document(uid)
                         .collection("events-attended")

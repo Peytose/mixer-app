@@ -64,10 +64,18 @@ struct GuestlistEntryForm: View {
     private var userSearchSection: some View {
         Section(header: Text("Username").fontWeight(.semibold),
                 footer: Text("If user doesn't have a mixer account, continue below")) {
-            TextField("Enter a user's username ...", text: $viewModel.username)
-                .foregroundColor(.white)
-                .autocorrectionDisabled()
-                .disabled(viewModel.name != "")
+            HStack {
+                Image(systemName: "text.magnifyingglass")
+                    .imageScale(.small)
+                    .foregroundStyle(Color.secondary)
+                
+                TextField("Enter a user's username ...", text: $viewModel.username)
+                    .foregroundColor(.white)
+                    .autocorrectionDisabled()
+                    .disabled(viewModel.name != "")
+                
+                Spacer()
+            }
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)
     }

@@ -46,6 +46,7 @@ class GuestlistViewModel: ObservableObject {
     @Published var isWithoutUniversity: Bool    = false
     
     @Published private(set) var guests = [EventGuest]()
+    private var universityIdDict = [String:String]()
     
     private let userService = UserService.shared
     private let hostService = HostService.shared
@@ -550,28 +551,43 @@ extension GuestlistViewModel {
 }
 
 
-
-import Foundation
-
 extension GuestlistViewModel {
-    func tt_upload() {
-        if let fileURL = Bundle.main.url(forResource: "test_guestlist", withExtension: "json") {
+    @MainActor
+    func uploadManualGuestlist() {
+        if let fileURL = Bundle.main.url(forResource: "divij-guestlist", withExtension: "json") {
             do {
                 let jsonData = try Data(contentsOf: fileURL)
-                
-                // Decode into an array of dictionaries
                 let decodedArray = try JSONDecoder().decode([[String: String]].self, from: jsonData)
-                
-                // Transform the array into the desired dictionary format
-                var inviteeDict = [String: [String]]()
-                for entry in decodedArray {
-                    let brotherName = entry["Brother"]!
-                    let invitees = Array(entry.values).filter { $0 != brotherName }
-                    inviteeDict[brotherName] = invitees
+
+                var universitySet = Set<String>()
+
+                for guestDict in decodedArray {
+                    if let universityStr = guestDict["Guest School"] {
+                        if universityStr.contains("Theta") {
+                            universitySet.insert("Tufts")
+                        } else {
+                            universitySet.insert(universityStr)
+                        }
+                    }
                 }
-                
-                // Now you have a dictionary with the brother's name as the key and the list of invitees as the value.
-                self.uploadGuestsFromDict(guestDict: inviteeDict)
+
+                let dispatchGroup = DispatchGroup()
+                print("Starting to fetch university IDs for \(universitySet)...")
+
+                for name in universitySet {
+                    dispatchGroup.enter()
+                    userService.fetchUniversityId(for: name) { id in
+                        print("Fetched ID for \(name): \(id)")
+                        self.universityIdDict[name] = id
+                        dispatchGroup.leave()
+                    }
+                }
+
+                print("Set up dispatch group notify...")
+                dispatchGroup.notify(queue: .main) {
+                    print("All university IDs fetched, starting to upload guests...")
+                    self.uploadGuestsFromDict(guestArray: decodedArray)
+                }
             } catch {
                 print("Failed to read or decode JSON: \(error)")
             }
@@ -579,72 +595,63 @@ extension GuestlistViewModel {
             print("Failed to find test_guestlist.json in the main bundle.")
         }
     }
+
     
     
-    func uploadGuestsFromDict(guestDict: [String: [String]]) {
-        for (brotherName, invitees) in guestDict {
-            for invitee in invitees where !invitee.isEmpty {
-                uploadSingleGuest(invitee: invitee, brotherName: brotherName)
-            }
+    func uploadGuestsFromDict(guestArray: [[String:String]]) {
+        for guestDict in guestArray {
+            uploadSingleGuest(guestDict: guestDict)
         }
     }
     
-    func uploadSingleGuest(invitee: String, brotherName: String) {
-        var cleanedInvitee = invitee  // This will store the name without any notes or "+x" patterns.
-        var fullNote: String?
+    func uploadSingleGuest(guestDict: [String:String]) {
         
-        // Extract gender.
-        let gender = inferGenderFromName(cleanedInvitee)
-        
-        // Extract note within parentheses
-        if let leftParenIndex = cleanedInvitee.firstIndex(of: "("), let rightParenIndex = cleanedInvitee.firstIndex(of: ")") {
-            let noteWithinParens = String(cleanedInvitee[leftParenIndex...rightParenIndex])
-            cleanedInvitee = cleanedInvitee.replacingOccurrences(of: noteWithinParens, with: "").trimmingCharacters(in: .whitespaces)
-            fullNote = String(noteWithinParens.dropFirst().dropLast()) // Convert to String after removing parentheses
+        func getFirstName(from fullName: String) -> String {
+            let nameComponents = fullName.components(separatedBy: " ")
+            return nameComponents.first ?? fullName
         }
         
-        // Extract "+<number>" patterns (with potential space) indicating additional guests
-        if let range = cleanedInvitee.range(of: "\\+\\s?\\d", options: .regularExpression) {
-            let plusGuests = String(cleanedInvitee[range])
-            cleanedInvitee = cleanedInvitee.replacingOccurrences(of: plusGuests, with: "").trimmingCharacters(in: .whitespaces)
-            fullNote = (fullNote == nil) ? plusGuests : "\(fullNote!), \(plusGuests) additional guests"
-        }
         
-        let guest = EventGuest(name: cleanedInvitee,
-                               universityId: "com",
-                               note: fullNote,
+        let name            = guestDict["Guest Name (First and Last)"]!
+        let genderStr       = guestDict["Gender"]!
+        let universityStr   = guestDict["Guest School"]!
+        let brotherFullName = guestDict["Brother"]!
+        let gender          = determineGender(genderStr)
+        
+        var guest = EventGuest(name: name,
+                               universityId: universityStr.contains("Theta") ? (universityIdDict["Tufts"] ?? "com") : (universityIdDict[universityStr] ?? "com"),
+                               age: guestDict["21+"]?.lowercased() != "no" ? nil : 19,
                                gender: gender,
                                status: .invited,
-                               invitedBy: brotherName,
+                               invitedBy: brotherFullName,
                                timestamp: Timestamp())
         
-        guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
+        if universityStr.contains("Theta") {
+            guest.note = "Tufts Theta"
+        }
         
-        let docId = "oo9xPo97lxtqcErh9wo8"
-        COLLECTION_EVENTS
-            .document(docId)
-            .collection("guestlist")
-            .addDocument(data: encodedGuest) { error in
-                if let error = error {
-                    print("DEBUG: Error \(error.localizedDescription)")
-                    return
-                }
-            }
+        guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
+//        let docId = "7BbqafP6QCQMB2bqk2Tj"
+//        
+//        COLLECTION_EVENTS
+//            .document(docId)
+//            .collection("guestlist")
+//            .addDocument(data: encodedGuest) { error in
+//                if let error = error {
+//                    print("DEBUG: Error \(error.localizedDescription)")
+//                    return
+//                }
+//                
+//                print("DEBUG: \(guest.name) added!")
+//            }
     }
     
-    func inferGenderFromName(_ name: String) -> Gender {
-        // Lists based on common names and the provided data
-        let maleNames = ["Ben", "Matt", "Phillip", "Colin", "Steven", "Alexander"]
-        let femaleNames = ["Cristina", "Leah", "Maddie", "Cindy", "Sophie", "Samantha", "Alexandria", "Emma"]
-        
-        let cleanName = name.components(separatedBy: " ")[0]
-        
-        if maleNames.contains(cleanName) {
-            return .man
-        } else if femaleNames.contains(cleanName) {
-            return .woman
-        } else {
-            return .preferNotToSay
+    func determineGender(_ letter: String) -> Gender {
+        switch letter.lowercased() {
+            case "m": return .man
+            case "f": return .woman
+            case "nb": return .other
+            default: return .preferNotToSay
         }
     }
     
