@@ -29,6 +29,7 @@ class ProfileViewModel: ObservableObject {
             currentAlert = .confirmation(confirmationAlertItem)
         }
     }
+    @Published var shareURL: URL? = nil
     
     private var service = UserService.shared
     private var hostManager = HostManager.shared
@@ -46,6 +47,19 @@ class ProfileViewModel: ObservableObject {
         if user.university == nil {
             service.fetchUniversity(with: user.universityId) { university in
                 self.user.university = university
+            }
+        }
+        
+        self.generateShareURL()
+    }
+    
+    
+    func generateShareURL() {
+        guard let userId = user.id else { return }
+        
+        UniversalLinkManager.generateShareURL(type: .user(userId)) { url in
+            DispatchQueue.main.async {
+                self.shareURL = url
             }
         }
     }

@@ -163,8 +163,7 @@ struct MapView: View {
                         }
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .background(Color.theme.backgroundColor.ignoresSafeArea())
-                        .presentationDetents([.height(DeviceTypes.ScreenSize.height * 0.2),
-                                              .height(DeviceTypes.ScreenSize.height * 0.4)])
+                        .presentationDetents([.height(DeviceTypes.ScreenSize.height * 0.45)])
                     }
 
 
@@ -173,6 +172,8 @@ struct MapView: View {
                     hostDetailView()
                     
                     eventDetailView()
+                    
+                    userDetailView()
                 }
             }
         }
@@ -195,6 +196,13 @@ extension MapView {
             HostDetailView(host: host,
                            action: homeViewModel.navigate,
                            namespace: namespace)
+        }
+    }
+    
+    @ViewBuilder
+    func userDetailView() -> some View {
+        if let user = context.last?.selectedUser {
+            ProfileView(user: user, action: homeViewModel.navigate)
         }
     }
     

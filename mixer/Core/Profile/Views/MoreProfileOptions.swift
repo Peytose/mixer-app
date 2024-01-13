@@ -59,7 +59,7 @@ struct MoreProfileOptions: View {
                         }
                     }
                     
-                    if let userId = viewModel.user.id, let url = URL(string: "https://mixer.page.link/profile?uid=\(userId)") {
+                    if let userId = viewModel.user.id, let url = viewModel.shareURL {
                         ShareLink(item: url,
                                   message: Text("\nCheck out this profile on mixer!"),
                                   preview: SharePreview("\(viewModel.user.displayName) (@\(viewModel.user.username))", image: profileImage ?? Image("default-avatar"))) {

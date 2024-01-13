@@ -133,77 +133,13 @@ final class EventViewModel: ObservableObject {
 
 extension EventViewModel {
     func generateShareURL() {
-        print("DEBUG: Generating share url....")
-        guard let eventId = event.id else {
-            self.shareURL = nil
-            return
-        }
+        guard let eventId = event.id else { return }
         
-        let baseURL = "mixerapp://open-event?id=\(eventId)"
-        
-        if event.isPrivate {
-            generateEventToken { token in
-                guard let token = token else {
-                    self.shareURL = nil
-                    return
-                }
-                
-                let fullURLString = baseURL + "&token=\(token)"
-                
-                DispatchQueue.main.async {
-                    self.shareURL = URL(string: fullURLString)
-                }
-            }
-        } else {
+        UniversalLinkManager.generateShareURL(type: .event(eventId),
+                                              isPrivateEvent: event.isPrivate) { url in
             DispatchQueue.main.async {
-                self.shareURL = URL(string: baseURL)
+                self.shareURL = url
             }
         }
-    }
-    
-    private func generateEventToken(completion: @escaping (String?) -> Void) {
-        guard let eventId = event.id else {
-            completion(nil)
-            return
-        }
-        
-        guard let url = URL(string: "https://us-central1-mixer-firebase-project.cloudfunctions.net/generateEventToken") else {
-            print("Invalid URL")
-            completion(nil)
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let requestBody: [String: Any] = ["eventId": eventId]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: requestBody)
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Error:", error)
-                completion(nil)
-                return
-            }
-            
-            if let data = data {
-                do {
-                    if let jsonResponse = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-                       let token = jsonResponse["token"] as? String {
-                        completion(token)
-                    } else {
-                        print("Invalid response format")
-                        completion(nil)
-                    }
-                } catch {
-                    print("Error parsing JSON:", error)
-                    completion(nil)
-                }
-            } else {
-                print("No data received")
-                completion(nil)
-            }
-        }.resume()
     }
 }

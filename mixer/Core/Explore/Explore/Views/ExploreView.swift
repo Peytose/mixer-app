@@ -74,6 +74,8 @@ struct ExploreView: View {
                         hostDetailView()
                         
                         eventDetailView()
+                    
+                        userDetailView()
                 }
             }
             .disabled(homeViewModel.showSideMenu)
@@ -100,6 +102,13 @@ extension ExploreView {
             HostDetailView(host: host,
                            action: homeViewModel.navigate,
                            namespace: namespace)
+        }
+    }
+    
+    @ViewBuilder
+    func userDetailView() -> some View {
+        if let user = context.last?.selectedUser {
+            ProfileView(user: user, action: homeViewModel.navigate)
         }
     }
 }

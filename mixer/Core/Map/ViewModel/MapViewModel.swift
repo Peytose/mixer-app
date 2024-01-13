@@ -33,8 +33,8 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var route: MKRoute?
     @Published var cameraPostition: MapCameraPosition = .region(.init(center: CLLocationCoordinate2D(latitude: 42.3506934,
                                                                                                      longitude: -71.090978),
-                                                           latitudinalMeters: 1200,
-                                                           longitudinalMeters: 1200))
+                                                           latitudinalMeters: 100,
+                                                           longitudinalMeters: 100))
     @Published var userLocation: CLLocationCoordinate2D?
 
 
@@ -158,8 +158,6 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
 
         return distance <= tolerance
     }
-
-
     
     
     @MainActor

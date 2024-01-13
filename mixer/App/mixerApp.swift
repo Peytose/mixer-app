@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    
+
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         if Auth.auth().canHandle(url) {
             return true
@@ -62,11 +62,21 @@ struct mixerApp: App {
                 .environmentObject(algoliaManager)
                 .environmentObject(linkManager)
                 .onOpenURL { url in
-                    linkManager.processIncomingURL(url) { event in
-                        if let event = event {
-                            homeViewModel.pushContext(NavigationContext(state: .close, selectedEvent: event))
-                        } else {
-                            print("DEBUG: ERROR??")
+                    linkManager.processIncomingURL(url) { model in
+                        DispatchQueue.main.async {
+                            if let event = model as? Event {
+                                homeViewModel.pushContext(NavigationContext(state: .close,
+                                                                            selectedEvent: event))
+                            } else if let host = model as? Host {
+                                homeViewModel.pushContext(NavigationContext(state: .close,
+                                                                            selectedHost: host))
+                            } else if let user = model as? User {
+                                homeViewModel.pushContext(NavigationContext(state: .close,
+                                                                            selectedUser: user))
+                            } else {
+                                // ERROR: Handle unknown model type
+                                print("DEBUG: Unknown model type received from URL.")
+                            }
                         }
                     }
                 }
