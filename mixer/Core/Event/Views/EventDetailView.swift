@@ -121,7 +121,7 @@ struct EventDetailView: View {
                 }
                 
                 if viewModel.event.didGuestlist == nil || viewModel.event.didRequest == nil {
-                    viewModel.getGuestlistAndRequestStatus()
+                    viewModel.fetchGuestlistAndRequestStatus()
                 }
             }
             .overlay(alignment: .bottom) {

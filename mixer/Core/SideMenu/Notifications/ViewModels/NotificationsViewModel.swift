@@ -273,14 +273,15 @@ extension NotificationsViewModel {
         return newNotifications.count
     }
 
+    private func getLastNotificationCheckTimestamp() -> Date? {
+        let timestamp = UserDefaults.standard.value(forKey: "LastNotificationCheckTimestamp") as? Date
+        print("DEBUG: Retrieved last notification check timestamp: \(String(describing: timestamp))")
+        return timestamp
+    }
     
     func saveCurrentTimestamp() {
         let timestamp = Date()
         UserDefaults.standard.setValue(timestamp, forKey: "LastNotificationCheckTimestamp")
-    }
-    
-    
-    private func getLastNotificationCheckTimestamp() -> Date? {
-        return UserDefaults.standard.value(forKey: "LastNotificationCheckTimestamp") as? Date
+        UserDefaults.standard.synchronize() // Force UserDefaults to save immediately
     }
 }

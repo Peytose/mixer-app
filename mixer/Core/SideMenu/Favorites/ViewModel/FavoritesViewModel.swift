@@ -70,7 +70,7 @@ class FavoritesViewModel: ObservableObject {
                                 event.isFavorited = true
                                 
                                 if event.isCheckInViaMixer {
-                                    EventManager.shared.getGuestlistAndRequestStatus(for: event) { didGuestlist, didRequest in
+                                    EventManager.shared.fetchGuestlistAndRequestStatus(for: event) { didGuestlist, didRequest in
                                         event.didGuestlist = didGuestlist
                                         event.didRequest   = didRequest
                                         self.favoritedEvents.insert(event)

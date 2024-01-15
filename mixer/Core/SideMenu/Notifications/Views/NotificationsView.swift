@@ -79,6 +79,9 @@ struct NotificationsView: View {
                 }
             }
         }
+        .onAppear {
+            viewModel.saveCurrentTimestamp()
+        }
     }
 }
 

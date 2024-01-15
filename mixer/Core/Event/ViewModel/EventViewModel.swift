@@ -123,8 +123,8 @@ final class EventViewModel: ObservableObject {
     }
     
     
-    @MainActor func getGuestlistAndRequestStatus() {
-        EventManager.shared.getGuestlistAndRequestStatus(for: event) { didGuestlist, didRequest in
+    @MainActor func fetchGuestlistAndRequestStatus() {
+        EventManager.shared.fetchGuestlistAndRequestStatus(for: event) { didGuestlist, didRequest in
             self.event.didGuestlist = didGuestlist
             self.event.didRequest   = didRequest
         }
