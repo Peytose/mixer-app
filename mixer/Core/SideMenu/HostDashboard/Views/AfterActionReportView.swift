@@ -24,6 +24,7 @@ struct EventAfterActionView: View {
                                  charts: charts,
                                  currentIndex: $currentIndex)
                 }
+                
                 ChartKeyPanel(slices: charts[currentIndex].segments, chart: charts[currentIndex])
                 
                 quickFacts
@@ -47,7 +48,7 @@ extension EventAfterActionView {
     var quickFacts: some View {
         SectionViewContainer("Quick Facts") {
             SquareViewContainer(title: "Total Attendance", value: "450", valueTitle: "Invited", isQuickFact: true) {
-                    Text("250")
+                Text("250")
                     .largeTitle()
             }
         } content2: {

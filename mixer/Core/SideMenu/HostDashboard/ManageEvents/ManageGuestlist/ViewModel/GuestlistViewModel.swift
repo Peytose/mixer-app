@@ -191,7 +191,7 @@ extension GuestlistViewModel {
         
         COLLECTION_USERS
             .document(uid)
-            .getDocument { snapshot, error in
+            .fetchWithCachePriority(freshnessDuration: 7200) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching user. \(error.localizedDescription)")
                     return
@@ -322,11 +322,14 @@ extension GuestlistViewModel {
                                             invitedBy: String? = nil,
                                             checkedInBy: String? = nil) {
         guard let host = self.userService.user?.currentHost else { return }
+        let queryKey = QueryKey(collectionPath: "users",
+                                filters: ["username == \(username)"],
+                                limit: 1)
         
         COLLECTION_USERS
             .whereField("username", isEqualTo: self.username)
             .limit(to: 1)
-            .getDocuments { snapshot, error in
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 7200) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error getting user from username: \(error.localizedDescription)")
                     return

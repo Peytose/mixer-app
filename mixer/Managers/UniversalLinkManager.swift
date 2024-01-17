@@ -237,7 +237,7 @@ class UniversalLinkManager: ObservableObject {
     private func fetchIncomingEvent(eventId: String, completion: @escaping (Event) -> Void) {
         COLLECTION_EVENTS
             .document(eventId)
-            .getDocument { snapshot, error in
+            .fetchWithCachePriority(freshnessDuration: 1800) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching incoming event.\n\(error.localizedDescription)")
                     return
@@ -252,7 +252,7 @@ class UniversalLinkManager: ObservableObject {
     private func fetchIncomingHost(hostId: String, completion: @escaping (Host) -> Void) {
         COLLECTION_HOSTS
             .document(hostId)
-            .getDocument { snapshot, error in
+            .fetchWithCachePriority(freshnessDuration: 3600) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching incoming event.\n\(error.localizedDescription)")
                     return
@@ -267,7 +267,7 @@ class UniversalLinkManager: ObservableObject {
     private func fetchIncomingUser(userId: String, completion: @escaping (User) -> Void) {
         COLLECTION_USERS
             .document(userId)
-            .getDocument { snapshot, error in
+            .fetchWithCachePriority(freshnessDuration: 7200) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching incoming event.\n\(error.localizedDescription)")
                     return

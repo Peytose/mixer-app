@@ -40,12 +40,16 @@ final class HostViewModel: ObservableObject {
         let thirtyDaysBefore = Timestamp(date: Calendar.current.date(byAdding: .day,
                                                                      value: -30,
                                                                      to: Date())!)
+        let queryKey = QueryKey(collectionPath: "events",
+                                filters: ["hostIds contains \(hostUid)",
+                                          "endDate in Past",
+                                          "endDate in LastMonth"])
         
         COLLECTION_EVENTS
             .whereField("hostIds", arrayContains: hostUid)
             .whereField("endDate", isLessThan: Timestamp())
             .whereField("endDate", isGreaterThan: thirtyDaysBefore)
-            .getDocuments { snapshot, _ in
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 7200) { snapshot, _ in
                 guard let documents = snapshot?.documents else { return }
                 let events = documents.compactMap({ try? $0.data(as: Event.self) })
                 self.recentEvents = events.sortedByStartDate(true)

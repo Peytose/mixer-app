@@ -203,59 +203,65 @@ extension NotificationsViewModel {
         
         // Fetch hosts
         for hostID in ids.hostIDs {
-            COLLECTION_HOSTS.document(hostID).getDocument { snapshot, _ in
-                if let host = try? snapshot?.data(as: Host.self) {
-                    self.cache.hosts[hostID] = host
-                    
-                    // Update the host value in the notifications array
-                    self.notifications = self.notifications.map { notification in
-                        if notification.hostId == hostID {
-                            var updatedNotification = notification
-                            updatedNotification.host = host
-                            return updatedNotification
+            COLLECTION_HOSTS
+                .document(hostID)
+                .fetchWithCachePriority(freshnessDuration: 7200) { snapshot, _ in
+                    if let host = try? snapshot?.data(as: Host.self) {
+                        self.cache.hosts[hostID] = host
+                        
+                        // Update the host value in the notifications array
+                        self.notifications = self.notifications.map { notification in
+                            if notification.hostId == hostID {
+                                var updatedNotification = notification
+                                updatedNotification.host = host
+                                return updatedNotification
+                            }
+                            return notification
                         }
-                        return notification
                     }
                 }
-            }
         }
         
         // Fetch events
         for eventID in ids.eventIDs {
-            COLLECTION_EVENTS.document(eventID).getDocument { snapshot, _ in
-                if let event = try? snapshot?.data(as: Event.self) {
-                    self.cache.events[eventID] = event
-                    
-                    // Update the event value in the notifications array
-                    self.notifications = self.notifications.map { notification in
-                        if notification.eventId == eventID {
-                            var updatedNotification = notification
-                            updatedNotification.event = event
-                            return updatedNotification
+            COLLECTION_EVENTS
+                .document(eventID)
+                .fetchWithCachePriority(freshnessDuration: 1800) { snapshot, _ in
+                    if let event = try? snapshot?.data(as: Event.self) {
+                        self.cache.events[eventID] = event
+                        
+                        // Update the event value in the notifications array
+                        self.notifications = self.notifications.map { notification in
+                            if notification.eventId == eventID {
+                                var updatedNotification = notification
+                                updatedNotification.event = event
+                                return updatedNotification
+                            }
+                            return notification
                         }
-                        return notification
                     }
                 }
-            }
         }
         
         // Fetch users
         for userID in ids.userIDs {
-            COLLECTION_USERS.document(userID).getDocument { snapshot, _ in
-                if let user = try? snapshot?.data(as: User.self) {
-                    self.cache.users[userID] = user
-                    
-                    // Update the user value in the notifications array
-                    self.notifications = self.notifications.map { notification in
-                        if notification.uid == userID {
-                            var updatedNotification = notification
-                            updatedNotification.user = user
-                            return updatedNotification
+            COLLECTION_USERS
+                .document(userID)
+                .fetchWithCachePriority(freshnessDuration: 2700) { snapshot, _ in
+                    if let user = try? snapshot?.data(as: User.self) {
+                        self.cache.users[userID] = user
+                        
+                        // Update the user value in the notifications array
+                        self.notifications = self.notifications.map { notification in
+                            if notification.uid == userID {
+                                var updatedNotification = notification
+                                updatedNotification.user = user
+                                return updatedNotification
+                            }
+                            return notification
                         }
-                        return notification
                     }
                 }
-            }
         }
     }
 }

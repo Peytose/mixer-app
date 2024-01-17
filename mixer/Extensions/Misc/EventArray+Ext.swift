@@ -28,4 +28,15 @@ extension Array where Element == Event {
             }
         }
     }
+    
+    
+    func sortedByEndDate(_ ascending: Bool = true) -> [Event] {
+        return self.sorted {
+            if ascending {
+                return $0.endDate < $1.endDate
+            } else {
+                return $0.endDate > $1.endDate
+            }
+        }
+    }
 }

@@ -55,9 +55,13 @@ class FavoritesViewModel: ObservableObject {
                 let chunks = eventIds.chunked(into: 10)
                 
                 for chunk in chunks {
+                    let idsString = chunk.joined(separator: ",")
+                    let queryKey = QueryKey(collectionPath: "events",
+                                                    filters: ["documentID in [\(idsString)]"])
+                    
                     COLLECTION_EVENTS
                         .whereField(FieldPath.documentID(), in: chunk)
-                        .getDocuments { snapshot, error in
+                        .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 1800) { snapshot, error in
                             if let error = error {
                                 print("DEBUG: Error getting events. \(error.localizedDescription)")
                                 return

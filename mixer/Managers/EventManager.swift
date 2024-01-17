@@ -17,8 +17,6 @@ class EventManager: ObservableObject {
     @Published var hostPastEvents = [Event]()
     @Published var userPastEvents = [Event]()
     
-    private var lastFetchedTimestamps: [String: Date] = [:] // EventID to Timestamp
-    
     init() {
         self.fetchExploreEvents()
     }
@@ -31,63 +29,30 @@ class EventManager: ObservableObject {
     }
     
     
-    private func fetchEvents(from collection: Query, completion: @escaping ([Event]) -> Void) {
-        // Attempt to fetch from cache
-        collection.getDocuments(source: .cache) { snapshot, error in
-            if let error = error {
-                print("DEBUG: Error fetching events from cache: \(error.localizedDescription)")
-            }
-
-            if let events = self.processSnapshot(snapshot), !events.isEmpty {
-                let lastFetchedTimes = events.compactMap { event -> String? in
-                    if let id = event.id, let lastFetched = self.lastFetchedTimestamps[id] {
-                        return "\(event.title): \(lastFetched)"
-                    } else {
-                        return nil
-                    }
-                }.joined(separator: ", ")
-
-                print("DEBUG: Fetched \(events.count) events from CACHE. Last fetched timestamps: [\(lastFetchedTimes)]")
-                
-                if self.events.allSatisfy(self.isEventFresh) {
-                    print("DEBUG: All events from CACHE are fresh.")
-                    completion(events) // Use cached data
-                } else {
-                    print("DEBUG: Some events from CACHE are not fresh. Fetching from SERVER.")
-                    self.fetchFromServer(collection, completion: completion)
-                }
-            } else {
-                print("DEBUG: No events in CACHE or CACHE data is stale. Fetching from SERVER.")
-                self.fetchFromServer(collection, completion: completion)
-            }
-        }
-    }
-
-    
-    private func fetchFromServer(_ collection: Query, completion: @escaping ([Event]) -> Void) {
-        collection.getDocuments(source: .server) { snapshot, _ in
-            if let events = self.processSnapshot(snapshot, updateTime: true) {
-                print("DEBUG: Fetched \(events.count) events from SERVER.")
-                completion(events)
-            } else {
-                print("DEBUG: No events fetched from SERVER.")
-            }
-        }
-    }
-    
-    
     private func fetchEventsByIds(_ ids: [String]) {
         let chunks = ids.chunked(into: 10) // Chunk the array into subarrays of size 10
         let dispatchGroup = DispatchGroup()
         
         for chunk in chunks {
             dispatchGroup.enter()
-            let eventsQuery = COLLECTION_EVENTS
-                .whereField(FieldPath.documentID(), in: chunk)
+            let idsString = chunk.joined(separator: ",")
+            let queryKey = QueryKey(collectionPath: "events",
+                                            filters: ["documentID in [\(idsString)]"])
             
-            fetchEvents(from: eventsQuery) { events in
-                self.events.formUnion(events)
-            }
+            COLLECTION_EVENTS
+                .whereField(FieldPath.documentID(), in: chunk)
+                .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 1800) { snapshot, error in
+                    if let error = error {
+                        print("DEBUG: Error fetching event by ID. \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    if let events = self.processSnapshot(snapshot), !events.isEmpty {
+                        self.events.formUnion(events)
+                    } else {
+                        print("DEBUG: No events. Potential error.")
+                    }
+                }
         }
     }
     
@@ -100,7 +65,7 @@ class EventManager: ObservableObject {
             .document(eventId)
             .collection("guestlist")
             .document(uid)
-            .getDocument { snapshot, _ in
+            .fetchWithCachePriority(freshnessDuration: 1800) { snapshot, error in
                 guard let data = snapshot?.data() else {
                     completion(false, false)
                     return
@@ -122,25 +87,41 @@ extension EventManager {
     func fetchHostMemberEvents() {
         guard let hostIdToMemberTypeMap = UserService.shared.user?.hostIdToMemberTypeMap else { return }
         let hostIds = Array(hostIdToMemberTypeMap.keys)
+        let hostIdsString = hostIds.joined(separator: ",")
         
-        let eventsQuery = COLLECTION_EVENTS
+        let queryKey = QueryKey(collectionPath: "events",
+                                filters: ["hostIds containsAny [\(hostIdsString)]",
+                                          "endDate in Future",
+                                          "isPrivate == true"])
+                                
+        COLLECTION_EVENTS
             .whereField("hostIds", arrayContainsAny: hostIds)
             .whereField("endDate", isGreaterThan: Timestamp())
             .whereField("isPrivate", isEqualTo: true)
-        
-        self.fetchEvents(from: eventsQuery) { events in
-            self.events.formUnion(events)
-        }
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 1800) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching host member events. \(error.localizedDescription)")
+                    return
+                }
+                
+                if let events = self.processSnapshot(snapshot), !events.isEmpty {
+                    self.events.formUnion(events)
+                } else {
+                    print("DEBUG: No events. Potential error.")
+                }
+            }
     }
     
     
     func fetchUserSpecificEvents() {
         guard let currentUserId = Auth.auth().currentUser?.uid else { return }
         
+        let queryKey = QueryKey(collectionPath: "user/accessible-events")
+        
         COLLECTION_USERS
             .document(currentUserId)
             .collection("accessible-events")
-            .getDocuments { snapshot, error in
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 3600) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error getting event IDs: \(error.localizedDescription)")
                     return
@@ -157,37 +138,110 @@ extension EventManager {
     func fetchEvents(for host: Host, completion: @escaping ([Event]) -> Void) {
         guard UserService.shared.user?.associatedHosts?.contains(where: { $0 == host }) ?? false else { return }
         guard let hostId = host.id else { return }
-        let hostEventsQuery = COLLECTION_EVENTS.whereField("hostIds", arrayContains: hostId)
         
-        fetchEvents(from: hostEventsQuery, completion: completion)
+        let queryKey = QueryKey(collectionPath: "events",
+                                filters: ["hostIds contains \(hostId)"])
+        
+        COLLECTION_EVENTS
+            .whereField("hostIds", arrayContains: hostId)
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 1800) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching events for \(host.name). \(error.localizedDescription)")
+                    return
+                }
+                
+                if let events = self.processSnapshot(snapshot), !events.isEmpty {
+                    completion(events)
+                } else {
+                    print("DEBUG: No events for \(host.name). Potential error.")
+                    completion([])
+                }
+            }
     }
     
     
     func fetchHostCurrentAndFutureEvents(for hostId: String, completion: @escaping ([Event]) -> Void) {
-        let hostCurrentAndFutureEventQuery =  COLLECTION_EVENTS
+        let queryKey = QueryKey(collectionPath: "events",
+                                    filters: ["hostIds contains \(hostId)",
+                                              "endDate in Future"])
+        
+        COLLECTION_EVENTS
             .whereField("hostIds", arrayContains: hostId)
             .whereField("endDate", isGreaterThan: Timestamp())
-        
-        fetchEvents(from: hostCurrentAndFutureEventQuery, completion: completion)
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 3600) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching host and current event. \(error.localizedDescription)")
+                    return
+                }
+                
+                if let events = self.processSnapshot(snapshot), !events.isEmpty {
+                    completion(events)
+                } else {
+                    print("DEBUG: No events. Potential error.")
+                    completion([])
+                }
+            }
     }
-
     
-    func fetchHostPastEvents(for hostId: String) {
-        let hostPastEventQuery = COLLECTION_EVENTS
+    
+    func fetchMostRecentEvent(for hostId: String, completion: @escaping ([Event]) -> Void) {
+        let queryKey = QueryKey(collectionPath: "events",
+                                filters: ["hostIds contains \(hostId)",
+                                          "endDate in Past)"],
+                                orders: ["endDate descending"],
+                                limit: 1)
+        
+        COLLECTION_EVENTS
             .whereField("hostIds", arrayContains: hostId)
             .whereField("endDate", isLessThan: Timestamp())
+            .order(by: "endDate", descending: true)
+            .limit(to: 1)
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 3600) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching host and current event. \(error.localizedDescription)")
+                    return
+                }
+                
+                if let events = self.processSnapshot(snapshot), !events.isEmpty {
+                    completion(events)
+                } else {
+                    print("DEBUG: No events. Potential error.")
+                    completion([])
+                }
+            }
+    }
+    
+    
+    func fetchHostPastEvents(for hostId: String) {
+        let queryKey = QueryKey(collectionPath: "events",
+                                filters: ["hostIds contains \(hostId)",
+                                          "endDate in Past)"])
         
-        fetchEvents(from: hostPastEventQuery) { events in
-            self.hostPastEvents = events
-        }
+        COLLECTION_EVENTS
+            .whereField("hostIds", arrayContains: hostId)
+            .whereField("endDate", isLessThan: Timestamp())
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching host past events. \(error.localizedDescription)")
+                    return
+                }
+                
+                if let events = self.processSnapshot(snapshot), !events.isEmpty {
+                    self.hostPastEvents = events
+                } else {
+                    print("DEBUG: No events. Potential error.")
+                }
+            }
     }
 
     
     func fetchUserPastEvents(for userId: String) {
+        let queryKey = QueryKey(collectionPath: "users/events-attended")
+        
         COLLECTION_USERS
             .document(userId)
             .collection("events-attended")
-            .getDocuments { snapshot, _ in
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 7200) { snapshot, _ in
                 guard let documents = snapshot?.documents else { return }
                 let eventIds = documents.compactMap({ $0.documentID })
                 let dispatchGroup = DispatchGroup()
@@ -198,7 +252,7 @@ extension EventManager {
                     
                     COLLECTION_EVENTS
                         .document(eventId)
-                        .getDocument { snapshot, error in
+                        .fetchWithCachePriority(freshnessDuration: 86400) { snapshot, error in
                             if let error = error {
                                 print("DEBUG: Error getting host past events: \(error.localizedDescription)")
                                 return
@@ -215,19 +269,30 @@ extension EventManager {
                 dispatchGroup.notify(queue: .main) {
                     self.userPastEvents = attendedEvents
                 }
-                
             }
     }
     
     
     func fetchAvailableEvents() {
-        let availableEventsQuery = COLLECTION_EVENTS
+        let queryKey = QueryKey(collectionPath: "events",
+                                filters: ["endDate in Future",
+                                          "isPrivate == false"])
+        
+        COLLECTION_EVENTS
             .whereField("endDate", isGreaterThan: Timestamp())
             .whereField("isPrivate", isEqualTo: false)
-        
-        fetchEvents(from: availableEventsQuery) { events in
-            self.events.formUnion(events)
-        }
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 3600) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching available events. \(error.localizedDescription)")
+                    return
+                }
+                
+                if let events = self.processSnapshot(snapshot), !events.isEmpty {
+                    self.events.formUnion(events)
+                } else {
+                    print("DEBUG: No events. Potential error.")
+                }
+            }
     }
     
     
@@ -235,7 +300,6 @@ extension EventManager {
         if let index = events.firstIndex(where: { $0.id == updatedEvent.id }) {
             events.remove(at: index)
             events.insert(updatedEvent)
-            updateLastFetchedTimestamps(for: [updatedEvent])
         }
     }
 }
@@ -247,37 +311,13 @@ extension EventManager {
 
 // MARK: - Utility Functions
 extension EventManager {
-    private func processSnapshot(_ snapshot: QuerySnapshot?, updateTime: Bool = false) -> [Event]? {
+    
+    private func processSnapshot(_ snapshot: QuerySnapshot?) -> [Event]? {
         guard let documents = snapshot?.documents else { return nil }
         var events = documents.compactMap({ try? $0.data(as: Event.self) })
         self.filterUnavailableEvents(events: &events)
         
-        if updateTime {
-            updateLastFetchedTimestamps(for: events)
-        }
-        
         return events
-    }
-    
-    
-    private func updateLastFetchedTimestamps(for events: [Event]) {
-        let currentTime = Date()
-        events.forEach { event in
-            if let id = event.id {
-                lastFetchedTimestamps[id] = currentTime
-            } else {
-                fatalError("ERROR: There's no ID associated with \(event.title)!")
-            }
-        }
-    }
-    
-    
-    private func isEventFresh(_ event: Event) -> Bool {
-        guard let id = event.id,
-              let lastFetched = lastFetchedTimestamps[id] else { return false }
-        let now = Date()
-        let freshnessThreshold = 3600.0 // For example, 1 hour in seconds
-        return now.timeIntervalSince(lastFetched) < freshnessThreshold
     }
     
     

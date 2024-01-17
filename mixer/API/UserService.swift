@@ -77,9 +77,14 @@ class UserService: ObservableObject {
     
     func fetchUniversityId(for name: String,
                            completion: @escaping (String) -> Void) {
+        let queryKey = QueryKey(collectionPath: "universities",
+                                filters: ["shortName == \(name)"],
+                                limit: 1)
+        
         COLLECTION_UNIVERSITIES
             .whereField("shortName", isEqualTo: name)
-            .getDocuments { snapshots, error in
+            .limit(to: 1)
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshots, error in
                 if let error = error {
                     print("DEBUG: Error fetching university. \(error.localizedDescription)")
                     return
@@ -95,7 +100,7 @@ class UserService: ObservableObject {
                          completion: @escaping (University) -> Void) {
         COLLECTION_UNIVERSITIES
             .document(id)
-            .getDocument { snapshot, error in
+            .fetchWithCachePriority(freshnessDuration: 86400) { snapshot, error in
                 if let error = error {
                     print("ERROR: Fetching university failed. ID: \(id), Error: \(error.localizedDescription)")
                     return
@@ -125,7 +130,7 @@ class UserService: ObservableObject {
             dispatchGroup.enter()
             COLLECTION_UNIVERSITIES
                 .document(id)
-                .getDocument { snapshot, error in
+                .fetchWithCachePriority(freshnessDuration: 86400) { snapshot, error in
                     defer { dispatchGroup.leave() }
 
                     if let error = error {
@@ -205,7 +210,7 @@ class UserService: ObservableObject {
     private func fetchHost(from id: String, completion: @escaping (Host) -> Void) {
         COLLECTION_HOSTS
             .document(id)
-            .getDocument { snapshot, error in
+            .fetchWithCachePriority(freshnessDuration: 7200) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching host: \(error.localizedDescription)")
                     return
@@ -324,8 +329,11 @@ class UserService: ObservableObject {
                                completion: @escaping (Bool) -> Void) {
         guard let currentUid = self.user?.id else { return }
 
-        COLLECTION_FOLLOWING.document(currentUid).collection("user-following")
-            .document(hostId).getDocument { snapshot, _ in
+        COLLECTION_FOLLOWING
+            .document(currentUid)
+            .collection("user-following")
+            .document(hostId)
+            .fetchWithCachePriority(freshnessDuration: 1800) { snapshot, _ in
                 guard let isFollowed = snapshot?.exists else { return }
                 completion(isFollowed)
             }
@@ -335,14 +343,16 @@ class UserService: ObservableObject {
     func fetchBlockedUsers(completion: @escaping ([String]) -> Void) {
         guard let currentUserId = self.user?.id else { return }
         var blockedUsers = [String]()
+        let queryKey = QueryKey(collectionPath: "relationships",
+                                filters: ["initiatorUid == \(currentUserId)",
+                                          "state == \(RelationshipState.blocked.rawValue)"])
         
-        // Assuming you have a Firebase collection for relationships.
         COLLECTION_RELATIONSHIPS
             .whereField("initiatorUid", isEqualTo: currentUserId)
             .whereField("state", isEqualTo: RelationshipState.blocked.rawValue)
-            .getDocuments { snapshot, error in
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshot, error in
                 if let error = error {
-                    print("Error fetching blocked users: \(error.localizedDescription)")
+                    print("DEBUG: Error fetching blocked users: \(error.localizedDescription)")
                     completion([])
                     return
                 }

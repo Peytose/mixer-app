@@ -116,10 +116,14 @@ final class EventViewModel: ObservableObject {
         guard let uid = UserService.shared.user?.id else { return }
         guard let eventId = event.id else { return }
         
-        COLLECTION_USERS.document(uid).collection("user-favorites").document(eventId).getDocument { snapshot, _ in
-            guard let isFavorited = snapshot?.exists else { return }
-            self.event.isFavorited = isFavorited
-        }
+        COLLECTION_USERS
+            .document(uid)
+            .collection("user-favorites")
+            .document(eventId)
+            .fetchWithCachePriority(freshnessDuration: 7200) { snapshot, _ in
+                guard let isFavorited = snapshot?.exists else { return }
+                self.event.isFavorited = isFavorited
+            }
     }
     
     

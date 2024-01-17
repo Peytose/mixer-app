@@ -179,21 +179,26 @@ extension AuthViewModel {
             completion(true)
         }
         
-        COLLECTION_UNIVERSITIES.whereField("domain", isEqualTo: domain).getDocuments { snapshot, error in
-            if let error = error {
-                print("DEBUG: Error getting domain from email. \(error.localizedDescription)")
-                completion(false)
-                return
+        let queryKey = QueryKey(collectionPath: "universities",
+                                filters: ["domain == \(domain)"])
+        
+        COLLECTION_UNIVERSITIES
+            .whereField("domain", isEqualTo: domain)
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error getting domain from email. \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+                
+                guard let documents = snapshot?.documents, let document = documents.first else {
+                    completion(false)
+                    return
+                }
+                
+                self.universityId = document.documentID
+                completion(true)
             }
-            
-            guard let documents = snapshot?.documents, let document = documents.first else {
-                completion(false)
-                return
-            }
-            
-            self.universityId = document.documentID
-            completion(true)
-        }
     }
 
     

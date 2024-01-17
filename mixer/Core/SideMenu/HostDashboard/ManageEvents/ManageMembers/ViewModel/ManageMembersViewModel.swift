@@ -120,10 +120,14 @@ class ManageMembersViewModel: ObservableObject {
             }
         } else {
             if username != "" {
+                let queryKey = QueryKey(collectionPath: "users",
+                                        filters: ["username == \(username)"],
+                                        limit: 1)
+                
                 COLLECTION_USERS
                     .whereField("username", isEqualTo: self.username)
                     .limit(to: 1)
-                    .getDocuments { snapshot, error in
+                    .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 7200) { snapshot, error in
                         if let _ = error {
                             self.alertItem = AlertContext.unableToGetUserFromUsername
                             return
@@ -264,10 +268,12 @@ extension ManageMembersViewModel {
             return
         }
         
+        let queryKey = QueryKey(collectionPath: "hosts/\(hostId)/member-list")
+        
         COLLECTION_HOSTS
             .document(hostId)
             .collection("member-list")
-            .getDocuments { snapshot, error in
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 7200) { snapshot, error in
                 guard let documents = snapshot?.documents else {
                     self.showEmptyView()
                     return
@@ -289,7 +295,7 @@ extension ManageMembersViewModel {
                     } else {
                         COLLECTION_USERS
                             .document(linkId)
-                            .getDocument { snapshot, error in
+                            .fetchWithCachePriority(freshnessDuration: 7200) { snapshot, error in
                                 guard let member = try? snapshot?.data(as: User.self) else {
                                     self.showEmptyView()
                                     return

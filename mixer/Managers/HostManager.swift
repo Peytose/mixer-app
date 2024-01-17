@@ -21,9 +21,10 @@ class HostManager: ObservableObject {
     
     func fetchHosts() {
         guard let _ = Auth.auth().currentUser?.uid else { return }
+        let queryKey = QueryKey(collectionPath: "hosts")
         
         COLLECTION_HOSTS
-            .getDocuments { snapshot, _ in
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 3600) { snapshot, _ in
                 guard let documents = snapshot?.documents else { return }
                 let hosts = documents.compactMap({ try? $0.data(as: Host.self) })
                 self.hosts = hosts
@@ -37,9 +38,10 @@ class HostManager: ObservableObject {
         
         for id in ids {
             group.enter()
+            
             COLLECTION_HOSTS
                 .document(id)
-                .getDocument { snapshot, error in
+                .fetchWithCachePriority(freshnessDuration: 3600) { snapshot, error in
                     if let error = error {
                         print("DEBUG: Error fetching host. \(error.localizedDescription)")
                         return

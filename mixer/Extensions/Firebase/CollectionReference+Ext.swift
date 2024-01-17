@@ -97,19 +97,31 @@ extension CollectionReference {
         // Build the query
         var query: Query = self.document(userID).collection("user-notifications").whereField("type", in: types.map { $0.rawValue })
         
+        // Initialize filters for QueryKey
+        var filters = ["type IN [\(types.map { String($0.rawValue) }.joined(separator: ", "))]"]
+        
         // Add filters to the query if provided
         if let uid = uid {
             query = query.whereField("uid", isEqualTo: uid)
+            filters.append("uid == \(uid)")
         }
         if let hostId = hostId {
             query = query.whereField("hostId", isEqualTo: hostId)
+            filters.append("hostId == \(hostId)")
         }
         if let eventId = eventId {
             query = query.whereField("eventId", isEqualTo: eventId)
+            filters.append("eventId == \(eventId)")
         }
         
+        // Create a QueryKey
+        let queryKey = QueryKey(collectionPath: "notifications/user-notifications/\(userID)",
+                                filters: filters,
+                                orders: [],
+                                limit: nil)
+        
         // Execute the query
-        query.getDocuments { snapshot, error in
+        query.fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 3600) { snapshot, error in
             if let error = error {
                 // Handle the error here, such as logging it or updating some UI
                 print("Error fetching notification document references: \(error.localizedDescription)")

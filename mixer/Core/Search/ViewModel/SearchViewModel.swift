@@ -92,7 +92,7 @@ final class SearchViewModel: ObservableObject {
             print("DEBUG: Fetching event details.")
             COLLECTION_EVENTS
                 .document(objectId)
-                .getDocument { document, error in
+                .fetchWithCachePriority(freshnessDuration: 1800) { document, error in
                     if let error = error {
                         print("DEBUG: Error fetching event: \(error.localizedDescription)")
                     }
@@ -108,7 +108,7 @@ final class SearchViewModel: ObservableObject {
             print("DEBUG: Fetching host details.")
             COLLECTION_HOSTS
                 .document(objectId)
-                .getDocument { document, error in
+                .fetchWithCachePriority(freshnessDuration: 3600) { document, error in
                     if let error = error {
                         print("DEBUG: Error fetching host: \(error.localizedDescription)")
                     }
@@ -124,7 +124,7 @@ final class SearchViewModel: ObservableObject {
             print("DEBUG: Fetching user details.")
             COLLECTION_USERS
                 .document(objectId)
-                .getDocument { document, error in
+                .fetchWithCachePriority(freshnessDuration: 7200) { document, error in
                     if let error = error {
                         print("DEBUG: Error fetching user: \(error.localizedDescription)")
                     }

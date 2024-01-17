@@ -58,17 +58,22 @@ struct EventLists {
     static func loadUsers(eventId: String, completion: @escaping ([EventGuest]) -> Void) {
         var users = [EventGuest]()
         
-        COLLECTION_EVENTS.document(eventId).collection("guestlist").getDocuments() { snapshot, error in
-            if let error = error {
-                print("DEBUG: Error getting users from event list: \(error.localizedDescription)")
+        let queryKey = QueryKey(collectionPath: "events/\(eventId)/guestlist")
+        
+        COLLECTION_EVENTS
+            .document(eventId)
+            .collection("guestlist")
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 1800) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error getting users from event list: \(error.localizedDescription)")
+                    completion(users)
+                    return
+                }
+                
+                guard let snapshot = snapshot else { completion(users); return }
+                users = snapshot.documents.compactMap({ try? $0.data(as: EventGuest.self) })
+                print("DEBUG: Users from event list: \(users)")
                 completion(users)
-                return
             }
-            
-            guard let snapshot = snapshot else { completion(users); return }
-            users = snapshot.documents.compactMap({ try? $0.data(as: EventGuest.self) })
-            print("DEBUG: Users from event list: \(users)")
-            completion(users)
-        }
     }
 }
