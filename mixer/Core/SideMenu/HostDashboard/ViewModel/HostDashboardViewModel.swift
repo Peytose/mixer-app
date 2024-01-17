@@ -111,61 +111,25 @@ final class HostDashboardViewModel: ObservableObject {
         
         self.statistics = stats
     }
-
-
-
     
     
     func fetchMostRecentEvent() {
         guard let hostId = host.id else { return }
         
-        if let mostRecentEvent = Array(EventManager.shared.events).sortedByEndDate(false).first {
-            
+        if let mostRecentEvent = Array(EventManager.shared.events).filterStartedEvents().sortedByEndDate(false).first {
+            DispatchQueue.main.async {
+                self.recentEvent = mostRecentEvent
+            }
+            fetchGuestListForEvent(eventId: mostRecentEvent.id ?? "")
         } else {
             EventManager.shared.fetchMostRecentEvent(for: hostId) { event in
                 if let event = event.first {
                     DispatchQueue.main.async {
                         self.recentEvent = event
                     }
-                    
-                    guard let eventId = event.id else { return }
-                    let queryKey = QueryKey(collectionPath: "events/\(eventId)/guestlist")
-                    
-                    COLLECTION_EVENTS
-                        .document(eventId)
-                        .collection("guestlist")
-                        .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshot, error in
-                            if let error = error {
-                                print("DEBUG: Error getting guestlist. \(error.localizedDescription)")
-                                return
-                            }
-                            
-                            guard let documents = snapshot?.documents else { return }
-                            let guests = documents.compactMap({ try? $0.data(as: EventGuest.self )})
-                            // Fetching unique university IDs from guests
-                            let uniqueUniversityIds = Set(guests.map { $0.universityId })
-                            
-                            // Fetch universities and then associate them with guests
-                            UserService.shared.fetchUniversities(with: Array(uniqueUniversityIds)) { universities in
-                                // Associate each guest with their respective university
-                                let updatedGuests = guests.map { guest -> EventGuest in
-                                    var guest = guest
-                                    let universityId = guest.universityId
-                                    if let university = universities.first(where: { $0.id == universityId }) {
-                                        guest.university = university
-                                    }
-                                    return guest
-                                }
-                                
-                                DispatchQueue.main.async {
-                                    self.guests = updatedGuests
-                                    self.calculateStatistics()
-                                }
-                            }
-                        }
+                    self.fetchGuestListForEvent(eventId: event.id ?? "")
                 } else {
-                    print("DEBUG: No event was returned. Potentially an error, and maybe host has no past events.")
-                    return
+                    print("DEBUG: No event was returned. Potentially an error, or the host may not have past events.")
                 }
             }
         }
@@ -204,4 +168,45 @@ final class HostDashboardViewModel: ObservableObject {
                 }
             }
     }
+}
+
+extension HostDashboardViewModel {
+    func fetchGuestListForEvent(eventId: String) {
+        let queryKey = QueryKey(collectionPath: "events/\(eventId)/guestlist")
+
+        COLLECTION_EVENTS
+            .document(eventId)
+            .collection("guestlist")
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error getting guestlist. \(error.localizedDescription)")
+                    return
+                }
+
+                guard let documents = snapshot?.documents else { return }
+                let guests = documents.compactMap({ try? $0.data(as: EventGuest.self) })
+                self.processGuests(guests)
+            }
+    }
+
+    
+    func processGuests(_ guests: [EventGuest]) {
+        let uniqueUniversityIds = Set(guests.map { $0.universityId })
+
+        UserService.shared.fetchUniversities(with: Array(uniqueUniversityIds)) { universities in
+            let updatedGuests = guests.map { guest -> EventGuest in
+                var guest = guest
+                if let university = universities.first(where: { $0.id == guest.universityId }) {
+                    guest.university = university
+                }
+                return guest
+            }
+
+            DispatchQueue.main.async {
+                self.guests = updatedGuests
+                self.calculateStatistics()
+            }
+        }
+    }
+
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Firebase
 
 extension Array where Element == Event {
     func sortedByTimePosted(_ ascending: Bool = true) -> [Event] {
@@ -38,5 +39,10 @@ extension Array where Element == Event {
                 return $0.endDate > $1.endDate
             }
         }
+    }
+    
+    
+    func filterStartedEvents() -> [Event] {
+        return self.filter({ $0.startDate < Timestamp() })
     }
 }
