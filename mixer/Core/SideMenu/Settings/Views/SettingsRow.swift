@@ -18,7 +18,7 @@ struct SettingsRow<ViewModel: SettingsConfigurable>: View {
                                     row: row) { [saveType = viewModel.saveType(for: row.title)] in
                     viewModel.save(for: saveType)
                 }
-            case .menu:
+            case .empty:
                 MenuSettingsRow(content: viewModel.content(for: row.title),
                                 row: row,
                                 saveType: viewModel.saveType(for: row.title))

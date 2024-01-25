@@ -12,7 +12,10 @@ import TabBar
 import PopupView
 
 struct ProfileView: View {
+    
     @StateObject var viewModel: ProfileViewModel
+    @EnvironmentObject var settingsViewModel: SettingsViewModel
+    
     @State private var showUsername = false
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
@@ -45,37 +48,50 @@ struct ProfileView: View {
             .ignoresSafeArea(.all)
             .statusBar(hidden: true)
             
-            if viewModel.isShowingMoreProfileOptions {
+            if viewModel.isShowingMoreProfileOptions,
+               !viewModel.user.isCurrentUser {
                 MoreProfileOptions(viewModel: viewModel)
                     .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
             }
         }
         .toolbar(.hidden)
         .overlay {
-            if action == nil {
-                HStack {
-                    PresentationBackArrowButton()
+            HStack {
+                Spacer()
+                
+                if viewModel.user.isCurrentUser {
+                    NavigationLink {
+                        if let user = settingsViewModel.user,
+                           let image = user.id?.generateQRCode() {
+                            MixerIdView(user: user,
+                                        image: Image(uiImage: image))
+                        }
+                    } label: {
+                        Image(systemName: "person.crop.square.filled.and.at.rectangle.fill")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .shadow(color: .black, radius: 3)
+                    }
                     
-                    Spacer()
-                    
+                    NavigationLink {
+                        SettingsView(viewModel: settingsViewModel)
+                    } label: {
+                        Image(systemName: "gear")
+                            .font(.title3)
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .shadow(color: .black, radius: 3)
+                    }
+                } else {
                     EllipsisButton {
                         viewModel.isShowingMoreProfileOptions.toggle()
                         HapticManager.playLightImpact()
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding()
-            } else {
-                HStack {
-                    Spacer()
-                    EllipsisButton {
-                        viewModel.isShowingMoreProfileOptions.toggle()
-                        HapticManager.playLightImpact()
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                .padding()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .padding()
         }
         .alert(item: $viewModel.currentAlert) { alertType in
             hideKeyboard()

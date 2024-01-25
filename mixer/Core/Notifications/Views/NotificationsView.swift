@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct NotificationsView: View {
-    @ObservedObject var viewModel: NotificationsViewModel
+    @StateObject var viewModel: NotificationsViewModel
     @Namespace var namespace
+    
+    init() {
+        self._viewModel = StateObject(wrappedValue: NotificationsViewModel())
+    }
     
     var body: some View {
         ZStack {
@@ -68,8 +72,6 @@ struct NotificationsView: View {
                         viewModel.isEditing.toggle()
                         viewModel.selectedNotificationIds = []
                     }
-                } else {
-                    PresentationBackArrowButton()
                 }
             }
             

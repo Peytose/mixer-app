@@ -12,13 +12,17 @@ struct HostDashboardView: View {
     @StateObject var viewModel: HostDashboardViewModel
     @State private var showSettings = false
     
-    init(host: Host) {
-        self._viewModel = StateObject(wrappedValue: HostDashboardViewModel(host: host))
+    init() {
+        _viewModel = StateObject(wrappedValue: HostDashboardViewModel())
     }
 
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
+                HostMenuView(viewModel: viewModel,
+                             showSettings: $showSettings)
+                .padding(.bottom, 10)
+                
                 VStack {
                     dashboardOverview
                     
@@ -46,29 +50,12 @@ struct HostDashboardView: View {
                     overviewSection
                 }
             }
-            .navigationTitle(viewModel.host.name)
-            .navigationBarTitleDisplayMode(.large)
             .padding(.bottom, 100)
             .padding(.horizontal)
         }
         .background(Color.theme.backgroundColor)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    showSettings.toggle()
-                } label: {
-                    Image(systemName: "gearshape")
-                }
-                .buttonStyle(.plain)
-            }
-            
-            ToolbarItem(placement: .navigationBarLeading) {
-                PresentationBackArrowButton()
-            }
-        }
         .overlay(alignment: .bottomTrailing) {
-            if let hostId = viewModel.host.id, (UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privilege ?? .basic).rawValue > PrivilegeLevel.basic.rawValue {
+            if let hostId = viewModel.currentHost?.id, (UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privilege ?? .basic).rawValue > PrivilegeLevel.basic.rawValue {
                 NavigationLink(destination: EventCreationFlowView()) {
                     Image(systemName: "plus")
                         .font(.title)
@@ -78,12 +65,64 @@ struct HostDashboardView: View {
                         .clipShape(Circle())
                         .shadow(color: .black, radius: 6)
                 }
-                .padding()
+                .padding(.trailing)
+                .padding(.bottom, 150)
             }
         }
         .sheet(isPresented: $showSettings) {
             if let host = UserService.shared.user?.currentHost {
                 HostSettingsView(host: host)
+            }
+        }
+    }
+}
+
+struct HostMenuView: View {
+    @ObservedObject var viewModel: HostDashboardViewModel
+    @Binding var showSettings: Bool
+    
+    @State private var isActive: Bool = false
+
+    var body: some View {
+        HStack(alignment: .top) {
+            if let hosts = viewModel.memberHosts {
+                Menu {
+                    ForEach(hosts) { host in
+                        Button {
+                            viewModel.selectHost(host)
+                        } label: {
+                            HStack {
+                                Text(host.name)
+
+                                if host.username == UserService.shared.user?.currentHost?.username {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Text(viewModel.currentHost?.name ?? "n/a")
+                            .font(.title)
+                            .fontWeight(.semibold)
+
+                        if hosts.count > 1 {
+                            Image(systemName: isActive ? "chevron.down" : "chevron.right")
+                                .font(.headline)
+                        }
+                    }
+                    .foregroundStyle(Color.white)
+                }
+            }
+            
+            Spacer()
+            
+            Button {
+                showSettings.toggle()
+            } label: {
+                Image(systemName: "gear")
+                    .font(.title3)
+                    .foregroundColor(.white)
             }
         }
     }
@@ -328,6 +367,6 @@ private struct TextRow: View {
 
 struct HostDashboardView_Previews: PreviewProvider {
     static var previews: some View {
-        HostDashboardView(host: dev.mockHost)
+        HostDashboardView()
     }
 }

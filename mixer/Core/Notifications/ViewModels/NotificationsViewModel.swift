@@ -169,11 +169,15 @@ extension NotificationsViewModel {
             imageUrl = event.eventImageUrl
         }
         
+        let timestamp = Timestamp()
+        let expiration = Timestamp(date: Calendar.current.date(byAdding: .month, value: 1, to: Date()) ?? Date())
+        
         let notification = Notification(hostId: host?.id,
                                         eventId: event?.id,
                                         uid: user.id ?? "",
                                         headline: headline,
-                                        timestamp: Timestamp(),
+                                        timestamp: timestamp,
+                                        expireAt: expiration,
                                         imageUrl: imageUrl,
                                         type: type)
         

@@ -25,36 +25,34 @@ class HomeViewModel: ObservableObject {
     }
     @Published var selectedNavigationStack: [NavigationContext] = []
     var currentState: NavigationState {
-        return selectedNavigationStack.last?.state ?? .menu
+        return selectedNavigationStack.last?.state ?? .empty
     }
-    @Published var showSideMenu: Bool = false
     @Published var currentHost: Host?
     
     private let service = UserService.shared
     private var cancellable = Set<AnyCancellable>()
     
     init() {
-        for tab in TabItem.allCases {
-            navigationStackTabMap[tab] = [NavigationContext(state: .menu)]
+        for tab in TabItem.availableTabs() {
+            navigationStackTabMap[tab] = [NavigationContext(state: .empty)]
         }
         
         service.$user
             .sink { user in
                 self.currentHost = user?.currentHost
+                
+                if self.currentHost != nil && self.navigationStackTabMap[TabItem.dashboard] == nil {
+                    self.navigationStackTabMap[TabItem.dashboard] = [NavigationContext(state: .empty)]
+                }
             }
             .store(in: &cancellable)
     }
     
     
-    func selectHost(_ host: Host) {
-        service.selectHost(host)
-    }
-
-    
     func iconForState() -> String {
         switch currentState {
-        case .menu:
-            return showSideMenu ? "chevron.right" : "line.3.horizontal"
+        case .empty:
+            return ""
         case .back:
             return "arrow.left"
         case .close:
@@ -65,10 +63,8 @@ class HomeViewModel: ObservableObject {
     
     func actionForState() {
         switch currentState {
-        case .menu:
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.6, blendDuration: 0)) {
-                showSideMenu.toggle()
-            }
+        case .empty:
+            break
         case .back, .close:
             withAnimation(.easeInOut) {
                 navigateBack()
@@ -81,18 +77,18 @@ class HomeViewModel: ObservableObject {
 extension HomeViewModel {
     func pushContext(_ context: NavigationContext) {
         navigationStackTabMap[currentTab]?.append(context)
-        selectedNavigationStack = navigationStackTabMap[currentTab] ?? [NavigationContext(state: .menu)]
+        selectedNavigationStack = navigationStackTabMap[currentTab] ?? [NavigationContext(state: .empty)]
     }
     
     
     func popContext() -> NavigationContext {
         // Pop the last context if there's more than one
         if navigationStackTabMap[currentTab]?.count ?? 0 > 1 {
-            return navigationStackTabMap[currentTab]?.popLast() ?? NavigationContext(state: .menu)
+            return navigationStackTabMap[currentTab]?.popLast() ?? NavigationContext(state: .empty)
         }
         
         // If there's only one context, return it without popping
-        return navigationStackTabMap[currentTab]?.last ?? NavigationContext(state: .menu)
+        return navigationStackTabMap[currentTab]?.last ?? NavigationContext(state: .empty)
     }
 
     

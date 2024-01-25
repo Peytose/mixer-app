@@ -8,7 +8,7 @@
 import Foundation
 
 enum NavigationState: Int, CaseIterable {
-    case menu
+    case empty
     case back
     case close
 }

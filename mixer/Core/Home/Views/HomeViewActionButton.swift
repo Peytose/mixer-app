@@ -23,7 +23,6 @@ struct HomeViewActionButton: View {
                 .clipShape(Circle())
                 .shadow(color: .black, radius: 6)
         }
-        .offset(x: homeViewModel.showSideMenu ? DeviceTypes.ScreenSize.width * 0.8 : 0)
         .padding(.leading)
         .padding(.top, 4)
         .frame(maxWidth: DeviceTypes.ScreenSize.width,

@@ -664,6 +664,7 @@
 		9C20919B2A96A1A3000E7664 /* Notifications */ = {
 			isa = PBXGroup;
 			children = (
+				9CDFA5B02A82B9C300EE0370 /* Favorites */,
 				9C20919D2A96A1AC000E7664 /* ViewModels */,
 				9C20919C2A96A1A8000E7664 /* Views */,
 			);
@@ -710,10 +711,8 @@
 			isa = PBXGroup;
 			children = (
 				9C20AF1C2A737A6000F057BD /* Views */,
-				A66B7E002AFD70100026D26F /* HostDashboard */,
-				9C20919B2A96A1A3000E7664 /* Notifications */,
-				9CDFA5B02A82B9C300EE0370 /* Favorites */,
 				9C2DC25B2A735C8B00494D7C /* Settings */,
+				A66B7E002AFD70100026D26F /* HostDashboard */,
 			);
 			path = SideMenu;
 			sourceTree = "<group>";
@@ -769,8 +768,8 @@
 		9C2B8987299D879B0011FC56 /* Search */ = {
 			isa = PBXGroup;
 			children = (
-				9C705F972A8F0CD500F1D0DB /* ViewModel */,
 				9C705F942A8F0C5500F1D0DB /* Views */,
+				9C705F972A8F0CD500F1D0DB /* ViewModel */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -833,14 +832,14 @@
 		9C3BADC7291F54FC009C8043 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				9C8F0A812A940D3F00A06D9A /* Profile */,
+				9C20919B2A96A1A3000E7664 /* Notifications */,
 				9C05C1C62983B03A00841100 /* Host */,
 				A6B9E6712953B529009C936E /* Event */,
-				9C2B8987299D879B0011FC56 /* Search */,
 				9C3BADD0291F558A009C8043 /* Explore */,
 				9C20AEFC2A735E4A00F057BD /* Map */,
 				9C3BADD9291F5676009C8043 /* Home */,
 				9C20AF1B2A737A4300F057BD /* SideMenu */,
-				9C8F0A812A940D3F00A06D9A /* Profile */,
 				9C3BADCC291F552F009C8043 /* CustomViews */,
 				9C3BADDA291F56BF009C8043 /* Authentication */,
 			);
@@ -939,6 +938,7 @@
 		9C3BADD0291F558A009C8043 /* Explore */ = {
 			isa = PBXGroup;
 			children = (
+				9C2B8987299D879B0011FC56 /* Search */,
 				9CDFA5952A79AD6700EE0370 /* Views */,
 				9CDFA5962A79AD6F00EE0370 /* ViewModel */,
 			);
@@ -1180,8 +1180,8 @@
 		9C8F0A812A940D3F00A06D9A /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				9C8F0A822A940D3F00A06D9A /* ViewModel */,
 				9C8F0A842A940D3F00A06D9A /* Views */,
+				9C8F0A822A940D3F00A06D9A /* ViewModel */,
 			);
 			path = Profile;
 			sourceTree = "<group>";

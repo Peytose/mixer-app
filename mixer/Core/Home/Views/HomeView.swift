@@ -8,14 +8,23 @@
 import SwiftUI
 import MapKit
 import TabBar
+import Kingfisher
 
 struct HomeView: View {
+    
     @State private var mapState: MapViewState = .noInput
     @StateObject var userService = UserService.shared
-    @StateObject var exploreViewModel = ExploreViewModel()
+    
+    @StateObject var mapViewModel           = MapViewModel()
+    @StateObject var searchViewModel        = SearchViewModel()
+    @StateObject var exploreViewModel       = ExploreViewModel()
+    @StateObject var settingsViewModel      = SettingsViewModel()
+    
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
+    
     @Namespace var namespace
+    
     let gradient = LinearGradient(gradient: Gradient(colors: [Color.black, Color.black.opacity(1), Color.black.opacity(1), Color.black.opacity(0.975), Color.black.opacity(0.85), Color.black.opacity(0.3), Color.black.opacity(0)]), startPoint: .bottom, endPoint: .top)
     
     var body: some View {
@@ -26,64 +35,71 @@ struct HomeView: View {
                 } else {
                     NavigationStack {
                         ZStack {
-                            if homeViewModel.showSideMenu {
-                                SideMenuView()
+                            if let state = homeViewModel.selectedNavigationStack.last?.state {
+                                switch state {
+                                case .empty:
+                                    ZStack {
+                                        switch homeViewModel.currentTab {
+                                        case .map:
+                                            MapView(viewModel: mapViewModel,
+                                                    mapState: $mapState)
+                                        case .explore:
+                                            ExploreView(viewModel: exploreViewModel,
+                                                        searchViewModel: searchViewModel)
+                                            .environmentObject(homeViewModel)
+                                            .searchable(text: $searchViewModel.searchText,
+                                                        placement: .automatic,
+                                                        prompt: "Search Mixer")
+                                        case .dashboard:
+                                            if let _ = homeViewModel.currentHost {
+                                                HostDashboardView()
+                                            }
+                                        case .inbox:
+                                            NotificationsView()
+                                        case .profile:
+                                            if let user = settingsViewModel.user {
+                                                ProfileView(user: user)
+                                                    .environmentObject(settingsViewModel)
+                                            }
+                                        }
+                                    }
+                                    
+                                case .back, .close:
+                                    hostDetailView()
+                                    
+                                    eventDetailView()
+                                    
+                                    userDetailView()
+                                }
                             }
                             
-                            ZStack {
-                                ZStack {
-                                    switch homeViewModel.currentTab {
-                                    case .map:
-                                        MapView(mapState: $mapState,
-                                                context: $homeViewModel.selectedNavigationStack)
-                                            .environmentObject(MapViewModel())
-                                    case .explore:
-                                        ExploreView(context: $homeViewModel.selectedNavigationStack)
-                                            .environmentObject(exploreViewModel)
-                                        
-                                    case .search:
-                                        SearchView(context: $homeViewModel.selectedNavigationStack)
-                                            .environmentObject(SearchViewModel())
-                                    }
-                                }
-                                .shadow(color: homeViewModel.showSideMenu ? .black : .clear, radius: 10)
+                            VStack {
+                                Spacer()
                                 
                                 VStack {
-                                    Spacer()
+                                    if let imageUrl = settingsViewModel.user?.profileImageUrl {
+                                        TabBarItems(tabSelection: $homeViewModel.currentTab,
+                                                    profileImageUrl: imageUrl)
+                                    }
                                     
-                                    VStack {
-                                        TabBarItems(tabSelection: $homeViewModel.currentTab)
-                                        
-                                        CircleView(tabSelection: $homeViewModel.currentTab)
-                                    }
-                                    .opacity(homeViewModel.showSideMenu ? 0 : 1)
-                                    .frame(height: 40)
-                                    .background(Color.theme.backgroundColor.opacity(0.01))
-                                    .background {
-                                        Rectangle()
-                                            .fill(Color.theme.backgroundColor)
-                                            .mask(gradient)
-                                            .frame(height: homeViewModel.currentTab == .explore ? 220 : 370)
-                                            .allowsHitTesting(false)
-                                    }
+                                    CircleView(tabSelection: $homeViewModel.currentTab)
                                 }
-                            }
-                            .offset(x: homeViewModel.showSideMenu ? DeviceTypes.ScreenSize.width * 0.8 : 0)
-                            .onTapGesture {
-                                if homeViewModel.showSideMenu {
-                                    withAnimation(.spring()) {
-                                        homeViewModel.showSideMenu = false
-                                    }
+                                .frame(height: 40)
+                                .background(Color.theme.backgroundColor.opacity(0.01))
+                                .background {
+                                    Rectangle()
+                                        .fill(Color.theme.backgroundColor)
+                                        .mask(gradient)
+                                        .frame(height: homeViewModel.currentTab == .explore ? 220 : 370)
+                                        .allowsHitTesting(false)
                                 }
                             }
                             
-                            HomeViewActionButton()
-                                .onChange(of: homeViewModel.showSideMenu) { _ in
-                                    hideKeyboard()
-                                }
+                            if homeViewModel.currentState != .empty {
+                                HomeViewActionButton()
+                            }
                         }
                     }
-                    .onAppear { homeViewModel.showSideMenu = false }
                 }
                 
                 LaunchScreenView()
@@ -93,12 +109,40 @@ struct HomeView: View {
     }
 }
 
+extension HomeView {
+    @ViewBuilder
+    func eventDetailView() -> some View {
+        if let event = homeViewModel.selectedNavigationStack.last?.selectedEvent {
+            EventDetailView(event: event,
+                            action: homeViewModel.navigate,
+                            namespace: namespace)
+        }
+    }
+    
+    @ViewBuilder
+    func hostDetailView() -> some View {
+        if let host = homeViewModel.selectedNavigationStack.last?.selectedHost {
+            HostDetailView(host: host,
+                           action: homeViewModel.navigate,
+                           namespace: namespace)
+        }
+    }
+    
+    @ViewBuilder
+    func userDetailView() -> some View {
+        if let user = homeViewModel.selectedNavigationStack.last?.selectedUser {
+            ProfileView(user: user, action: homeViewModel.navigate)
+        }
+    }
+}
+
 struct CircleView: View {
     @Binding var tabSelection: TabItem
+    private let availableTabs = TabItem.availableTabs()
     
     var body: some View {
         Capsule()
-            .foregroundColor(Color.theme.mixerIndigo)
+            .foregroundColor(tabSelection == .profile ? Color.clear : Color.theme.mixerIndigo)
             .frame(width: 60, height: 3)
             .offset(x: getOffset(), y: 0)
             .animation(.spring(response: 0.4, dampingFraction: 0.7, blendDuration: 0))
@@ -106,30 +150,69 @@ struct CircleView: View {
     
     private func getOffset() -> CGFloat {
         let width = DeviceTypes.ScreenSize.width
-        let totalTabs = CGFloat(TabItem.allCases.count)
+        let totalTabs = CGFloat(availableTabs.count)
         let tabWidth = width / totalTabs
-        let selectedIndex = CGFloat(tabSelection.rawValue)
+        let selectedIndex = CGFloat(availableTabs.firstIndex(of: tabSelection) ?? 0)
         return (tabWidth * selectedIndex) - (width / 2) + (tabWidth / 2)
     }
 }
 
 struct TabBarItems: View {
     @Binding var tabSelection: TabItem
+    let profileImageUrl: String
     
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(TabItem.allCases, id: \.self) { item in
+            ForEach(TabItem.availableTabs(), id: \.self) { item in
                 Spacer()
                 
-                    Image(systemName: (tabSelection == item && tabSelection != TabItem.search) ? item.icon + ".fill" : item.icon)
-                        .foregroundColor(tabSelection == item ? .white : .secondary)
-                        .frame(width: 35, height: 35)
-                        .scaleEffect(tabSelection == item ? 1.3 : 1)
+                if item == .explore {
+                    Image(tabSelection == item ? .compassFill : .compass)
+                        .renderingMode(.template)
+                        .resizable()
+                        .foregroundStyle(tabSelection == item ? Color.white : Color.secondary)
+                        .overlay(alignment: .center) {
+                            if item == TabItem.profile {
+                                KFImage(URL(string: profileImageUrl))
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 35, height: 35)
+                                    .clipShape(Circle())
+                            }
+                        }
+                        .frame(width: 25, height: 25)
+                        .scaleEffect((tabSelection == item && item != TabItem.profile) ? 1.3 : 1)
                         .animation(Animation.timingCurve(0.2, 0.2, 0.2, 1, duration: 0.2))
                         .contentShape(Rectangle())
                         .onTapGesture {
                             self.tabSelection = item
                         }
+                } else {
+                    Image(systemName: (tabSelection == item && tabSelection != TabItem.profile) ? item.icon + ".fill" : item.icon)
+                        .foregroundColor(tabSelection == item ? .white : .secondary)
+                        .overlay(alignment: .center) {
+                            if item == TabItem.profile {
+                                KFImage(URL(string: profileImageUrl))
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 35, height: 35)
+                                    .clipShape(Circle())
+                                    .padding(5)
+                                    .background {
+                                        Circle()
+                                            .strokeBorder(style: StrokeStyle(lineWidth: 3))
+                                            .foregroundColor(tabSelection == item ? Color.theme.mixerIndigo : Color.clear)
+                                    }
+                            }
+                        }
+                        .frame(width: 35, height: 35)
+                        .scaleEffect((tabSelection == item && item != TabItem.profile) ? 1.2 : 1)
+                        .animation(Animation.timingCurve(0.2, 0.2, 0.2, 1, duration: 0.2))
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            self.tabSelection = item
+                        }
+                }
                 
                 Spacer()
             }

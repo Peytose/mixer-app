@@ -30,19 +30,19 @@
             },
             {
                 "id": 1005,
-                "type": "menu",
+                "type": "empty",
                 "title": "Gender",
                 "icon": "figure.arms.open"
             },
             {
                 "id": 1006,
-                "type": "menu",
+                "type": "empty",
                 "title": "Relationship Status",
                 "icon": "relationship"
             },
             {
                 "id": 1007,
-                "type": "menu",
+                "type": "empty",
                 "title": "Major",
                 "icon": "diploma"
             },

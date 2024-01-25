@@ -16,6 +16,7 @@ struct MixerIdView: View {
     @State private var tapLocation: CGPoint = .zero
     @State private var gradientColors: [Color] = [Color.pink, Color.purple]
     @State private var rippleColor: Color = Color.black.opacity(0.5)
+    @State private var shareURL: URL? = nil
     
     let gradientPairs: [[Color]] = [
         [Color.red, Color.orange],
@@ -23,6 +24,13 @@ struct MixerIdView: View {
         [Color.pink, Color.purple],
         [Color.mint, Color.green]
     ]
+    
+    init(user: User, image: Image, shareURL: URL? = nil) {
+        self.user = user
+        self.image = image
+        self.shareURL = shareURL
+        self.generateShareURL()
+    }
     
     
     var body: some View {
@@ -89,14 +97,30 @@ struct MixerIdView: View {
             }
             
             ToolbarItem(placement: .topBarTrailing) {
-                ShareLink(item: "https://rococo-gumdrop-0f32da.netlify.app") {
-                    Image(systemName: "square.and.arrow.up")
-                        .font(.body)
-                        .foregroundColor(.black)
-                        .padding(6)
-                        .background(.white)
-                        .clipShape(Circle())
+                if let url = self.shareURL {
+                    ShareLink(item: url) {
+                        Image(systemName: "square.and.arrow.up")
+                            .font(.body)
+                            .foregroundColor(.black)
+                            .padding(10)
+                            .background(.white)
+                            .clipShape(Circle())
+                    }
                 }
+            }
+        }
+        .onAppear {
+            self.generateShareURL()
+        }
+    }
+    
+    
+    private func generateShareURL() {
+        guard let userId = user.id else { return }
+        
+        UniversalLinkManager.generateShareURL(type: .user(userId)) { url in
+            DispatchQueue.main.async {
+                self.shareURL = url
             }
         }
     }

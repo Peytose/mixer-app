@@ -16,6 +16,7 @@ struct Notification: Identifiable, Codable, Hashable {
     let uid: String
     let headline: String
     let timestamp: Timestamp
+    var expireAt: Timestamp
     let imageUrl: String
     var type: NotificationType
     

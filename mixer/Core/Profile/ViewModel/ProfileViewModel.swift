@@ -49,19 +49,6 @@ class ProfileViewModel: ObservableObject {
                 self.user.university = university
             }
         }
-        
-        self.generateShareURL()
-    }
-    
-    
-    func generateShareURL() {
-        guard let userId = user.id else { return }
-        
-        UniversalLinkManager.generateShareURL(type: .user(userId)) { url in
-            DispatchQueue.main.async {
-                self.shareURL = url
-            }
-        }
     }
     
     

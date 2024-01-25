@@ -9,7 +9,7 @@ import SwiftUI
 
 enum RowType: String, Codable {
     case editable = "editable"
-    case menu     = "menu"
+    case empty    = "empty"
     case readOnly = "readOnly"
     case toggle   = "toggle"
     case mail     = "mail"

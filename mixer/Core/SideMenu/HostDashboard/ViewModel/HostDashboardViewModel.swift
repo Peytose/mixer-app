@@ -8,9 +8,11 @@
 import SwiftUI
 import Firebase
 import FirebaseFirestoreSwift
+import Combine
 
 final class HostDashboardViewModel: ObservableObject {
-    @Published var host: Host
+    @Published var currentHost: Host?
+    @Published var memberHosts: [Host]?
     @Published var memberCount: Int = 0
     @Published var eventCount: Int = 0
     @Published var recentEvent: Event?
@@ -18,12 +20,20 @@ final class HostDashboardViewModel: ObservableObject {
     
     @Published var statistics: [String: String] = [:]
     
-    init(host: Host) {
-        self.host = host
-        
-        getNumberOfMembers()
-        getNumberOfEvents()
-        fetchMostRecentEvent()
+    private let service = UserService.shared
+    private var cancellable = Set<AnyCancellable>()
+    
+    init() {
+        service.$user
+            .sink { user in
+                self.currentHost = user?.currentHost
+                self.memberHosts = user?.associatedHosts
+                
+                self.getNumberOfMembers()
+                self.getNumberOfEvents()
+                self.fetchMostRecentEvent()
+            }
+            .store(in: &cancellable)
     }
     
     
@@ -114,7 +124,7 @@ final class HostDashboardViewModel: ObservableObject {
     
     
     func fetchMostRecentEvent() {
-        guard let hostId = host.id else { return }
+        guard let hostId = currentHost?.id else { return }
         
         if let mostRecentEvent = Array(EventManager.shared.events).filterStartedEvents().sortedByEndDate(false).first {
             DispatchQueue.main.async {
@@ -137,7 +147,7 @@ final class HostDashboardViewModel: ObservableObject {
     
     
     func getNumberOfEvents() {
-        guard let hostId = host.id else { return }
+        guard let hostId = currentHost?.id else { return }
         
         COLLECTION_EVENTS
             .whereField("hostIds", arrayContains: hostId)
@@ -153,7 +163,7 @@ final class HostDashboardViewModel: ObservableObject {
     
     
     func getNumberOfMembers() {
-        guard let hostId = host.id else { return }
+        guard let hostId = currentHost?.id else { return }
         
         COLLECTION_HOSTS
             .document(hostId)
@@ -209,4 +219,8 @@ extension HostDashboardViewModel {
         }
     }
 
+    
+    func selectHost(_ host: Host) {
+        service.selectHost(host)
+    }
 }

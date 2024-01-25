@@ -12,19 +12,20 @@ struct EllipsisButton: View {
     let action: () -> Void
     
     var body: some View {
-        Image(systemName: "ellipsis")
-            .font(.callout)
-            .foregroundColor(.white)
-            .padding(10)
-            .contentShape(Rectangle())
-            .background {
-                Circle()
-                    .stroke(lineWidth: stroke)
-                    .foregroundColor(.white)
-            }
-            .onTapGesture {
-                action()
-            }
+        Button {
+            action()
+        } label: {
+            Image(systemName: "ellipsis")
+                .font(.callout)
+                .foregroundColor(.white)
+                .padding(10)
+                .contentShape(Rectangle())
+                .background {
+                    Circle()
+                        .stroke(lineWidth: stroke)
+                        .foregroundColor(.white)
+                }
+        }
     }
 }
 

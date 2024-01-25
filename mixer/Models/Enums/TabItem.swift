@@ -8,16 +8,20 @@
 import SwiftUI
 import TabBar
 
-enum TabItem: Int, CaseIterable, Equatable {
+enum TabItem: Int, Equatable {
     case map
     case explore
-    case search
+    case dashboard
+    case profile
+    case inbox
     
     var icon: String {
         switch self {
             case .map: return "map"
-            case .explore: return "person.3"
-            case .search: return "magnifyingglass"
+            case .explore: return "compass"
+            case .dashboard: return "chart.bar"
+            case .inbox: return "tray"
+            case .profile: return "circle"
         }
     }
     
@@ -25,7 +29,17 @@ enum TabItem: Int, CaseIterable, Equatable {
         switch self {
             case .map: return "Map"
             case .explore: return "Explore"
-            case .search: return "Search"
+            case .dashboard: return "Dashboard"
+            case .inbox: return "Inbox"
+            case .profile: return "Profile"
         }
+    }
+
+    static func availableTabs() -> [TabItem] {
+        var tabs: [TabItem] = [.map, .explore, .inbox, .profile]
+        if !(UserService.shared.user?.hostIdToMemberTypeMap?.isEmpty ?? true) {
+            tabs.insert(.dashboard, at: 2) // Adjust the index based on where you want to insert the add tab
+        }
+        return tabs
     }
 }
