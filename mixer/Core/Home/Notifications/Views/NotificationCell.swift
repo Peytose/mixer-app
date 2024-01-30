@@ -29,20 +29,21 @@ struct NotificationCell: View {
                     .foregroundColor(notificationsViewModel.selectedNotificationIds.contains(where: { $0 == cellViewModel.notification.id }) ? Color.theme.mixerIndigo : .white)
             }
             
-            NavigationLink(value: cellViewModel.notification) {
-                KFImage(URL(string: cellViewModel.notification.imageUrl))
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 40, height: 40)
-                    .clipShape(Circle())
+            VStack(alignment: .leading) {
+                NavigationLink(value: cellViewModel.notification) {
+                    KFImage(URL(string: cellViewModel.notification.imageUrl))
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 20, height: 20)
+                        .clipShape(Circle())
+                }
+                .disabled(notificationsViewModel.isEditing)
+                
+                Group {
+                    cellViewModel.formattedNotificationMessage()
+                }
+                .multilineTextAlignment(.leading)
             }
-            .padding(.trailing, 5)
-            .disabled(notificationsViewModel.isEditing)
-            
-            Group {
-                cellViewModel.formattedNotificationMessage()
-            }
-            .multilineTextAlignment(.leading)
             
             Spacer()
             
