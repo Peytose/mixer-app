@@ -8,35 +8,33 @@
 import SwiftUI
 
 struct SegmentedPieChartView: View {
-    var slices: [(Int, Color)]
+    var slices: [(value: Int, color: Color)]
     
     var body: some View {
         Canvas { context, size in
-            // Add these lines to display as Donut
-            //Start Donut
-            let donut = Path { p in
-                p.addEllipse(in: CGRect(origin: .zero, size: size))
-                p.addEllipse(in: CGRect(x: size.width * 0.25, y: size.height * 0.25, width: size.width * 0.5, height: size.height * 0.5))
-            }
-            context.clip(to: donut, style: .init(eoFill: true))
-            //End Donut
-            let total = slices.reduce(0) { $0 + $1.0 }
-            context.translateBy(x: size.width * 0.5, y: size.height * 0.5)
-            var pieContext = context
-            pieContext.rotate(by: .degrees(-90))
-            let radius = min(size.width, size.height) * 0.48
-            let gapSize = Angle(degrees: 5) // size of the gap between slices in degrees
+            let total = slices.reduce(0) { $0 + $1.value }
+            context.translateBy(x: size.width / 2, y: size.height / 2)
+            var startAngle = Angle.degrees(0)
+            let radius = min(size.width, size.height) / 2
             
-            var startAngle = Angle.zero
-            for (value, color) in slices {
-                let angle = Angle(degrees: 360 * (Double(value) / Double(total)))
-                let endAngle = startAngle + angle
+            for slice in slices {
+                let valuePercentage = Double(slice.value) / Double(total)
+                let endAngle = startAngle + Angle.degrees(valuePercentage * 360)
+                
+                // Adjust gap size here
+                let gapSize = Angle.degrees(1) // Smaller gap size
+                let adjustedEndAngle = endAngle - gapSize
+                
+                // Draw segment
                 let path = Path { p in
-                    p.move(to: .zero)
-                    p.addArc(center: .zero, radius: radius, startAngle: startAngle + Angle(degrees: 5) / 2, endAngle: endAngle, clockwise: false)
+                    p.move(to: CGPoint.zero)
+                    p.addArc(center: .zero, radius: radius, startAngle: startAngle, endAngle: adjustedEndAngle, clockwise: false)
                     p.closeSubpath()
                 }
-                pieContext.fill(path, with: .color(color))
+                
+                context.fill(path, with: .color(slice.color))
+                
+                // Update start angle for the next segment, including the gap
                 startAngle = endAngle
             }
         }

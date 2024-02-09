@@ -16,10 +16,6 @@ struct ManageEventsView: View {
                 .ignoresSafeArea()
             
             VStack {
-                Text(UserService.shared.user?.currentHost?.name ?? "No host found.")
-                    .primaryHeading()
-                    .multilineTextAlignment(.trailing)
-                
                 StickyHeaderView(items: EventState.allCases,
                                  selectedItem: $viewModel.currentState)
                 

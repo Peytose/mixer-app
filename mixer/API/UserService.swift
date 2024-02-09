@@ -531,8 +531,8 @@ extension UserService {
                              completion: FirestoreCompletion) {
         guard let currentUserId = self.user?.id,
               let eventId = event.id,
-              let keyForCurrentUser = event.plannerHostStatusMap.keys.first(where: { $0.plannerId == currentUserId }),
-              let primaryPlannerKey = event.primaryPlannerKey?.plannerId,
+              let keyForCurrentUser = event.allPlannerIds?.first(where: { $0 == currentUserId}),
+              let primaryPlannerId = event.primaryPlannerId,
               let hostId = keyForCurrentUser.hostId else {
             print("DEBUG: Failed to retrieve necessary data.")
             return
@@ -565,7 +565,7 @@ extension UserService {
             COLLECTION_NOTIFICATIONS
                 .getNotificationDocumentReferences(forUserID: currentUserId,
                                                    ofTypes: [.plannerInvited],
-                                                   from: primaryPlannerKey) { documentReferences in
+                                                   from: primaryPlannerId) { documentReferences in
                     if let documentReferences = documentReferences {
                         Firestore.addDeleteOperations(to: batch, for: documentReferences)
                     }

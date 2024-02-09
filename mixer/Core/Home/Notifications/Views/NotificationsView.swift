@@ -6,118 +6,125 @@
 //
 
 import SwiftUI
+import FirebaseFirestore
 
 struct NotificationsView: View {
-    @StateObject var viewModel: NotificationsViewModel
+    @StateObject var viewModel = NotificationsViewModel()
+    @EnvironmentObject var homeViewModel: HomeViewModel
     @Namespace var namespace
-    
-    init() {
-        self._viewModel = StateObject(wrappedValue: NotificationsViewModel())
-    }
     
     var body: some View {
         ZStack {
             Color.theme.backgroundColor
                 .ignoresSafeArea()
             
-            VStack {
-                LazyVStack(alignment: .center) {
-                    ForEach(viewModel.notifications) { notification in
-                        NotificationCell(notificationsViewModel: viewModel,
-                                         notification: notification)
+            VStack(alignment: .leading) {
+                HStack {
+                    Text("Notifications")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.white)
+                    
+                    Spacer()
+                }
+                .padding(.bottom, 10)
+                .padding(.leading)
+                
+                
+                HStack(alignment: .center, spacing: 7) {
+                    ForEach(viewModel.availableCategories, id: \.self) { category in
+                        NotificationCategoryCell(text: category.stringVal,
+                                                 isSecondaryLabel: category != viewModel.currentCategory) {
+                            viewModel.setCurrentCategory(category)
+                        }
+                    }
+                    
+                    Spacer()
+                }
+                .padding(.leading)
+                
+                List {
+                    let now = Date()
+                    let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now)!
+                    // Separate notifications into recent and older
+                    let recentNotifications = viewModel.notifications.filter { $0.timestamp.dateValue() >= sevenDaysAgo && ($0.type.category == viewModel.currentCategory || viewModel.currentCategory == .all) }
+                    let olderNotifications = viewModel.notifications.filter { $0.timestamp.dateValue() < sevenDaysAgo && ($0.type.category == viewModel.currentCategory || viewModel.currentCategory == .all) }
+                    
+                    // Conditionally display "Last 7 Days" if there are recent notifications
+                    if !recentNotifications.isEmpty {
+                        Section {
+                            ForEach(recentNotifications) { notification in
+                                NotificationCell(cellViewModel: viewModel.viewModelForNotification(notification))
+                                    .environmentObject(self.viewModel)
+                                    .environmentObject(homeViewModel)
+                                    .listRowBackground(Color.clear)
+                                    .listRowSeparator(.hidden)
+                                    .swipeActions {
+                                        Button(role: .destructive) {
+                                            viewModel.deleteNotification(notification: notification)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
+                            }
+                        } header: {
+                            NotificationHeader(text: "Last 7 Days")
+                        }
+                    }
+                    
+                    // Conditionally display "Older" if there are older notifications
+                    if !olderNotifications.isEmpty {
+                        Section {
+                            ForEach(olderNotifications) { notification in
+                                NotificationCell(cellViewModel: viewModel.viewModelForNotification(notification))
+                                    .environmentObject(self.viewModel)
+                                    .environmentObject(homeViewModel)
+                                    .listRowBackground(Color.clear)
+                                    .listRowSeparator(.hidden)
+                                    .swipeActions {
+                                        Button(role: .destructive) {
+                                            viewModel.deleteNotification(notification: notification)
+                                        } label: {
+                                            Label("Delete", systemImage: "trash")
+                                        }
+                                    }
+                            }
+                        } header: {
+                            NotificationHeader(text: "Older")
+                        }
                     }
                 }
+                .listStyle(.plain)
                 
                 Spacer()
             }
             .padding(.top, 10)
-            .navigationDestination(for: Notification.self) { notification in
-                switch notification.type {
-                case .friendAccepted,
-                        .friendRequest,
-                        .newFollower,
-                        .memberJoined,
-                        .guestlistJoined,
-                        .plannerAccepted,
-                        .plannerDeclined,
-                        .plannerReplaced,
-                        .plannerRemoved,
-                        .plannerPendingReminder:
-                    if let user = notification.user {
-                        ProfileView(user: user)
-                    }
-                case .memberInvited,
-                        .guestlistAdded:
-                    if let host = notification.host {
-                        HostDetailView(host: host,
-                                       namespace: namespace)
-                    }
-                case .eventLiked,
-                        .eventPostedWithoutPlanner:
-                    if let event = notification.event {
-                        EventDetailView(event: event,
-                                        namespace: namespace)
-                    }
-                default:
-                    ComingSoonView()
-                }
-            }
         }
-        .navigationBar(title: "Notifications", displayMode: .inline)
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if viewModel.isEditing {
-                    XDismissButton {
-                        viewModel.isEditing.toggle()
-                        viewModel.selectedNotificationIds = []
-                    }
-                }
-            }
-            
-            if !viewModel.notifications.isEmpty {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditNotificationsButton(viewModel: viewModel)
-                }
-            }
-        }
         .onAppear {
             viewModel.saveCurrentTimestamp()
         }
     }
 }
 
-fileprivate struct EditNotificationsButton: View {
-    @ObservedObject var viewModel: NotificationsViewModel
-    
-    var icon: String {
-        if viewModel.isEditing {
-            return !viewModel.selectedNotificationIds.isEmpty ? "trash.fill" : ""
-        } else {
-            return "square.and.pencil"
-        }
-    }
+fileprivate struct NotificationHeader: View {
+    let text: String
     
     var body: some View {
-        Button {
-            if !viewModel.selectedNotificationIds.isEmpty {
-                viewModel.deleteNotifications()
-            } else {
-                if !viewModel.selectedNotificationIds.isEmpty {
-                    viewModel.selectedNotificationIds = []
-                }
-                
-                viewModel.isEditing.toggle()
-            }
-        } label: {
-            if icon != "" {
-                Image(systemName: icon)
+        VStack {
+            HStack {
+                Text(text)
                     .font(.title3)
-                    .imageScale(.medium)
-                    .foregroundColor(!viewModel.selectedNotificationIds.isEmpty ? .pink : .white)
-                    .padding(10)
-                    .contentShape(Rectangle())
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                Spacer()
             }
+            
+            RoundedRectangle(cornerRadius: 4, style: .continuous)
+                .fill(Color.secondary)
+                .frame(height: 2)
+                .opacity(0.7)
+                .padding(.bottom, 7)
         }
     }
 }

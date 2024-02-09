@@ -2,66 +2,26 @@
 //  NotificationCellViewModel.swift
 //  mixer
 //
-//  Created by Peyton Lyons on 8/23/23.
+//  Created by Peyton Lyons on 2/3/24.
 //
 
 import SwiftUI
-import Firebase
+import FirebaseFirestore
 
 class NotificationCellViewModel: ObservableObject {
+    
     @Published var notification: Notification
+    
     private let userService = UserService.shared
     private let hostService = HostService.shared
     
     init(notification: Notification) {
         self.notification = notification
-        checkUserRelationship()
     }
     
     
-    func formattedNotificationMessage() -> Text {
-        var message = Text(notification.headline)
-            .font(.footnote)
-            .fontWeight(.semibold)
-            .foregroundColor(Color.theme.mixerIndigo)
-
-        message = message + Text(notification.type.notificationMessage)
-            .font(.subheadline)
-            .foregroundColor(.white)
-        
-        switch notification.type {
-            case .eventLiked,
-                    .guestlistJoined,
-                    .guestlistAdded,
-                    .plannerInvited,
-                    .plannerAccepted,
-                    .plannerDeclined,
-                    .plannerReplaced,
-                    .plannerRemoved,
-                    .plannerPendingReminder:
-                if let event = notification.event {
-                    message = message + Text(event.title)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-                }
-            case .memberInvited,
-                    .memberJoined:
-                if let host = notification.host {
-                    message = message + Text(host.name)
-                        .font(.subheadline)
-                        .foregroundColor(.white)
-                }
-            default: break
-        }
-
-        return message + Text(" \(notification.timestampString)")
-            .font(.caption)
-            .foregroundColor(.secondary)
-    }
-    
-    
-    func removePlanner() {
-        guard let event = notification.event else { return }
+    func removePlanner(event: Event?) {
+        guard let event = event else { return }
         userService.handlePlannerAction(forEvent: event,
                                         actionType: .plannerRemoved) { _ in
             HapticManager.playLightImpact()
@@ -69,8 +29,8 @@ class NotificationCellViewModel: ObservableObject {
     }
     
     
-    func acceptPlannerInvite() {
-        guard let event = notification.event else { return }
+    func acceptPlannerInvite(event: Event?) {
+        guard let event = event else { return }
         userService.handlePlannerAction(forEvent: event,
                                         actionType: .plannerAccepted) { _ in
             HapticManager.playLightImpact()
@@ -78,8 +38,8 @@ class NotificationCellViewModel: ObservableObject {
     }
     
     
-    func declinePlannerInvite() {
-        guard let event = notification.event else { return }
+    func declinePlannerInvite(event: Event?) {
+        guard let event = event else { return }
         userService.handlePlannerAction(forEvent: event,
                                         actionType: .plannerDeclined) { _ in
             HapticManager.playLightImpact()
@@ -99,10 +59,8 @@ class NotificationCellViewModel: ObservableObject {
     }
     
     
-    func acceptMemberInvite() {
-        print("Host: \(String(describing: notification.host))")
-        print("Event: \(String(describing: notification.event))")
-        if let host = notification.host {
+    func acceptMemberInvite(host: Host?) {
+        if let host = host {
             userService.acceptMemberInvite(forHost: host,
                                            fromUser: notification.uid) { _ in
                 HapticManager.playSuccess()
@@ -147,7 +105,6 @@ class NotificationCellViewModel: ObservableObject {
     
     
     func cancelOrDeleteRelationship() {
-        
         userService.cancelOrDeleteRelationship(uid: notification.uid) { _ in
             HapticManager.playLightImpact()
         }
@@ -155,9 +112,7 @@ class NotificationCellViewModel: ObservableObject {
     
     
     func checkUserRelationship() {
-        guard notification.type == .friendRequest
-                || notification.type == .friendAccepted
-                || notification.type == .newFollower else { return }
+        guard notification.type == .friendRequest || notification.type == .friendAccepted || notification.type == .newFollower else { return }
         
         UserService.shared.getUserRelationship(uid: notification.uid) { state in
             switch state {

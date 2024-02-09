@@ -8,26 +8,34 @@
 import SwiftUI
 
 struct ListCellActionButton: View {
-    var text: String
+    var text: String = ""
+    var isIcon: Bool = false
     var isSecondaryLabel: Bool = false
     let action: () -> Void
     
     var body: some View {
         Button(action: action) {
             ZStack(alignment: .center) {
-                RoundedRectangle(cornerRadius: 3)
+                RoundedRectangle(cornerRadius: 10)
                     .stroke(Color.secondary, lineWidth: isSecondaryLabel ? 1 : 0)
                     .background(isSecondaryLabel ? .clear : Color.theme.mixerIndigo)
-                    .cornerRadius(3)
+                    .cornerRadius(10)
                 
-                Text(text)
-                    .font(.footnote)
-                    .foregroundColor(isSecondaryLabel ? .secondary : .white)
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 18)
+                if isIcon {
+                    Image(systemName: text)
+                        .imageScale(.small)
+                        .foregroundColor(isSecondaryLabel ? .secondary : .white)
+                } else {
+                    Text(text)
+                        .font(.caption)
+                        .foregroundColor(isSecondaryLabel ? .secondary : .white)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 18)
+                }
             }
         }
-        .frame(width: 100, height: 32)
+        .buttonStyle(.borderless)
+        .frame(width: isIcon ? 32 : 100, height: 32)
         .contentShape(Rectangle())
     }
 }

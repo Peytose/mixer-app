@@ -63,7 +63,12 @@ final class EventViewModel: ObservableObject {
         let newFavoriteStatus = !(event.isFavorited ?? false)
         
         UserService.shared.toggleFavoriteStatus(isFavorited: newFavoriteStatus,
-                                                event: self.event) { _ in
+                                                event: self.event) { error in
+            if let error = error {
+                print("DEBUG: Error liking event: \(error.localizedDescription)")
+                return
+            }
+            
             self.event.isFavorited = newFavoriteStatus
             HapticManager.playLightImpact()
         }
