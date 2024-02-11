@@ -14,36 +14,19 @@ struct NotificationsView: View {
     @Namespace var namespace
     
     var body: some View {
-        ZStack {
-            Color.theme.backgroundColor
-                .ignoresSafeArea()
-            
+        ScrollView {
             VStack(alignment: .leading) {
-                HStack {
-                    Text("Notifications")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundStyle(.white)
-                    
-                    Spacer()
-                }
-                .padding(.bottom, 10)
-                .padding(.leading)
-                
-                
-                HStack(alignment: .center, spacing: 7) {
+                HStack(spacing: 7) {
                     ForEach(viewModel.availableCategories, id: \.self) { category in
                         NotificationCategoryCell(text: category.stringVal,
                                                  isSecondaryLabel: category != viewModel.currentCategory) {
                             viewModel.setCurrentCategory(category)
                         }
                     }
-                    
-                    Spacer()
                 }
-                .padding(.leading)
+                .padding(.bottom)
                 
-                List {
+                LazyVStack {
                     let now = Date()
                     let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now)!
                     // Separate notifications into recent and older
@@ -94,18 +77,27 @@ struct NotificationsView: View {
                         }
                     }
                 }
-                .listStyle(.plain)
-                
-                Spacer()
             }
             .padding(.top, 10)
+            .padding(.horizontal)
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                PresentationBackArrowButton()
+            }
+        }
         .onAppear {
             viewModel.saveCurrentTimestamp()
         }
+        .background(Color.theme.backgroundColor)
+        .navigationTitle("Notifications")
+        .navigationBarTitleDisplayMode(.large)
     }
 }
+
+// Your NotificationHeader and other supporting views...
+
 
 fileprivate struct NotificationHeader: View {
     let text: String

@@ -20,6 +20,7 @@ struct MapView: View {
     @Environment(\.openURL) private var openURL
     @State private var selectedTag: Int?
     @State private var isSheetPresented = false
+    @State private var travelTime: TimeInterval?
     
     @ObservedObject var viewModel: MapViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
@@ -28,10 +29,14 @@ struct MapView: View {
     
     @Namespace var namespace
     @State private var buttons: [ButtonData] = []
+    @State private var travelTimeByCar: TimeInterval?
+    @State private var travelTimeByWalking: TimeInterval?
+    @State private var travelTimeByTransit: TimeInterval?
+
     
     var body: some View {
         ZStack {
-            Map(position: $viewModel.cameraPostition, selection: $selectedTag) {
+            Map(position: $viewModel.cameraPosition, selection: $selectedTag) {
                 ForEach(viewModel.mapItems.indices, id: \.self) { index in
                     if let itemId = viewModel.mapItems[index].id {
                         Annotation(viewModel.mapItems[index].title,
@@ -39,8 +44,8 @@ struct MapView: View {
                             MixerAnnotation(item: viewModel.mapItems[index],
                                             number: viewModel.hostEventCounts[itemId] ?? 0)
                         }
-                        .annotationTitles(.hidden)
-                        .tag(index)
+                                   .annotationTitles(.hidden)
+                                   .tag(index)
                     }
                 }
                 
@@ -61,7 +66,7 @@ struct MapView: View {
                         .foregroundColor(Color.theme.mixerIndigo)
                         .padding(10)
                         .background {
-                            RoundedRectangle(cornerRadius: 10)
+                            Circle()
                                 .fill(Color.theme.secondaryBackgroundColor)
                                 .shadow(color: .black, radius: 3)
                         }
@@ -73,97 +78,61 @@ struct MapView: View {
             .onChange(of: selectedTag) { index in
                 isSheetPresented = index != nil
                 self.buttons = createButtons()
-            }
-            .sheet(isPresented: $isSheetPresented) {
-                VStack(alignment: .leading, spacing: 0) {
-                    if let index = self.selectedTag, index < viewModel.mapItems.count {
-                        let totalButtons = buttons.count + 1 // +1 for the "More" button
-                        let horizontalPadding: CGFloat = 16 // Total horizontal padding (8 on each side)
-                        let buttonSpacing: CGFloat = 8 // Spacing between buttons
-                        let totalSpacing = buttonSpacing * CGFloat(totalButtons - 1)
-                        let availableWidth = DeviceTypes.ScreenSize.width - horizontalPadding - totalSpacing
-                        let buttonWidth = availableWidth / CGFloat(totalButtons)
-                        
-                        Text(viewModel.mapItems[index].title)
-                            .font(.title)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(Color.white)
-                            .padding(.leading)
-                            .padding(.bottom)
-                        
-                        HStack(spacing: buttonSpacing) {
-                            ForEach(Array(buttons.indices), id: \.self) { index in
-                                Button(action: buttons[index].action) {
-                                    VStack(spacing: 5) {
-                                        (buttons[index].symbol == "instagram" ? Image(buttons[index].symbol) : Image(systemName: buttons[index].symbol))
-                                            .resizable()
-                                            .scaledToFit()
-                                            .foregroundStyle(.white)
-                                            .frame(width: 20, height: 20)
-                                        
-                                        Text(buttons[index].title)
-                                            .foregroundStyle(.white)
-                                            .font(.footnote)
-                                    }
-                                    .frame(width: buttonWidth, height: buttonWidth * 0.6)
-                                    .background {
-                                        RoundedRectangle(cornerRadius: 10)
-                                            .fill(index == 0 ? Color.theme.mixerIndigo : Color.theme.secondaryBackgroundColor)
-                                    }
-                                }
-                            }
-                            
-                            VStack(spacing: 5) {
-                                Image(systemName: "ellipsis")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundStyle(.white)
-                                    .frame(width: 20, height: 20)
-                                
-                                Text("More")
-                                    .font(.footnote)
-                                    .foregroundStyle(.white)
-                            }
-                            .frame(width: buttonWidth, height: buttonWidth * 0.6)
-                            .background {
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.theme.secondaryBackgroundColor)
-                            }
-                            .contextMenu {
-                                Button {
-                                    
-                                } label: {
-                                    Label(
-                                        title: { Text("Report an Issue") },
-                                        icon: { Image(systemName: "exclamationmark.bubble") }
-                                    )
-                                }
-                            }
+
+                // Reset travel times when selection changes
+                self.travelTimeByCar = nil
+                self.travelTimeByWalking = nil
+                self.travelTimeByTransit = nil
+
+                if let index = index, index < viewModel.mapItems.count {
+                    let destination = viewModel.mapItems[index].coordinate
+                    // Calculate for automobile
+                    viewModel.calculateTravelTime(to: destination, transportType: .automobile) { time, error in
+                        if let time = time {
+                            print("Car travel time: \(time)")
+                            self.travelTimeByCar = time
+                        } else if let error = error {
+                            print("Error calculating car travel time: \(error.localizedDescription)")
                         }
-                        .padding(.horizontal)
-                        
-                        if #available(iOS 17.0, *) {
-                            LocationPreviewLookAroundView(selectedItem: viewModel.mapItems[index])
-                                .frame(height: DeviceTypes.ScreenSize.height * 0.2)
-                                .clipShape(RoundedRectangle(cornerRadius: 10))
-                                .padding([.top, .horizontal])
-                        } else {
-                            MapSnapshotView(location: .constant(viewModel.mapItems[index].coordinate),
-                                            snapshotWidth: DeviceTypes.ScreenSize.width - 16,
-                                            snapshotHeight: DeviceTypes.ScreenSize.height * 0.2)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .padding([.top, .horizontal])
-                            .onTapGesture {
-                                viewModel.getDirectionsToLocation(with: viewModel.mapItems[index].title,
-                                                                  coordinates: viewModel.mapItems[index].coordinate)
-                            }
+                    }
+                    // Calculate for walking
+                    viewModel.calculateTravelTime(to: destination, transportType: .walking) { time, error in
+                        if let time = time {
+                            print("Walking travel time: \(time)")
+                            self.travelTimeByWalking = time
+                        } else if let error = error {
+                            print("Error calculating walking travel time: \(error.localizedDescription)")
+                        }
+                    }
+                    // Calculate for transit
+                    viewModel.calculateTravelTime(to: destination, transportType: .transit) { time, error in
+                        if let time = time {
+                            print("Transit travel time: \(time)")
+                            self.travelTimeByTransit = time
+                        } else if let error = error {
+                            print("Error calculating transit travel time: \(error.localizedDescription)")
                         }
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.theme.backgroundColor.ignoresSafeArea())
-                .presentationDetents([.height(DeviceTypes.ScreenSize.height * 0.45)])
             }
+
+            .sheet(isPresented: $isSheetPresented) {
+                if let index = self.selectedTag, index < viewModel.mapItems.count {
+                    // Ensure the argument labels here match the ones in your MapItemDetailSheetView initializer
+                    MapItemDetailSheetView(
+                        selectedItem: viewModel.mapItems[index],
+                        buttons: self.buttons,
+                        getDirectionsAction: viewModel.getDirectionsToLocation,
+                        viewModel: viewModel,
+                        travelTimeByWalk: self.travelTimeByWalking,  // Make sure labels match
+                        travelTimeByCar: self.travelTimeByCar,       // Make sure labels match
+                        travelTimeByTransit: self.travelTimeByTransit // Make sure labels match
+                    )
+                    .presentationDetents([.medium, .large])
+                }
+            }
+
+
         }
     }
 }
@@ -173,20 +142,20 @@ extension MapView {
         guard let selectedTag = selectedTag, viewModel.mapItems.indices.contains(selectedTag) else {
             return []
         }
-
+        
         let hostDetailsButton = ButtonData(title: "Host Details", symbol: "person.fill") {
             guard let hostId = viewModel.mapItems[selectedTag].id,
                   let host = HostManager.shared.hosts.first(where: { $0.id == hostId }) else { return }
             homeViewModel.navigate(to: .close, withHost: host)
         }
-
+        
         let instagramButton = ButtonData(title: "Instagram", symbol: "instagram") {
             guard let hostId = viewModel.mapItems[selectedTag].id,
                   let host = HostManager.shared.hosts.first(where: { $0.id == hostId }),
                   let instagramUrl = URL(string: "https://www.instagram.com/\(host.instagramHandle ?? "mixerpartyapp")/") else { return }
             openURL(instagramUrl)
         }
-
+        
         return [hostDetailsButton, instagramButton] // Add more buttons to this array
     }
 }

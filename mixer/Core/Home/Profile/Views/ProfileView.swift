@@ -12,7 +12,6 @@ import TabBar
 import PopupView
 
 struct ProfileView: View {
-    
     @StateObject var viewModel: ProfileViewModel
     @EnvironmentObject var settingsViewModel: SettingsViewModel
     
@@ -61,26 +60,21 @@ struct ProfileView: View {
                 
                 if viewModel.user.isCurrentUser {
                     NavigationLink {
-                        if let user = settingsViewModel.user,
-                           let image = user.id?.generateQRCode() {
-                            MixerIdView(user: user,
-                                        image: Image(uiImage: image))
-                        }
+                        NotificationsView()
                     } label: {
-                        Image(systemName: "person.crop.square.filled.and.at.rectangle.fill")
-                            .font(.title3)
+                        Image(systemName: "bell")
+                            .font(.title2)
                             .foregroundColor(.white)
-                            .padding(10)
+                            .padding(.trailing)
                             .shadow(color: .black, radius: 3)
                     }
                     
                     NavigationLink {
                         SettingsView(viewModel: settingsViewModel)
                     } label: {
-                        Image(systemName: "gear")
-                            .font(.title3)
+                        Image(systemName: "gearshape")
+                            .font(.title2)
                             .foregroundColor(.white)
-                            .padding(10)
                             .shadow(color: .black, radius: 3)
                     }
                 } else {
@@ -137,12 +131,30 @@ extension ProfileView {
                         
                         Spacer()
                         
-                        if let instagramUrl = URL(string: "https://www.instagram.com/\(viewModel.user.instagramHandle ?? "mixerpartyapp")/") {
-                            Link(destination: instagramUrl) {
-                                Image("instagram")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: 24, height: 24)
+                        if viewModel.user.isCurrentUser {
+                            NavigationLink {
+                                if let user = settingsViewModel.user,
+                                   let image = user.id?.generateQRCode() {
+                                    MixerIdView(user: user,
+                                                image: Image(uiImage: image))
+                                }
+                            } label: {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.title2)
+                                    .foregroundColor(Color.theme.Offwhite2)
+                                    .padding(.trailing, 8)
+                                    .shadow(color: .black, radius: 3)
+                            }
+                        }
+                        
+                        if (viewModel.user.instagramHandle != nil) {
+                            if let instagramUrl = URL(string: "https://www.instagram.com/\(viewModel.user.instagramHandle ?? "mixerpartyapp")/") {
+                                Link(destination: instagramUrl) {
+                                    Image("instagram")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 24, height: 24)
+                                }
                             }
                         }
                     }
@@ -242,5 +254,6 @@ fileprivate struct ProfileCornerButton: View {
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView(user: dev.mockUser)
+            .environmentObject(SettingsViewModel())
     }
 }

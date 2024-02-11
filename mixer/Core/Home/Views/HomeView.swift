@@ -54,8 +54,6 @@ struct HomeView: View {
                                             if let _ = homeViewModel.currentHost {
                                                 HostDashboardView()
                                             }
-                                        case .inbox:
-                                            NotificationsView()
                                         case .profile:
                                             if let user = settingsViewModel.user {
                                                 ProfileView(user: user)
@@ -165,29 +163,7 @@ struct TabBarItems: View {
         HStack(spacing: 0) {
             ForEach(TabItem.availableTabs(), id: \.self) { item in
                 Spacer()
-                
-                if item == .explore {
-                    Image(tabSelection == item ? .compassFill : .compass)
-                        .renderingMode(.template)
-                        .resizable()
-                        .foregroundStyle(tabSelection == item ? Color.white : Color.secondary)
-                        .overlay(alignment: .center) {
-                            if item == TabItem.profile {
-                                KFImage(URL(string: profileImageUrl))
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 35, height: 35)
-                                    .clipShape(Circle())
-                            }
-                        }
-                        .frame(width: 25, height: 25)
-                        .scaleEffect((tabSelection == item && item != TabItem.profile) ? 1.3 : 1)
-                        .animation(Animation.timingCurve(0.2, 0.2, 0.2, 1, duration: 0.2))
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            self.tabSelection = item
-                        }
-                } else {
+            
                     Image(systemName: (tabSelection == item && tabSelection != TabItem.profile) ? item.icon + ".fill" : item.icon)
                         .foregroundColor(tabSelection == item ? .white : .secondary)
                         .overlay(alignment: .center) {
@@ -212,7 +188,6 @@ struct TabBarItems: View {
                         .onTapGesture {
                             self.tabSelection = item
                         }
-                }
                 
                 Spacer()
             }

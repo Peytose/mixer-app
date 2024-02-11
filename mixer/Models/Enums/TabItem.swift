@@ -13,14 +13,13 @@ enum TabItem: Int, Equatable {
     case explore
     case dashboard
     case profile
-    case inbox
+//    case inbox
     
     var icon: String {
         switch self {
             case .map: return "map"
-            case .explore: return "compass"
-            case .dashboard: return "chart.bar"
-            case .inbox: return "tray"
+            case .explore: return "person.3"
+            case .dashboard: return "house"
             case .profile: return "circle"
         }
     }
@@ -30,13 +29,12 @@ enum TabItem: Int, Equatable {
             case .map: return "Map"
             case .explore: return "Explore"
             case .dashboard: return "Dashboard"
-            case .inbox: return "Inbox"
             case .profile: return "Profile"
         }
     }
 
     static func availableTabs() -> [TabItem] {
-        var tabs: [TabItem] = [.map, .explore, .inbox, .profile]
+        var tabs: [TabItem] = [.map, .explore, .profile]
         if !(UserService.shared.user?.hostIdToMemberTypeMap?.isEmpty ?? true) {
             tabs.insert(.dashboard, at: 2) // Adjust the index based on where you want to insert the add tab
         }

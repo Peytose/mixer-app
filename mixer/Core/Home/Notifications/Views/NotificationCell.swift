@@ -69,8 +69,6 @@ struct NotificationCell: View {
                     formattedNotificationMessage
                 }
                 .multilineTextAlignment(.leading)
-                .lineLimit(cellViewModel.notification.count == nil ? 1 : nil)
-                .minimumScaleFactor(0.7)
             }
             
             Spacer()

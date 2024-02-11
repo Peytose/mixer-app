@@ -22,6 +22,7 @@ struct HostDashboardView: View {
                 HostMenuView(viewModel: viewModel,
                              showSettings: $showSettings)
                 .padding(.bottom, 10)
+                .padding(.top, 20)
                 
                 VStack {
                     dashboardOverview
@@ -50,7 +51,7 @@ struct HostDashboardView: View {
                     overviewSection
                 }
             }
-            .padding(.bottom, 100)
+            .padding(.bottom, 120)
             .padding(.horizontal)
         }
         .background(Color.theme.backgroundColor)
@@ -66,7 +67,7 @@ struct HostDashboardView: View {
                         .shadow(color: .black, radius: 6)
                 }
                 .padding(.trailing)
-                .padding(.bottom, 150)
+                .padding(.bottom, 120)
             }
         }
         .sheet(isPresented: $showSettings) {
@@ -120,9 +121,10 @@ struct HostMenuView: View {
             Button {
                 showSettings.toggle()
             } label: {
-                Image(systemName: "gear")
-                    .font(.title3)
+                Image(systemName: "gearshape")
+                    .font(.title2)
                     .foregroundColor(.white)
+                    .shadow(color: .black, radius: 3)
             }
         }
     }

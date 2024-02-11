@@ -274,6 +274,8 @@
 		A62BE1A629CA4FCA0052D34F /* UIScreen+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */; };
 		A62BE1A829CA501F0052D34F /* QRCodeAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */; };
 		A62ED41129DE31A0008D6274 /* ShareProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A62ED41029DE31A0008D6274 /* ShareProfileView.swift */; };
+		A63716382B76CAC20089BCB2 /* MapItemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A63716372B76CAC20089BCB2 /* MapItemDetailView.swift */; };
+		A637163B2B76E1B20089BCB2 /* TravelTimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A637163A2B76E1B20089BCB2 /* TravelTimeView.swift */; };
 		A64152952A1982F5000B4C97 /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = A64152942A1982F5000B4C97 /* ConfettiSwiftUI */; };
 		A6430448294FBEC80058C0F0 /* EventCreationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430447294FBEC80058C0F0 /* EventCreationViewModel.swift */; };
 		A643044A294FBFB00058C0F0 /* DesignCodeExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */; };
@@ -551,6 +553,8 @@
 		A62BE1A529CA4FCA0052D34F /* UIScreen+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIScreen+Ext.swift"; sourceTree = "<group>"; };
 		A62BE1A729CA501F0052D34F /* QRCodeAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeAnimationView.swift; sourceTree = "<group>"; };
 		A62ED41029DE31A0008D6274 /* ShareProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareProfileView.swift; sourceTree = "<group>"; };
+		A63716372B76CAC20089BCB2 /* MapItemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapItemDetailView.swift; sourceTree = "<group>"; };
+		A637163A2B76E1B20089BCB2 /* TravelTimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TravelTimeView.swift; sourceTree = "<group>"; };
 		A6430447294FBEC80058C0F0 /* EventCreationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationViewModel.swift; sourceTree = "<group>"; };
 		A6430449294FBFB00058C0F0 /* DesignCodeExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignCodeExtensions.swift; sourceTree = "<group>"; };
 		A6430452294FC3A00058C0F0 /* PreferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferenceKeys.swift; sourceTree = "<group>"; };
@@ -1146,6 +1150,7 @@
 				9CDFA5902A7955C500EE0370 /* LocationDetailsCardView.swift */,
 				9C89F2C22B17DC7D003F2C52 /* MixerAnnotation.swift */,
 				9C89F2C42B17DC89003F2C52 /* MapBalloon.swift */,
+				A63716392B76E19B0089BCB2 /* DetailView */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1562,6 +1567,15 @@
 			path = QRCodeAnimation;
 			sourceTree = "<group>";
 		};
+		A63716392B76E19B0089BCB2 /* DetailView */ = {
+			isa = PBXGroup;
+			children = (
+				A63716372B76CAC20089BCB2 /* MapItemDetailView.swift */,
+				A637163A2B76E1B20089BCB2 /* TravelTimeView.swift */,
+			);
+			path = DetailView;
+			sourceTree = "<group>";
+		};
 		A66B7E002AFD70100026D26F /* HostDashboard */ = {
 			isa = PBXGroup;
 			children = (
@@ -1944,9 +1958,11 @@
 				A6430453294FC3A00058C0F0 /* PreferenceKeys.swift in Sources */,
 				9C99EAF429A6B33600D66FEB /* EventDetailView.swift in Sources */,
 				9C99EAE729A56EB700D66FEB /* ImageUploader.swift in Sources */,
+				A63716382B76CAC20089BCB2 /* MapItemDetailView.swift in Sources */,
 				9C9331BC292739700079E039 /* EnterVerificationCodeView.swift in Sources */,
 				9C7958682A8C577800590E1A /* HomeViewModel.swift in Sources */,
 				A62BE1A829CA501F0052D34F /* QRCodeAnimationView.swift in Sources */,
+				A637163B2B76E1B20089BCB2 /* TravelTimeView.swift in Sources */,
 				A682CC562970915B008EA546 /* DetailRowView.swift in Sources */,
 				9CDFA5C32A83764A00EE0370 /* Gender.swift in Sources */,
 				9C50D23529FB54A6002FAE76 /* HapticManager.swift in Sources */,

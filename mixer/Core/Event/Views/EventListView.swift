@@ -29,13 +29,13 @@ struct EventListView<CellView: View>: View {
                         CellDateView(event: event, hasStarted: event.isEventCurrentlyHappening())
                     }, contentView: {
                         cellView(event, namespace)
+                            .onTapGesture {
+                                withAnimation(.openCard) {
+                                    eventManager.selectedEvent = event
+                                }
+                            }
                     })
                     .frame(height: 380)
-                    .onTapGesture {
-                        withAnimation(.openCard) {
-                            eventManager.selectedEvent = event
-                        }
-                    }
                 }
             } else {
                 Text("Nothin' to see here 🙅‍♂️")
