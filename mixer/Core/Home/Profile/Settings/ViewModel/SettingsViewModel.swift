@@ -106,11 +106,14 @@ class SettingsViewModel: SettingsConfigurable {
             }
             
         case .bio(let updatedBio):
-            guard updatedBio != self.bio, updatedBio != "" else { return }
+            print("DEBUG: Saving bio......")
+            guard updatedBio != self.bio else { return }
+            
+            guard updatedBio != "" else { return }
             
             COLLECTION_USERS
                 .document(uid)
-                .updateData(["bio": bio]) { _ in
+                .updateData(["bio": updatedBio]) { _ in
                     completion()
                 }
             

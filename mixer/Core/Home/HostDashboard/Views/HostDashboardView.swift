@@ -48,12 +48,13 @@ struct HostDashboardView: View {
                 .cornerRadius(10)
                 
                 VStack {
-                    overviewSection
+                    SectionViewContainer(title: "Quick Stats",
+                                         quickStatistics: viewModel.quickStatistics)
                 }
             }
-            .padding(.bottom, 120)
-            .padding(.horizontal)
+            .padding(.bottom, 140)
         }
+        .padding(.horizontal, 17)
         .background(Color.theme.backgroundColor)
         .overlay(alignment: .bottomTrailing) {
             if let hostId = viewModel.currentHost?.id, (UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privilege ?? .basic).rawValue > PrivilegeLevel.basic.rawValue {
@@ -66,8 +67,8 @@ struct HostDashboardView: View {
                         .clipShape(Circle())
                         .shadow(color: .black, radius: 6)
                 }
-                .padding(.trailing)
                 .padding(.bottom, 120)
+                .padding(.trailing)
             }
         }
         .sheet(isPresented: $showSettings) {
@@ -186,8 +187,8 @@ extension HostDashboardView {
                 }
                 
                 VStack(alignment: .leading, spacing: 12) {
-                    ForEach(viewModel.statistics.keys.sorted(), id: \.self) { key in
-                        if let value = viewModel.statistics[key] {
+                    ForEach(viewModel.recentStatistics.keys.sorted(), id: \.self) { key in
+                        if let value = viewModel.recentStatistics[key] {
                             TextRow(title: key, value: value)
                         }
                     }
@@ -202,62 +203,40 @@ extension HostDashboardView {
             Spacer()
             
             NavigationLink {
-                EventAfterActionView(viewModel: viewModel)
+                EventDetailedChartsView(viewModel: viewModel)
             } label: {
-                Text("See full report")
+                Text("See charts")
                     .fontWeight(.medium)
                     .foregroundStyle(Color.theme.mixerIndigo)
             }
         }
     }
-    
-    var overviewSection: some View {
-        SectionViewContainer("Overview") {
-            SquareViewContainer(title: "Total Attendance", value: "2709", valueTitle: "Invited", isQuickFact: true) {
-                Text("1305")
-                    .largeTitle()
-            }
-        } content2: {
-            SquareViewContainer(title: "Total Schools", value: "11", valueTitle: "schools", isQuickFact: true) {
-                Text("11")
-                    .largeTitle()
-            }
-        } content3: {
-            SquareViewContainer(title: "Most Frequent Guest", value: "5", valueTitle: "events attended", width: DeviceTypes.ScreenSize.width * 0.92, isQuickFact: true) {
-                Text("Ashley Hoesmith")
-                    .largeTitle()
-            }
-        } navigationDestination: {
-            Text("Recent Event Analytics")
-        }
-    }}
+}
 
 struct SquareViewContainer<Content: View>: View {
     let content: Content
-    //    let destination: Destination
-    
     var title: String
     var subtitle: String
-    var value: String
-    var valueTitle: String
+    var secondaryValue: String
+    var secondaryLabel: String
     var width: CGFloat
-    var isQuickFact: Bool
     
-    init(title: String, subtitle: String = "", value: String, valueTitle: String, width: CGFloat = DeviceTypes.ScreenSize.width * 0.44, isQuickFact: Bool = false, @ViewBuilder content: () -> Content) {
+    init(title: String, subtitle: String = "", secondaryValue: String, secondaryLabel: String, width: CGFloat = DeviceTypes.ScreenSize.width * 0.44, @ViewBuilder content: () -> Content) {
         self.content = content()
-        //        self.destination = destination()
         self.title = title
         self.subtitle = subtitle
-        self.value = value
-        self.valueTitle = valueTitle
+        self.secondaryValue = secondaryValue
+        self.secondaryLabel = secondaryLabel
         self.width = width
-        self.isQuickFact = isQuickFact
     }
     
     var body: some View {
-        VStack(alignment: isQuickFact ? .center : .leading) {
+        VStack(alignment: .center) {
             Text(title)
                 .font(.headline)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .multilineTextAlignment(.center)
             
             Text(subtitle)
                 .font(.subheadline)
@@ -267,11 +246,16 @@ struct SquareViewContainer<Content: View>: View {
 
             content
                 .frame(maxWidth: .infinity, alignment: .center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
             
             Divider()
             
             HStack {
-                Text("\(value) \(Text(valueTitle).font(.footnote).foregroundColor(.secondary))")
+                Text("\(Text(secondaryValue).font(.subheadline).foregroundStyle(.white)) \(Text(secondaryLabel).font(.footnote).foregroundStyle(.secondary))")
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+                
                 Spacer()
             }
         }
@@ -282,44 +266,79 @@ struct SquareViewContainer<Content: View>: View {
     }
 }
 
-struct SectionViewContainer<Content: View, Content2: View>: View {
+struct SectionViewContainer: View {
     var title: String
-    let content1: Content
-    let content2: Content
-    var content3: Content
-    
-    let navigationDestination: Content2
-    
-    init(_ title: String, @ViewBuilder content1: () -> Content, @ViewBuilder content2: () -> Content, @ViewBuilder content3: () -> Content, @ViewBuilder navigationDestination: () -> Content2) {
-        self.title = title
-        self.content1 = content1()
-        self.content2 = content2()
-        self.content3 = content3()
-        self.navigationDestination = navigationDestination()
-    }
+    var quickStatistics: [String: (String, String, String)] = [:]
     
     var body: some View {
-        VStack(alignment: .center) {
-            HStack {
-                Text(title)
-                    .font(.title2.bold())
-                
-                Spacer()
+        VStack(alignment: .leading) {
+            Text(title)
+                .font(.title2.bold())
+                .padding(.bottom)
+
+            let sortedStats = quickStatistics.sorted(by: { $0.key.count < $1.key.count })
+            let statsCount = sortedStats.count
+            
+            if statsCount == 1 {
+                if let stat = sortedStats.first {
+                    LargeStatView(title: stat.key,
+                                  value: stat.value.0,
+                                  secondaryValue: stat.value.1,
+                                  secondaryLabel: stat.value.2)
+                }
+            } else {
+                VStack(alignment: .center) {
+                    HStack {
+                        ForEach(sortedStats.prefix(2), id: \.key) { key, value in
+                            StandardStatView(title: key,
+                                             value: value.0,
+                                             secondaryValue: value.1,
+                                             secondaryLabel: value.2)
+                            if sortedStats.prefix(2).first?.key == key {
+                                Spacer()
+                            }
+                        }
+                    }
+                    
+                    if statsCount == 3 {
+                        if let largeStat = sortedStats.last {
+                            LargeStatView(title: largeStat.key,
+                                          value: largeStat.value.0,
+                                          secondaryValue: largeStat.value.1,
+                                          secondaryLabel: largeStat.value.2)
+                            .padding(.top)
+                        }
+                    }
+                }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            
-            HStack {
-                content1
-                
-                Spacer()
-                
-                content2
-            }
-            
-            content3
-            
         }
         .padding(.top, 25)
+    }
+    
+    
+    // Define a view for a larger stat container
+    @ViewBuilder
+    private func LargeStatView(title: String, value: String, secondaryValue: String, secondaryLabel: String) -> some View {
+        // Implement the view with a larger width
+        SquareViewContainer(title: title,
+                            secondaryValue: secondaryValue,
+                            secondaryLabel: secondaryLabel,
+                            width: DeviceTypes.ScreenSize.width * 0.92) {
+            Text(value)
+                .largeTitle()
+        }
+    }
+    
+    // Define a standard view for stats
+    @ViewBuilder
+    private func StandardStatView(title: String, value: String, secondaryValue: String, secondaryLabel: String) -> some View {
+        // Implement the view with standard sizing
+        SquareViewContainer(title: title,
+                            secondaryValue: secondaryValue,
+                            secondaryLabel: secondaryLabel) {
+            Text(value)
+                .largeTitle()
+        }
     }
 }
 
@@ -367,8 +386,13 @@ private struct TextRow: View {
     }
 }
 
-struct HostDashboardView_Previews: PreviewProvider {
+struct SquareViewContainer_Previews: PreviewProvider {
     static var previews: some View {
-        HostDashboardView()
+        SquareViewContainer(title: "Most Freq.",
+                            secondaryValue: "5",
+                            secondaryLabel: "label shi") {
+            Text("MIT")
+                .largeTitle()
+        }
     }
 }

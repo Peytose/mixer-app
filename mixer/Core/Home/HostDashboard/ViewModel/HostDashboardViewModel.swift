@@ -18,7 +18,8 @@ final class HostDashboardViewModel: ObservableObject {
     @Published var recentEvent: Event?
     @Published var guests: [EventGuest]?
     
-    @Published var statistics: [String: String] = [:]
+    @Published var recentStatistics: [String: String] = [:]
+    @Published var quickStatistics: [String: (String, String, String)] = [:]
     
     private let service = UserService.shared
     private var cancellable = Set<AnyCancellable>()
@@ -86,10 +87,10 @@ final class HostDashboardViewModel: ObservableObject {
             return
         }
         
-        var stats = [String: String]()
+        var recentStats = [String: String]()
         
         // Total Guests
-        stats["Total Guests:"] = "\(guests.count)"
+        recentStats["Total Guests:"] = "\(guests.count)"
         print("DEBUG: Total number of guests - \(guests.count)")
 
         // Most Invites
@@ -97,7 +98,7 @@ final class HostDashboardViewModel: ObservableObject {
             .mapValues { $0.count }
         if let mostInvites = invitesCount.max(by: { $0.value < $1.value }) {
             let invitee = mostInvites.key ?? "Unknown" // Provide a default value if nil
-            stats["Most Invites:"] = "\(invitee) (\(mostInvites.value))"
+            recentStats["Most Invites:"] = "\(invitee) (\(mostInvites.value))"
             print("DEBUG: Most invites by \(invitee) with count \(mostInvites.value)")
         }
 
@@ -106,7 +107,7 @@ final class HostDashboardViewModel: ObservableObject {
         let checkInsCount = Dictionary(grouping: validCheckIns, by: { $0.checkedInBy! })
             .mapValues { $0.count }
         if let mostCheckIns = checkInsCount.max(by: { $0.value < $1.value }) {
-            stats["Most Check-ins:"] = "\(mostCheckIns.key) (\(mostCheckIns.value))"
+            recentStats["Most Check-ins:"] = "\(mostCheckIns.key) (\(mostCheckIns.value))"
             print("DEBUG: Most check-ins by \(mostCheckIns.key) with count \(mostCheckIns.value)")
         }
 
@@ -114,12 +115,51 @@ final class HostDashboardViewModel: ObservableObject {
         if let firstGuest = validCheckIns.min(by: { $0.timestamp?.dateValue() ?? Date() < $1.timestamp?.dateValue() ?? Date() }) {
             let guestName = firstGuest.name.capitalized
             if let firstGuestTime = firstGuest.timestamp?.getTimestampString(format: "h:mm aa") {
-                stats["First Guest:"] = "\(guestName) (\(firstGuestTime))"
+                recentStats["First Guest:"] = "\(guestName) (\(firstGuestTime))"
                 print("DEBUG: First guest is \(guestName) at \(firstGuestTime)")
             }
         }
         
-        self.statistics = stats
+        self.recentStatistics = recentStats
+        var quickStats = [String: (String, String, String)]()
+        
+        // Most Frequent University
+        let universityCounts = Dictionary(grouping: guests, by: { $0.university })
+            .mapValues { $0.count }
+        if let mostFrequentUniversity = universityCounts.max(by: { $0.value < $1.value }) {
+            // Assuming you have a way to get the university name from its ID
+            let universityName = mostFrequentUniversity.key?.shortName ?? mostFrequentUniversity.key?.name ?? "N/A"
+            quickStats["Most Frequent University"] = (universityName, "\(mostFrequentUniversity.value)", "from this school")
+            print("DEBUG: Most frequent university is \(universityName) with \(mostFrequentUniversity.value) guests")
+        }
+        
+        // Calculate Average Age and Age Range
+        let ages = guests.compactMap { $0.age } // Filter out nil ages
+        if !ages.isEmpty {
+            let sumOfAges = ages.reduce(0, +)
+            let averageAge = Double(sumOfAges) / Double(ages.count)
+            print("DEBUG: Average: \(averageAge). Sum: \(sumOfAges). Count: \(ages.count).")
+            let ageRange = "\(ages.min()!)-\(ages.max()!)"
+
+            // Formatting the average age to one decimal place
+            let formattedAverageAge = String(format: "%.1f", averageAge)
+
+            quickStats["Average Age"] = (formattedAverageAge, ageRange, "age range")
+            print("DEBUG: Average Age is \(formattedAverageAge) with an age range of \(ageRange)")
+        }
+        
+        // Most Represented Field of Study
+        let majors = guests.compactMap({ $0.major }) // Filter out nil majors
+        if !majors.isEmpty {
+            let majorCount = Dictionary(grouping: majors, by: { $0 })
+                .mapValues { $0.count }
+            if let mostRepresentedMajor = majorCount.max(by: { $0.value < $1.value }) {
+                quickStats["Most Represented Major"] = (mostRepresentedMajor.key.description, "\(mostRepresentedMajor.value)", "students attending")
+                print("DEBUG: Most represented major is \(mostRepresentedMajor.key) with \(mostRepresentedMajor.value) guests")
+            }
+        }
+
+        self.quickStatistics = quickStats
     }
     
     

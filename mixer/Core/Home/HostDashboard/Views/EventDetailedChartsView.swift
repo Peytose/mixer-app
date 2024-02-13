@@ -1,5 +1,5 @@
 //
-//  AfterActionReportView.swift
+//  EventDetailedChartsView.swift (formerly AfterActionReportView)
 //  mixer
 //
 //  Created by Jose Martinez on 11/18/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 import Kingfisher
 
-struct EventAfterActionView: View {
+struct EventDetailedChartsView: View {
     @ObservedObject var viewModel: HostDashboardViewModel
     @State private var currentIndex: Int = 0
     
@@ -26,11 +26,7 @@ struct EventAfterActionView: View {
                 }
                 
                 ChartKeyPanel(slices: charts[currentIndex].segments, chart: charts[currentIndex])
-                
-                quickFacts
             }
-            .navigationTitle("After Action Report")
-            .navigationBarTitleDisplayMode(.large)
             .padding(.horizontal)
         }
         .background(Color.theme.backgroundColor)
@@ -41,29 +37,6 @@ struct EventAfterActionView: View {
             }
         }
         
-    }
-}
-
-extension EventAfterActionView {
-    var quickFacts: some View {
-        SectionViewContainer("Quick Facts") {
-            SquareViewContainer(title: "Total Attendance", value: "450", valueTitle: "Invited", isQuickFact: true) {
-                Text("250")
-                    .largeTitle()
-            }
-        } content2: {
-            SquareViewContainer(title: "Total Schools", value: "3", valueTitle: "schools", isQuickFact: true) {
-                Text("3")
-                    .largeTitle()
-            }
-        } content3: {
-            SquareViewContainer(title: "Most Invites", value: "50", valueTitle: "guests invited", width: DeviceTypes.ScreenSize.width * 0.92, isQuickFact: true) {
-                Text("Brian Robinson")
-                    .largeTitle()
-            }
-        } navigationDestination: {
-            Text("Recent Event Analytics")
-        }
     }
 }
 
