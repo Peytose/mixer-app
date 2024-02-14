@@ -108,7 +108,7 @@ fileprivate struct NotificationHeader: View {
                 Text(text)
                     .font(.title3)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.white)
+                    .foregroundColor(.white)
                 Spacer()
             }
             

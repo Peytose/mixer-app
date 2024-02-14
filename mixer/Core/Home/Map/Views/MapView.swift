@@ -33,25 +33,42 @@ struct MapView: View {
     @State private var travelTimeByWalking: TimeInterval?
     @State private var travelTimeByTransit: TimeInterval?
 
-    
     var body: some View {
         ZStack {
-            Map(position: $viewModel.cameraPosition, selection: $selectedTag) {
-                ForEach(viewModel.mapItems.indices, id: \.self) { index in
-                    if let itemId = viewModel.mapItems[index].id {
-                        Annotation(viewModel.mapItems[index].title,
-                                   coordinate: viewModel.mapItems[index].coordinate) {
-                            MixerAnnotation(item: viewModel.mapItems[index],
-                                            number: viewModel.hostEventCounts[itemId] ?? 0)
+            Group {
+                if #available(iOS 17, *) {
+                    Map(position: getCameraPositionBinding(), selection: $selectedTag) {
+                        ForEach(viewModel.mapItems.indices, id: \.self) { index in
+                            if let itemId = viewModel.mapItems[index].id {
+                                Annotation(viewModel.mapItems[index].title,
+                                           coordinate: viewModel.mapItems[index].coordinate) {
+                                    MixerAnnotation(item: viewModel.mapItems[index],
+                                                    number: viewModel.hostEventCounts[itemId] ?? 0)
+                                }
+                                           .annotationTitles(.hidden)
+                                           .tag(index)
+                            }
                         }
-                                   .annotationTitles(.hidden)
-                                   .tag(index)
+                        
+                        UserAnnotation()
+                    }
+                } else {
+                    Map(coordinateRegion: $viewModel.region,
+                        annotationItems: viewModel.mapItems) { item in
+                        MapAnnotation(coordinate: item.coordinate) {
+                            if let itemId = item.id,
+                               let index = viewModel.mapItems.firstIndex(where: { $0.id == itemId }) {
+                                MixerAnnotation(item: item,
+                                                number: viewModel.hostEventCounts[itemId] ?? 0)
+                                .onTapGesture {
+                                    self.selectedTag = index
+                                }
+                            }
+                        }
                     }
                 }
-                
-                UserAnnotation()
             }
-            .edgesIgnoringSafeArea(.bottom)
+            .edgesIgnoringSafeArea(.top)
             .overlay(alignment: .top) {
                 LogoView(frameWidth: 65)
                     .shadow(radius: 10)
@@ -115,7 +132,6 @@ struct MapView: View {
                     }
                 }
             }
-
             .sheet(isPresented: $isSheetPresented) {
                 if let index = self.selectedTag, index < viewModel.mapItems.count {
                     // Ensure the argument labels here match the ones in your MapItemDetailSheetView initializer
@@ -157,6 +173,13 @@ extension MapView {
         }
         
         return [hostDetailsButton, instagramButton] // Add more buttons to this array
+    }
+    
+    
+    @available(iOS 17.0, *)
+    func getCameraPositionBinding() -> Binding<MapCameraPosition> {
+        // Convert region to MapCameraPosition and return as Binding
+        return .constant(MapCameraPosition.region(viewModel.region))
     }
 }
 

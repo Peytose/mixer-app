@@ -36,7 +36,7 @@ struct testView: View {
     var body: some View {
         Text("Hello, world!")
             .font(.largeTitle)
-            .foregroundStyle(.white)
+            .foregroundColor(.white)
             .padding()
             .background(.blue)
             .clipShape(Capsule())

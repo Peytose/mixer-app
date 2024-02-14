@@ -67,7 +67,7 @@ struct GuestlistEntryForm: View {
             HStack {
                 Image(systemName: "text.magnifyingglass")
                     .imageScale(.small)
-                    .foregroundStyle(Color.secondary)
+                    .foregroundColor(Color.secondary)
                 
                 TextField("Enter a user's username ...", text: $viewModel.username)
                     .foregroundColor(.white)
@@ -89,8 +89,8 @@ struct GuestlistEntryForm: View {
                 Toggle("No university?", isOn: $isWithoutUniversity)
                     .toggleStyle(iOSCheckboxToggleStyle())
                     .buttonStyle(.plain)
-                    .onChange(of: isWithoutUniversity) {
-                        if isWithoutUniversity {
+                    .onChange(of: isWithoutUniversity) { newValue in
+                        if newValue {
                             let university = University(id: "com",
                                                         domain: ".com",
                                                         name: "Non-university",

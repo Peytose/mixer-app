@@ -37,7 +37,7 @@ struct GuestlistPDF: View {
             }
             .font(.caption)
         }
-        .foregroundStyle(.white)
+        .foregroundColor(.white)
 
     }
     
@@ -48,7 +48,7 @@ struct GuestlistPDF: View {
                     guestRow(for: guest, at: index)
                 }
             }
-            .foregroundStyle(.white)
+            .foregroundColor(.white)
         }
         .listStyle(.grouped)
         .scrollContentBackground(.hidden)

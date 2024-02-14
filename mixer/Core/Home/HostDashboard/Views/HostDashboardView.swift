@@ -113,7 +113,7 @@ struct HostMenuView: View {
                                 .font(.headline)
                         }
                     }
-                    .foregroundStyle(Color.white)
+                    .foregroundColor(Color.white)
                 }
             }
             
@@ -182,7 +182,7 @@ extension HostDashboardView {
                         
                         Text("Hosted on \(event.startDate.getTimestampString(format: "MMMM dd, yyyy"))")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                     }
                 }
                 
@@ -194,7 +194,7 @@ extension HostDashboardView {
                     }
                 }
             }
-            .foregroundStyle(.white)
+            .foregroundColor(.white)
         }
     }
     
@@ -207,7 +207,7 @@ extension HostDashboardView {
             } label: {
                 Text("See charts")
                     .fontWeight(.medium)
-                    .foregroundStyle(Color.theme.mixerIndigo)
+                    .foregroundColor(Color.theme.mixerIndigo)
             }
         }
     }
@@ -252,7 +252,7 @@ struct SquareViewContainer<Content: View>: View {
             Divider()
             
             HStack {
-                Text("\(Text(secondaryValue).font(.subheadline).foregroundStyle(.white)) \(Text(secondaryLabel).font(.footnote).foregroundStyle(.secondary))")
+                Text("\(Text(secondaryValue).font(.subheadline).foregroundColor(.white)) \(Text(secondaryLabel).font(.footnote).foregroundColor(.secondary))")
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
                 
@@ -354,7 +354,7 @@ private struct Label: View {
                 Text(value)
                     .font(isFocus ? .largeTitle : .title2)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.white)
+                    .foregroundColor(.white)
                 
                 Text(title)
                     .font(.subheadline)

@@ -16,35 +16,37 @@ struct ComingSoonView: View {
                 .ignoresSafeArea()
             
             VStack(alignment: .center, spacing: 10) {
-                Image(systemName: "bolt.badge.clock")
-                    .resizable()
-                    .scaledToFit()
-                    .symbolRenderingMode(.palette)
-                    .foregroundStyle(Color.theme.mixerIndigo, Color.white)
-                    .frame(width: 80)
-                    .modify {
-                        if #available(iOS 17.0, *) {
-                            $0.symbolEffect(.pulse,
-                                            options: .speed(1).repeat(3),
-                                            value: isActive)
-                        }
+                Group {
+                    if #available(iOS 17.0, *) {
+                        Image(systemName: "bolt.badge.clock")
+                            .resizable()
+                            .scaledToFit()
+                            .symbolRenderingMode(.palette)
+                            .foregroundStyle(Color.theme.mixerIndigo, Color.white)
+                            .symbolEffect(.pulse,
+                                          options: .speed(1).repeat(3),
+                                          value: isActive)
+                    } else {
+                        Image(systemName: "clock.badge.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(Color.white)
                     }
-                    .onAppear {
-                        isActive = true
-                    }
-                    .onTapGesture {
-                        isActive.toggle()
-                    }
-                    
+                }
+                .frame(width: 80)
+                .onAppear {
+                    isActive = true
+                }
+                .onTapGesture {
+                    isActive.toggle()
+                }
                 
-                Text("Coming soon!")
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(Color.white)
+                Text("\(Text("Coming ").font(.title).fontWeight(.semibold).foregroundColor(Color.white)) \(Text("soon!").font(.title).fontWeight(.semibold).foregroundColor(Color.theme.mixerIndigo))")
+                    
                 
                 Text("We're working hard to bring you something amazing")
                     .font(.callout)
-                    .foregroundStyle(Color.secondary)
+                    .foregroundColor(Color.secondary)
                     .multilineTextAlignment(.center)
             }
             .frame(width: DeviceTypes.ScreenSize.width * 0.85,
@@ -59,8 +61,4 @@ struct ComingSoonView: View {
             }
         }
     }
-}
-
-#Preview {
-    ComingSoonView()
 }

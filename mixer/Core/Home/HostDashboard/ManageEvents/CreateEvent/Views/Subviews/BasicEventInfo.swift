@@ -63,7 +63,7 @@ struct BasicEventInfo: View {
                                 viewModel.isShowingAddPlannerAlert.toggle()
                             } label: {
                                 Image(systemName: "plus")
-                                    .foregroundStyle(.white)
+                                    .foregroundColor(.white)
                                     .padding()
                                     .background {
                                         RoundedRectangle(cornerRadius: 8)

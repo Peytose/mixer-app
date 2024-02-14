@@ -17,7 +17,7 @@ struct UniversitySearchView: View {
             HStack {
                 Image(systemName: "text.magnifyingglass")
                     .imageScale(.small)
-                    .foregroundStyle(Color.secondary)
+                    .foregroundColor(Color.secondary)
                 
                 TextField("Search universities..", text: $viewModel.searchText)
                     .focused($isTextFieldFocused)

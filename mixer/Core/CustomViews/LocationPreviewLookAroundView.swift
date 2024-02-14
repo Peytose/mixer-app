@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 
+@available(iOS 17.0, *)
 struct LocationPreviewLookAroundView: View {
     @State private var lookAroundScene: MKLookAroundScene?
     var selectedItem: MixerMapItem
@@ -19,7 +20,7 @@ struct LocationPreviewLookAroundView: View {
                     Text("\(selectedItem.title)")
                 }
                 .font(.caption)
-                .foregroundStyle(.white)
+                .foregroundColor(.white)
                 .padding(18)
             }
             .onAppear {

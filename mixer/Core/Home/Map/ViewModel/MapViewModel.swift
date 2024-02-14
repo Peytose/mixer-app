@@ -28,11 +28,7 @@ struct TransportType: Hashable {
 class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     // MARK: - Properties
     @Published var shownMapTypes   = [MapItemType.event, MapItemType.host]
-    @Published var mapItems        = [MixerMapItem]() {
-        didSet {
-            print("DEBUG: Map Items: \(mapItems)")
-        }
-    }
+    @Published var mapItems        = [MixerMapItem]()
     @Published var hostEventCounts = [String: Int]()
     @Published var pickupTime: String?
     @Published var dropOffTime: String?
@@ -46,14 +42,10 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     private var cancellable        = Set<AnyCancellable>()
     
     @Published var route: MKRoute?
-//    @Published var cameraPostition: MapCameraPosition = .region(.init(center: CLLocationCoordinate2D(latitude: 42.3506934,
-//                                                                                                     longitude: -),
-//                                                                      latitudinalMeters: 100,
-//                                                                      longitudinalMeters: 100))
-    @Published var cameraPosition: MapCameraPosition = .region(MKCoordinateRegion(
+    @Published var region: MKCoordinateRegion = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 42.3506934, longitude: -71.090978),
-        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05) // Zoomed in enough to see the city
-    ))
+        span: MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
+    )
     @Published var userLocation: CLLocationCoordinate2D?
     
     
@@ -245,12 +237,14 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
         
         // Define the new region to center the map on the user's location with animation
-        let newRegion = MKCoordinateRegion(center: userLocation, latitudinalMeters: 1200, longitudinalMeters: 1200)
+        let newRegion = MKCoordinateRegion(center: userLocation,
+                                           latitudinalMeters: 1200,
+                                           longitudinalMeters: 1200)
         
         // Use SwiftUI's withAnimation to smoothly transition to the new region
         DispatchQueue.main.async {
             withAnimation(.easeInOut(duration: 0.5)) {
-                self.cameraPosition = .region(newRegion)
+                self.region = newRegion
                 self.isCenteredOnUserLocation = true
             }
         }
@@ -259,12 +253,12 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     
     private func isMapCentered(on coordinate: CLLocationCoordinate2D) -> Bool {
-        guard let userLocation = self.userLocation, let region = self.cameraPosition.region else {
+        guard let userLocation = self.userLocation else {
             return false
         }
         
         let tolerance: CLLocationDistance = 50 // meters
-        let center = region.center
+        let center = self.region.center
         let distance = CLLocation(latitude: center.latitude, longitude: center.longitude)
             .distance(from: CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude))
         

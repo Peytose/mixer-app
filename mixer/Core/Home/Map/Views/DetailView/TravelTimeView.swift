@@ -31,7 +31,6 @@ fileprivate struct LocationCell: View {
     
     var body: some View {
         HStack(spacing: 20) {
-            
             Image(systemName: isDestination ? "mappin.and.ellipse" : "location")
             
             VStack(alignment: .leading) {
@@ -45,7 +44,7 @@ fileprivate struct LocationCell: View {
                 
                 Text(isDestination ? address : "Near \(address)")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
             
             Spacer()
