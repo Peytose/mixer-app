@@ -177,7 +177,6 @@
 		9C8F0AA32A9467EE00A06D9A /* ManageMembersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F0AA22A9467EE00A06D9A /* ManageMembersViewModel.swift */; };
 		9C8F0AA52A9515D000A06D9A /* HostUserLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F0AA42A9515D000A06D9A /* HostUserLink.swift */; };
 		9C908C862B70824A00AEDD5D /* NotificationCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C908C852B70824A00AEDD5D /* NotificationCategoryCell.swift */; };
-		9C93318529201C760079E039 /* SearchViewOld.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C93318429201C760079E039 /* SearchViewOld.swift */; };
 		9C93318729201C7B0079E039 /* ExploreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C93318629201C7B0079E039 /* ExploreView.swift */; };
 		9C93319B29242A9F0079E039 /* FirebaseDynamicLinks in Frameworks */ = {isa = PBXBuildFile; productRef = 9C93319A29242A9F0079E039 /* FirebaseDynamicLinks */; };
 		9C93319D29255D8D0079E039 /* AlertItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C93319C29255D8D0079E039 /* AlertItem.swift */; };
@@ -225,7 +224,7 @@
 		9CDFA5842A78564800EE0370 /* UIImage+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5832A78564800EE0370 /* UIImage+Ext.swift */; };
 		9CDFA5882A78770D00EE0370 /* DiscoverActivationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5872A78770D00EE0370 /* DiscoverActivationView.swift */; };
 		9CDFA58B2A788FE700EE0370 /* Array+Iterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA58A2A788FE700EE0370 /* Array+Iterator.swift */; };
-		9CDFA58F2A79271100EE0370 /* SearchResultsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA58E2A79271100EE0370 /* SearchResultsCell.swift */; };
+		9CDFA58F2A79271100EE0370 /* ItemInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA58E2A79271100EE0370 /* ItemInfoCell.swift */; };
 		9CDFA5912A7955C500EE0370 /* LocationDetailsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5902A7955C500EE0370 /* LocationDetailsCardView.swift */; };
 		9CDFA59B2A7A056D00EE0370 /* NameAndLinksRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA59A2A7A056D00EE0370 /* NameAndLinksRow.swift */; };
 		9CDFA59E2A808D1300EE0370 /* GeoPoint+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA59D2A808D1300EE0370 /* GeoPoint+Ext.swift */; };
@@ -459,7 +458,6 @@
 		9C8F0AA22A9467EE00A06D9A /* ManageMembersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageMembersViewModel.swift; sourceTree = "<group>"; };
 		9C8F0AA42A9515D000A06D9A /* HostUserLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostUserLink.swift; sourceTree = "<group>"; };
 		9C908C852B70824A00AEDD5D /* NotificationCategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationCategoryCell.swift; sourceTree = "<group>"; };
-		9C93318429201C760079E039 /* SearchViewOld.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewOld.swift; sourceTree = "<group>"; };
 		9C93318629201C7B0079E039 /* ExploreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreView.swift; sourceTree = "<group>"; };
 		9C93319529235EDF0079E039 /* mixer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = mixer.entitlements; sourceTree = "<group>"; };
 		9C9331982923816F0079E039 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -505,7 +503,7 @@
 		9CDFA5832A78564800EE0370 /* UIImage+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Ext.swift"; sourceTree = "<group>"; };
 		9CDFA5872A78770D00EE0370 /* DiscoverActivationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverActivationView.swift; sourceTree = "<group>"; };
 		9CDFA58A2A788FE700EE0370 /* Array+Iterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Iterator.swift"; sourceTree = "<group>"; };
-		9CDFA58E2A79271100EE0370 /* SearchResultsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsCell.swift; sourceTree = "<group>"; };
+		9CDFA58E2A79271100EE0370 /* ItemInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemInfoCell.swift; sourceTree = "<group>"; };
 		9CDFA5902A7955C500EE0370 /* LocationDetailsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsCardView.swift; sourceTree = "<group>"; };
 		9CDFA59A2A7A056D00EE0370 /* NameAndLinksRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameAndLinksRow.swift; sourceTree = "<group>"; };
 		9CDFA59D2A808D1300EE0370 /* GeoPoint+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GeoPoint+Ext.swift"; sourceTree = "<group>"; };
@@ -745,6 +743,7 @@
 			isa = PBXGroup;
 			children = (
 				9C3BADD6291F55D1009C8043 /* Constants.swift */,
+				9CDFA58E2A79271100EE0370 /* ItemInfoCell.swift */,
 				9CDFA5812A7828D600EE0370 /* MixerLocationAnnotationView.swift */,
 				9CDFA59A2A7A056D00EE0370 /* NameAndLinksRow.swift */,
 				9CDFC3C92A9D64BF00BDFA60 /* CustomBadgeModifier.swift */,
@@ -963,7 +962,6 @@
 			isa = PBXGroup;
 			children = (
 				9C7958622A8C572200590E1A /* ViewModel */,
-				9C20919B2A96A1A3000E7664 /* Notifications */,
 				9C8F0A812A940D3F00A06D9A /* Profile */,
 				9C3BADD0291F558A009C8043 /* Explore */,
 				9C20AEFC2A735E4A00F057BD /* Map */,
@@ -1117,9 +1115,7 @@
 		9C705F942A8F0C5500F1D0DB /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				9C93318429201C760079E039 /* SearchViewOld.swift */,
 				9C8F0A9C2A940E3600A06D9A /* SearchView.swift */,
-				9CDFA58E2A79271100EE0370 /* SearchResultsCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1181,6 +1177,7 @@
 		9C8F0A812A940D3F00A06D9A /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				9C20919B2A96A1A3000E7664 /* Notifications */,
 				9C2DC25B2A735C8B00494D7C /* Settings */,
 				9C8F0A842A940D3F00A06D9A /* Views */,
 				9C8F0A822A940D3F00A06D9A /* ViewModel */,
@@ -1836,7 +1833,6 @@
 				A6BF681A29FF14F0000FF54B /* ParticleEffectModifier+Ext.swift in Sources */,
 				9C2B8989299D87A90011FC56 /* SearchViewModel.swift in Sources */,
 				9C8F0A7C2A94099200A06D9A /* StickyHeaderView.swift in Sources */,
-				9C93318529201C760079E039 /* SearchViewOld.swift in Sources */,
 				9C4B0E47298241B700A9D963 /* AuthViewModel.swift in Sources */,
 				9CDFC3C82A9C48F200BDFA60 /* Notification+Ext.swift in Sources */,
 				A6BAEF612955064200410DED /* ReviewCreatedEventView.swift in Sources */,
@@ -1983,7 +1979,7 @@
 				A62BE19D29C8231A0052D34F /* CardView.swift in Sources */,
 				9C67D1A62AED8BEC007BB6F4 /* TextFieldItem.swift in Sources */,
 				9C79585A2A880EBC00590E1A /* GuestlistView.swift in Sources */,
-				9CDFA58F2A79271100EE0370 /* SearchResultsCell.swift in Sources */,
+				9CDFA58F2A79271100EE0370 /* ItemInfoCell.swift in Sources */,
 				9C2091A72A970231000E7664 /* NotificationsViewModel.swift in Sources */,
 				9C529A432B575D15001D847E /* QueryKey.swift in Sources */,
 				9CD47AAC2A65A0BC00030D31 /* DataLoader.swift in Sources */,

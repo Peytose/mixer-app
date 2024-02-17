@@ -45,10 +45,11 @@ fileprivate struct MixerMapItemSearchResultsView: View {
                 .padding(.top)
         } else {
             ForEach(selectedResults, id: \.self) { result in
-                SearchResultsCell(imageUrl: result.imageUrl,
-                                  title: result.title,
-                                  subtitle: result.subtitle,
-                                  type: viewModel.selectedSearchType)
+                ItemInfoCell(
+                    title: result.title,
+                    subtitle: "\(viewModel.selectedSearchType == .users || viewModel.selectedSearchType == .hosts ? "@" : "")\(result.subtitle)",
+                    imageUrl: result.imageUrl
+                )
                 .onTapGesture {
                     withAnimation(.spring()) {
                         viewModel.fetchDetails(for: result,

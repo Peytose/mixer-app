@@ -96,8 +96,9 @@ fileprivate struct LocationSearchResultsView: View {
         ScrollView {
             VStack(alignment: .leading) {
                 ForEach(viewModel.results, id: \.self) { result in
-                    SearchResultsCell(title: result.title,
-                                      subtitle: result.subtitle)
+                    ItemInfoCell(title: result.title,
+                                 subtitle: result.subtitle,
+                                 icon: "location.circle.fill")
                     .onTapGesture {
                         withAnimation(.spring()) {
                             viewModel.selectLocation(result)

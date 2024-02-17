@@ -63,10 +63,9 @@ struct EventDetailView: View {
                         EventDetails()
                             .environmentObject(viewModel)
                         
-                        
                         AmenitiesView(amenities: viewModel.event.amenities,
                                       bathroomCount: viewModel.event.bathroomCount)
-                        .environmentObject(viewModel)
+                            .environmentObject(viewModel)
                         
                         LocationSection()
                             .environmentObject(viewModel)

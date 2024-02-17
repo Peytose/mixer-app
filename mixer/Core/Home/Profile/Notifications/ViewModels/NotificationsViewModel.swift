@@ -54,47 +54,37 @@ class NotificationsViewModel: ObservableObject {
         }
     }
     
-    static func preparePlannerNotificationBatch(for event: Event,
-                                                type: NotificationType,
-                                                within batch: WriteBatch) {
-        var activePlannerIds: [String] = []
+    // Refactored to ensure no duplicate notifications are prepared for the same user
+    static func preparePlannerNotificationBatch(for event: Event, type: NotificationType, within batch: WriteBatch) {
+        var uniquePlannerIds: Set<String> = []
 
+        // Consolidate planner IDs based on the notification type
         switch type {
         case .plannerAccepted, .plannerDeclined, .plannerRemoved, .plannerReplaced:
-            activePlannerIds = event.activePlannerIds ?? []
+            uniquePlannerIds = Set(event.activePlannerIds ?? [])
         case .plannerInvited, .plannerPendingReminder:
-            activePlannerIds = event.pendingPlannerIds ?? []
+            uniquePlannerIds = Set(event.pendingPlannerIds ?? [])
         case .eventPostedWithoutPlanner, .eventLiked, .eventAutoDeleted, .eventDeletedDueToDecline:
-            activePlannerIds = (event.activePlannerIds ?? [])
+            uniquePlannerIds = Set(event.activePlannerIds ?? [])
             if let primaryPlannerId = event.primaryPlannerId, !primaryPlannerId.isEmpty {
-                activePlannerIds.append(primaryPlannerId)
+                uniquePlannerIds.insert(primaryPlannerId)
             }
         default:
             break
         }
         
-        guard !activePlannerIds.isEmpty else { return }
-        // Prepare the notifications for each planner
+        guard !uniquePlannerIds.isEmpty else { return }
+        
         var documentRefsDataMap: [DocumentReference: [String: Any]] = [:]
-        for uid in activePlannerIds {
+        for uid in uniquePlannerIds {
+            print("DEBUG: \(uid) notification")
             guard uid != UserService.shared.user?.id else { continue }
-            print("DEBUG: Uid for notification: \(uid)")
-            
-            let plannerNotificationRef = COLLECTION_NOTIFICATIONS
-                .document(uid)
-                .collection("user-notifications")
-                .document()
-            
-            documentRefsDataMap.updateValue(prepareNotificationData(toUid: uid,
-                                                                    type: type,
-                                                                    event: event),
-                                            forKey: plannerNotificationRef)
-            print("\n\nDEBUG: DATA MAP: \(documentRefsDataMap)\n\n")
+            let plannerNotificationRef = COLLECTION_NOTIFICATIONS.document(uid).collection("user-notifications").document()
+            documentRefsDataMap[plannerNotificationRef] = prepareNotificationData(toUid: uid, type: type, event: event)
         }
         
-        // Use the batchUpdate function to send all notifications at once
-        batch
-            .addBatchUpdate(documentRefsDataMap: documentRefsDataMap)
+        // Proceed with batch update
+        batch.addBatchUpdate(documentRefsDataMap: documentRefsDataMap)
     }
     
     
@@ -349,7 +339,7 @@ extension NotificationsViewModel {
         // Notify when all fetches are complete
         dispatchGroup.notify(queue: .main) {
             print("DEBUG: Notification sharedData populated!")
-            print("DEBUG: sharedData hosts \(self.sharedData.hosts)")
+            print("DEBUG: sharedData hosts \(self.sharedData.hosts.count)")
         }
     }
 }

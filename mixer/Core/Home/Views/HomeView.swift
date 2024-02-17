@@ -58,6 +58,7 @@ struct HomeView: View {
                                             if let user = settingsViewModel.user {
                                                 ProfileView(user: user)
                                                     .environmentObject(settingsViewModel)
+                                                    .environmentObject(homeViewModel)
                                             }
                                         }
                                     }

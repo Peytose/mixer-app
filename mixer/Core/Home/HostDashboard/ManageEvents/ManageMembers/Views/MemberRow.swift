@@ -21,15 +21,13 @@ struct MemberRow: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            SearchResultsCell(imageUrl: member.profileImageUrl,
-                              title: member.displayName,
-                              subtitle: subtitle)
-            
-            Spacer()
-            
-            if link.status == .joined {
-                EllipsisButton(stroke: 0) {
-                    showActionSheet = true
+            ItemInfoCell(title: member.displayName,
+                         subtitle: subtitle,
+                         imageUrl: member.profileImageUrl) {
+                if link.status == .joined {
+                    EllipsisButton(stroke: 0) {
+                        showActionSheet = true
+                    }
                 }
             }
         }

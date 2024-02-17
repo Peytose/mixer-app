@@ -32,9 +32,9 @@ struct UniversitySearchView: View {
                 ScrollView {
                     VStack(alignment: .leading) {
                         ForEach(Array(viewModel.results), id: \.self) { result in
-                            SearchResultsCell(title: result.name,
-                                              subtitle: result.domain,
-                                              isUniversity: true)
+                            ItemInfoCell(title: result.name,
+                                         subtitle: result.domain,
+                                         icon: "graduationcap.circle.fill")
                             .onTapGesture {
                                 withAnimation(.spring()) {
                                     action(result)
