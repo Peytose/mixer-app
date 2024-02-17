@@ -130,6 +130,7 @@ struct NotificationCell: View {
                 }
             }
         }
+        .padding(.trailing)
     }
 }
 

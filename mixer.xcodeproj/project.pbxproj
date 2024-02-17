@@ -251,6 +251,7 @@
 		9CDFC3D82A9F98AB00BDFA60 /* FavoriteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFC3D72A9F98AB00BDFA60 /* FavoriteCell.swift */; };
 		9CDFC3DA2A9FA46D00BDFA60 /* ParticleEffectButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFC3D92A9FA46D00BDFA60 /* ParticleEffectButton.swift */; };
 		9CDFC3DC2A9FAFB400BDFA60 /* WriteBatch+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFC3DB2A9FAFB400BDFA60 /* WriteBatch+Ext.swift */; };
+		9CE2BD692B8039DD00634150 /* SwipeActions in Frameworks */ = {isa = PBXBuildFile; productRef = 9CE2BD682B8039DD00634150 /* SwipeActions */; };
 		9CF84C9929AAA38A005BE430 /* EnterNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9829AAA38A005BE430 /* EnterNameView.swift */; };
 		9CF84C9B29AAE337005BE430 /* EnterProfilePictureAndBioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9A29AAE337005BE430 /* EnterProfilePictureAndBioView.swift */; };
 		9CFB25F12AEC106200F090E6 /* UniversitySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFB25F02AEC106200F090E6 /* UniversitySearchView.swift */; };
@@ -616,6 +617,7 @@
 				9C529A082B530870001D847E /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
 				9C529A222B530870001D847E /* FirebaseFirestoreSwift in Frameworks */,
 				9C3BADF6291F59E7009C8043 /* FirebaseStorage in Frameworks */,
+				9CE2BD692B8039DD00634150 /* SwipeActions in Frameworks */,
 				A6B9E6622953A47C009C936E /* CodeScanner in Frameworks */,
 				9C529A2C2B530870001D847E /* FirebaseInstallations in Frameworks */,
 				9C529A1E2B530870001D847E /* FirebaseFirestore in Frameworks */,
@@ -1695,6 +1697,7 @@
 				9C529A352B530870001D847E /* FirebaseRemoteConfigSwift */,
 				9C529A372B530870001D847E /* FirebaseStorage */,
 				9C529A392B530870001D847E /* FirebaseStorageCombine-Community */,
+				9CE2BD682B8039DD00634150 /* SwipeActions */,
 			);
 			productName = mixer;
 			productReference = 9C3BADB6291F54B4009C8043 /* mixer.app */;
@@ -1741,6 +1744,7 @@
 				9C8F0A6F2A92A95400A06D9A /* XCRemoteSwiftPackageReference "algoliasearch-client-swift" */,
 				9C2368242AA557FE001F20E5 /* XCRemoteSwiftPackageReference "MaterialUI" */,
 				9C8E05C22AEDEF2100551B39 /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+				9CE2BD672B8039DD00634150 /* XCRemoteSwiftPackageReference "SwipeActions" */,
 			);
 			productRefGroup = 9C3BADB7291F54B4009C8043 /* Products */;
 			projectDirPath = "";
@@ -2376,6 +2380,14 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		9CE2BD672B8039DD00634150 /* XCRemoteSwiftPackageReference "SwipeActions" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/c-villain/SwipeActions";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.3;
+			};
+		};
 		A611E6E32A03123200DDFD32 /* XCRemoteSwiftPackageReference "PopupView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/exyte/PopupView.git";
@@ -2590,6 +2602,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9CD47AA82A6599CE00030D31 /* XCRemoteSwiftPackageReference "ScreenshotPreventing-iOS" */;
 			productName = ScreenshotPreventingSwiftUI;
+		};
+		9CE2BD682B8039DD00634150 /* SwipeActions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9CE2BD672B8039DD00634150 /* XCRemoteSwiftPackageReference "SwipeActions" */;
+			productName = SwipeActions;
 		};
 		A611E6E42A03123200DDFD32 /* PopupView */ = {
 			isa = XCSwiftPackageProductDependency;

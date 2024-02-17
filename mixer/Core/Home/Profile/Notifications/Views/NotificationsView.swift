@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseFirestore
+import SwipeActions
 
 struct NotificationsView: View {
     @StateObject var viewModel = NotificationsViewModel()
@@ -39,58 +40,86 @@ struct NotificationsView: View {
                     
                     // Conditionally display "Last 7 Days" if there are recent notifications
                     if !recentNotifications.isEmpty {
-                        Section {
+                        VStack {
+                            NotificationHeader(text: "Last 7 Days")
+                            
                             ForEach(recentNotifications) { notification in
                                 NotificationCell(cellViewModel: viewModel.viewModelForNotification(notification))
                                     .environmentObject(self.viewModel)
                                     .environmentObject(homeViewModel)
-                                    .listRowBackground(Color.clear)
-                                    .listRowSeparator(.hidden)
-                                    .swipeActions {
-                                        Button(role: .destructive) {
+                                    .background(Color.theme.backgroundColor)
+                                    .addFullSwipeAction(menu: .slided,
+                                                        swipeColor: .red,
+                                                        swipeRole: .destructive) {
+                                        Leading { }
+                                        Trailing {
+                                            Button {
+                                                withAnimation {
+                                                    viewModel.deleteNotification(notification: notification)
+                                                }
+                                            } label: {
+                                                Image(systemName: "trash")
+                                                    .foregroundColor(.white)
+                                            }
+                                            .contentShape(Rectangle())
+                                            .frame(width: 60)
+                                            .frame(maxHeight: .infinity)
+                                            .background(Color.red)
+                                        }
+                                    } action: {
+                                        withAnimation {
                                             viewModel.deleteNotification(notification: notification)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
                                         }
                                     }
                             }
-                        } header: {
-                            NotificationHeader(text: "Last 7 Days")
                         }
                     }
                     
                     // Conditionally display "Older" if there are older notifications
                     if !olderNotifications.isEmpty {
-                        Section {
+                        VStack {
+                            NotificationHeader(text: "Older")
+                            
                             ForEach(olderNotifications) { notification in
                                 NotificationCell(cellViewModel: viewModel.viewModelForNotification(notification))
                                     .environmentObject(self.viewModel)
                                     .environmentObject(homeViewModel)
-                                    .listRowBackground(Color.clear)
-                                    .listRowSeparator(.hidden)
-                                    .swipeActions {
-                                        Button(role: .destructive) {
+                                    .background(Color.theme.backgroundColor)
+                                    .addFullSwipeAction(menu: .slided,
+                                                        swipeColor: .red,
+                                                        swipeRole: .destructive) {
+                                        Leading { }
+                                        Trailing {
+                                            Button {
+                                                withAnimation {
+                                                    viewModel.deleteNotification(notification: notification)
+                                                }
+                                            } label: {
+                                                Image(systemName: "trash")
+                                                    .foregroundColor(.white)
+                                            }
+                                            .contentShape(Rectangle())
+                                            .frame(width: 60)
+                                            .frame(maxHeight: .infinity)
+                                            .background(Color.red)
+                                        }
+                                    } action: {
+                                        withAnimation {
                                             viewModel.deleteNotification(notification: notification)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
                                         }
                                     }
                             }
-                        } header: {
-                            NotificationHeader(text: "Older")
                         }
                     }
                 }
             }
             .padding(.top, 10)
-            .padding(.horizontal)
+            .padding(.leading)
         }
         .onAppear {
             viewModel.saveCurrentTimestamp()
         }
         .background(Color.theme.backgroundColor)
-        .navigationBar(title: "Notifications",
-                       displayMode: .large)
     }
 }
 
