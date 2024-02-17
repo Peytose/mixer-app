@@ -116,17 +116,15 @@ class GuestlistViewModel: ObservableObject {
         let maleCount = self.guests.filter { $0.gender == .man }.count
         let femaleCount = self.guests.filter { $0.gender == .woman }.count
 
-        // Avoid division by zero
-        if maleCount == 0 && femaleCount == 0 {
-            return "0:0"
-        } else if maleCount == 0 {
-            return "0:\(femaleCount)"
-        } else if femaleCount == 0 {
-            return "\(maleCount):0"
+        // Avoid division by zero by checking if there are any men
+        if maleCount == 0 {
+            return femaleCount == 0 ? "No guests" : "All women"
         } else {
-            // Find the greatest common divisor for a simplified ratio
-            let gcd = greatestCommonDivisor(maleCount, femaleCount)
-            return "\(maleCount / gcd):\(femaleCount / gcd)"
+            // Calculate the ratio of women per man as a floating-point number for precision
+            let ratio = Float(femaleCount) / Float(maleCount)
+            
+            // Format the ratio to have one decimal point for readability
+            return String(format: "%.1f women per man", ratio)
         }
     }
 

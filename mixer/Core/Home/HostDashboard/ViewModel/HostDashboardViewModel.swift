@@ -98,7 +98,7 @@ final class HostDashboardViewModel: ObservableObject {
             .mapValues { $0.count }
         if let mostInvites = invitesCount.max(by: { $0.value < $1.value }) {
             let invitee = mostInvites.key ?? "Unknown" // Provide a default value if nil
-            recentStats["Most Invites:"] = "\(invitee) (\(mostInvites.value))"
+            recentStats["Most Invites:"] = "\(invitee.firstSubstringBeforeSpace()) (\(mostInvites.value))"
             print("DEBUG: Most invites by \(invitee) with count \(mostInvites.value)")
         }
 
@@ -107,7 +107,7 @@ final class HostDashboardViewModel: ObservableObject {
         let checkInsCount = Dictionary(grouping: validCheckIns, by: { $0.checkedInBy! })
             .mapValues { $0.count }
         if let mostCheckIns = checkInsCount.max(by: { $0.value < $1.value }) {
-            recentStats["Most Check-ins:"] = "\(mostCheckIns.key) (\(mostCheckIns.value))"
+            recentStats["Most Check-ins:"] = "\(mostCheckIns.key.firstSubstringBeforeSpace()) (\(mostCheckIns.value))"
             print("DEBUG: Most check-ins by \(mostCheckIns.key) with count \(mostCheckIns.value)")
         }
 
@@ -115,7 +115,7 @@ final class HostDashboardViewModel: ObservableObject {
         if let firstGuest = validCheckIns.min(by: { $0.timestamp?.dateValue() ?? Date() < $1.timestamp?.dateValue() ?? Date() }) {
             let guestName = firstGuest.name.capitalized
             if let firstGuestTime = firstGuest.timestamp?.getTimestampString(format: "h:mm aa") {
-                recentStats["First Guest:"] = "\(guestName) (\(firstGuestTime))"
+                recentStats["First Guest:"] = "\(guestName.firstSubstringBeforeSpace()) (\(firstGuestTime))"
                 print("DEBUG: First guest is \(guestName) at \(firstGuestTime)")
             }
         }

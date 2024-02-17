@@ -20,6 +20,11 @@ extension String {
         }
         return pureNumber
     }
+    
+    
+    func firstSubstringBeforeSpace() -> String {
+        return self.components(separatedBy: " ").first ?? self
+    }
 
     
     func getLocation(completion: @escaping(CLLocation?, Error?) -> Void) {

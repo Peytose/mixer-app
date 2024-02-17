@@ -46,9 +46,7 @@ struct GuestlistView: View {
                         Spacer()
                         
                         HStack {
-                            InfoButton { viewModel.alertItem = AlertContext.genderRatioInfo }
-                            
-                            Text("Ratio: \(viewModel.getGenderRatioText())")
+                            Text(viewModel.getGenderRatioText())
                         }
                     }
                     .font(.headline)
@@ -59,8 +57,10 @@ struct GuestlistView: View {
                     switch viewModel.viewState {
                     case .loading:
                         LoadingView()
+                        Spacer()
                     case .empty:
                         emptyView
+                        Spacer()
                     case .list:
                         List {
                             // Loop over each section in sectionedGuests
@@ -85,8 +85,6 @@ struct GuestlistView: View {
                             viewModel.filterGuests(for: newValue)
                         }
                     }
-                    
-                    Spacer()
                 }
             }
             .navigationBarBackButtonHidden(true)
