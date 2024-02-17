@@ -73,15 +73,24 @@ class GuestlistViewModel: ObservableObject {
     
     
     func filterGuests(for searchText: String) {
-        // If the search text is empty, reset to the full list
-        if searchText.isEmpty {
+        let trimmedSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        guard !trimmedSearchText.isEmpty else {
             refreshViewState(with: guests)
-        } else {
-            // Filter the guests for names that contain the search text
-            let filtered = guests.filter { $0.name.lowercased().contains(searchText.lowercased()) }
-            // Update your viewState and sectionedGuests accordingly
-            refreshViewState(with: filtered)
+            return
         }
+
+        // Split the search text into words for flexible matching
+        let searchWords = trimmedSearchText.split(separator: " ").map(String.init)
+
+        let filtered = guests.filter { guest in
+            // Check if each word in the search text is contained in the guest name
+            let guestNameLowercased = guest.name.lowercased()
+            return searchWords.allSatisfy { searchWord in
+                guestNameLowercased.contains(searchWord)
+            }
+        }
+
+        refreshViewState(with: filtered)
     }
     
     
@@ -202,8 +211,8 @@ extension GuestlistViewModel {
                       let userId = user.id else { return }
                 
                 self.hostService.addUserToGuestlist(eventId: eventId,
-                                                user: user,
-                                                status: status) { error in
+                                                    user: user,
+                                                    status: status) { error in
                     if let error = error {
                         print("DEBUG: Error adding user to guestlist. \(error.localizedDescription)")
                         return
@@ -386,7 +395,7 @@ extension GuestlistViewModel {
               let invitedBy = guestDict["Brother"] else { return }
 
         let isTwentyOnePlus = (guestDict["21+"] != "N")
-        let age = isTwentyOnePlus ? 21 : 20
+        let age = isTwentyOnePlus ? 21 : 19
 
         let names = nameField.components(separatedBy: "\n")
         for name in names {
@@ -557,7 +566,7 @@ extension GuestlistViewModel {
 extension GuestlistViewModel {
     @MainActor
     func uploadManualGuestlist() {
-        if let fileURL = Bundle.main.url(forResource: "divij-guestlist", withExtension: "json") {
+        if let fileURL = Bundle.main.url(forResource: "valentines-guestlist", withExtension: "json") {
             do {
                 let jsonData = try Data(contentsOf: fileURL)
                 let decodedArray = try JSONDecoder().decode([[String: String]].self, from: jsonData)
@@ -565,9 +574,9 @@ extension GuestlistViewModel {
                 var universitySet = Set<String>()
 
                 for guestDict in decodedArray {
-                    if let universityStr = guestDict["Guest School"] {
-                        if universityStr.contains("Theta") {
-                            universitySet.insert("Tufts")
+                    if let universityStr = guestDict["University"] {
+                        if universityStr == "" {
+                            universitySet.insert("Non-university")
                         } else {
                             universitySet.insert(universityStr)
                         }
@@ -579,6 +588,7 @@ extension GuestlistViewModel {
 
                 for name in universitySet {
                     dispatchGroup.enter()
+                    
                     userService.fetchUniversityId(for: name) { id in
                         print("Fetched ID for \(name): \(id)")
                         self.universityIdDict[name] = id
@@ -608,33 +618,23 @@ extension GuestlistViewModel {
     }
     
     func uploadSingleGuest(guestDict: [String:String]) {
-        
-        func getFirstName(from fullName: String) -> String {
-            let nameComponents = fullName.components(separatedBy: " ")
-            return nameComponents.first ?? fullName
-        }
-        
-        
-        let name            = guestDict["Guest Name (First and Last)"]!
+        let name            = guestDict["Name"]!
         let genderStr       = guestDict["Gender"]!
-        let universityStr   = guestDict["Guest School"]!
+        let universityStr   = guestDict["University"]!
         let brotherFullName = guestDict["Brother"]!
         let gender          = determineGender(genderStr)
         
         var guest = EventGuest(name: name,
-                               universityId: universityStr.contains("Theta") ? (universityIdDict["Tufts"] ?? "com") : (universityIdDict[universityStr] ?? "com"),
-                               age: guestDict["21+"]?.lowercased() != "no" ? nil : 19,
+                               universityId: (universityIdDict[universityStr] ?? "com"),
+                               age: guestDict["21+"] == "N" ? 19 : 21,
                                gender: gender,
                                status: .invited,
                                invitedBy: brotherFullName,
                                timestamp: Timestamp())
         
-        if universityStr.contains("Theta") {
-            guest.note = "Tufts Theta"
-        }
-        
         guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
-//        let docId = "7BbqafP6QCQMB2bqk2Tj"
+        print("\(encodedGuest)\n")
+//        let docId = "Sab0cQkG2jTm772WTbny"
 //        
 //        COLLECTION_EVENTS
 //            .document(docId)
@@ -653,7 +653,6 @@ extension GuestlistViewModel {
         switch letter.lowercased() {
             case "m": return .man
             case "f": return .woman
-            case "nb": return .other
             default: return .preferNotToSay
         }
     }
