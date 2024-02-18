@@ -34,6 +34,8 @@ class UserService: ObservableObject {
             return
         }
         
+        print("DEBUG: CURRENT USER ID : \(uid)")
+        
         self.listener = COLLECTION_USERS
             .document(uid)
             .addSnapshotListener { snapshot, error in
@@ -256,22 +258,40 @@ class UserService: ObservableObject {
     
     
     func cancelOrLeaveGuestlist(for event: Event, completion: FirestoreCompletion) {
-        guard let eventId = event.id else { return }
-        guard let userId = self.user?.id else { return }
+        guard let eventId = event.id, let userId = self.user?.id else { return }
         
         let batch = Firestore.firestore().batch()
         
+        // Reference to delete the user from the guestlist
         let guestReference = COLLECTION_EVENTS.document(eventId).collection("guestlist").document(userId)
-        
         batch.deleteDocument(guestReference)
         
-        COLLECTION_NOTIFICATIONS
-            .deleteNotificationsForPlanners(for: event,
-                                            ofTypes: [NotificationType.guestlistJoined],
-                                            from: userId,
-                                            using: batch) {
-                batch.commit(completion: completion)
+        // First, perform the query to find guest notifications to be deleted
+        let notificationQuery = COLLECTION_NOTIFICATIONS
+            .document(userId)
+            .collection("user-notifications")
+            .whereField("eventId", isEqualTo: eventId)
+            .whereField("type", in: [NotificationType.guestlistAdded.rawValue])
+        
+        notificationQuery.getDocuments { snapshot, error in
+            guard let documents = snapshot?.documents, error == nil else {
+                completion?(error)
+                return
             }
+            
+            // Add each found notification document to the batch for deletion
+            documents.forEach { document in
+                batch.deleteDocument(document.reference)
+            }
+            
+            // Assuming `deleteNotificationsForPlanners` adds planner notification deletions to the same batch
+            COLLECTION_NOTIFICATIONS.deleteNotificationsForPlanners(for: event, ofTypes: [NotificationType.guestlistJoined], from: userId, using: batch) {
+                // Now commit the batch after adding all deletions
+                batch.commit { error in
+                    completion?(error)
+                }
+            }
+        }
     }
     
     

@@ -76,28 +76,25 @@ struct NotificationCell: View {
             // Side button(s)
             Group {
                 switch cellViewModel.notification.type {
-                case .friendRequest:
+                case .friendRequest, .memberInvited:
                     HStack(spacing: 15) {
                         ListCellActionButton(text: "checkmark",
                                              isIcon: true) {
-                            cellViewModel.acceptFriendRequest()
+                            if cellViewModel.notification.type == .friendRequest {
+                                cellViewModel.acceptFriendRequest()
+                            } else if cellViewModel.notification.type == .memberInvited {
+                                cellViewModel.acceptMemberInvite(host: sharedData.hosts[cellViewModel.notification.hostId ?? ""])
+                            }
                         }
                         
                         ListCellActionButton(text: "xmark",
                                              isIcon: true,
                                              isSecondaryLabel: true) {
-                            cellViewModel.cancelOrDeleteRelationship()
-                        }
-                    }
-                case .memberInvited:
-                    HStack {
-                        ListCellActionButton(text: "Join") {
-                            cellViewModel.acceptMemberInvite(host: sharedData.hosts[cellViewModel.notification.hostId ?? ""])
-                        }
-                        
-                        ListCellActionButton(text: "Reject",
-                                             isSecondaryLabel: true) {
-                            cellViewModel.declineMemberInvite()
+                            if cellViewModel.notification.type == .friendRequest {
+                                cellViewModel.cancelOrDeleteRelationship()
+                            } else if cellViewModel.notification.type == .memberInvited {
+                                cellViewModel.declineMemberInvite()
+                            }
                         }
                     }
                 case .eventLiked, .guestlistAdded:
@@ -117,7 +114,8 @@ struct NotificationCell: View {
                             cellViewModel.acceptPlannerInvite(event: sharedData.events[cellViewModel.notification.eventId ?? ""])
                         }
                         
-                        ListCellActionButton(text: "Decline",
+                        ListCellActionButton(text: "xmark",
+                                             isIcon: true,
                                              isSecondaryLabel: true) {
                             cellViewModel.declinePlannerInvite(event: sharedData.events[cellViewModel.notification.eventId ?? ""])
                         }

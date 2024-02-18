@@ -119,9 +119,7 @@ struct EventDetailView: View {
                     viewModel.checkIfUserFavoritedEvent()
                 }
                 
-                if viewModel.event.didGuestlist == nil || viewModel.event.didRequest == nil {
-                    viewModel.fetchGuestlistAndRequestStatus()
-                }
+                viewModel.fetchGuestlistAndRequestStatus()
             }
             .overlay(alignment: .bottom) {
                 GuestlistActionButton(state: EventUserActionState(event: viewModel.event)) {
