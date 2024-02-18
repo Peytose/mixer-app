@@ -27,6 +27,7 @@ struct EnterProfilePictureAndBioView: View {
 
                     Spacer()
                 }
+                .padding(.bottom, 100)
             }
         }
     }

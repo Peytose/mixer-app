@@ -11,9 +11,8 @@ enum AuthFlowViewState: Int, CaseIterable {
     case enterName
     case enterPhone
     case verifyCode
-    case enterEmail
     case uploadProfilePicAndBio
-    case enterBirthday
+    case enterBirthdayAndUniversity
     case selectGender
     case chooseUsername
     
@@ -28,8 +27,7 @@ enum AuthFlowViewState: Int, CaseIterable {
         switch self {
             case .enterName: return "Please enter your name"
             case .enterPhone: return "Please enter a valid phone number"
-            case .enterEmail: return "Please enter your college email"
-            case .enterBirthday: return "Please enter a valid date"
+            case .enterBirthdayAndUniversity: return "Please enter a valid date and/or select a university"
             case .chooseUsername: return "Please enter a unique username"
             default: return nil
         }

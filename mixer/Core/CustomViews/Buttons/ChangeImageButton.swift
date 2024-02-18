@@ -30,6 +30,7 @@ struct ChangeImageButton: View {
                 if let pickerItem = selectedImage,
                    let data = try? await pickerItem.loadTransferable(type: Data.self) {
                     if let image = UIImage(data: data) {
+                        uploadedImage = image
                         saveFunc(image)
                     }
                 }

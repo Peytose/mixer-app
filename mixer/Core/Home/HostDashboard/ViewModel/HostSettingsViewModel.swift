@@ -190,6 +190,11 @@ extension HostSettingsViewModel {
     }
     
     
+    func shouldShowRow(withTitle title: String) -> Bool {
+        return true
+    }
+    
+    
     // Mapping destination based on the row title
     @ViewBuilder
     func destination(for title: String) -> some View {

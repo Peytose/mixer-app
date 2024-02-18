@@ -1,5 +1,5 @@
 //
-//  SelectGenderView.swift
+//  EnterBirthdayAndUniversityView.swift
 //  mixer
 //
 //  Created by Jose Martinez on 4/2/23.

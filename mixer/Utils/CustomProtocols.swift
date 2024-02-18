@@ -24,6 +24,7 @@ protocol SettingsConfigurable: ObservableObject {
     func saveType(for title: String) -> SettingSaveType
     func toggle(for title: String) -> Binding<Bool>
     func url(for title: String) -> String
+    func shouldShowRow(withTitle title: String) -> Bool
     @ViewBuilder func destination(for title: String) -> Content
 }
 

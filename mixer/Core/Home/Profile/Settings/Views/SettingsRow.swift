@@ -23,8 +23,10 @@ struct SettingsRow<ViewModel: SettingsConfigurable>: View {
                                 row: row,
                                 saveType: viewModel.saveType(for: row.title))
             case .readOnly:
+            if viewModel.content(for: row.title).wrappedValue != "" {
                 ReadOnlySettingsRow(row: row,
                                     content: viewModel.content(for: row.title).wrappedValue)
+            }
             case .toggle:
                 ToggleSettingsRow(isOn: viewModel.toggle(for: row.title),
                                   row: row) { [saveType = viewModel.saveType(for: row.title)] in
@@ -36,9 +38,11 @@ struct SettingsRow<ViewModel: SettingsConfigurable>: View {
                 LinkSettingsRow(row: row,
                                 url: viewModel.url(for: row.title))
             case .navigate:
+            if viewModel.shouldShowRow(withTitle: row.title) {
                 NavigableSettingsRow(row: row) {
                     viewModel.destination(for: row.title)
                 }
+            }
         }
     }
 }

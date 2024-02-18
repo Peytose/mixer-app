@@ -60,12 +60,18 @@
             },
             {
                 "id": 1010,
+                "type": "navigate",
+                "title": "Connect Email",
+                "icon": "envelope.fill"
+            },
+            {
+                "id": 1011,
                 "type": "readOnly",
                 "title": "Email",
                 "icon": "envelope.fill"
             },
             {
-                "id": 1011,
+                "id": 1012,
                 "type": "readOnly",
                 "title": "Phone",
                 "icon": "flipphone"

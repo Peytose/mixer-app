@@ -17,6 +17,7 @@ struct MixerIdView: View {
     @State private var gradientColors: [Color] = [Color.pink, Color.purple]
     @State private var rippleColor: Color = Color.black.opacity(0.5)
     @State private var shareURL: URL? = nil
+    @State private var hasGeneratedShareURL = false
     
     let gradientPairs: [[Color]] = [
         [Color.red, Color.orange],
@@ -29,7 +30,6 @@ struct MixerIdView: View {
         self.user = user
         self.image = image
         self.shareURL = shareURL
-        self.generateShareURL()
     }
     
     
@@ -110,7 +110,10 @@ struct MixerIdView: View {
             }
         }
         .onAppear {
-            self.generateShareURL()
+            if !hasGeneratedShareURL {
+                self.generateShareURL()
+                hasGeneratedShareURL = true
+            }
         }
     }
     

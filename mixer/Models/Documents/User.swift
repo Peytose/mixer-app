@@ -20,7 +20,7 @@ struct User: Hashable, Identifiable, Codable {
     var lastName: String
     var displayName: String
     let username: String
-    let email: String
+    var email: String?
     var profileImageUrl: String
     var birthday: Timestamp
     var universityId: String

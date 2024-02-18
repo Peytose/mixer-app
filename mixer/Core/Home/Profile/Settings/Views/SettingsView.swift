@@ -41,6 +41,8 @@ struct SettingsView: View {
                 .scrollContentBackground(.hidden)
                 .listStyle(.insetGrouped)
             }
+            
+            if viewModel.isLoading { LoadingView() }
         }
         .navigationBar(title: "Settings", displayMode: .inline)
         .navigationBarBackButtonHidden(true)
@@ -49,6 +51,8 @@ struct SettingsView: View {
                 PresentationBackArrowButton()
             }
         }
+        .alert(item: $viewModel.alertItem, content: { $0.alert })
+        .onOpenURL(perform: viewModel.handleUrl)
     }
 }
 

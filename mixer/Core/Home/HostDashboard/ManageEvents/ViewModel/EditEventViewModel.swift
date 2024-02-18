@@ -149,6 +149,12 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
         }
     }
     
+    
+    func shouldShowRow(withTitle title: String) -> Bool {
+        return true
+    }
+    
+    
     @ViewBuilder
     func destination(for title: String) -> some View {
         switch title {

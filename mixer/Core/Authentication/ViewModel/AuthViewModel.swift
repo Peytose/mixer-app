@@ -16,7 +16,6 @@ class AuthViewModel: ObservableObject {
     // User-Related Variables
     @Published var firstName       = ""
     @Published var lastName        = ""
-    @Published var email           = ""
     @Published var phoneNumber     = ""
     @Published var countryCode     = ""
     @Published var code            = ""
@@ -31,6 +30,7 @@ class AuthViewModel: ObservableObject {
         }
     }
     @Published var universityId    = ""
+    @Published var universityName  = ""
     @Published var isBirthdayValid = false
     @Published var isUsernameValid = false
     
@@ -75,9 +75,8 @@ class AuthViewModel: ObservableObject {
             case .enterName: return AnyView(EnterNameView())
             case .enterPhone: return AnyView(EnterPhoneNumberView())
             case .verifyCode: return AnyView(EnterVerificationCodeView())
-            case .enterEmail: return AnyView(EnterEmailView())
             case .uploadProfilePicAndBio: return AnyView(EnterProfilePictureAndBioView())
-            case .enterBirthday: return AnyView(EnterBirthdayView())
+            case .enterBirthdayAndUniversity: return AnyView(EnterBirthdayAndUniversityView())
             case .selectGender: return AnyView(SelectGenderView())
             case .chooseUsername: return AnyView(EnterUsernameView())
         }
@@ -100,9 +99,7 @@ class AuthViewModel: ObservableObject {
                     self.next(state)
                 }
             }
-        case .enterEmail:
-            self.sendVerificationEmail()
-        case .uploadProfilePicAndBio, .enterBirthday, .selectGender:
+        case .uploadProfilePicAndBio, .enterBirthdayAndUniversity, .selectGender:
             self.next(state)
         case .chooseUsername:
             self.register()
@@ -118,12 +115,10 @@ class AuthViewModel: ObservableObject {
             return !phoneNumber.isEmpty
         case .verifyCode:
             return !code.isEmpty
-        case .enterEmail:
-            return email.isValidEmail
         case .uploadProfilePicAndBio:
             return image != nil
-        case .enterBirthday:
-            return isBirthdayValid
+        case .enterBirthdayAndUniversity:
+            return isBirthdayValid && universityId != ""
         case .chooseUsername:
             return !username.isEmpty
         default: return true
@@ -155,53 +150,17 @@ class AuthViewModel: ObservableObject {
             }
         }
     }
+    
+    
+    func selectUniversity(_ university: University) {
+        guard let id = university.id else { return }
+        self.universityId   = id
+        self.universityName = university.shortName ?? university.name
+    }
 }
 
 // MARK: - Firebase Query Functions
 extension AuthViewModel {
-    private func fetchUniversity(completion: @escaping (Bool) -> Void) {
-        if !email.isValidEmail {
-            completion(false)
-            return
-        }
-        
-        let emailComponents = email.split(separator: "@")
-        if emailComponents.count != 2 {
-            completion(false)
-            return
-        }
-        
-        let domain = String(emailComponents[1])
-        print("DEBUG: Domain from email: \(domain)")
-        
-        if domain.contains(".com") {
-            self.universityId = "com"
-            completion(true)
-        }
-        
-        let queryKey = QueryKey(collectionPath: "universities",
-                                filters: ["domain == \(domain)"])
-        
-        COLLECTION_UNIVERSITIES
-            .whereField("domain", isEqualTo: domain)
-            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshot, error in
-                if let error = error {
-                    print("DEBUG: Error getting domain from email. \(error.localizedDescription)")
-                    completion(false)
-                    return
-                }
-                
-                guard let documents = snapshot?.documents, let document = documents.first else {
-                    completion(false)
-                    return
-                }
-                
-                self.universityId = document.documentID
-                completion(true)
-            }
-    }
-
-    
     func register() {
         guard let image = image, let uid = Auth.auth().currentUser?.uid else { return }
         
@@ -211,7 +170,6 @@ extension AuthViewModel {
                             lastName: self.lastName.capitalized,
                             displayName: self.firstName.capitalized,
                             username: self.username.lowercased(),
-                            email: self.email.lowercased(),
                             profileImageUrl: imageUrl,
                             birthday: Timestamp(date: self.birthday),
                             universityId: self.universityId,
@@ -260,66 +218,6 @@ extension AuthViewModel {
             
             guard let _ = result?.user else { return }
             self.service.fetchUser()
-            self.hideLoadingView()
-            completion(true)
-        }
-    }
-    
-    
-    private func sendVerificationEmail() {
-        showLoadingView()
-        
-        fetchUniversity { success in
-            guard success else {
-                self.hideLoadingView()
-                self.alertItem = AlertContext.unableToSendEmailLink
-                return
-            }
-            
-            let actionCodeSettings = ActionCodeSettings()
-            actionCodeSettings.url = URL(string: "https://mixer.page.link/email-login?email=\(self.email)")
-            actionCodeSettings.handleCodeInApp = true
-            
-            Auth.auth().sendSignInLink(toEmail: self.email, actionCodeSettings: actionCodeSettings) { error in
-                if let error = error as? NSError {
-                    self.handleAuthError(error)
-                    return
-                }
-                
-                self.hideLoadingView()
-                self.alertItem = AlertContext.sentEmailLink
-            }
-        }
-    }
-    
-    
-    func handleVerificationEmail(_ url: URL, completion: @escaping(Bool) -> Void) {
-        showLoadingView()
-        
-        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let queryItems = components.queryItems,
-              let linkParam = queryItems.first(where: { $0.name == "link" }),
-              let linkString = linkParam.value,
-              let linkUrl = URL(string: linkString),
-              let linkQueryItems = URLComponents(url: linkUrl, resolvingAgainstBaseURL: true)?.queryItems,
-              let continueUrl = linkQueryItems.first(where: { $0.name == "continueUrl" })?.value,
-              let emailQueryItem = URLComponents(string: continueUrl)?.queryItems?.first(where: { $0.name == "email" }),
-              emailQueryItem.value == email else {
-            hideLoadingView()
-            completion(false)
-            return
-        }
-        
-        let link = url.absoluteString
-        let credential = EmailAuthProvider.credential(withEmail: email, link: link)
-        
-        Auth.auth().currentUser?.link(with: credential) { authResult, error in
-            if let error = error {
-                self.handleAuthError(error as NSError)
-                completion(false)
-                return
-            }
-            
             self.hideLoadingView()
             completion(true)
         }
@@ -427,16 +325,10 @@ extension AuthViewModel {
     private func handleAuthError(_ error: NSError) {
         hideLoadingView()
         let errorCode = AuthErrorCode(_nsError: error)
-        print("DEBUG: Auth Error: \(error.localizedDescription)")
-        print("DEBUG: Auth Error: \(error)")
         
         switch errorCode.code {
         case .invalidCredential:
             alertItem = AlertContext.invalidCredential
-        case .emailAlreadyInUse:
-            alertItem = AlertContext.emailAlreadyInUse
-        case .invalidEmail:
-            alertItem = AlertContext.invalidEmail
         case .tooManyRequests:
             alertItem = AlertContext.tooManyRequests
         case .userNotFound:

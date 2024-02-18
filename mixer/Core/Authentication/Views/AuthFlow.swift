@@ -38,13 +38,6 @@ struct AuthFlow: View {
                     .padding(.top, 5)
             }
         }
-        .onOpenURL { url in
-            viewModel.handleVerificationEmail(url) { success in
-                if success && authState == .enterEmail {
-                    viewModel.next($authState)
-                }
-            }
-        }
         .onChange(of: viewModel.isLoggedOut) { newValue in
             if newValue { authState = .enterName }
         }

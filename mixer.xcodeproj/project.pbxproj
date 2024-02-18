@@ -77,6 +77,7 @@
 		9C4B0E512983795600A9D963 /* EventListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B0E502983795600A9D963 /* EventListView.swift */; };
 		9C4B4AF02A993B8000D70454 /* NavigationBackArrowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B4AEF2A993B8000D70454 /* NavigationBackArrowButton.swift */; };
 		9C4FB4B92AF995670046C58E /* Firestore+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4FB4B82AF995670046C58E /* Firestore+Ext.swift */; };
+		9C5051772B81796A00543226 /* EnterBirthdayAndUniversityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5051762B81796A00543226 /* EnterBirthdayAndUniversityView.swift */; };
 		9C50D23329FB4F65002FAE76 /* EventMapAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C50D23229FB4F65002FAE76 /* EventMapAnnotation.swift */; };
 		9C50D23529FB54A6002FAE76 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C50D23429FB54A6002FAE76 /* HapticManager.swift */; };
 		9C52122F2A58A2AE00C66C83 /* Courier_iOS in Frameworks */ = {isa = PBXBuildFile; productRef = 9C52122E2A58A2AE00C66C83 /* Courier_iOS */; };
@@ -310,7 +311,6 @@
 		A6BF68212A02255F000FF54B /* LaunchScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF68202A02255F000FF54B /* LaunchScreenView.swift */; };
 		A6BF68232A023912000FF54B /* SmallEventCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6BF68222A023912000FF54B /* SmallEventCell.swift */; };
 		A6C32A0F2A40403F006EEE77 /* FlowContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C32A0E2A40403F006EEE77 /* FlowContainerView.swift */; };
-		A6C99FC029DA5BA00046D61B /* EnterBirthdayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FBF29DA5BA00046D61B /* EnterBirthdayView.swift */; };
 		A6C99FC229DA5BFF0046D61B /* SelectGenderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC129DA5BFF0046D61B /* SelectGenderView.swift */; };
 		A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */; };
 		A6CBBDCD2B0839D90029F1EC /* EditEventDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6CBBDCC2B0839D90029F1EC /* EditEventDateView.swift */; };
@@ -385,6 +385,7 @@
 		9C4B0E502983795600A9D963 /* EventListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventListView.swift; sourceTree = "<group>"; };
 		9C4B4AEF2A993B8000D70454 /* NavigationBackArrowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBackArrowButton.swift; sourceTree = "<group>"; };
 		9C4FB4B82AF995670046C58E /* Firestore+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Firestore+Ext.swift"; sourceTree = "<group>"; };
+		9C5051762B81796A00543226 /* EnterBirthdayAndUniversityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterBirthdayAndUniversityView.swift; sourceTree = "<group>"; };
 		9C50D23229FB4F65002FAE76 /* EventMapAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMapAnnotation.swift; sourceTree = "<group>"; };
 		9C50D23429FB54A6002FAE76 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		9C529A3B2B574744001D847E /* TimestampManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimestampManager.swift; sourceTree = "<group>"; };
@@ -585,7 +586,6 @@
 		A6BF68202A02255F000FF54B /* LaunchScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenView.swift; sourceTree = "<group>"; };
 		A6BF68222A023912000FF54B /* SmallEventCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallEventCell.swift; sourceTree = "<group>"; };
 		A6C32A0E2A40403F006EEE77 /* FlowContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowContainerView.swift; sourceTree = "<group>"; };
-		A6C99FBF29DA5BA00046D61B /* EnterBirthdayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterBirthdayView.swift; sourceTree = "<group>"; };
 		A6C99FC129DA5BFF0046D61B /* SelectGenderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectGenderView.swift; sourceTree = "<group>"; };
 		A6C99FC329DA5CA50046D61B /* CheckBoxToggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckBoxToggle.swift; sourceTree = "<group>"; };
 		A6CBBDCC2B0839D90029F1EC /* EditEventDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditEventDateView.swift; sourceTree = "<group>"; };
@@ -893,6 +893,7 @@
 		9C3BADCC291F552F009C8043 /* CustomViews */ = {
 			isa = PBXGroup;
 			children = (
+				9CFB25F02AEC106200F090E6 /* UniversitySearchView.swift */,
 				9CDFA5CE2A8711D700EE0370 /* QRCodeScannerView.swift */,
 				A6C32A0E2A40403F006EEE77 /* FlowContainerView.swift */,
 				A6D6FC8029DF595700BFCF52 /* MailViewModal.swift */,
@@ -1047,7 +1048,6 @@
 				9C20AF032A735E4A00F057BD /* GuestDetailView.swift */,
 				9C20AF022A735E4A00F057BD /* GuestlistEntryForm.swift */,
 				9CDFC3CF2A9E908100BDFA60 /* GuestlistPDF.swift */,
-				9CFB25F02AEC106200F090E6 /* UniversitySearchView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1218,9 +1218,8 @@
 				9CF84C9829AAA38A005BE430 /* EnterNameView.swift */,
 				A678594929C647F200A2D884 /* EnterPhoneNumberView.swift */,
 				9C9331BB292739700079E039 /* EnterVerificationCodeView.swift */,
-				9C9331B629272D7F0079E039 /* EnterEmailView.swift */,
+				9C5051762B81796A00543226 /* EnterBirthdayAndUniversityView.swift */,
 				9CF84C9A29AAE337005BE430 /* EnterProfilePictureAndBioView.swift */,
-				A6C99FBF29DA5BA00046D61B /* EnterBirthdayView.swift */,
 				A6C99FC129DA5BFF0046D61B /* SelectGenderView.swift */,
 				9C567A9F2934FCFF00EA5FCB /* EnterUsernameView.swift */,
 			);
@@ -1479,6 +1478,7 @@
 				9C2DC2602A735CC300494D7C /* SettingsView.swift */,
 				9C80634C2B09B6BA00F34432 /* SettingsSection.swift */,
 				9C3ED6AB2B6350E400B5D534 /* SettingsRow.swift */,
+				9C9331B629272D7F0079E039 /* EnterEmailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1969,6 +1969,7 @@
 				9C8F0A982A940DF300A06D9A /* ProfileView.swift in Sources */,
 				9C3D48372987227D00116C9E /* Timestamp+Ext.swift in Sources */,
 				9CDFA5602A76DA2100EE0370 /* SideMenuView.swift in Sources */,
+				9C5051772B81796A00543226 /* EnterBirthdayAndUniversityView.swift in Sources */,
 				9C8F0A7A2A930FCC00A06D9A /* SearchItem.swift in Sources */,
 				9C3BADBA291F54B4009C8043 /* mixerApp.swift in Sources */,
 				9C529A412B574A40001D847E /* DocumentReference+Ext.swift in Sources */,
@@ -2004,7 +2005,6 @@
 				A66B7E022AFD70240026D26F /* HostDashboardView.swift in Sources */,
 				9C3BADD7291F55D1009C8043 /* Constants.swift in Sources */,
 				A66E672029DF7ED500AB355E /* EventCreationActionButton.swift in Sources */,
-				A6C99FC029DA5BA00046D61B /* EnterBirthdayView.swift in Sources */,
 				9C705F8D2A8E9A8B00F1D0DB /* CLLocationCoordinate2D+Ext.swift in Sources */,
 				A62BE19B29C8221C0052D34F /* LaunchScreenCard.swift in Sources */,
 				9CCEC4BC2AF93BA000367055 /* HostMemberType.swift in Sources */,

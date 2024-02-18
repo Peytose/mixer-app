@@ -23,6 +23,7 @@ enum SettingSaveType {
     case gender
     case relationship
     case major
+    case email
     case ageToggle
     // Host-specific save types
     case website
@@ -39,12 +40,17 @@ class SettingsViewModel: SettingsConfigurable {
     @Published var user: User?
     @Published var displayName: String     = ""
     @Published var bio: String             = ""
+    @Published var email: String           = ""
     @Published var instagramHandle: String = ""
     @Published var showAgeOnProfile: Bool  = false
     @Published var genderStr: String       = ""
     @Published var datingStatusStr: String = ""
     @Published var majorStr: String        = ""
+    @Published var isLoading               = false
+    @Published var alertItem: AlertItem?
+    
     private var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
+    private var universityId: String = ""
     
     let privacyLink = "https://rococo-gumdrop-0f32da.netlify.app"
     let termsOfServiceLink = "https://mixer.llc/privacy-policy/"
@@ -66,6 +72,7 @@ class SettingsViewModel: SettingsConfigurable {
                 
                 self.displayName = user.displayName
                 self.bio = user.bio ?? ""
+                self.email = user.email ?? ""
                 self.instagramHandle = user.instagramHandle ?? ""
                 self.showAgeOnProfile = user.showAgeOnProfile
                 self.genderStr = user.gender.description
@@ -156,6 +163,15 @@ class SettingsViewModel: SettingsConfigurable {
                     completion()
                 }
             
+        case .email:
+            guard self.email.isValidEmail else { return }
+            
+            COLLECTION_USERS
+                .document(uid)
+                .updateData(["email": email]) { _ in
+                    completion()
+                }
+            
         case .ageToggle:
             COLLECTION_USERS
                 .document(uid)
@@ -200,8 +216,6 @@ extension SettingsViewModel {
         switch title {
         case "Display Name":
             return Binding<String>(get: { self.displayName }, set: { self.displayName = $0 })
-        case "Bio":
-            return Binding<String>(get: { self.bio }, set: { self.bio = $0 })
         case "Instagram":
             return Binding<String>(get: { self.instagramHandle }, set: { self.instagramHandle = $0 })
         case "Gender":
@@ -215,7 +229,7 @@ extension SettingsViewModel {
         case "Username":
             return .constant(user.username)
         case "Email":
-            return .constant(user.email)
+            return Binding<String>(get: { self.email }, set: { self.email = $0 })
         case "Phone":
             return .constant(self.phoneNumber)
         case "Version":
@@ -239,6 +253,8 @@ extension SettingsViewModel {
                 return .relationship
             case "Major":
                 return .major
+            case "Email":
+                return .email
             case "Show age on profile?":
                 return .ageToggle
             default:
@@ -272,6 +288,18 @@ extension SettingsViewModel {
             return ""
         }
     }
+
+    
+    func shouldShowRow(withTitle title: String) -> Bool {
+        // Example condition for "Connect Email" row
+        if title.contains("Connect") && !(email.isEmpty) {
+            // Don't show the row if the email is connected (not empty)
+            return false
+        }
+        // Add other conditions for different rows as needed
+        // Return true for rows that don't have specific conditions and should always be shown
+        return true
+    }
     
     
     // Mapping destination based on the row title
@@ -285,7 +313,182 @@ extension SettingsViewModel {
                                         limit: 150) { updatedText in
                 self.save(for: .bio(updatedText))
             }
-            default: ComingSoonView()
+        case "Connect Email":
+            EnterEmailView(viewModel: self)
+        default: ComingSoonView()
         }
     }
+}
+
+extension SettingsViewModel {
+    private func fetchUniversity(completion: @escaping (Bool) -> Void) {
+        if !email.isValidEmail {
+            completion(false)
+            return
+        }
+        
+        let emailComponents = email.split(separator: "@")
+        if emailComponents.count != 2 {
+            completion(false)
+            return
+        }
+        
+        let domain = String(emailComponents[1])
+        print("DEBUG: Domain from email: \(domain)")
+        
+        if domain.contains(".com") {
+            universityId = "com"
+            completion(true)
+        }
+        
+        let queryKey = QueryKey(collectionPath: "universities",
+                                filters: ["domain == \(domain)"])
+        
+        COLLECTION_UNIVERSITIES
+            .whereField("domain", isEqualTo: domain)
+            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error getting domain from email. \(error.localizedDescription)")
+                    completion(false)
+                    return
+                }
+                
+                guard let documents = snapshot?.documents, let document = documents.first else {
+                    completion(false)
+                    return
+                }
+                
+                self.universityId = document.documentID
+                completion(true)
+            }
+    }
+    
+    
+    func sendVerificationEmail() {
+        showLoadingView()
+        
+        fetchUniversity { success in
+            guard success else {
+                self.hideLoadingView()
+                self.alertItem = AlertContext.unableToSendEmailLink
+                return
+            }
+            
+            let actionCodeSettings = ActionCodeSettings()
+            actionCodeSettings.url = URL(string: "https://mixer.page.link/email-login?email=\(self.email)")
+            actionCodeSettings.handleCodeInApp = true
+            
+            Auth.auth().sendSignInLink(toEmail: self.email, actionCodeSettings: actionCodeSettings) { error in
+                if let error = error as? NSError {
+                    self.handleAuthError(error)
+                    return
+                }
+                
+                self.hideLoadingView()
+                self.alertItem = AlertContext.sentEmailLink
+            }
+        }
+    }
+    
+    
+    func handleUrl(_ url: URL) {
+        print("Handling URL: \(url)")
+        self.handleVerificationEmail(url) { success in
+            if success {
+                print("Email verification successful. Saving email...")
+                self.save(for: .email)
+            } else {
+                print("Email verification failed.")
+                HapticManager.playLightImpact()
+            }
+        }
+    }
+
+    private func handleVerificationEmail(_ url: URL, completion: @escaping (Bool) -> Void) {
+        showLoadingView()
+        
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+              let queryItems = components.queryItems,
+              let linkParam = queryItems.first(where: { $0.name == "link" }),
+              let linkString = linkParam.value,
+              let linkUrl = URL(string: linkString),
+              let linkQueryItems = URLComponents(url: linkUrl, resolvingAgainstBaseURL: true)?.queryItems,
+              let continueUrlParam = linkQueryItems.first(where: { $0.name == "continueUrl" })?.value,
+              let continueUrl = URL(string: continueUrlParam),
+              let continueUrlComponents = URLComponents(url: continueUrl, resolvingAgainstBaseURL: true),
+              let emailQueryItem = continueUrlComponents.queryItems?.first(where: { $0.name == "email" }) else {
+            print("Failed to extract email or continueUrl from the link.")
+            hideLoadingView()
+            completion(false)
+            return
+        }
+        
+        // Ensure the email from the URL matches the expected email format.
+        guard emailQueryItem.value?.isValidEmail ?? false else {
+            print("Extracted email is not in valid format.")
+            hideLoadingView()
+            completion(false)
+            return
+        }
+
+        let email = emailQueryItem.value!
+        print("Extracted email: \(email)")
+        
+        let link = url.absoluteString
+        let credential = EmailAuthProvider.credential(withEmail: email, link: link)
+        
+        Auth.auth().currentUser?.link(with: credential) { authResult, error in
+            if let error = error {
+                print("Firebase Auth linking error: \(error.localizedDescription)")
+                self.handleAuthError(error as NSError)
+                completion(false)
+                return
+            }
+            
+            print("Firebase Auth linking successful.")
+            self.hideLoadingView()
+            completion(true)
+        }
+    }
+
+
+    private func handleAuthError(_ error: NSError) {
+        hideLoadingView()
+        let errorCode = AuthErrorCode(_nsError: error)
+        
+        switch errorCode.code {
+        case .invalidCredential:
+            print("Auth Error: Invalid Credential")
+            alertItem = AlertContext.invalidCredential
+        case .emailAlreadyInUse:
+            print("Auth Error: Email Already in Use")
+            alertItem = AlertContext.emailAlreadyInUse
+        case .invalidEmail:
+            print("Auth Error: Invalid Email")
+            alertItem = AlertContext.invalidEmail
+        case .tooManyRequests:
+            print("Auth Error: Too Many Requests")
+            alertItem = AlertContext.tooManyRequests
+        case .userNotFound:
+            print("Auth Error: User Not Found")
+            alertItem = AlertContext.userNotFound
+        case .networkError:
+            print("Auth Error: Network Error")
+            alertItem = AlertContext.networkError
+        case .credentialAlreadyInUse:
+            print("Auth Error: Credential Already in Use")
+            alertItem = AlertContext.credentialAlreadyInUse
+        case .captchaCheckFailed:
+            print("Auth Error: Captcha Check Failed")
+            break
+        default:
+            print("Unspecified Auth Error: \(error.localizedDescription)")
+            alertItem = AlertContext.unspecifiedAuthError
+        }
+    }
+
+    
+    
+    private func showLoadingView() { isLoading = true }
+    private func hideLoadingView() { isLoading = false }
 }
