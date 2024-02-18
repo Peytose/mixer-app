@@ -34,8 +34,6 @@ class UserService: ObservableObject {
             return
         }
         
-        print("DEBUG: CURRENT USER ID : \(uid)")
-        
         self.listener = COLLECTION_USERS
             .document(uid)
             .addSnapshotListener { snapshot, error in
@@ -65,7 +63,6 @@ class UserService: ObservableObject {
             self.user?.associatedHosts = sortedHosts
             if let firstHost = sortedHosts.first {
                 self.user?.currentHost = firstHost
-                print("DEBUG: Selected host: \(firstHost.name)")
             }
         }
     }
@@ -267,13 +264,16 @@ class UserService: ObservableObject {
         batch.deleteDocument(guestReference)
         
         // First, perform the query to find guest notifications to be deleted
+        let queryKey = QueryKey(collectionPath: "notifications/\(userId)/user-notifications",
+                                filters: ["eventId == \(eventId)", "type IN [\(NotificationType.guestlistAdded.rawValue)]"])
+                                
         let notificationQuery = COLLECTION_NOTIFICATIONS
             .document(userId)
             .collection("user-notifications")
             .whereField("eventId", isEqualTo: eventId)
             .whereField("type", in: [NotificationType.guestlistAdded.rawValue])
         
-        notificationQuery.getDocuments { snapshot, error in
+        notificationQuery.fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 2000) { snapshot, error in
             guard let documents = snapshot?.documents, error == nil else {
                 completion?(error)
                 return
