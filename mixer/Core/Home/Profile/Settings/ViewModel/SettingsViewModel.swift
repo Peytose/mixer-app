@@ -434,7 +434,7 @@ extension SettingsViewModel {
         let email = emailQueryItem.value!
         print("Extracted email: \(email)")
         
-        let link = url.absoluteString
+        let link = continueUrl.absoluteString
         let credential = EmailAuthProvider.credential(withEmail: email, link: link)
         
         Auth.auth().currentUser?.link(with: credential) { authResult, error in

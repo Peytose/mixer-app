@@ -120,7 +120,7 @@ class AuthViewModel: ObservableObject {
         case .enterBirthdayAndUniversity:
             return isBirthdayValid && universityId != ""
         case .chooseUsername:
-            return !username.isEmpty
+            return !username.isEmpty && self.isUsernameValid
         default: return true
         }
     }
