@@ -118,7 +118,7 @@ class AuthViewModel: ObservableObject {
         case .uploadProfilePicAndBio:
             return image != nil
         case .enterBirthdayAndUniversity:
-            return isBirthdayValid && universityId != ""
+            return isBirthdayValid && !universityId.isEmpty
         case .chooseUsername:
             return !username.isEmpty && self.isUsernameValid
         default: return true

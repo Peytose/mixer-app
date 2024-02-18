@@ -408,34 +408,20 @@ extension SettingsViewModel {
         showLoadingView()
         
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let queryItems = components.queryItems,
-              let linkParam = queryItems.first(where: { $0.name == "link" }),
-              let linkString = linkParam.value,
-              let linkUrl = URL(string: linkString),
-              let linkQueryItems = URLComponents(url: linkUrl, resolvingAgainstBaseURL: true)?.queryItems,
-              let continueUrlParam = linkQueryItems.first(where: { $0.name == "continueUrl" })?.value,
-              let continueUrl = URL(string: continueUrlParam),
-              let continueUrlComponents = URLComponents(url: continueUrl, resolvingAgainstBaseURL: true),
-              let emailQueryItem = continueUrlComponents.queryItems?.first(where: { $0.name == "email" }) else {
-            print("Failed to extract email or continueUrl from the link.")
+              let linkString = components.queryItems?.first(where: { $0.name == "link" })?.value,
+              let decodedLinkString = linkString.removingPercentEncoding,
+              let linkComponents = URLComponents(string: decodedLinkString),
+              let continueUrlString = linkComponents.queryItems?.first(where: { $0.name == "continueUrl" })?.value,
+              let decodedContinueUrlString = continueUrlString.removingPercentEncoding,
+              let continueUrl = URL(string: decodedContinueUrlString),
+              let email = URLComponents(url: continueUrl, resolvingAgainstBaseURL: true)?.queryItems?.first(where: { $0.name == "email" })?.value else {
+            print("Failed to extract or decode continueUrl or email.")
             hideLoadingView()
             completion(false)
             return
         }
         
-        // Ensure the email from the URL matches the expected email format.
-        guard emailQueryItem.value?.isValidEmail ?? false else {
-            print("Extracted email is not in valid format.")
-            hideLoadingView()
-            completion(false)
-            return
-        }
-
-        let email = emailQueryItem.value!
-        print("Extracted email: \(email)")
-        
-        let link = continueUrl.absoluteString
-        let credential = EmailAuthProvider.credential(withEmail: email, link: link)
+        let credential = EmailAuthProvider.credential(withEmail: email, link: linkString)
         
         Auth.auth().currentUser?.link(with: credential) { authResult, error in
             if let error = error {
