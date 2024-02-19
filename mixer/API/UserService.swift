@@ -68,6 +68,66 @@ class UserService: ObservableObject {
     }
     
     
+    func deleteAccount(completion: @escaping (Error?) -> Void) {
+        let user = Auth.auth().currentUser
+        
+        user?.delete { error in
+            if let error = error {
+                completion(error)
+            } else {
+                self.wipeUserPresence { error in
+                    if let error = error {
+                        completion(error)
+                    } else {
+                        self.user = nil
+                        completion(nil)
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    private func wipeUserPresence(completion: @escaping (Error?) -> Void) {
+        guard let userId = self.user?.id else { return }
+        let db = Firestore.firestore()
+        let batch = db.batch()
+        
+        let userNotifQuery = COLLECTION_NOTIFICATIONS.document(userId).collection("user-notifications")
+        let userSentNotifQuery = db.collectionGroup("user-notifications").whereField("uid", isEqualTo: userId)
+        let userEventLikesQuery = db.collectionGroup("event-favorites").whereField("uid", isEqualTo: userId)
+        let userSentRelations = COLLECTION_RELATIONSHIPS.whereField("initiatorUid", isEqualTo: userId)
+        let userReceivedRelations = COLLECTION_RELATIONSHIPS.whereField("recipientUid", isEqualTo: userId)
+        let hostMembershipQuery = db.collectionGroup("member-list").whereField("uid", isEqualTo: userId)
+
+        let queries = [userNotifQuery, userSentNotifQuery, userEventLikesQuery, userSentRelations, userReceivedRelations, hostMembershipQuery]
+        
+        let dispatchGroup = DispatchGroup()
+        
+        for query in queries {
+            dispatchGroup.enter()
+            Firestore.firestore().queueDeletions(inBatch: batch, forQuery: query) { error in
+                if let error = error {
+                    completion(error)
+                }
+                
+                dispatchGroup.leave()
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            batch.commit { error in
+                if let error = error {
+                    completion(error)
+                } else {
+                    completion(nil)
+                }
+            }
+        }
+    }
+
+    
+    
     func selectHost(_ host: Host) {
         self.user?.currentHost = host
         print("DEBUG: Selected host: \(host.name)")

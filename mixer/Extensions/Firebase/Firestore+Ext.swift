@@ -15,4 +15,19 @@ extension Firestore {
             batch.deleteDocument(documentReference)
         }
     }
+    
+    
+    func queueDeletions(inBatch batch: WriteBatch, forQuery query: Query, completion: @escaping (Error?) -> Void) {
+        query.getDocuments { snapshot, error in
+            if let error = error  {
+                completion(error)
+            }
+            
+            guard let documents = snapshot?.documents else { return }
+            
+            for document in documents {
+                batch.deleteDocument(document.reference)
+            }
+        }
+    }
 }

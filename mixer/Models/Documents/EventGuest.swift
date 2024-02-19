@@ -23,6 +23,7 @@ struct EventGuest: Identifiable, Codable {
     var status: GuestStatus
     var invitedBy: String?
     var checkedInBy: String?
+    var uid: String?
     var timestamp: Timestamp?
     
     var university: University?
@@ -39,6 +40,7 @@ struct EventGuest: Identifiable, Codable {
          status: GuestStatus = .invited,
          invitedBy: String? = nil,
          checkedInBy: String? = nil,
+         uid: String? = nil,
          timestamp: Timestamp? = Timestamp(),
          university: University? = nil) {
         self.name            = name
@@ -52,6 +54,7 @@ struct EventGuest: Identifiable, Codable {
         self.major           = major
         self.status          = status
         self.invitedBy       = invitedBy
+        self.uid             = uid
         self.timestamp       = timestamp
         self.university      = university
     }

@@ -248,6 +248,14 @@ struct AlertContext {
                                                               message: Text("We were unable to update your profile at this time.\nPlease try again later."),
                                                               dismissButton: .default(Text("Shucks!")))
     
+    static let accountDeletionFailedDueToHosting  = AlertItem(title: Text("Account Deletion Failed"),
+                                                              message: Text("You are currently the main user for one or more hosts. Please transfer your hosting privileges to another member in Host Dashboard > Members before deleting your account."),
+                                                              dismissButton: .default(Text("Got it!")))
+    
+    static let accountDeletionGeneralError        = AlertItem(title: Text("Account Deletion Failed"),
+                                                              message: Text("We encountered an issue deleting your account. Please contact us immediately at Profile > Settings > Questions for assistance."),
+                                                              dismissButton: .default(Text("Got it!")))
+
     
     //MARK: - LocationDetailView Errors
     static let unableToGetCheckInStatus           = AlertItem(title: Text("Server Error"),

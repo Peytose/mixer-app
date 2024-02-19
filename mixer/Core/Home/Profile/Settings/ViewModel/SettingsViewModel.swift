@@ -46,6 +46,7 @@ class SettingsViewModel: SettingsConfigurable {
     @Published var genderStr: String       = ""
     @Published var datingStatusStr: String = ""
     @Published var majorStr: String        = ""
+    @Published var confirmUsername         = ""
     @Published var isLoading               = false
     @Published var alertItem: AlertItem?
     
@@ -315,6 +316,8 @@ extension SettingsViewModel {
             }
         case "Connect Email":
             EnterEmailView(viewModel: self)
+        case "Delete Account":
+            ConfirmDeleteAccountView(viewModel: self)
         default: ComingSoonView()
         }
     }
@@ -404,6 +407,7 @@ extension SettingsViewModel {
         }
     }
 
+    
     private func handleVerificationEmail(_ url: URL, completion: @escaping (Bool) -> Void) {
         showLoadingView()
         
@@ -434,6 +438,22 @@ extension SettingsViewModel {
             print("Firebase Auth linking successful.")
             self.hideLoadingView()
             completion(true)
+        }
+    }
+    
+    
+    func deleteAccount() {
+        if self.user?.associatedHosts?.contains(where: { $0.mainUserId == self.user?.id }) ?? false {
+            alertItem = AlertContext.accountDeletionFailedDueToHosting
+        } else {
+            service.deleteAccount { error in
+                if let error = error {
+                    self.alertItem = AlertContext.accountDeletionGeneralError
+                    return
+                } else {
+                    HapticManager.playSuccess()
+                }
+            }
         }
     }
 

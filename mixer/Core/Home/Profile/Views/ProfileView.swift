@@ -150,7 +150,7 @@ extension ProfileView {
                                                 image: Image(uiImage: image))
                                 }
                             } label: {
-                                Image(systemName: "square.and.arrow.up")
+                                Image(systemName: "qrcode")
                                     .font(.title2)
                                     .foregroundColor(Color.theme.Offwhite2)
                                     .padding(.trailing, 8)
@@ -158,8 +158,8 @@ extension ProfileView {
                             }
                         }
                         
-                        if (viewModel.user.instagramHandle != nil) {
-                            if let instagramUrl = URL(string: "https://www.instagram.com/\(viewModel.user.instagramHandle ?? "mixerpartyapp")/") {
+                        if let handle = viewModel.user.instagramHandle {
+                            if let instagramUrl = URL(string: "https://www.instagram.com/\(handle)/") {
                                 Link(destination: instagramUrl) {
                                     Image("instagram")
                                         .resizable()

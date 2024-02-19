@@ -78,6 +78,7 @@
 		9C4B4AF02A993B8000D70454 /* NavigationBackArrowButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4B4AEF2A993B8000D70454 /* NavigationBackArrowButton.swift */; };
 		9C4FB4B92AF995670046C58E /* Firestore+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4FB4B82AF995670046C58E /* Firestore+Ext.swift */; };
 		9C5051772B81796A00543226 /* EnterBirthdayAndUniversityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5051762B81796A00543226 /* EnterBirthdayAndUniversityView.swift */; };
+		9C5051792B839C4400543226 /* ConfirmDeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C5051782B839C4400543226 /* ConfirmDeleteAccountView.swift */; };
 		9C50D23329FB4F65002FAE76 /* EventMapAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C50D23229FB4F65002FAE76 /* EventMapAnnotation.swift */; };
 		9C50D23529FB54A6002FAE76 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C50D23429FB54A6002FAE76 /* HapticManager.swift */; };
 		9C52122F2A58A2AE00C66C83 /* Courier_iOS in Frameworks */ = {isa = PBXBuildFile; productRef = 9C52122E2A58A2AE00C66C83 /* Courier_iOS */; };
@@ -386,6 +387,7 @@
 		9C4B4AEF2A993B8000D70454 /* NavigationBackArrowButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBackArrowButton.swift; sourceTree = "<group>"; };
 		9C4FB4B82AF995670046C58E /* Firestore+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Firestore+Ext.swift"; sourceTree = "<group>"; };
 		9C5051762B81796A00543226 /* EnterBirthdayAndUniversityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterBirthdayAndUniversityView.swift; sourceTree = "<group>"; };
+		9C5051782B839C4400543226 /* ConfirmDeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmDeleteAccountView.swift; sourceTree = "<group>"; };
 		9C50D23229FB4F65002FAE76 /* EventMapAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMapAnnotation.swift; sourceTree = "<group>"; };
 		9C50D23429FB54A6002FAE76 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		9C529A3B2B574744001D847E /* TimestampManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimestampManager.swift; sourceTree = "<group>"; };
@@ -1479,6 +1481,7 @@
 				9C80634C2B09B6BA00F34432 /* SettingsSection.swift */,
 				9C3ED6AB2B6350E400B5D534 /* SettingsRow.swift */,
 				9C9331B629272D7F0079E039 /* EnterEmailView.swift */,
+				9C5051782B839C4400543226 /* ConfirmDeleteAccountView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -1814,6 +1817,7 @@
 				9C20AF182A735FDE00F057BD /* MixerIdView.swift in Sources */,
 				9CB312152B0D69200097A1BA /* EventType.swift in Sources */,
 				9C705F9F2A8FD7AD00F1D0DB /* MapView.swift in Sources */,
+				9C5051792B839C4400543226 /* ConfirmDeleteAccountView.swift in Sources */,
 				9C8F0A9D2A940E3600A06D9A /* SearchView.swift in Sources */,
 				A6B9E65729518A3C009C936E /* EventCellView.swift in Sources */,
 				9C89F2C52B17DC89003F2C52 /* MapBalloon.swift in Sources */,
