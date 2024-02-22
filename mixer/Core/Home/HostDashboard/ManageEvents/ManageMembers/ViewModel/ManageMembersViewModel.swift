@@ -137,7 +137,8 @@ class ManageMembersViewModel: ObservableObject {
                               let userId = user.id else { return }
                         
                         var link = HostUserLink(timestamp: Timestamp(),
-                                                status: .invited)
+                                                status: .invited,
+                                                uid: userId)
                         
                         guard let encodedLink = try? Firestore.Encoder().encode(link) else { return }
                         

@@ -227,7 +227,6 @@
 		9CDFA5882A78770D00EE0370 /* DiscoverActivationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5872A78770D00EE0370 /* DiscoverActivationView.swift */; };
 		9CDFA58B2A788FE700EE0370 /* Array+Iterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA58A2A788FE700EE0370 /* Array+Iterator.swift */; };
 		9CDFA58F2A79271100EE0370 /* ItemInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA58E2A79271100EE0370 /* ItemInfoCell.swift */; };
-		9CDFA5912A7955C500EE0370 /* LocationDetailsCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5902A7955C500EE0370 /* LocationDetailsCardView.swift */; };
 		9CDFA59B2A7A056D00EE0370 /* NameAndLinksRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA59A2A7A056D00EE0370 /* NameAndLinksRow.swift */; };
 		9CDFA59E2A808D1300EE0370 /* GeoPoint+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA59D2A808D1300EE0370 /* GeoPoint+Ext.swift */; };
 		9CDFA5A42A81594E00EE0370 /* Relationship.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDFA5A32A81594E00EE0370 /* Relationship.swift */; };
@@ -508,7 +507,6 @@
 		9CDFA5872A78770D00EE0370 /* DiscoverActivationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverActivationView.swift; sourceTree = "<group>"; };
 		9CDFA58A2A788FE700EE0370 /* Array+Iterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Iterator.swift"; sourceTree = "<group>"; };
 		9CDFA58E2A79271100EE0370 /* ItemInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemInfoCell.swift; sourceTree = "<group>"; };
-		9CDFA5902A7955C500EE0370 /* LocationDetailsCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationDetailsCardView.swift; sourceTree = "<group>"; };
 		9CDFA59A2A7A056D00EE0370 /* NameAndLinksRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameAndLinksRow.swift; sourceTree = "<group>"; };
 		9CDFA59D2A808D1300EE0370 /* GeoPoint+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GeoPoint+Ext.swift"; sourceTree = "<group>"; };
 		9CDFA5A32A81594E00EE0370 /* Relationship.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Relationship.swift; sourceTree = "<group>"; };
@@ -1137,7 +1135,6 @@
 			children = (
 				9C705F9E2A8FD7AD00F1D0DB /* MapView.swift */,
 				9CDFA5672A76F3BE00EE0370 /* MixerMapViewRepresentable.swift */,
-				9CDFA5902A7955C500EE0370 /* LocationDetailsCardView.swift */,
 				9C89F2C22B17DC7D003F2C52 /* MixerAnnotation.swift */,
 				9C89F2C42B17DC89003F2C52 /* MapBalloon.swift */,
 				A63716392B76E19B0089BCB2 /* DetailView */,
@@ -1813,7 +1810,6 @@
 				9C4B0E4C298241CF00A9D963 /* EventLists.swift in Sources */,
 				A6BF681829FC6E03000FF54B /* PieChartView.swift in Sources */,
 				9CDFA5822A7828D600EE0370 /* MixerLocationAnnotationView.swift in Sources */,
-				9CDFA5912A7955C500EE0370 /* LocationDetailsCardView.swift in Sources */,
 				9C20AF182A735FDE00F057BD /* MixerIdView.swift in Sources */,
 				9CB312152B0D69200097A1BA /* EventType.swift in Sources */,
 				9C705F9F2A8FD7AD00F1D0DB /* MapView.swift in Sources */,

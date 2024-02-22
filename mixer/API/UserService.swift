@@ -222,7 +222,7 @@ class UserService: ObservableObject {
         let eventFavoritesReference = COLLECTION_EVENTS.document(eventId).collection("event-favorites").document(currentUserId)
         let userFavoritesReference = COLLECTION_USERS.document(currentUserId).collection("user-favorites").document(eventId)
 
-        let favoriteData = ["timestamp": Timestamp()] as [String: Any]
+        let favoriteData = ["timestamp": Timestamp(), "uid": currentUserId] as [String: Any]
         let documentRefs = [eventFavoritesReference, userFavoritesReference]
         let documentRefsDataMap = Dictionary(uniqueKeysWithValues: documentRefs.map { ($0, favoriteData) })
         let batch = Firestore.firestore().batch()

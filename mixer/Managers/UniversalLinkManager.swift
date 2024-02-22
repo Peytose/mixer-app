@@ -106,6 +106,11 @@ class UniversalLinkManager: ObservableObject {
                 switch type {
                 case .event(let eventId):
                     self.fetchIncomingEvent(eventId: eventId) { event in
+                        guard let event = event else {
+                            completion(nil)
+                            return
+                        }
+                        
                         if event.isPrivate {
                             guard let _ = self.incomingToken else {
                                 // Handle the error: A token is required but not provided
@@ -234,12 +239,13 @@ class UniversalLinkManager: ObservableObject {
     }
     
     
-    private func fetchIncomingEvent(eventId: String, completion: @escaping (Event) -> Void) {
+    private func fetchIncomingEvent(eventId: String, completion: @escaping (Event?) -> Void) {
         COLLECTION_EVENTS
             .document(eventId)
             .fetchWithCachePriority(freshnessDuration: 1800) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching incoming event.\n\(error.localizedDescription)")
+                    completion(nil)
                     return
                 }
                 
@@ -249,12 +255,13 @@ class UniversalLinkManager: ObservableObject {
     }
     
     
-    private func fetchIncomingHost(hostId: String, completion: @escaping (Host) -> Void) {
+    private func fetchIncomingHost(hostId: String, completion: @escaping (Host?) -> Void) {
         COLLECTION_HOSTS
             .document(hostId)
             .fetchWithCachePriority(freshnessDuration: 3600) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching incoming event.\n\(error.localizedDescription)")
+                    completion(nil)
                     return
                 }
                 
@@ -264,12 +271,18 @@ class UniversalLinkManager: ObservableObject {
     }
     
     
-    private func fetchIncomingUser(userId: String, completion: @escaping (User) -> Void) {
+    private func fetchIncomingUser(userId: String, completion: @escaping (User?) -> Void) {
+        guard userId == Auth.auth().currentUser?.uid else {
+            completion(UserService.shared.user)
+            return
+        }
+        
         COLLECTION_USERS
             .document(userId)
             .fetchWithCachePriority(freshnessDuration: 7200) { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching incoming event.\n\(error.localizedDescription)")
+                    completion(nil)
                     return
                 }
                 

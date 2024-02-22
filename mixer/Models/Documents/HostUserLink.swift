@@ -26,6 +26,7 @@ struct HostUserLink: Identifiable, Codable, Hashable {
     @DocumentID var id: String?
     var timestamp: Timestamp?
     var status: MemberInviteStatus
+    var uid: String
     
     
     static func == (lhs: HostUserLink, rhs: HostUserLink) -> Bool {

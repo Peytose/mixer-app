@@ -41,6 +41,6 @@ struct MemberRow: View {
 
 struct MemberRow_Previews: PreviewProvider {
     static var previews: some View {
-        MemberRow(member: dev.mockUser, link: HostUserLink(status: .invited))
+        MemberRow(member: dev.mockUser, link: HostUserLink(status: .invited, uid: ""))
     }
 }

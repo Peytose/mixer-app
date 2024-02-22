@@ -71,8 +71,12 @@ struct mixerApp: App {
                                 homeViewModel.pushContext(NavigationContext(state: .close,
                                                                             selectedHost: host))
                             } else if let user = model as? User {
-                                homeViewModel.pushContext(NavigationContext(state: .close,
-                                                                            selectedUser: user))
+                                if user.id == Auth.auth().currentUser?.uid {
+                                    homeViewModel.currentTab = .profile
+                                } else {
+                                    homeViewModel.pushContext(NavigationContext(state: .close,
+                                                                                selectedUser: user))
+                                }
                             } else {
                                 // ERROR: Handle unknown model type
                                 print("DEBUG: Unknown model type received from URL.")
