@@ -127,11 +127,11 @@ struct NotificationCell: View {
                         cellViewModel.removePlanner(event: sharedData.events[cellViewModel.notification.eventId ?? ""])
                     }
                 case .hostInvited:
-                    NavigationLink {
-                        BecomeHostView()
-                    } label: {
-                        ListCellActionButton(text: "chevron.right",
-                                             isIcon: true) { }
+                    ListCellActionButton(text: "chevron.right",
+                                             isIcon: true) {
+                        if let notificationId = cellViewModel.notification.id {
+                            viewModel.showCreateHost(notificationId: notificationId)
+                        }
                     }
                 default: Text("")
                 }

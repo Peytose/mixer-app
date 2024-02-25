@@ -22,10 +22,11 @@ struct NotesSection: View {
             }
             
             if showNoteToggle {
-                TextFieldItem(title: title,
-                              placeholder: "Add any additional notes/info",
-                              input: $note,
-                              limit: 250)
+                MultilineTextField(text: $note,
+                                   title: title,
+                                   placeholder: "Add any additional notes/info",
+                                   limit: 250,
+                                   lineLimit: 4)
             }
         }
     }

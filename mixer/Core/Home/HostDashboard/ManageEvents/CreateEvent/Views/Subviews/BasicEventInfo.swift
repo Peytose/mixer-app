@@ -24,10 +24,10 @@ struct BasicEventInfo: View {
                                       input: $viewModel.title,
                                       limit: 50)
                         
-                        TextFieldItem(title: "Description",
-                                      placeholder: "Briefly describe your event",
-                                      input: $viewModel.eventDescription,
-                                      limit: 150)
+                        MultilineTextField(text: $viewModel.eventDescription,
+                                           title: "Description",
+                                           placeholder: "Briefly describe your event",
+                                           limit: 150)
                         
                         NotesSection(title: "Note for guests",
                                      note: $viewModel.note)

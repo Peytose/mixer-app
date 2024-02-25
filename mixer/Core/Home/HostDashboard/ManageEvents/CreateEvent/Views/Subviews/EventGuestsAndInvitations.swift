@@ -60,32 +60,32 @@ struct EventGuestsAndInvitations: View {
                 }
                 
                 // MARK: Guestlist settings
-                if viewModel.isCheckInViaMixer {
-                    Section {
-                        HStack {
-                            InfoButton { viewModel.alertItem = AlertContext.guestLimitInfo }
-                            
-                            Toggle("Set guest limit", isOn: $isGuestLimitEnabled.animation())
-                                .font(.body)
-                                .fontWeight(.semibold)
-                        }
-                        
-                        if isGuestLimitEnabled {
-                            TextField("Maximum guests", text: $viewModel.guestLimitStr)
-                                .foregroundColor(.white)
-                                .keyboardType(.numberPad)
-                        }
-                    } header: { Text("Guestlist Settings") }
-                        .listRowBackground(Color.theme.secondaryBackgroundColor)
-                    
-                    // MARK: Invite limits section
-                    if isGuestLimitEnabled {
-                        inviteLimitsSection
-                    }
-                    
-                    // MARK: Advanced settings sections
-                    advancedSettingsSection
-                }
+//                if viewModel.isCheckInViaMixer {
+//                    Section {
+//                        HStack {
+//                            InfoButton { viewModel.alertItem = AlertContext.guestLimitInfo }
+//                            
+//                            Toggle("Set guest limit", isOn: $isGuestLimitEnabled.animation())
+//                                .font(.body)
+//                                .fontWeight(.semibold)
+//                        }
+//                        
+//                        if isGuestLimitEnabled {
+//                            TextField("Maximum guests", text: $viewModel.guestLimitStr)
+//                                .foregroundColor(.white)
+//                                .keyboardType(.numberPad)
+//                        }
+//                    } header: { Text("Guestlist Settings") }
+//                        .listRowBackground(Color.theme.secondaryBackgroundColor)
+//                    
+//                    // MARK: Invite limits section
+//                    if isGuestLimitEnabled {
+//                        inviteLimitsSection
+//                    }
+//                    
+//                    // MARK: Advanced settings sections
+//                    advancedSettingsSection
+//                }
             }
             .padding(.bottom, 80)
             .scrollContentBackground(.hidden)

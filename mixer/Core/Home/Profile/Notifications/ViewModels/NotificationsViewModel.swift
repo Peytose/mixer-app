@@ -14,6 +14,8 @@ class NotificationsViewModel: ObservableObject {
     @Published var notifications = [Notification]()
     @Published var availableCategories: [NotificationCategory] = [.all]
     @Published var currentCategory: NotificationCategory = .all
+    @Published var showCreateHostView: Bool = false
+    @Published var selectedNotificationId: String = ""
     
     private var groupedNotificationIds: [String: [String]] = [:]
     private let userService = UserService.shared
@@ -27,6 +29,12 @@ class NotificationsViewModel: ObservableObject {
     
     deinit {
         listener?.remove() // Detach the listener when the ViewModel is deallocated
+    }
+    
+    
+    func showCreateHost(notificationId: String) {
+        self.selectedNotificationId = notificationId
+        self.showCreateHostView = true
     }
     
     

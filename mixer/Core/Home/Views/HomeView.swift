@@ -165,7 +165,7 @@ struct TabBarItems: View {
             ForEach(TabItem.availableTabs(), id: \.self) { item in
                 Spacer()
             
-                    Image(systemName: (tabSelection == item && tabSelection != TabItem.profile) ? item.icon + ".fill" : item.icon)
+                Image(systemName: (tabSelection == item && tabSelection != TabItem.profile) ? item.icon + (tabSelection == TabItem.explore ? "" : ".fill") : item.icon)
                         .foregroundColor(tabSelection == item ? .white : .secondary)
                         .overlay(alignment: .center) {
                             if item == TabItem.profile {

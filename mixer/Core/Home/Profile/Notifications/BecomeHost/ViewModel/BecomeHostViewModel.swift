@@ -21,6 +21,8 @@ class BecomeHostViewModel: ObservableObject {
     @Published var contactEmail: String = ""
     @Published var username: String = ""
     
+    private var notificationId: String
+    
     @Published var isUsernameValid: Bool = false {
         didSet {
             checkUsernameValidity()
@@ -38,6 +40,10 @@ class BecomeHostViewModel: ObservableObject {
     @Published var showPicker: Bool = false
     
     private var userService = UserService.shared
+    
+    init(notificationId: String) {
+        self.notificationId = notificationId
+    }
     
     
     func buttonMessage(for state: BecomeHostViewState) -> String? {
@@ -161,7 +167,13 @@ class BecomeHostViewModel: ObservableObject {
                             return
                         }
                         
-                        self.userService.user?.currentHost = host
+                        COLLECTION_NOTIFICATIONS
+                            .document(userId)
+                            .collection("user-notifications")
+                            .document(self.notificationId)
+                            .delete { _ in
+                                self.userService.user?.currentHost = host
+                            }
                     }
                 }
             }

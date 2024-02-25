@@ -123,6 +123,9 @@ struct NotificationsView: View {
                 PresentationBackArrowButton()
             }
         }
+        .sheet(isPresented: $viewModel.showCreateHostView) {
+            BecomeHostView(notificationId: viewModel.selectedNotificationId)
+        }
     }
 }
 

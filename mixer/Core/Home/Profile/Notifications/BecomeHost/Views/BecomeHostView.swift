@@ -20,14 +20,19 @@ enum BecomeHostViewState: Int, CaseIterable {
 struct BecomeHostView: View {
     
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel = BecomeHostViewModel()
+    @StateObject var viewModel: BecomeHostViewModel
     @State var viewState: BecomeHostViewState = .nameAndDescription
+    
+    init(notificationId: String) {
+        self._viewModel = StateObject(wrappedValue: BecomeHostViewModel(notificationId: notificationId))
+    }
     
     var body: some View {
         FlowContainerView {
             ScrollView(showsIndicators: false) {
                 viewForState(viewState)
                     .padding(.bottom, 200)
+                    .padding(.top, 50)
                     .transition(.move(edge: .leading))
             }
         }
@@ -39,27 +44,21 @@ struct BecomeHostView: View {
                                  text: viewModel.buttonText(for: viewState),
                                  isButtonActive: viewModel.isButtonActive(for: viewState)) {
                 viewModel.buttonAction(for: &viewState)
-            }
-            .disabled(!viewModel.isButtonActive(for: viewState))
+            }.disabled(!viewModel.isButtonActive(for: viewState))
         }
-        .toolbar {
+        .overlay(alignment: .topLeading) {
             if viewState != BecomeHostViewState.allCases.first {
-                ToolbarItem(placement: .topBarLeading) {
-                    BackArrowButton { viewModel.backArrowAction(for: &viewState) }
+                BackArrowButton { viewModel.backArrowAction(for: &viewState) }
                     .padding(.horizontal, 4)
                     .padding(.top, 5)
-                }
             }
+        }
+        .overlay(alignment: .topTrailing) {
+            XDismissButton { dismiss() }
         }
         .onChange(of: UserService.shared.user?.currentHost) { host in
             if let host = host { dismiss() }
         }
-    }
-}
-
-#Preview {
-    NavigationView {
-        BecomeHostView()
     }
 }
 
