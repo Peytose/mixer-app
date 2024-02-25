@@ -20,8 +20,8 @@ struct Notification: Identifiable, Codable, Hashable {
     var imageUrl: String
     var type: NotificationType
     
-    var isFollowed: Bool? = false
-    var isFriends: Bool? = false
+    var isFollowed: Bool?
+    var isFriends: Bool?
     
     var count: Int?
     

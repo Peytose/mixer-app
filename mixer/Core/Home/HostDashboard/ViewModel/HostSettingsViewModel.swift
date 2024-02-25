@@ -113,6 +113,7 @@ extension HostSettingsViewModel {
                 .document(uid)
                 .updateData(data) { _ in
                     UserService.shared.user?.currentHost?.address = self.address
+                    self.address = self.address.components(separatedBy: ",")[0]
                     UserService.shared.user?.currentHost?.location = self.coordinate.toGeoPoint()
                     completion()
                 }

@@ -17,7 +17,6 @@ struct ProfileView: View {
     @EnvironmentObject var homeViewModel: HomeViewModel
     
     @State private var showUsername = false
-    @State private var showNotificationsView = false
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
     init(user: User, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
@@ -61,8 +60,9 @@ struct ProfileView: View {
                 Spacer()
                 
                 if viewModel.user.isCurrentUser {
-                    Button {
-                        self.showNotificationsView = true
+                    NavigationLink {
+                        NotificationsView()
+                            .environmentObject(homeViewModel)
                     } label: {
                         Image(systemName: "bell")
                             .font(.title2)
@@ -88,15 +88,6 @@ struct ProfileView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .padding()
-        }
-        .sheet(isPresented: $showNotificationsView) {
-            NotificationsView()
-                .environmentObject(homeViewModel)
-                .overlay(alignment: .topTrailing) {
-                    XDismissButton {
-                        self.showNotificationsView = false
-                    }
-                }
         }
         .alert(item: $viewModel.currentAlert) { alertType in
             hideKeyboard()

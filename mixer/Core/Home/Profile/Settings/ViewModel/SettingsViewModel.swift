@@ -308,8 +308,6 @@ extension SettingsViewModel {
 
     
     func shouldShowRow(with title: String) -> Bool {
-        print("DEBUG: Checking if should check row with title: \(title)!!!")
-        // Example condition for "Connect Email" row
         if title.contains("Connect") {
             return self.user?.email == nil
         } else if title.contains("Host"), let userId = self.user?.id {

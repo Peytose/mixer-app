@@ -1,0 +1,34 @@
+.
+├── project.pbxproj
+├── project.xcworkspace
+│   ├── contents.xcworkspacedata
+│   ├── xcshareddata
+│   │   ├── IDEWorkspaceChecks.plist
+│   │   └── swiftpm
+│   │       ├── Package.resolved
+│   │       └── configuration
+│   └── xcuserdata
+│       ├── mikey.xcuserdatad
+│       │   └── UserInterfaceState.xcuserstate
+│       └── peyton.xcuserdatad
+│           ├── IDEFindNavigatorScopes.plist
+│           ├── UserInterfaceState.xcuserstate
+│           └── xcdebugger
+│               └── Breakpoints_v2.xcbkptlist
+├── project_tree.txt
+├── xcshareddata
+│   └── xcschemes
+│       └── mixer.xcscheme
+└── xcuserdata
+    ├── mikey.xcuserdatad
+    │   ├── xcdebugger
+    │   │   └── Breakpoints_v2.xcbkptlist
+    │   └── xcschemes
+    │       └── xcschememanagement.plist
+    └── peyton.xcuserdatad
+        ├── xcdebugger
+        │   └── Breakpoints_v2.xcbkptlist
+        └── xcschemes
+            └── xcschememanagement.plist
+
+18 directories, 14 files

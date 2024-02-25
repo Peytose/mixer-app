@@ -17,10 +17,6 @@ struct NotificationsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
-                Text("Notifications")
-                    .largeTitle()
-                    .padding(.top)
-                
                 HStack(spacing: 7) {
                     ForEach(viewModel.availableCategories, id: \.self) { category in
                         NotificationCategoryCell(text: category.stringVal,
@@ -120,11 +116,15 @@ struct NotificationsView: View {
             viewModel.saveCurrentTimestamp()
         }
         .background(Color.theme.backgroundColor)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarTitle("Notifications", displayMode: .inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                PresentationBackArrowButton()
+            }
+        }
     }
 }
-
-// Your NotificationHeader and other supporting views...
-
 
 fileprivate struct NotificationHeader: View {
     let text: String

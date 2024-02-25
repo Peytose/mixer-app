@@ -29,9 +29,7 @@ struct SettingsView: View {
                     }
                     
                     ForEach(settings) { setting in
-                        SettingsSection(setting: setting,
-                                        viewModel: viewModel)
-                            .environmentObject(viewModel)
+                        SettingsSection(setting: setting, viewModel: viewModel)
                     }
                     
                     LogoutSection()

@@ -46,14 +46,12 @@ enum HostMemberType: Int, CustomStringConvertible, Codable, CaseIterable {
     
     var privileges: Privilege {
         switch self {
-        case .member:
-            return [.viewEvents]
-        case .planner:
-            return [.viewEvents, .createEvents, .editEvents]
-        case .vip:
+        case .member, .vip:
             return [.viewEvents, .viewAnalytics]
+        case .planner:
+            return [.viewEvents, .viewAnalytics, .createEvents, .editEvents]
         case .moderator:
-            return [.viewEvents, .createEvents, .editEvents, .deleteEvents, .manageMembers]
+            return [.viewEvents, .viewAnalytics, .createEvents, .editEvents, .deleteEvents, .manageMembers]
         case .admin:
             return .all
         }
