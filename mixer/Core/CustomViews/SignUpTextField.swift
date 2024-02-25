@@ -14,7 +14,7 @@ struct SignUpTextField: View {
     var note: String?
     let placeholder: String
     var footnote: String?
-    let keyboard: UIKeyboardType
+    var keyboard: UIKeyboardType = .default
     var disableAutocorrection: Bool = true
     var isValidUsername: Bool?
     

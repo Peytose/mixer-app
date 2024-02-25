@@ -27,6 +27,7 @@ enum SettingSaveType {
     case ageToggle
     // Host-specific save types
     case website
+    case hostInviteeUsername
     // Event-specific save types
     case title
     case note(String)
@@ -37,6 +38,7 @@ enum SettingSaveType {
 }
 
 class SettingsViewModel: SettingsConfigurable {
+    
     @Published var user: User?
     @Published var displayName: String     = ""
     @Published var bio: String             = ""
@@ -46,15 +48,19 @@ class SettingsViewModel: SettingsConfigurable {
     @Published var genderStr: String       = ""
     @Published var datingStatusStr: String = ""
     @Published var majorStr: String        = ""
-    @Published var confirmUsername         = ""
-    @Published var isLoading               = false
+    @Published var confirmUsername: String = ""
+    @Published var hostInviteeUsername: String = ""
+    @Published var showAlert: Bool         = false
+    @Published var isLoading: Bool         = false
+    
+    @Published var chosenRow: SettingsRowModel?
     @Published var alertItem: AlertItem?
     
     private var phoneNumber: String { return Auth.auth().currentUser?.phoneNumber ?? "" }
     private var universityId: String = ""
     
-    let privacyLink = "https://rococo-gumdrop-0f32da.netlify.app"
-    let termsOfServiceLink = "https://mixer.llc/privacy-policy/"
+    let privacyLink = "https://mixer-firebase-project.web.app/privacy"
+    let termsOfServiceLink = "https://mixer-firebase-project.web.app"
     
     private let service = UserService.shared
     private var cancellable = Set<AnyCancellable>()
@@ -85,7 +91,6 @@ class SettingsViewModel: SettingsConfigurable {
     
     func save(for type: SettingSaveType) {
         self.save(for: type) {
-            print("DEBUG: \(type.self) saved!")
             HapticManager.playSuccess()
         }
     }
@@ -180,6 +185,13 @@ class SettingsViewModel: SettingsConfigurable {
                     completion()
                 }
             
+        case .hostInviteeUsername:
+            guard !hostInviteeUsername.isEmpty, hostInviteeUsername != self.user?.username else { return }
+            AdminServices.shared.inviteHost(with: self.hostInviteeUsername) { _ in
+                self.hostInviteeUsername = ""
+                completion()
+            }
+            
         default:
             break
         }
@@ -235,6 +247,8 @@ extension SettingsViewModel {
             return .constant(self.phoneNumber)
         case "Version":
             return .constant(self.getVersion())
+        case "Invite Host":
+            return Binding<String>(get: { self.hostInviteeUsername }, set: { self.hostInviteeUsername = $0 })
         default:
             return .constant("")
         }
@@ -258,6 +272,8 @@ extension SettingsViewModel {
                 return .email
             case "Show age on profile?":
                 return .ageToggle
+            case "Invite Host":
+                return .hostInviteeUsername
             default:
                 return .unknown
         }
@@ -291,11 +307,13 @@ extension SettingsViewModel {
     }
 
     
-    func shouldShowRow(withTitle title: String) -> Bool {
+    func shouldShowRow(with title: String) -> Bool {
+        print("DEBUG: Checking if should check row with title: \(title)!!!")
         // Example condition for "Connect Email" row
-        if title.contains("Connect") && !(email.isEmpty) {
-            // Don't show the row if the email is connected (not empty)
-            return false
+        if title.contains("Connect") {
+            return self.user?.email == nil
+        } else if title.contains("Host"), let userId = self.user?.id {
+            return AdminServices.shared.authorizedUserIds.contains(userId)
         }
         // Add other conditions for different rows as needed
         // Return true for rows that don't have specific conditions and should always be shown
@@ -447,7 +465,7 @@ extension SettingsViewModel {
             alertItem = AlertContext.accountDeletionFailedDueToHosting
         } else {
             service.deleteAccount { error in
-                if let error = error {
+                if let _ = error {
                     self.alertItem = AlertContext.accountDeletionGeneralError
                     return
                 } else {
@@ -493,6 +511,14 @@ extension SettingsViewModel {
         }
     }
 
+    
+    func action(for title: String) -> Void {
+        switch title {
+        case "Display Name", "Instagram", "Invite Host":
+            self.showAlert = true
+        default: break
+        }
+    }
     
     
     private func showLoadingView() { isLoading = true }

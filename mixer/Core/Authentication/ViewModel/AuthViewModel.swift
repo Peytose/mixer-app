@@ -12,6 +12,16 @@ import FirebaseFirestoreSwift
 import FirebaseFirestore
 import Combine
 
+enum AuthFlowViewState: Int, CaseIterable {
+    case enterName
+    case enterPhone
+    case verifyCode
+    case uploadProfilePicAndBio
+    case enterBirthdayAndUniversity
+    case selectGender
+    case chooseUsername
+}
+
 class AuthViewModel: ObservableObject {
     // User-Related Variables
     @Published var firstName       = ""
@@ -26,7 +36,7 @@ class AuthViewModel: ObservableObject {
     @Published var gender          = Gender.woman
     @Published var username        = "" {
         didSet {
-            checkUsernameValidity(username: username)
+            checkUsernameValidity()
         }
     }
     @Published var universityId    = ""
@@ -103,6 +113,29 @@ class AuthViewModel: ObservableObject {
             self.next(state)
         case .chooseUsername:
             self.register()
+        }
+    }
+    
+    
+    func buttonText(for state: AuthFlowViewState) -> String {
+        switch state {
+            case .chooseUsername: return "Join mixer!"
+            default: return "Continue"
+        }
+    }
+    
+    
+    func buttonMessage(for state: AuthFlowViewState) -> String? {
+        if isButtonActiveForState(state) {
+            return nil
+        }
+        
+        switch state {
+        case .enterName: return "Please enter your name"
+            case .enterPhone: return "Please enter a valid phone number"
+            case .enterBirthdayAndUniversity: return "Please enter a valid date and/or select a university"
+            case .chooseUsername: return "Please enter a unique username"
+            default: return nil
         }
     }
     
@@ -292,13 +325,16 @@ extension AuthViewModel {
     }
     
     
-    func checkUsernameValidity(username: String) {
-        guard self.username.count >= 4 else {
+    private func checkUsernameValidity() {
+        let usernamePattern = "^[a-zA-Z0-9_]{4,}$" // Adjust pattern as needed
+        let usernamePredicate = NSPredicate(format: "SELF MATCHES %@", usernamePattern)
+        
+        guard usernamePredicate.evaluate(with: self.username) else {
             self.isUsernameValid = false
             return
         }
         
-        algoliaManager.validateUsername(username) { isValid in
+        AlgoliaManager.shared.validateUsername(self.username) { isValid in
             DispatchQueue.main.async {
                 self.isUsernameValid = isValid
             }
@@ -332,7 +368,7 @@ extension AuthViewModel {
         case .tooManyRequests:
             alertItem = AlertContext.tooManyRequests
         case .userNotFound:
-            alertItem = AlertContext.userNotFound
+            alertItem = AlertContext.userNotFoundAuth
         case .networkError:
             alertItem = AlertContext.networkError
         case .credentialAlreadyInUse:

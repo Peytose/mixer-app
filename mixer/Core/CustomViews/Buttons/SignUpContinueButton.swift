@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct SignUpContinueButton: View {
-    @EnvironmentObject var viewModel: AuthViewModel
-    @Binding var state: AuthFlowViewState
+    var message: String?
+    var text: String
+    var isButtonActive: Bool = false
+    let action: () -> Void
     
     var body: some View {
         VStack {
-            if let message = state.buttonMessage, !viewModel.isButtonActiveForState(state) {
+            if let message = message {
                 Text(message)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -21,16 +23,16 @@ struct SignUpContinueButton: View {
             
             Button {
                 withAnimation(.spring()) {
-                    viewModel.actionForState($state)
+                    action()
                 }
             } label: {
                 Capsule()
-                    .fill(Color.theme.mixerIndigo.gradient.opacity(viewModel.isButtonActiveForState(state) ? 1 : 0.4))
+                    .fill(Color.theme.mixerIndigo.gradient)
                     .longButtonFrame()
                     .shadow(radius: 20, x: -8, y: -8)
                     .shadow(radius: 20, x: 8, y: 8)
                     .overlay {
-                        Text(state.buttonText)
+                        Text(text)
                             .font(.body.weight(.medium))
                             .foregroundColor(.white)
                     }
@@ -39,6 +41,7 @@ struct SignUpContinueButton: View {
             }
         }
         .animation(Animation.timingCurve(0.2, 0.2, 0.2, 1))
-        .disabled(!viewModel.isButtonActiveForState(state))
+        .opacity(isButtonActive ? 1 : 0.4)
+        .disabled(!isButtonActive)
     }
 }

@@ -40,6 +40,7 @@ struct EditEventView: View {
                     XDismissButton { showEditEventView.toggle() }
                 }
             }
+            .settingsAlert(viewModel: viewModel)
         }
     }
 }

@@ -21,7 +21,7 @@ struct EditAmenitiesView: View {
             .padding()
             .padding(.bottom, 80)
         }
-        .background(Color.theme.secondaryBackgroundColor.ignoresSafeArea())
+        .background(Color.theme.backgroundColor.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

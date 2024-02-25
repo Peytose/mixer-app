@@ -53,6 +53,7 @@ struct SettingsView: View {
         }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .onOpenURL(perform: viewModel.handleUrl)
+        .settingsAlert(viewModel: viewModel)
     }
 }
 

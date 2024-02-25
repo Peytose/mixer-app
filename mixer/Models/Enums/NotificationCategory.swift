@@ -16,6 +16,7 @@ enum NotificationCategory: Int, CaseIterable {
     case guestlist
     case eventPlanning
     case eventUpdates
+    case hostInvites
     // Additional categories as necessary
     
     var stringVal: String {
@@ -28,6 +29,7 @@ enum NotificationCategory: Int, CaseIterable {
         case .guestlist: return "Guestlist"
         case .eventPlanning: return "Planning"
         case .eventUpdates: return "Updates"
+        case .hostInvites: return "Host Invites"
         }
     }
     
@@ -41,6 +43,7 @@ enum NotificationCategory: Int, CaseIterable {
         case .guestlist: return "list.bullet.rectangle"
         case .eventPlanning: return "calendar"
         case .eventUpdates: return "megaphone"
+        case .hostInvites: return "star"
         }
     }
 }

@@ -8,7 +8,7 @@
 import FirebaseFirestoreSwift
 import FirebaseFirestore
 
-enum HostType: Int, Codable {
+enum HostType: Int, CaseIterable, Codable {
     case fraternity
     case sorority
     case socialClub
@@ -20,7 +20,7 @@ enum HostType: Int, Codable {
         case .fraternity: return "Fraternity"
         case .sorority: return "Sorority"
         case .socialClub: return "Social Club"
-        case .fraternityCoed: return "Fraternity (Co-ed)"
+        case .fraternityCoed: return "Co-ed Fraternity"
         }
     }
     
@@ -42,6 +42,7 @@ struct Host: Hashable, Identifiable, Codable, Equatable {
     // MARK: - Metadata
     @DocumentID var id: String?
     var mainUserId: String
+    var contactEmail: String?
     let dateJoined: Timestamp
 
     // MARK: - Basic Information
@@ -49,7 +50,7 @@ struct Host: Hashable, Identifiable, Codable, Equatable {
     let username: String
     var description: String
     var hostImageUrl: String
-    let universityId: String
+    var universityId: String?
 
     // MARK: - Host Type & Types of Events Held
     let type: HostType
@@ -63,12 +64,9 @@ struct Host: Hashable, Identifiable, Codable, Equatable {
     // MARK: - Location
     var address: String?
     var location: GeoPoint
+    var showLocationOnProfile: Bool
     
     // MARK: - Flags
-    var showLocationOnProfile: Bool
     var hasCurrentEvent: Bool?
     var isFollowed: Bool?
-    
-    // MARK: - Associated Data
-    var university: University?
 }

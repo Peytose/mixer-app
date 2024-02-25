@@ -25,29 +25,32 @@ enum NotificationType: Int, Codable {
     case eventPostedWithoutPlanner // An event has been posted without one or more planners
     case eventDeletedDueToDecline // An event was deleted because a planner declined and no action was taken
     case eventAutoDeleted // An event was automatically deleted due to unconfirmed planners after the start date
+    case hostInvited // A user was invited by an admin to become a host
     
     var category: NotificationCategory {
-            switch self {
-            case .friendRequest, .friendAccepted:
-                return .friends // Includes friend requests and acceptances
-            case .eventLiked:
-                return .likes // Includes likes and other forms of engagement with content
-            case .newFollower:
-                return .follows // New followers, mentions, etc.
-            case .memberInvited, .memberJoined:
-                return .membership // Invitations to join and confirmations of joining
-            case .guestlistJoined, .guestlistAdded:
-                return .guestlist // Notifications related to the management of event guestlists
-            case .plannerInvited, .plannerAccepted, .plannerDeclined, .plannerReplaced, .plannerRemoved, .plannerPendingReminder:
-                return .eventPlanning // Notifications related to the planning and management of events
-            case .eventPostedWithoutPlanner, .eventDeletedDueToDecline, .eventAutoDeleted:
-                return .eventUpdates // Notifications about events being posted, deleted, or automatically removed
-            }
+        switch self {
+        case .friendRequest, .friendAccepted:
+            return .friends // Includes friend requests and acceptances
+        case .eventLiked:
+            return .likes // Includes likes and other forms of engagement with content
+        case .newFollower:
+            return .follows // New followers, mentions, etc.
+        case .memberInvited, .memberJoined:
+            return .membership // Invitations to join and confirmations of joining
+        case .guestlistJoined, .guestlistAdded:
+            return .guestlist // Notifications related to the management of event guestlists
+        case .plannerInvited, .plannerAccepted, .plannerDeclined, .plannerReplaced, .plannerRemoved, .plannerPendingReminder:
+            return .eventPlanning // Notifications related to the planning and management of events
+        case .eventPostedWithoutPlanner, .eventDeletedDueToDecline, .eventAutoDeleted:
+            return .eventUpdates // Notifications about events being posted, deleted, or automatically removed
+        case .hostInvited:
+            return .hostInvites
         }
+    }
     
     var requiresIndividualAttention: Bool {
         switch self {
-        case .friendRequest, .memberInvited, .guestlistJoined, .plannerInvited, .plannerDeclined, .plannerReplaced, .plannerPendingReminder, .eventPostedWithoutPlanner, .eventDeletedDueToDecline, .eventAutoDeleted:
+        case .friendRequest, .memberInvited, .guestlistJoined, .plannerInvited, .plannerDeclined, .plannerReplaced, .plannerPendingReminder, .eventPostedWithoutPlanner, .eventDeletedDueToDecline, .eventAutoDeleted, .hostInvited:
                 return true
             default:
                 return false
@@ -75,6 +78,7 @@ enum NotificationType: Int, Codable {
             case .eventPostedWithoutPlanner: return " has been posted without a planner."
             case .eventDeletedDueToDecline: return " was deleted due to a planner's decline."
             case .eventAutoDeleted: return " was automatically deleted due to pending confirmations."
+            case .hostInvited: return " invited you to become a host."
         }
     }
 }

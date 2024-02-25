@@ -19,7 +19,12 @@ final class HostDashboardViewModel: ObservableObject {
     @Published var guests: [EventGuest]?
     
     @Published var recentStatistics: [String: String] = [:]
-    @Published var quickStatistics: [String: (String, String, String)] = [:]
+    @Published var quickStatistics: [String: (String, String, String)] = [:] {
+        didSet {
+            self.hideLoadingView()
+        }
+    }
+    @Published var isLoading: Bool = false
     
     private let service = UserService.shared
     private var cancellable = Set<AnyCancellable>()
@@ -165,6 +170,7 @@ final class HostDashboardViewModel: ObservableObject {
     
     func fetchMostRecentEvent() {
         guard let hostId = currentHost?.id else { return }
+        self.showLoadingView()
         
         if let mostRecentEvent = Array(EventManager.shared.events).filterStartedEvents().sortedByEndDate(false).first {
             DispatchQueue.main.async {
@@ -173,13 +179,14 @@ final class HostDashboardViewModel: ObservableObject {
             fetchGuestListForEvent(eventId: mostRecentEvent.id ?? "")
         } else {
             EventManager.shared.fetchMostRecentEvent(for: hostId) { event in
-                if let event = event.first {
-                    DispatchQueue.main.async {
+                DispatchQueue.main.async {
+                    if let event = event.first {
                         self.recentEvent = event
+                        
+                        self.fetchGuestListForEvent(eventId: event.id ?? "")
+                    } else {
+                        print("DEBUG: No event was returned. Potentially an error, or the host may not have past events.")
                     }
-                    self.fetchGuestListForEvent(eventId: event.id ?? "")
-                } else {
-                    print("DEBUG: No event was returned. Potentially an error, or the host may not have past events.")
                 }
             }
         }
@@ -263,4 +270,7 @@ extension HostDashboardViewModel {
     func selectHost(_ host: Host) {
         service.selectHost(host)
     }
+    
+    private func showLoadingView() { isLoading = true }
+    private func hideLoadingView() { isLoading = false }
 }

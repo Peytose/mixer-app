@@ -247,7 +247,7 @@ extension NotificationsViewModel {
         var headline = ""
         
         switch type {
-        case .friendRequest, .friendAccepted, .eventLiked, .newFollower, .memberJoined, .guestlistJoined, .plannerInvited, .plannerAccepted, .plannerDeclined, .plannerReplaced, .plannerRemoved, .plannerPendingReminder:
+        case .friendRequest, .friendAccepted, .eventLiked, .newFollower, .memberJoined, .guestlistJoined, .plannerInvited, .plannerAccepted, .plannerDeclined, .plannerReplaced, .plannerRemoved, .plannerPendingReminder, .hostInvited:
             imageUrl = user.profileImageUrl
             headline = user.username
         case .memberInvited, .guestlistAdded:

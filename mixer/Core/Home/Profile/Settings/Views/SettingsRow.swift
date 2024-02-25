@@ -7,26 +7,29 @@
 
 import SwiftUI
 
-struct SettingsRow<ViewModel: SettingsConfigurable>: View {
+struct SettingsRow<ViewModel>: View where ViewModel: SettingsConfigurable {
     let row: SettingsRowModel
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        switch row.type {
+        if viewModel.shouldShowRow(with: row.title) {
+            switch row.type {
             case .editable:
-                EditableSettingsRow(content: viewModel.content(for: row.title),
-                                    row: row) { [saveType = viewModel.saveType(for: row.title)] in
-                    viewModel.save(for: saveType)
+                EditableSettingsRow(content: viewModel.content(for: row.title).wrappedValue,
+                                    row: row) {
+                    viewModel.chosenRow = row
+                    viewModel.action(for: row.title)
                 }
             case .empty:
                 MenuSettingsRow(content: viewModel.content(for: row.title),
-                                row: row,
-                                saveType: viewModel.saveType(for: row.title))
+                                row: row) {
+                    viewModel.save(for: viewModel.saveType(for: row.title))
+                }
             case .readOnly:
-            if viewModel.content(for: row.title).wrappedValue != "" {
-                ReadOnlySettingsRow(row: row,
-                                    content: viewModel.content(for: row.title).wrappedValue)
-            }
+                if viewModel.content(for: row.title).wrappedValue != "" {
+                    ReadOnlySettingsRow(row: row,
+                                        content: viewModel.content(for: row.title).wrappedValue)
+                }
             case .toggle:
                 ToggleSettingsRow(isOn: viewModel.toggle(for: row.title),
                                   row: row) { [saveType = viewModel.saveType(for: row.title)] in
@@ -38,7 +41,6 @@ struct SettingsRow<ViewModel: SettingsConfigurable>: View {
                 LinkSettingsRow(row: row,
                                 url: viewModel.url(for: row.title))
             case .navigate:
-            if viewModel.shouldShowRow(withTitle: row.title) {
                 NavigableSettingsRow(row: row) {
                     viewModel.destination(for: row.title)
                 }
@@ -60,7 +62,7 @@ struct MailSettingsRow: View {
                 
                 Spacer()
                 
-                SettingIcon(icon: "chevron.right", color: .secondary)
+                SettingIcon(icon: "arrowshape.turn.up.right", color: .secondary)
             }
         }
         .sheet(isPresented: $isPresented) {
@@ -110,48 +112,25 @@ struct LinkSettingsRow: View {
 }
 
 struct EditableSettingsRow: View {
-    @Binding var content: String
-    @State var staticContent: String
+    var content: String
     let row: SettingsRowModel
-    let saveAction: () -> Void
-    @State private var showAlert: Bool = false
-    
-    init(content: Binding<String>,
-         row: SettingsRowModel,
-         saveAction: @escaping () -> Void) {
-        self._content = content
-        self.staticContent = content.wrappedValue
-        self.row = row
-        self.saveAction = saveAction
-    }
+    let action: () -> Void
     
     var body: some View {
-        Button { showAlert.toggle() } label: {
+        Button { action() } label: {
             HStack {
-                ReadOnlySettingsRow(row: row, content: staticContent)
+                ReadOnlySettingsRow(row: row, content: content)
                 
-                SettingIcon(icon: "pencil", color: .secondary)
+                SettingIcon(icon: "hand.tap", color: .secondary)
             }
         }
-        .alert(row.alertTitle ?? "", isPresented: $showAlert) {
-            TextField(row.alertPlaceholder ?? "", text: $content)
-                    
-            if #available(iOS 16.0, *) {
-                Button("Save") {
-                    staticContent = content
-                    saveAction()
-                }
-                Button("Cancel", role: .cancel, action: {})
-            }
-        } message: { Text(row.alertMessage ?? "") }
     }
 }
 
 struct MenuSettingsRow: View {
-    @EnvironmentObject var viewModel: SettingsViewModel
     @Binding var content: String
     let row: SettingsRowModel
-    let saveType: SettingSaveType
+    let saveAction: () -> Void
     
     var body: some View {
         HStack {
@@ -164,7 +143,7 @@ struct MenuSettingsRow: View {
                 ForEach(enumCases.indices, id: \.self) { index in
                     Button {
                         content = enumCases[index].description
-                        viewModel.save(for: saveType)
+                        saveAction()
                     } label: {
                         HStack {
                             Text(enumCases[index].description)

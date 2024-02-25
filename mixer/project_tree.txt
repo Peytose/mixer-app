@@ -1,0 +1,626 @@
+.
+├── API
+│   ├── DataController.swift
+│   ├── EventLists.swift
+│   ├── HostService.swift
+│   └── UserService.swift
+├── App
+│   └── mixerApp.swift
+├── Assets.xcassets
+│   ├── AccentColor.colorset
+│   │   └── Contents.json
+│   ├── AppIcon.appiconset
+│   │   ├── Contents.json
+│   │   └── mixer-cups-logo.jpg
+│   ├── BackgroundColor.colorset
+│   │   └── Contents.json
+│   ├── Contents.json
+│   ├── Custom Icons
+│   │   ├── Contents.json
+│   │   ├── compass.fill.imageset
+│   │   │   ├── Contents.json
+│   │   │   ├── compass.fill@1×.png
+│   │   │   ├── compass.fill@2×.png
+│   │   │   └── compass.fill@3x.png
+│   │   ├── compass.imageset
+│   │   │   ├── Contents.json
+│   │   │   ├── compass@1×.png
+│   │   │   ├── compass@2×.png
+│   │   │   └── compass@3×.png
+│   │   ├── diploma.imageset
+│   │   │   ├── Contents.json
+│   │   │   ├── diploma@1x.png
+│   │   │   └── diploma@2x.png
+│   │   ├── instagram-black.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── Instagram_Glyph_Black.svg
+│   │   ├── instagram.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── Instagram_Glyph_Gradient.png
+│   │   ├── man.imageset
+│   │   │   ├── Contents.json
+│   │   │   ├── man@1x.png
+│   │   │   └── man@2x.png
+│   │   ├── relationship.imageset
+│   │   │   ├── Contents.json
+│   │   │   ├── relationship@1x.png
+│   │   │   └── relationship@2x.png
+│   │   ├── unisex.imageset
+│   │   │   ├── Contents.json
+│   │   │   ├── unisex@1x.png
+│   │   │   └── unisex@2x.png
+│   │   └── woman.imageset
+│   │       ├── Contents.json
+│   │       ├── woman@1x.png
+│   │       └── woman@2x.png
+│   ├── DesignCodeSwiftIOS15
+│   │   ├── Backgrounds
+│   │   │   ├── Background 1.imageset
+│   │   │   │   ├── Background 1.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 10.imageset
+│   │   │   │   ├── Background 10.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 2.imageset
+│   │   │   │   ├── Background 2.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 3.imageset
+│   │   │   │   ├── Background 3.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 4.imageset
+│   │   │   │   ├── Background 4.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 5.imageset
+│   │   │   │   ├── Background 5.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 6.imageset
+│   │   │   │   ├── Background 6.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 7.imageset
+│   │   │   │   ├── Background 7.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 8.imageset
+│   │   │   │   ├── Background 8.jpg
+│   │   │   │   └── Contents.json
+│   │   │   ├── Background 9.imageset
+│   │   │   │   ├── Background 9.jpg
+│   │   │   │   └── Contents.json
+│   │   │   └── Contents.json
+│   │   ├── Blobs
+│   │   │   ├── Blob 1.imageset
+│   │   │   │   ├── Blob 1 Dark.pdf
+│   │   │   │   ├── Blob 1.pdf
+│   │   │   │   └── Contents.json
+│   │   │   └── Contents.json
+│   │   ├── Colors
+│   │   │   ├── Background.colorset
+│   │   │   │   └── Contents.json
+│   │   │   ├── Contents.json
+│   │   │   └── Shadow.colorset
+│   │   │       └── Contents.json
+│   │   ├── Contents.json
+│   │   └── Mixer Version
+│   │       ├── 2560px-MIT_logo.svg.imageset
+│   │       │   ├── 2560px-MIT_logo.svg.png
+│   │       │   └── Contents.json
+│   │       ├── Contents.json
+│   │       └── MIT_Seal.svg.imageset
+│   │           ├── Contents.json
+│   │           └── MIT_Seal.svg.png
+│   ├── LaunchScreenBackgroundColor.colorset
+│   │   └── Contents.json
+│   ├── Mock Assets
+│   │   ├── Contents.json
+│   │   ├── Instagram-Icon.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── Instagram-Icon.png
+│   │   ├── Landing Page assets
+│   │   │   ├── Contents.json
+│   │   │   ├── LandingPage-Image-1.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── landing-page-screen-1.png
+│   │   │   ├── blank.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── blank.png
+│   │   │   ├── buttonbg.colorset
+│   │   │   │   └── Contents.json
+│   │   │   ├── gradient.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── gradient.png
+│   │   │   ├── landingPage-image-2.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── landing-page-screen-1 7.png
+│   │   │   ├── landingPage-image-3.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── landing-page-screen-1 2.png
+│   │   │   ├── landingPage-image-4.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── landing-page-screen-1 8.png
+│   │   │   ├── landingpage-background-1.imageset
+│   │   │   │   ├── 15C6B61E-8FC4-4C98-B76F-1ACFF561DCC2_1_201_a.jpeg
+│   │   │   │   └── Contents.json
+│   │   │   ├── landingpage-background-2.imageset
+│   │   │   │   ├── 2CA4A5C8-D7F3-4890-940E-8E0D324D2A00_1_201_a.jpeg
+│   │   │   │   └── Contents.json
+│   │   │   ├── landingpage-background-3.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── D3ADE3BB-FB0C-499C-BAFA-40544B6D410B_1_201_a.jpeg
+│   │   │   ├── netflixlogo.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── netflixlogo.png
+│   │   │   ├── qrcode.imageset
+│   │   │   │   ├──  db890ef3595e822feae02463157b663aace423b8-1679421184 copy.png
+│   │   │   │   └── Contents.json
+│   │   │   ├── screen.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── screen.png
+│   │   │   ├── screen1.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── screen1.png
+│   │   │   ├── screen2.imageset
+│   │   │   │   ├── Contents.json
+│   │   │   │   └── screen2.png
+│   │   │   └── screen3.imageset
+│   │   │       ├── Contents.json
+│   │   │       └── screen3.png
+│   │   ├── banner-image-1.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── sam-mar-OQOKSsj8QME-unsplash.jpg
+│   │   ├── mit-banner.imageset
+│   │   │   ├── 90.jpeg
+│   │   │   └── Contents.json
+│   │   ├── mit-logo.imageset
+│   │   │   ├── 2560px-MIT_logo.svg.png
+│   │   │   └── Contents.json
+│   │   ├── mock-user-1.imageset
+│   │   │   ├── 2A154834-8508-46BA-BCF6-05DDA9645371_1_201_a.jpeg
+│   │   │   └── Contents.json
+│   │   ├── mock-user-2.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_5695.jpg
+│   │   ├── mock-user-3.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_5696 2.jpg
+│   │   ├── mock-user-4.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_5697.jpg
+│   │   ├── mock-user-5.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_5698.jpg
+│   │   ├── mock-user-6.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_5699.jpg
+│   │   ├── mock-user-7.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_5700.jpg
+│   │   ├── mock-user-8.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_5701.jpg
+│   │   ├── profile-banner-1.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_3739.jpg
+│   │   ├── profile-banner-2.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_5681.jpg
+│   │   ├── profile-banner-3.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_2106.jpg
+│   │   ├── profile-banner-4.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── sae-wall.jpg
+│   │   ├── tab-bar-image.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── tabbar1.png
+│   │   ├── theta-chi-crest.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── Theta_Chi_fraternity_Crest.png
+│   │   ├── theta-chi-party-poster-2.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_4306.jpg
+│   │   ├── theta-chi-party-poster-3.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── IMG_4307.jpg
+│   │   ├── theta-chi-party-poster-4.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── Theta Chi Rush Party Banner.jpg
+│   │   ├── theta-chi-party-poster-5.imageset
+│   │   │   ├── Contents.json
+│   │   │   └── Phi Sig Tropical Paradise Party Job.jpg
+│   │   └── theta-chi-party-poster.imageset
+│   │       ├── 363A117B-AC84-4CDD-8D27-11D7C9F20165_1_105_c.jpeg
+│   │       └── Contents.json
+│   ├── SecondaryBackgroundColor.colorset
+│   │   └── Contents.json
+│   ├── coming-soon-icon.symbolset
+│   │   ├── Contents.json
+│   │   └── bolt.badge.clock.svg
+│   ├── default-avatar.imageset
+│   │   ├── Contents.json
+│   │   ├── default-avatar@1x.png
+│   │   ├── default-avatar@2x.png
+│   │   └── default-avatar@3x.png
+│   ├── mixer-icon-white.imageset
+│   │   ├── Contents.json
+│   │   └── mixer-icon-white.png
+│   └── recenter-button.imageset
+│       ├── Contents.json
+│       └── my_location_FILL0_wght700_GRAD0_opsz40.svg
+├── Core
+│   ├── Authentication
+│   │   ├── ViewModel
+│   │   │   └── AuthViewModel.swift
+│   │   └── Views
+│   │       ├── AuthFlow.swift
+│   │       ├── FlowScreens
+│   │       │   ├── EnterBirthdayAndUniversityView.swift
+│   │       │   ├── EnterNameView.swift
+│   │       │   ├── EnterPhoneNumberView.swift
+│   │       │   ├── EnterProfilePictureAndBioView.swift
+│   │       │   ├── EnterUsernameView.swift
+│   │       │   ├── EnterVerificationCodeView.swift
+│   │       │   └── SelectGenderView.swift
+│   │       └── LaunchScreen
+│   │           ├── CardView.swift
+│   │           ├── LandingPageView.swift
+│   │           ├── LaunchScreenCard.swift
+│   │           └── QRCodeAnimation
+│   │               └── QRCodeAnimationView.swift
+│   ├── CustomViews
+│   │   ├── AddressSearch
+│   │   │   └── AddressSearchHandler.swift
+│   │   ├── AvatarView.swift
+│   │   ├── Buttons
+│   │   │   ├── ChangeImageButton.swift
+│   │   │   ├── EventCreationActionButton.swift
+│   │   │   ├── InfoButton.swift
+│   │   │   ├── MapGuestlistButton.swift
+│   │   │   ├── NavigationBackArrowButton.swift
+│   │   │   ├── NextButton.swift
+│   │   │   ├── PresentationBackArrowButton.swift
+│   │   │   ├── SignUpContinueButton.swift
+│   │   │   └── XDismissButton.swift
+│   │   ├── CharactersRemainView.swift
+│   │   ├── ComingSoonView.swift
+│   │   ├── CustomMapView.swift
+│   │   ├── DetailRowView.swift
+│   │   ├── EllipsisButton.swift
+│   │   ├── EventFlowTextField.swift
+│   │   ├── FlowContainerView.swift
+│   │   ├── LaunchScreenView.swift
+│   │   ├── LoadingView.swift
+│   │   ├── LocationPreviewLookAroundView.swift
+│   │   ├── LogoView.swift
+│   │   ├── MailViewModal.swift
+│   │   ├── MapSnapshotView.swift
+│   │   ├── MultilineTextField.swift
+│   │   ├── NotesSection.swift
+│   │   ├── Notifications
+│   │   │   ├── AddedToGuestlistNotification.swift
+│   │   │   ├── FriendRequestSentNotification.swift
+│   │   │   └── LikedEventNotification.swift
+│   │   ├── PieChart
+│   │   │   ├── PieChartView.swift
+│   │   │   ├── PieSlice.swift
+│   │   │   └── SegmentedPieChartView.swift
+│   │   ├── QRCodeBoxView.swift
+│   │   ├── QRCodeRoundedCornerView.swift
+│   │   ├── QRCodeScannerView.swift
+│   │   ├── QRCodeView.swift
+│   │   ├── SelectionPicker.swift
+│   │   ├── ShareProfileView.swift
+│   │   ├── SignUpPictureView.swift
+│   │   ├── SignUpTextField.swift
+│   │   ├── SmallCornerNumber.swift
+│   │   ├── SmallEventCell.swift
+│   │   ├── StickyDateHeader.swift
+│   │   ├── StickyHeaderView.swift
+│   │   ├── StretchablePhotoBanner.swift
+│   │   ├── TextFieldDynamicWidth.swift
+│   │   ├── TextFieldItem.swift
+│   │   ├── UniversitySearchView.swift
+│   │   └── UserIconList.swift
+│   ├── Event
+│   │   ├── ViewModel
+│   │   │   └── EventViewModel.swift
+│   │   └── Views
+│   │       ├── AmenityListView.swift
+│   │       ├── EventCellView.swift
+│   │       ├── EventDetailView.swift
+│   │       └── EventListView.swift
+│   ├── Home
+│   │   ├── Explore
+│   │   │   ├── Explore
+│   │   │   │   └── Views
+│   │   │   │       ├── DiscoverActivationView.swift
+│   │   │   │       └── ExploreView.swift
+│   │   │   ├── Search
+│   │   │   │   ├── ViewModel
+│   │   │   │   │   └── SearchViewModel.swift
+│   │   │   │   └── Views
+│   │   │   │       └── SearchView.swift
+│   │   │   └── ViewModel
+│   │   │       └── ExploreViewModel.swift
+│   │   ├── HostDashboard
+│   │   │   ├── ManageEvents
+│   │   │   │   ├── CreateEvent
+│   │   │   │   │   ├── ViewModel
+│   │   │   │   │   │   └── EventCreationViewModel.swift
+│   │   │   │   │   └── Views
+│   │   │   │   │       ├── CustomDateSelector.swift
+│   │   │   │   │       ├── EventCreationFlowView.swift
+│   │   │   │   │       └── Subviews
+│   │   │   │   │           ├── BasicEventInfo.swift
+│   │   │   │   │           ├── EventAmenitiesAndCost.swift
+│   │   │   │   │           ├── EventGuestsAndInvitations.swift
+│   │   │   │   │           ├── EventLocationAndDates.swift
+│   │   │   │   │           └── ReviewCreatedEventView.swift
+│   │   │   │   ├── ManageGuestlist
+│   │   │   │   │   ├── ViewModel
+│   │   │   │   │   │   ├── GuestlistViewModel.swift
+│   │   │   │   │   │   └── UniversitySearchViewModel.swift
+│   │   │   │   │   └── Views
+│   │   │   │   │       ├── GuestDetailView.swift
+│   │   │   │   │       ├── GuestlistEntryForm.swift
+│   │   │   │   │       ├── GuestlistPDF.swift
+│   │   │   │   │       ├── GuestlistRow.swift
+│   │   │   │   │       └── GuestlistView.swift
+│   │   │   │   ├── ManageMembers
+│   │   │   │   │   ├── ViewModel
+│   │   │   │   │   │   └── ManageMembersViewModel.swift
+│   │   │   │   │   └── Views
+│   │   │   │   │       ├── ManageMembersView.swift
+│   │   │   │   │       └── MemberRow.swift
+│   │   │   │   ├── ViewModel
+│   │   │   │   │   ├── EditEventViewModel.swift
+│   │   │   │   │   └── ManageEventsViewModel.swift
+│   │   │   │   └── Views
+│   │   │   │       ├── EditEvent
+│   │   │   │       │   ├── EditAmenitiesView.swift
+│   │   │   │       │   ├── EditEventDateView.swift
+│   │   │   │       │   └── EditEventView.swift
+│   │   │   │       ├── ManageEventCell.swift
+│   │   │   │       └── ManageEventsView.swift
+│   │   │   ├── ViewModel
+│   │   │   │   ├── HostDashboardViewModel.swift
+│   │   │   │   └── HostSettingsViewModel.swift
+│   │   │   └── Views
+│   │   │       ├── EventDetailedChartsView.swift
+│   │   │       ├── HostDashboardView.swift
+│   │   │       ├── HostLineGraph.swift
+│   │   │       └── Settings
+│   │   │           ├── EditTextView.swift
+│   │   │           ├── HostSettingsView.swift
+│   │   │           └── SelectAddressView.swift
+│   │   ├── Map
+│   │   │   ├── Needs looking at
+│   │   │   │   └── MapTemp.swift
+│   │   │   ├── ViewModel
+│   │   │   │   └── MapViewModel.swift
+│   │   │   └── Views
+│   │   │       ├── DetailView
+│   │   │       │   ├── MapItemDetailView.swift
+│   │   │       │   └── TravelTimeView.swift
+│   │   │       ├── MapBalloon.swift
+│   │   │       ├── MapView.swift
+│   │   │       ├── MixerAnnotation.swift
+│   │   │       └── MixerMapViewRepresentable.swift
+│   │   ├── Profile
+│   │   │   ├── Notifications
+│   │   │   │   ├── BecomeHost
+│   │   │   │   │   ├── ViewModel
+│   │   │   │   │   └── Views
+│   │   │   │   │       └── BecomeHostView.swift
+│   │   │   │   ├── Favorites
+│   │   │   │   │   ├── View
+│   │   │   │   │   │   ├── FavoriteCell.swift
+│   │   │   │   │   │   └── FavoritesView.swift
+│   │   │   │   │   └── ViewModel
+│   │   │   │   │       └── FavoritesViewModel.swift
+│   │   │   │   ├── ViewModels
+│   │   │   │   │   ├── NotificationCellViewModel.swift
+│   │   │   │   │   └── NotificationsViewModel.swift
+│   │   │   │   └── Views
+│   │   │   │       ├── NotificationCategoryCell.swift
+│   │   │   │       ├── NotificationCell.swift
+│   │   │   │       └── NotificationsView.swift
+│   │   │   ├── Settings
+│   │   │   │   ├── ViewModel
+│   │   │   │   │   └── SettingsViewModel.swift
+│   │   │   │   └── Views
+│   │   │   │       ├── ConfirmDeleteAccountView.swift
+│   │   │   │       ├── EnterEmailView.swift
+│   │   │   │       ├── SettingsRow.swift
+│   │   │   │       ├── SettingsSection.swift
+│   │   │   │       └── SettingsView.swift
+│   │   │   ├── ViewModel
+│   │   │   │   └── ProfileViewModel.swift
+│   │   │   └── Views
+│   │   │       ├── FriendshipButtonsView.swift
+│   │   │       ├── MoreProfileOptions.swift
+│   │   │       └── ProfileView.swift
+│   │   ├── ViewModel
+│   │   │   └── HomeViewModel.swift
+│   │   └── Views
+│   │       ├── HomeView.swift
+│   │       └── HomeViewActionButton.swift
+│   ├── Host
+│   │   ├── ViewModel
+│   │   │   └── HostViewModel.swift
+│   │   └── Views
+│   │       ├── FeaturedHostCell.swift
+│   │       ├── HostDetailView.swift
+│   │       └── HostInfoView.swift
+│   └── SideMenu
+│       └── Views
+│           ├── MixerIdView.swift
+│           ├── SideMenuOptionView.swift
+│           └── SideMenuView.swift
+├── Extensions
+│   ├── CoreData
+│   │   └── CDEvent+Ext.swift
+│   ├── Firebase
+│   │   ├── CollectionReference+Ext.swift
+│   │   ├── DocumentReference+Ext.swift
+│   │   ├── Firestore+Ext.swift
+│   │   ├── Query+Ext.swift
+│   │   └── WriteBatch+Ext.swift
+│   ├── ImagePickers
+│   │   ├── CustomImagePicker.swift
+│   │   ├── ImageLoader.swift
+│   │   └── PhotoPicker.swift
+│   ├── Misc
+│   │   ├── Animation+Ext.swift
+│   │   ├── Array+Ext.swift
+│   │   ├── Array+Iterator.swift
+│   │   ├── Binding+Ext.swift
+│   │   ├── CLLocationCoordinate2D+Ext.swift
+│   │   ├── CheckBoxToggle.swift
+│   │   ├── Color+Ext.swift
+│   │   ├── CoordinateRepresentable+Ext.swift
+│   │   ├── CustomPopUpView.swift
+│   │   ├── CustomStackView.swift
+│   │   ├── CustomStringConvertible+Ext.swift
+│   │   ├── DesignCodeExtensions.swift
+│   │   ├── Event+Ext.swift
+│   │   ├── EventArray+Ext.swift
+│   │   ├── Float+Ext.swift
+│   │   ├── GeoPoint+Ext.swift
+│   │   ├── GeometryProxy+Ext.swift
+│   │   ├── Keyboard+Ext.swift
+│   │   ├── Notification+Ext.swift
+│   │   ├── OffsetModifier.swift
+│   │   ├── Optional+Ext.swift
+│   │   ├── ParticleEffectModifier+Ext.swift
+│   │   ├── PinchZoomImageModifier.swift
+│   │   ├── PlaceHolderColorModifier.swift
+│   │   ├── PreviewProvider+Ext.swift
+│   │   ├── SearchResponse+Ext.swift
+│   │   ├── Set+Ext.swift
+│   │   ├── String+Ext.swift
+│   │   ├── Timestamp+Ext.swift
+│   │   ├── UIImage+Ext.swift
+│   │   └── UIScreen+Ext.swift
+│   ├── ViewExtensions
+│   │   ├── Button+Ext.swift
+│   │   ├── Text+Ext.swift
+│   │   ├── TextField+Ext.swift
+│   │   └── View+Ext.swift
+│   └── ViewModifiers
+│       ├── AutoDismissView.swift
+│       └── Ripple.swift
+├── Info.plist
+├── Managers
+│   ├── AlgoliaManager.swift
+│   ├── EventManager.swift
+│   ├── HapticManager.swift
+│   ├── HostManager.swift
+│   ├── LocationManager.swift
+│   ├── NavigationContext.swift
+│   ├── SharedNotificationDataStore.swift
+│   ├── TimestampManager.swift
+│   └── UniversalLinkManager.swift
+├── Map
+│   └── Embedded Views
+│       ├── Create Event View
+│       │   ├── CreateEventView 2.swift
+│       │   ├── CreateEventView.swift
+│       │   ├── EventLocationView.swift
+│       │   └── EventVisibilityView.swift
+│       ├── Guestlist
+│       │   ├── AddToGuestlistView 2.swift
+│       │   ├── AddToGuestlistView.swift
+│       │   ├── GuestlistChartsView.swift
+│       │   ├── GuestlistUserView.swift
+│       │   ├── GuestlistView.swift
+│       │   └── GuestlistViewModel.swift
+│       └── MapClusterView.swift
+├── Models
+│   ├── CoreData
+│   │   ├── Event.xcdatamodeld
+│   │   │   └── Event.xcdatamodel
+│   │   │       └── contents
+│   │   ├── EventModel.xcdatamodeld
+│   │   │   └── EventModel.xcdatamodel
+│   │   │       └── contents
+│   │   └── MixerModel.xcdatamodeld
+│   │       └── MixerModel.xcdatamodel
+│   │           └── contents
+│   ├── Documents
+│   │   ├── Event.swift
+│   │   ├── EventGuest.swift
+│   │   ├── Host.swift
+│   │   ├── HostUserLink.swift
+│   │   ├── Notification.swift
+│   │   ├── Relationship.swift
+│   │   ├── University.swift
+│   │   └── User.swift
+│   ├── Enums
+│   │   ├── AuthFlowViewState.swift
+│   │   ├── DeadlineOption.swift
+│   │   ├── EventAmenities.swift
+│   │   ├── EventCreationState.swift
+│   │   ├── EventType.swift
+│   │   ├── EventUserActionState.swift
+│   │   ├── Gender.swift
+│   │   ├── HomeViewState.swift
+│   │   ├── HostMemberType.swift
+│   │   ├── HostSideMenuOption.swift
+│   │   ├── ImageContext.swift
+│   │   ├── ListViewState.swift
+│   │   ├── MapViewState.swift
+│   │   ├── NavigationState.swift
+│   │   ├── NotificationCategory.swift
+│   │   ├── NotificationType.swift
+│   │   ├── PlannerStatus.swift
+│   │   ├── RelationshipState.swift
+│   │   ├── RelationshipStatus.swift
+│   │   ├── SearchType.swift
+│   │   ├── SideMenuOption.swift
+│   │   ├── StudentMajor.swift
+│   │   ├── SwipeDirection.swift
+│   │   └── TabItem.swift
+│   └── Misc
+│       ├── CheckInMethod.swift
+│       ├── EventMapAnnotation.swift
+│       ├── Feedback.swift
+│       ├── MapItemType.swift
+│       ├── MixerMapAnnotation.swift
+│       ├── MixerMapItem.swift
+│       ├── PieChartModel.swift
+│       ├── PieChartSegment.swift
+│       ├── QueryKey.swift
+│       ├── SearchItem.swift
+│       ├── SettingsModel.swift
+│       └── UserSelectedLocation.swift
+├── Preview Content
+│   └── Preview Assets.xcassets
+│       └── Contents.json
+├── ReusableItems
+│   ├── BackArrowButton.swift
+│   ├── Constants.swift
+│   ├── CustomBadgeModifier.swift
+│   ├── ItemInfoCell.swift
+│   ├── ListCellActionButton.swift
+│   ├── MixerLocationAnnotationView.swift
+│   ├── NameAndLinksRow.swift
+│   └── ParticleEffectButton.swift
+├── Utils
+│   ├── AlertItem.swift
+│   ├── Cache
+│   │   ├── EventCache.swift
+│   │   ├── HostCache.swift
+│   │   └── UserCache.swift
+│   ├── CustomProtocols.swift
+│   ├── CustomSecureField.swift
+│   ├── CustomTextField.swift
+│   ├── DataLoader.swift
+│   ├── ImageRenderer.swift
+│   ├── ImageUploader.swift
+│   └── PreferenceKeys.swift
+├── event_settings.json
+├── host_settings.json
+├── mixer.entitlements
+├── profile_settings.json
+└── project_tree.txt
+
+180 directories, 444 files

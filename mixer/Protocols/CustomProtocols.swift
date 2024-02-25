@@ -17,17 +17,6 @@ protocol CoordinateRepresentable: Equatable {
     var coordinate: CLLocationCoordinate2D { get }
 }
 
-protocol SettingsConfigurable: ObservableObject {
-    associatedtype Content: View
-    func content(for title: String) -> Binding<String>
-    func save(for type: SettingSaveType)
-    func saveType(for title: String) -> SettingSaveType
-    func toggle(for title: String) -> Binding<Bool>
-    func url(for title: String) -> String
-    func shouldShowRow(withTitle title: String) -> Bool
-    @ViewBuilder func destination(for title: String) -> Content
-}
-
 protocol AmenityHandling: ObservableObject {
     var selectedAmenities: Set<EventAmenity> { get set }
     var bathroomCount: Int { get set }

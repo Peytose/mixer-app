@@ -1,5 +1,5 @@
 //
-//  EditAddressView.swift
+//  SelectAddressView.swift
 //  mixer
 //
 //  Created by Jose Martinez on 11/16/23.
@@ -8,9 +8,9 @@
 import SwiftUI
 import MapKit
 
-struct EditAddressView: View {
-    @State var text = "528 Beacon St Boston, MA 02215"
-    @State private var coordinate = CLLocationCoordinate2D(latitude: 42.3506934, longitude: -71.090978)
+struct SelectAddressView: View {
+    @Binding var text: String
+    @Binding var coordinate: CLLocationCoordinate2D
     
     var body: some View {
         List {
@@ -29,7 +29,7 @@ struct EditAddressView: View {
     }
 }
 
-extension EditAddressView {
+extension SelectAddressView {
     var textCell: some View {
         SettingsSectionContainer(header: "title") {
             MapPickerCell(coordinate: $coordinate, value: $text)
@@ -44,7 +44,9 @@ fileprivate struct MapPickerCell: View {
     
     var body: some View {
         VStack {
-            Button(action: { showPicker.toggle() }) {
+            Button {
+                showPicker.toggle()
+            } label: {
                 Text(value)
                     .frame(
                         minWidth: 0,
@@ -65,13 +67,9 @@ fileprivate struct MapPickerCell: View {
                     self.coordinate = placemark.coordinate
                 }
             }
+            
         }
     }
-}
-
-
-#Preview {
-    EditAddressView()
 }
 
 fileprivate struct SelectedLocationMapView: UIViewRepresentable {

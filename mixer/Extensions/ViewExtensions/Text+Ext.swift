@@ -15,8 +15,8 @@ extension Text {
     }
     
     // Headings
-    func primaryHeading(color: Color = .white) -> some View {
-        customFont(.title, weight: .bold, color: color)
+    func primaryHeading(weight: Font.Weight = .bold, color: Color = .white) -> some View {
+        customFont(.title, weight: weight, color: color)
     }
     
     func secondaryHeading(color: Color = .white) -> some View {
@@ -46,8 +46,8 @@ extension Text {
         customFont(.caption, color: color)
     }
     
-    func body(color: Color = .secondary) -> some View {
-        customFont(.body, color: color)
+    func body(weight: Font.Weight = .medium, color: Color = .secondary) -> some View {
+        customFont(.body, weight: weight, color: color)
     }
     
     // Button Fonts

@@ -58,8 +58,8 @@
         "rows": [
             {
                 "id": 7002,
-                "type": "navigate",
-                "title": "Address",
+                "type": "editable",
+                "title": "Change Address",
                 "icon": "map.fill"
             },
             {

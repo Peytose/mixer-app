@@ -194,7 +194,7 @@ class EventCreationViewModel: NSObject, ObservableObject, AmenityHandling {
                 guard let user = try? snapshot?.documents.first?.data(as: User.self),
                       let userId = user.id else { return }
 
-                if let associatedHosts = user.hostIdToMemberTypeMap?.filter({ $0.value.privilege.rawValue > 0 }).keys {
+                if let associatedHosts = user.hostIdToMemberTypeMap?.filter({ $0.value.rawValue > 0 }).keys {
                     HostManager.shared.fetchHosts(with: Array(associatedHosts)) { hosts in
                         self.plannerUsername = ""
 

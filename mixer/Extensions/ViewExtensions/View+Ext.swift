@@ -10,6 +10,13 @@ import Firebase
 import CoreGraphics
 
 extension View {
+    
+    func settingsAlert<ViewModel: SettingsConfigurable>(viewModel: ViewModel) -> some View {
+        self.modifier(SettingsAlertModifier(viewModel: viewModel))
+    }
+    
+    
+    //MARK: - PDF & Image rendering
     @MainActor
     func renderPDF(title: String) -> URL {
         let renderer = ImageRenderer(content: self)
@@ -85,7 +92,7 @@ extension View {
     }
     
     
-    // MARK: Frame Extensions
+    // MARK: - Frame Extensions
     func textFieldFrame() -> some View {
         self
             .frame(width: DeviceTypes.ScreenSize.width * 0.9)
@@ -96,10 +103,9 @@ extension View {
         self
             .frame(width: DeviceTypes.ScreenSize.width * 0.9, height: 55)
     }
-}
-
-// MARK: Gesture extension
-extension View {
+    
+    
+    // MARK: - Gesture extension
     func swipeGesture(direction: SwipeDirection, action: @escaping () -> Void) -> some View {
         return self.gesture(DragGesture(minimumDistance: 3.0, coordinateSpace: .local)
             .onEnded { value in
@@ -118,19 +124,16 @@ extension View {
             }
         )
     }
-}
-
-// MARK: Ripple extension
-extension View {
+    
+    
+    // MARK: - Ripple extension
     func rippleEffect(location: Binding<CGPoint>,
                       rippleColor: Color = .accentColor.opacity(0.5),
                       onTap: (() -> Void)? = nil) -> some View {
         modifier(Ripple(location: location, color: rippleColor, onTap: onTap))
     }
-}
-
-// MARK:
-public extension View {
+    
+    
     @ViewBuilder
     func modify(@ViewBuilder _ transform: (Self) -> (some View)?) -> some View {
         if let view = transform(self), !(view is EmptyView) {

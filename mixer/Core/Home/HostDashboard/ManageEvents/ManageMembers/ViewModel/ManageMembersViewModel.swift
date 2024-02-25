@@ -203,14 +203,14 @@ class ManageMembersViewModel: ObservableObject {
         }
         
         // Check privilege level
-        guard currentUserRole.privilege.rawValue > memberRole.privilege.rawValue else {
+        guard currentUserRole.rawValue > memberRole.rawValue else {
             print("DEBUG: currentUserRole does not have higher privilege than memberRole")
             return ActionSheet(title: Text("No Actions Available"))
         }
         
         // Add buttons for roles less privileged than the current user's role
         let validRoles = HostMemberType.allCases.filter( {
-            $0.privilege.rawValue <= currentUserRole.privilege.rawValue &&
+            $0.rawValue <= currentUserRole.rawValue &&
             $0 != memberRole
         })
         
@@ -222,7 +222,7 @@ class ManageMembersViewModel: ObservableObject {
         }
         
         // If the current user can delete users, add a delete button
-        if currentUserRole.privilege == .admin {
+        if currentUserRole == .admin {
             buttons.append(.destructive(Text("Delete Member")) {
                 // Delete member action
                 self.removeMember(with: memberId)

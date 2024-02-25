@@ -125,7 +125,6 @@ class UserService: ObservableObject {
             }
         }
     }
-
     
     
     func selectHost(_ host: Host) {

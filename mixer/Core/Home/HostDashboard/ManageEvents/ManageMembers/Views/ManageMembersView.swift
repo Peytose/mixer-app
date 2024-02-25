@@ -58,7 +58,9 @@ struct ManageMembersView: View {
                 .padding()
         }
         .overlay(alignment: .topTrailing) {
-            if let hostId = viewModel.selectedHost?.id, (UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privilege ?? .basic).rawValue > PrivilegeLevel.basic.rawValue {
+            if let hostId = viewModel.selectedHost?.id,
+               let privileges = UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privileges,
+               privileges.contains(.inviteMembers) {
                 AddMemberButton(showAlert: $viewModel.isShowingUsernameInputAlert)
                     .padding()
             }

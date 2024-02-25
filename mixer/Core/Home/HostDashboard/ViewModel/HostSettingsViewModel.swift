@@ -6,15 +6,22 @@
 //
 
 import SwiftUI
+import MapKit
+import Firebase
 
 class HostSettingsViewModel: SettingsConfigurable {
+    
     @Published var hostImageUrl: String
     @Published var displayName: String
     @Published private(set) var username: String
     @Published var instagramHandle: String
     @Published var website: String
     @Published var address: String
+    @Published var coordinate: CLLocationCoordinate2D
     @Published var showLocationOnProfile: Bool
+    @Published var chosenRow: SettingsRowModel?
+    @Published var showPicker: Bool = false
+    @Published var showAlert: Bool = false
     
     private var description: String
     let hostAgreementLink = ""
@@ -27,7 +34,8 @@ class HostSettingsViewModel: SettingsConfigurable {
         self.instagramHandle       = host.instagramHandle ?? ""
         self.website               = host.website ?? ""
         self.description           = host.description
-        self.address               = host.address ?? ""
+        self.address               = host.address?.components(separatedBy: ",")[0] ?? ""
+        self.coordinate            = host.location.toCoordinate()
         self.showLocationOnProfile = host.showLocationOnProfile
     }
 }
@@ -99,15 +107,15 @@ extension HostSettingsViewModel {
             
         case .address:
             guard self.address != "" else { return }
+            let data: [String: Any] = ["address": address, "location": coordinate.toGeoPoint()]
             
-            print("DEBUG: Not implemented yet.")
-            break
-            
-//            COLLECTION_HOSTS
-//                .document(uid)
-//                .updateData(["address": address]) { _ in
-//                    completion()
-//                }
+            COLLECTION_HOSTS
+                .document(uid)
+                .updateData(data) { _ in
+                    UserService.shared.user?.currentHost?.address = self.address
+                    UserService.shared.user?.currentHost?.location = self.coordinate.toGeoPoint()
+                    completion()
+                }
             
         case .locationToggle:
             self.showLocationOnProfile = !showLocationOnProfile
@@ -136,7 +144,7 @@ extension HostSettingsViewModel {
             return Binding<String>(get: { self.instagramHandle }, set: { self.instagramHandle = $0 })
         case "Website":
             return Binding<String>(get: { self.website }, set: { self.website = $0 })
-        case "Location":
+        case "Change Address":
             return Binding<String>(get: { self.address }, set: { self.address = $0 })
         default:
             return .constant("")
@@ -190,11 +198,6 @@ extension HostSettingsViewModel {
     }
     
     
-    func shouldShowRow(withTitle title: String) -> Bool {
-        return true
-    }
-    
-    
     // Mapping destination based on the row title
     @ViewBuilder
     func destination(for title: String) -> some View {
@@ -203,12 +206,32 @@ extension HostSettingsViewModel {
                 EditTextView(navigationTitle: "Edit Description",
                                             title: "Description",
                                             text: description,
-                                            limit: 200) { updatedText in
+                                            limit: 150) { updatedText in
                     self.save(for: .description(updatedText))
                 }
             case "Edit Members":
                 ManageMembersView()
             default: ComingSoonView()
+        }
+    }
+    
+    
+    func action(for title: String) -> Void {
+        switch title {
+            case "Change Address":
+                self.showPicker = true
+            case "Display Name", "Instagram", "Website":
+                self.showAlert = true
+            default: break
+        }
+    }
+    
+    
+    func handleItem(_ item: MKMapItem?) {
+        if let placemark = item?.placemark, !(placemark.title?.contains(address) ?? false) {
+            self.address = placemark.title?.condenseWhitespace() ?? ""
+            self.coordinate = placemark.coordinate
+            self.save(for: .address)
         }
     }
 }

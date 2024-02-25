@@ -9,6 +9,17 @@ import SwiftUI
 import CoreLocation
 
 extension String {
+    func trimmingAllSpaces(using characterSet: CharacterSet = .whitespacesAndNewlines) -> String {
+        return components(separatedBy: characterSet).joined()
+    }
+    
+    
+    func condenseWhitespace() -> String {
+        let components = self.components(separatedBy: .whitespacesAndNewlines)
+        return components.filter { !$0.isEmpty }.joined(separator: " ")
+    }
+    
+    
     func applyPattern(pattern: String = "##  ##  ####", replacmentCharacter: Character = "#") -> String {
         var pureNumber = self.replacingOccurrences( of: "[^0-9]", with: "", options: .regularExpression)
         for index in 0 ..< pattern.count {

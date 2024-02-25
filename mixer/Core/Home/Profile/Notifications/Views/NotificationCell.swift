@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Kingfisher
+import Firebase
 
 struct NotificationCell: View {
     
@@ -49,9 +50,10 @@ struct NotificationCell: View {
                             .plannerDeclined,
                             .plannerReplaced,
                             .plannerRemoved,
-                            .plannerPendingReminder:
+                            .plannerPendingReminder,
+                            .hostInvited:
                         homeViewModel.navigate(to: .close,
-                                               withUser: sharedData.users[cellViewModel.notification.uid ?? ""])
+                                               withUser: sharedData.users[cellViewModel.notification.uid])
                     case .guestlistAdded:
                         homeViewModel.navigate(to: .close,
                                                withHost: sharedData.hosts[cellViewModel.notification.hostId ?? ""])
@@ -124,6 +126,13 @@ struct NotificationCell: View {
                     ListCellActionButton(text: "Remove") {
                         cellViewModel.removePlanner(event: sharedData.events[cellViewModel.notification.eventId ?? ""])
                     }
+                case .hostInvited:
+                    NavigationLink {
+                        BecomeHostView()
+                    } label: {
+                        ListCellActionButton(text: "chevron.right",
+                                             isIcon: true) { }
+                    }
                 default: Text("")
                 }
             }
@@ -131,6 +140,12 @@ struct NotificationCell: View {
         .padding(.trailing)
     }
 }
+
+#Preview("Notification Cell", body: {
+    NavigationStack {
+        NotificationCell(cellViewModel: NotificationCellViewModel(notification: Notification(uid: "", headline: "Peyton", timestamp: Timestamp(), expireAt: Timestamp(), imageUrl: "", type: .hostInvited)))
+    }
+})
 
 fileprivate struct NotificationSecondaryImage: View {
     let imageUrl: String

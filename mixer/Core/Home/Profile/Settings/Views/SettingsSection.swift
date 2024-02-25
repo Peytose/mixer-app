@@ -14,14 +14,18 @@ struct SettingsSection<ViewModel: SettingsConfigurable>: View {
     var body: some View {
         Section {
             ForEach(setting.rows) { row in
-                SettingsRow(row: row, viewModel: viewModel)
-                    .listRowBackground(Color.theme.secondaryBackgroundColor)
+                if viewModel.shouldShowRow(with: row.title) {
+                    SettingsRow(row: row, viewModel: viewModel)
+                        .listRowBackground(Color.theme.secondaryBackgroundColor)
+                }
             }
         } header: {
-            Text(setting.header)
-                .fontWeight(.semibold)
+            if viewModel.visibleRowsCount(in: setting) > 0 {
+                Text(setting.header)
+                    .fontWeight(.semibold)
+            }
         } footer: {
-            if let footer = setting.footer {
+            if let footer = setting.footer, viewModel.visibleRowsCount(in: setting) > 0 {
                 Text(footer)
             }
         }

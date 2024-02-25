@@ -147,5 +147,20 @@
                 "icon": "info.circle.fill"
             }
         ]
+    },
+    {
+        "id": 6001,
+        "header": "Admin Options",
+        "rows": [
+            {
+                "id": 6002,
+                "type": "editable",
+                "title": "Invite Host",
+                "icon": "house.circle.fill",
+                "alertTitle": "Invite a New Host",
+                "alertMessage": "Enter the username of the user you want to invite as a host. They will receive an invitation to create a host account.",
+                "alertPlaceholder": "Username"
+            }
+        ]
     }
 ]

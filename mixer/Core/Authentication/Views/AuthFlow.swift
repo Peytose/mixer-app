@@ -28,14 +28,20 @@ struct AuthFlow: View {
             if viewModel.isLoading { LoadingView() }
         }
         .overlay(alignment: .bottom) {
-            SignUpContinueButton(state: $authState)
-                .disabled(viewModel.isLoading)
+            SignUpContinueButton(message: viewModel.buttonMessage(for: authState),
+                                 text: viewModel.buttonText(for: authState),
+                                 isButtonActive: viewModel.isButtonActiveForState(authState)) {
+                viewModel.actionForState($authState)
+            }
+            .disabled(viewModel.isLoading)
         }
         .overlay(alignment: .topLeading) {
             if authState != .enterName {
-                backArrowButton
-                    .padding(.horizontal, 4)
-                    .padding(.top, 5)
+                BackArrowButton {
+                    viewModel.previous($authState)
+                }
+                .padding(.horizontal, 4)
+                .padding(.top, 5)
             }
         }
         .onChange(of: viewModel.isLoggedOut) { newValue in
@@ -63,19 +69,5 @@ struct AuthFlow_Previews: PreviewProvider {
         AuthFlow()
             .preferredColorScheme(.dark)
             .environmentObject(AuthViewModel.shared)
-    }
-}
-
-
-extension AuthFlow {
-    var backArrowButton: some View {
-        Button { viewModel.previous($authState) } label: {
-            Image(systemName: "arrow.left")
-                .font(.title2)
-                .imageScale(.medium)
-                .foregroundColor(.white)
-                .padding(10)
-                .contentShape(Rectangle())
-        }
     }
 }

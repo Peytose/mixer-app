@@ -20,6 +20,8 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
     @Published var containsAlcohol: Bool
     @Published var startDate: Timestamp
     @Published var endDate: Timestamp
+    @Published var chosenRow: SettingsRowModel?
+    @Published var showAlert: Bool = false
     
     init(event: Event) {
         self.event             = event
@@ -150,7 +152,7 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
     }
     
     
-    func shouldShowRow(withTitle title: String) -> Bool {
+    func shouldShowRow(with title: String) -> Bool {
         return true
     }
     
@@ -176,16 +178,22 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
             EditAmenitiesView(viewModel: self,
                               amenities: event.amenities,
                               bathroomCount: event.bathroomCount)
-        case "Address":
-            EditAddressView()
         default: ComingSoonView()
+        }
+    }
+    
+    func action(for title: String) -> Void {
+        switch title {
+            case "Title":
+                self.showAlert = true
+            default: break
         }
     }
     
     
     func isSecondaryButton() -> Bool {
-        let isAmenitiesChanged = Set(event.amenities ?? []) != selectedAmenities
-        let isBathroomCountChanged = bathroomCount != event.bathroomCount
+        var isAmenitiesChanged = Set(event.amenities ?? []) != selectedAmenities
+        var isBathroomCountChanged = bathroomCount != event.bathroomCount
         return !isAmenitiesChanged && !isBathroomCountChanged
     }
 }

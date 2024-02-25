@@ -59,19 +59,20 @@ struct HostDashboardView: View {
             Color.theme.backgroundColor
                 .ignoresSafeArea()
             
-            Image("Blob 1")
+            Image(.blob1)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 300, height: 300, alignment: .top)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                 .opacity(0.8)
                 .rotationEffect(Angle(degrees: 180))
-                .offset(x: -20, y: -420) // Looks really sick don't delete
-//                .offset(x: -20, y: -720)
+                .offset(x: -20, y: -420)
 
         }
         .overlay(alignment: .bottomTrailing) {
-            if let hostId = viewModel.currentHost?.id, (UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privilege ?? .basic).rawValue > PrivilegeLevel.basic.rawValue {
+            if let hostId = viewModel.currentHost?.id,
+               let privileges = UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privileges,
+               privileges.contains(.createEvents) {
                 NavigationLink(destination: EventCreationFlowView()) {
                     Image(systemName: "plus")
                         .font(.title)
@@ -181,6 +182,7 @@ extension HostDashboardView {
                     .scaledToFill()
                     .frame(width: 120, height: 180)
                     .cornerRadius(10, corners: .topRight)
+                    .redacted(reason: viewModel.isLoading ? .placeholder : [])
             }
             
             Spacer()
@@ -193,10 +195,12 @@ extension HostDashboardView {
                             .fontWeight(.bold)
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
+                            .redacted(reason: viewModel.isLoading ? .placeholder : [])
                         
                         Text("Hosted on \(event.startDate.getTimestampString(format: "MMMM dd, yyyy"))")
                             .font(.subheadline.weight(.medium))
                             .foregroundColor(.secondary)
+                            .redacted(reason: viewModel.isLoading ? .placeholder : [])
                     }
                 }
                 
@@ -204,6 +208,7 @@ extension HostDashboardView {
                     ForEach(viewModel.recentStatistics.keys.sorted(), id: \.self) { key in
                         if let value = viewModel.recentStatistics[key] {
                             TextRow(title: key, value: value)
+                                .redacted(reason: viewModel.isLoading ? .placeholder : [])
                         }
                     }
                 }

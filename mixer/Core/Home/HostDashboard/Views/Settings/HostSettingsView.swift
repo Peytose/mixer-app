@@ -37,6 +37,8 @@ struct HostSettingsView: View {
             }
             .background(Color.theme.backgroundColor)
             .navigationBar(title: "Host Settings", displayMode: .inline)
+            .mapItemPicker(isPresented: $viewModel.showPicker, onDismiss: viewModel.handleItem)
+            .settingsAlert(viewModel: viewModel)
         }
     }
 }

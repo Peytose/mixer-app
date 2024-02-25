@@ -7,10 +7,19 @@
 
 import SwiftUI
 
-enum PrivilegeLevel: Int {
-    case basic
-    case advanced
-    case admin
+struct Privilege: OptionSet {
+    let rawValue: Int
+
+    static let viewEvents      = Privilege(rawValue: 1 << 0)
+    static let createEvents    = Privilege(rawValue: 1 << 1)
+    static let editEvents      = Privilege(rawValue: 1 << 2)
+    static let deleteEvents    = Privilege(rawValue: 1 << 3)
+    static let manageMembers   = Privilege(rawValue: 1 << 4)
+    static let viewAnalytics   = Privilege(rawValue: 1 << 5)
+    static let manageSettings  = Privilege(rawValue: 1 << 6)
+    static let inviteMembers   = Privilege(rawValue: 1 << 7)
+    static let removeMembers   = Privilege(rawValue: 1 << 8)
+    static let all: Privilege   = [.viewEvents, .createEvents, .editEvents, .deleteEvents, .manageMembers, .viewAnalytics, .manageSettings, .inviteMembers, .removeMembers]
 }
 
 enum HostMemberType: Int, CustomStringConvertible, Codable, CaseIterable {
@@ -35,14 +44,18 @@ enum HostMemberType: Int, CustomStringConvertible, Codable, CaseIterable {
         }
     }
     
-    var privilege: PrivilegeLevel {
+    var privileges: Privilege {
         switch self {
         case .member:
-            return .basic
-        case .planner, .vip:
-            return .advanced
-        case .moderator, .admin:
-            return .admin
+            return [.viewEvents]
+        case .planner:
+            return [.viewEvents, .createEvents, .editEvents]
+        case .vip:
+            return [.viewEvents, .viewAnalytics]
+        case .moderator:
+            return [.viewEvents, .createEvents, .editEvents, .deleteEvents, .manageMembers]
+        case .admin:
+            return .all
         }
     }
 }

@@ -43,6 +43,16 @@ struct ConfirmationAlertItem: Identifiable {
 }
 
 struct AlertContext {
+    //MARK: - AdminServices Errors/Messages
+    static let userNotFound                   = AlertItem(title: Text("User Not Found"),
+                                                          message: Text("The specified user could not be found. Please try again."),
+                                                          dismissButton: .default(Text("OK")))
+    
+    static let unauthorized                   = AlertItem(title: Text("Unauthorized"),
+                                                          message: Text("You do not have permission to perform this action."),
+                                                          dismissButton: .default(Text("OK")))
+    
+    
     // MARK: - ManageMembersViewModel Errors/Messages
     static let cannotInviteSelf               = AlertItem(title: Text("Error"),
                                                           message: Text("You are already apart of this organization."),
@@ -121,7 +131,7 @@ struct AlertContext {
                                                               message: Text("An abnormal number of requests have been made from this device to our Firebase Authentication servers.\nRetry again after some time."),
                                                               dismissButton: .default(Text("Weird")))
     
-    static let userNotFound                       = AlertItem(title: Text(("Authentication Error")),
+    static let userNotFoundAuth                   = AlertItem(title: Text(("Authentication Error")),
                                                               message: Text("We could not find any accounts matching the information you provided.\nConsider signing up instead."),
                                                               dismissButton: .default(Text("Okie dokie")))
     
