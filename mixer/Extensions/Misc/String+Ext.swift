@@ -9,6 +9,11 @@ import SwiftUI
 import CoreLocation
 
 extension String {
+    var removedSpecialCharacters: String {
+        return self.components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: "")
+    }
+    
+    
     func trimmingAllSpaces(using characterSet: CharacterSet = .whitespacesAndNewlines) -> String {
         return components(separatedBy: characterSet).joined()
     }

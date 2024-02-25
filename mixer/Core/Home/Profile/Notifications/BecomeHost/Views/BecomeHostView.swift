@@ -156,7 +156,7 @@ extension BecomeHostView {
         case .username:
             SignUpTextField(input: $viewModel.username,
                             title: "Create your username",
-                            placeholder: "e.g., \(viewModel.name.trimmingAllSpaces().lowercased())",
+                            placeholder: "e.g., \(viewModel.name.trimmingAllSpaces().trimmingAllSpaces(using: .punctuationCharacters).lowercased())",
                             footnote: "Use letters, numbers, or underscores. Avoid spaces and special characters.",
                             keyboard: .default,
                             isValidUsername: viewModel.isUsernameValid)

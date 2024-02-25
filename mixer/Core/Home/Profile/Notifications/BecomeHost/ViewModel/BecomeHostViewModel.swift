@@ -19,15 +19,15 @@ class BecomeHostViewModel: ObservableObject {
     @Published var image: UIImage?
     @Published var tagline: String = ""
     @Published var contactEmail: String = ""
-    @Published var username: String = ""
-    
-    private var notificationId: String
-    
-    @Published var isUsernameValid: Bool = false {
+    @Published var username: String = "" {
         didSet {
             checkUsernameValidity()
         }
     }
+    
+    private var notificationId: String
+    
+    @Published var isUsernameValid: Bool = false
     @Published var useEmailForContact: Bool = false {
         didSet {
             if useEmailForContact, let email = userService.user?.email {
@@ -185,13 +185,21 @@ class BecomeHostViewModel: ObservableObject {
         let usernamePattern = "^[a-zA-Z0-9_]{4,}$" // Adjust pattern as needed
         let usernamePredicate = NSPredicate(format: "SELF MATCHES %@", usernamePattern)
         
-        guard usernamePredicate.evaluate(with: self.username) else {
+        if usernamePredicate.evaluate(with: self.username) {
+            print("DEBUG: Username '\(self.username)' matches the pattern.")
+        } else {
+            print("DEBUG: Username '\(self.username)' does NOT match the pattern.")
             self.isUsernameValid = false
             return
         }
         
         AlgoliaManager.shared.validateUsername(self.username) { isValid in
             DispatchQueue.main.async {
+                if isValid {
+                    print("DEBUG: Username '\(self.username)' is valid according to AlgoliaManager.")
+                } else {
+                    print("DEBUG: Username '\(self.username)' is NOT valid according to AlgoliaManager.")
+                }
                 self.isUsernameValid = isValid
             }
         }
