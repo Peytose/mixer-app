@@ -50,6 +50,7 @@ fileprivate struct MixerMapItemSearchResultsView: View {
                     subtitle: "\(viewModel.selectedSearchType == .users || viewModel.selectedSearchType == .hosts ? "@" : "")\(result.subtitle)",
                     imageUrl: result.imageUrl
                 )
+                .contentShape(Rectangle())
                 .onTapGesture {
                     withAnimation(.spring()) {
                         viewModel.fetchDetails(for: result,

@@ -55,7 +55,21 @@ struct HostDashboardView: View {
             .padding(.bottom, 140)
         }
         .padding(.horizontal, 17)
-        .background(Color.theme.backgroundColor)
+        .background {
+            Color.theme.backgroundColor
+                .ignoresSafeArea()
+            
+            Image("Blob 1")
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: 300, height: 300, alignment: .top)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .opacity(0.8)
+                .rotationEffect(Angle(degrees: 180))
+                .offset(x: -20, y: -420) // Looks really sick don't delete
+//                .offset(x: -20, y: -720)
+
+        }
         .overlay(alignment: .bottomTrailing) {
             if let hostId = viewModel.currentHost?.id, (UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privilege ?? .basic).rawValue > PrivilegeLevel.basic.rawValue {
                 NavigationLink(destination: EventCreationFlowView()) {

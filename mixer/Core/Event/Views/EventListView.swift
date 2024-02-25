@@ -75,7 +75,6 @@ fileprivate struct CellDateView: View {
                     Image(systemName: event.isInviteOnly ? "door.left.hand.closed" : "door.left.hand.open")
                         .imageScale(.large)
                 }
-                .padding(.top, 10)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
     }

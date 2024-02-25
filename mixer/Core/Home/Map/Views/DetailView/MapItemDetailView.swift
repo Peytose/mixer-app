@@ -23,6 +23,7 @@ struct MapItemDetailSheetView: View {
     
     @State private var selectedMode: MKDirectionsTransportType = .automobile
     @State private var travelIcon = "car.fill"
+    @State private var showMailModal = false
     
     var body: some View {
         ScrollView {
@@ -38,6 +39,9 @@ struct MapItemDetailSheetView: View {
         }
         .background(Color.theme.backgroundColor.ignoresSafeArea())
         .onAppear(perform: setupAddresses)
+        .sheet(isPresented: $showMailModal) {
+            MailViewModal(isShowing: $showMailModal, subject: "mixer", recipients: ["josemartinez102001@gmail.com"])
+        }
     }
 }
 
@@ -52,11 +56,14 @@ extension MapItemDetailSheetView {
     
     var buttonsView: some View {
         HStack(spacing: 8) {
+            
             ForEach(Array(buttons.indices), id: \.self) { index in
                 Button(action: buttons[index].action) {
                     buttonContent(for: buttons[index])
+                    Spacer()
                 }
             }
+            
             moreButton
         }
     }
@@ -126,25 +133,24 @@ extension MapItemDetailSheetView {
     }
     
     var moreButton: some View {
-        VStack(spacing: 5) {
-            Image(systemName: "ellipsis")
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.white)
-                .frame(width: 20, height: 20)
-            
-            Text("More")
-                .font(.footnote)
-                .foregroundColor(.white)
-        }
-        .frame(width: 125, height: 90)
-        .background(RoundedRectangle(cornerRadius: 10).fill(Color.theme.secondaryBackgroundColor))
-        .contextMenu {
-            Button {
-                // Action for reporting an issue
-            } label: {
-                Label("Report an Issue", systemImage: "exclamationmark.bubble")
+        Menu {
+//            Button("Share Host Profile", action: {})
+            Button("Contact Host", action: { showMailModal.toggle() })
+        } label: {
+            VStack(spacing: 5) {
+                Image(systemName: "ellipsis")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.white)
+                    .frame(width: 20, height: 20)
+                
+                Text("More")
+                    .font(.footnote)
+                    .foregroundColor(.white)
             }
+            .frame(height: 90)
+            .frame(maxWidth: 110)
+            .background(RoundedRectangle(cornerRadius: 10).fill(Color.theme.secondaryBackgroundColor))
         }
     }
     
@@ -161,10 +167,11 @@ extension MapItemDetailSheetView {
                 .foregroundColor(.white)
                 .font(.footnote)
         }
-        .frame(width: 125, height: 90)
+        .frame(height: 90)
+        .frame(maxWidth: 110)
         .background(RoundedRectangle(cornerRadius: 10).fill(Color.theme.secondaryBackgroundColor))
     }
-
+    
     
     private func travelTimeText(for mode: MKDirectionsTransportType) -> String {
         let time: TimeInterval? // Declare an optional TimeInterval to hold the value based on the mode
@@ -192,7 +199,7 @@ extension MapItemDetailSheetView {
                 self.userAddress = address ?? "Location not found"
             }
         }
-
+        
         // Reverse geocode selectedItem location
         reverseGeocodeCoordinate(selectedItem.coordinate) { address in
             self.destinationAddress = address ?? "Location not found"
@@ -203,19 +210,19 @@ extension MapItemDetailSheetView {
     private func reverseGeocodeCoordinate(_ coordinate: CLLocationCoordinate2D, completion: @escaping (String?) -> Void) {
         let geocoder = CLGeocoder()
         let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-
+        
         geocoder.reverseGeocodeLocation(location) { placemarks, error in
             guard let placemark = placemarks?.first, error == nil else {
                 completion(nil)
                 return
             }
-
+            
             let formattedAddress = [
                 [placemark.subThoroughfare, placemark.thoroughfare].compactMap { $0 }.joined(separator: " "),
                 [placemark.locality, placemark.administrativeArea].compactMap { $0 }.joined(separator: ", ")
             ].joined(separator: " ")
-
-
+            
+            
             completion(formattedAddress)
         }
     }

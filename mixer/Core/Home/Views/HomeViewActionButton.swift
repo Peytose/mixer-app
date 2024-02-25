@@ -18,7 +18,7 @@ struct HomeViewActionButton: View {
             Image(systemName: homeViewModel.iconForState())
                 .font(.title2)
                 .foregroundColor(.black)
-                .padding()
+                .padding(10)
                 .background(.white)
                 .clipShape(Circle())
                 .shadow(color: .black, radius: 6)

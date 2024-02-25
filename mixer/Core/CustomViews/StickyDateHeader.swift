@@ -125,7 +125,7 @@ struct StickyDateHeader<Header: View, Content: View>: View {
 
     func getHeaderOffset() -> CGFloat {
         // The height of the event categories header
-        let eventCategoriesHeaderHeight: CGFloat = 200
+        let eventCategoriesHeaderHeight: CGFloat = 170
 
         // Calculate the offset to keep the date header just below the event categories header
         return max(-topOffset + eventCategoriesHeaderHeight, 0)
