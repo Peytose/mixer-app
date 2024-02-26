@@ -30,17 +30,21 @@ struct HostDashboardView: View {
                     Spacer()
                     
                     VStack(alignment: .leading) {
-                        Text("Most Recent")
+                        Text(viewModel.recentEvent != nil ? "Most Recent" : "Post an Event")
                             .font(.title)
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         
                         recentEventInformation
+                        
+                        Spacer()
                     }
                     
                     Divider()
                     
-                    seeReportButton
+                    if let _ = viewModel.recentEvent {
+                        seeReportButton
+                    }
                 }
                 .frame(minHeight: 360)
                 .padding()
@@ -49,7 +53,8 @@ struct HostDashboardView: View {
                 
                 VStack {
                     SectionViewContainer(title: "Quick Stats",
-                                         quickStatistics: viewModel.quickStatistics)
+                                         quickStatistics: $viewModel.quickStatistics,
+                                         isLoading: $viewModel.isLoading)
                 }
             }
             .padding(.bottom, 140)
@@ -239,14 +244,16 @@ struct SquareViewContainer<Content: View>: View {
     var secondaryValue: String
     var secondaryLabel: String
     var width: CGFloat
+    @Binding var isLoading: Bool
     
-    init(title: String, subtitle: String = "", secondaryValue: String, secondaryLabel: String, width: CGFloat = DeviceTypes.ScreenSize.width * 0.44, @ViewBuilder content: () -> Content) {
+    init(title: String, subtitle: String = "", secondaryValue: String, secondaryLabel: String, width: CGFloat = DeviceTypes.ScreenSize.width * 0.44, isLoading: Binding<Bool>, @ViewBuilder content: () -> Content) {
         self.content = content()
         self.title = title
         self.subtitle = subtitle
         self.secondaryValue = secondaryValue
         self.secondaryLabel = secondaryLabel
         self.width = width
+        self._isLoading = isLoading
     }
     
     var body: some View {
@@ -256,10 +263,12 @@ struct SquareViewContainer<Content: View>: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
                 .multilineTextAlignment(.center)
+                .redacted(reason: isLoading ? .placeholder : [])
             
             Text(subtitle)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+                .redacted(reason: isLoading ? .placeholder : [])
                        
             Spacer()
 
@@ -267,6 +276,7 @@ struct SquareViewContainer<Content: View>: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
+                .redacted(reason: isLoading ? .placeholder : [])
             
             Divider()
             
@@ -274,6 +284,7 @@ struct SquareViewContainer<Content: View>: View {
                 Text("\(Text(secondaryValue).font(.subheadline).foregroundColor(.white)) \(Text(secondaryLabel).font(.footnote).foregroundColor(.secondary))")
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
+                    .redacted(reason: isLoading ? .placeholder : [])
                 
                 Spacer()
             }
@@ -287,7 +298,8 @@ struct SquareViewContainer<Content: View>: View {
 
 struct SectionViewContainer: View {
     var title: String
-    var quickStatistics: [String: (String, String, String)] = [:]
+    @Binding var quickStatistics: [String: (String, String, String)]
+    @Binding var isLoading: Bool
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -342,7 +354,8 @@ struct SectionViewContainer: View {
         SquareViewContainer(title: title,
                             secondaryValue: secondaryValue,
                             secondaryLabel: secondaryLabel,
-                            width: DeviceTypes.ScreenSize.width * 0.92) {
+                            width: DeviceTypes.ScreenSize.width * 0.92,
+                            isLoading: $isLoading) {
             Text(value)
                 .largeTitle()
         }
@@ -354,7 +367,8 @@ struct SectionViewContainer: View {
         // Implement the view with standard sizing
         SquareViewContainer(title: title,
                             secondaryValue: secondaryValue,
-                            secondaryLabel: secondaryLabel) {
+                            secondaryLabel: secondaryLabel,
+                            isLoading: $isLoading) {
             Text(value)
                 .largeTitle()
         }
@@ -402,16 +416,5 @@ private struct TextRow: View {
         }
         .lineLimit(1)
         .minimumScaleFactor(0.8)
-    }
-}
-
-struct SquareViewContainer_Previews: PreviewProvider {
-    static var previews: some View {
-        SquareViewContainer(title: "Most Freq.",
-                            secondaryValue: "5",
-                            secondaryLabel: "label shi") {
-            Text("MIT")
-                .largeTitle()
-        }
     }
 }

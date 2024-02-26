@@ -45,4 +45,9 @@ extension Array where Element == Event {
     func filterStartedEvents() -> [Event] {
         return self.filter({ $0.startDate < Timestamp() })
     }
+    
+    
+    var mostRecentEvent: Event? {
+        return self.filter({ $0.startDate < Timestamp() && $0.endDate < Timestamp() }).first
+    }
 }

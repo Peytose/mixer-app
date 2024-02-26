@@ -172,7 +172,7 @@ final class HostDashboardViewModel: ObservableObject {
         guard let hostId = currentHost?.id else { return }
         self.showLoadingView()
         
-        if let mostRecentEvent = Array(EventManager.shared.events).filterStartedEvents().sortedByEndDate(false).first {
+        if let mostRecentEvent = Array(EventManager.shared.events).mostRecentEvent {
             DispatchQueue.main.async {
                 self.recentEvent = mostRecentEvent
             }
@@ -182,7 +182,6 @@ final class HostDashboardViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     if let event = event.first {
                         self.recentEvent = event
-                        
                         self.fetchGuestListForEvent(eventId: event.id ?? "")
                     } else {
                         print("DEBUG: No event was returned. Potentially an error, or the host may not have past events.")
@@ -268,6 +267,7 @@ extension HostDashboardViewModel {
 
     
     func selectHost(_ host: Host) {
+        self.recentEvent = nil
         service.selectHost(host)
     }
     

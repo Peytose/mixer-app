@@ -57,7 +57,9 @@ class ManageEventsViewModel: ObservableObject {
     
     
     private func updateEventsForSelectedState() {
-        self.eventsForSelectedState = events.filter { EventState(event: $0).description == currentState.description }
+        self.eventsForSelectedState = events.filter {
+            EventState(event: $0).description == currentState.description
+        }
     }
 
     
