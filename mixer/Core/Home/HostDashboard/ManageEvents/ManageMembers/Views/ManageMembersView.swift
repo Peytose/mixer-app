@@ -36,20 +36,30 @@ struct ManageMembersView: View {
                 
                 Spacer()
             }
-            .alert("Invite a Member", isPresented: $viewModel.isShowingUsernameInputAlert) {
-                TextField("Type username here...", text: $viewModel.username)
-                    .foregroundColor(.primary)
-                
-                if #available(iOS 16.0, *) {
-                    Button("Invite") { viewModel.inviteMember() }
-                        .tint(.secondary)
-                    Button("Cancel", role: .cancel, action: {})
-                        .tint(.white)
-                }
-            } message: {
-                Text("")
-            }
             .padding(.top, 50)
+            .sheet(isPresented: $viewModel.isShowingUsernameInputSheet) {
+                NavigationStack {
+                    List(viewModel.userResults) { result in
+                        ItemInfoCell(title: result.title,
+                                     subtitle: result.subtitle,
+                                     imageUrl: result.imageUrl)
+                        .listRowBackground(Color.theme.secondaryBackgroundColor)
+                        .onTapGesture {
+                            viewModel.inviteMember(with: result.subtitle)
+                            viewModel.isShowingUsernameInputSheet = false
+                        }
+                    }
+                    .listStyle(.insetGrouped)
+                    .background(Color.theme.backgroundColor.ignoresSafeArea())
+                    .searchable(text: $viewModel.searchText)
+                    .navigationTitle("Search Users")
+                    
+                    Spacer()
+                }
+                .overlay(alignment: .topTrailing) {
+                    XDismissButton { viewModel.isShowingUsernameInputSheet = false }
+                }
+            }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden)
@@ -61,23 +71,9 @@ struct ManageMembersView: View {
             if let hostId = viewModel.selectedHost?.id,
                let privileges = UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privileges,
                privileges.contains(.inviteMembers) {
-                AddMemberButton(showAlert: $viewModel.isShowingUsernameInputAlert)
+                AddMemberButton(showAlert: $viewModel.isShowingUsernameInputSheet)
                     .padding()
             }
-        }
-        .alert(item: $viewModel.currentAlert) { alertType in
-            hideKeyboard()
-            
-            switch alertType {
-            case .regular(let alertItem):
-                guard let item = alertItem else { break }
-                return item.alert
-            case .confirmation(let confirmationAlertItem):
-                guard let item = confirmationAlertItem else { break }
-                return item.alert
-            }
-            
-            return Alert(title: Text("Unexpected Error"))
         }
     }
 }

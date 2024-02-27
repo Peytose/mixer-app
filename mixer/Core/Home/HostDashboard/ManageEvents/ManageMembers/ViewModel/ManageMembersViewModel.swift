@@ -14,7 +14,11 @@ import FirebaseFirestore
 class ManageMembersViewModel: ObservableObject {
     @Published var selectedHost: Host?
     @Published var selectedMember: User?
-    @Published var username: String = ""
+    @Published var searchText: String = "" {
+        didSet {
+            self.performSearch()
+        }
+    }
     @Published var memberType: HostMemberType = .member
     @Published var hostUserLinks: [HostUserLink] = [] {
         didSet {
@@ -22,6 +26,7 @@ class ManageMembersViewModel: ObservableObject {
         }
     }
     @Published var filteredMembers: [User] = []
+    @Published var userResults: [SearchItem] = []
     @Published var selectedMemberSection: MemberInviteStatus = .invited {
         didSet {
             refreshViewState()
@@ -29,7 +34,7 @@ class ManageMembersViewModel: ObservableObject {
     }
     
     @Published var viewState: ListViewState = .loading
-    @Published var isShowingUsernameInputAlert: Bool = false
+    @Published var isShowingUsernameInputSheet: Bool = false
     
     @Published var currentAlert: AlertType?
     @Published var alertItem: AlertItem? {
@@ -48,11 +53,12 @@ class ManageMembersViewModel: ObservableObject {
     init() {
         self.selectedHost = UserService.shared.user?.currentHost
         self.fetchMembers()
+        
+        
     }
     
     
     func refresh() {
-        self.username = ""
         self.fetchMembers()
     }
     
@@ -69,6 +75,27 @@ class ManageMembersViewModel: ObservableObject {
         
         self.filteredMembers = filteredMembers
         self.viewState = filteredMembers.isEmpty ? .empty : .list
+    }
+    
+    
+    func performSearch() {
+        if searchText.isEmpty { userResults = [] }
+        
+        AlgoliaManager.shared.search(by: .users, searchText: self.searchText) { result in
+            switch result {
+            case .success(let response):
+                let items = response.mapToSearchItems()
+                let filteredItems = items.filter { item in
+                    return !self.members.contains(where: { $0.id == item.objectId })
+                }
+                
+                DispatchQueue.main.async {
+                    self.userResults = filteredItems
+                }
+            case .failure(let error):
+                print("DEBUG: Error searching for \(self.searchText): \(error.localizedDescription)")
+            }
+        }
     }
     
     
@@ -107,8 +134,8 @@ class ManageMembersViewModel: ObservableObject {
     }
     
     
-    func inviteMember() {
-        guard let selectedHost = self.selectedHost, let hostId = selectedHost.id else { return }
+    func inviteMember(with username: String) {
+        guard let selectedHost = self.selectedHost, let hostId = selectedHost.id, !username.isEmpty else { return }
         
         if let member = members.first(where: { $0.username == username }),
            let link = self.hostUserLinks.first(where: { $0.id == member.id }) {
@@ -125,7 +152,7 @@ class ManageMembersViewModel: ObservableObject {
                                         limit: 1)
                 
                 COLLECTION_USERS
-                    .whereField("username", isEqualTo: self.username)
+                    .whereField("username", isEqualTo: username)
                     .limit(to: 1)
                     .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 7200) { snapshot, error in
                         if let _ = error {
@@ -156,7 +183,8 @@ class ManageMembersViewModel: ObservableObject {
                                     link.id = userId
                                     self.members.append(user)
                                     self.hostUserLinks.append(link)
-                                    self.refreshViewState()
+                                    self.selectedMemberSection = .invited
+                                    HapticManager.playSuccess()
                                 }
                                 
                                 NotificationsViewModel.uploadNotification(toUid: userId,
