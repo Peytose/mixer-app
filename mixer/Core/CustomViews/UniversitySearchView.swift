@@ -50,6 +50,33 @@ struct UniversitySearchView: View {
     }
 }
 
-#Preview {
-    UniversitySearchView(viewModel: UniversitySearchViewModel()) { _ in }
+struct UniversitySearchModalView: View {
+    @ObservedObject var viewModel: UniversitySearchViewModel
+    @Binding var dismissSheet: Bool
+    let action: (University) -> Void
+    
+    var body: some View {
+        NavigationStack {
+            List(Array(viewModel.results), id: \.self) { result in
+                ItemInfoCell(title: result.name,
+                             subtitle: result.domain,
+                             icon: "graduationcap.circle.fill")
+                .listRowBackground(Color.theme.secondaryBackgroundColor) // Apply to each cell
+                .onTapGesture {
+                    action(result)
+                    viewModel.clearInput()
+                    dismissSheet = false
+                }
+            }
+            .scrollContentBackground(.hidden)
+            .background(Color.theme.backgroundColor) // Apply the regular background color to the list
+            .searchable(text: $viewModel.searchText)
+            .navigationTitle("Search Universities")
+        }
+    }
 }
+
+
+//#Preview {
+//    UniversitySearchView(viewModel: UniversitySearchViewModel()) { _ in }
+//}

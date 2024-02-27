@@ -65,7 +65,7 @@ struct EventDetailView: View {
                         
                         AmenitiesView(amenities: viewModel.event.amenities,
                                       bathroomCount: viewModel.event.bathroomCount)
-                            .environmentObject(viewModel)
+                        .environmentObject(viewModel)
                         
                         LocationSection()
                             .environmentObject(viewModel)
@@ -133,7 +133,7 @@ struct EventDetailView: View {
                         ShareLink(item: shareURL,
                                   message: Text("\nCheck out this event on mixer!"),
                                   preview: SharePreview("\(viewModel.event.title) by \(viewModel.event.hostNames.joinedWithCommasAndAnd())",
-                                  image: viewModel.imageLoader.image ?? Image("AppIcon"))) {
+                                                        image: viewModel.imageLoader.image ?? Image("AppIcon"))) {
                             Label("Share Event", image: "square.and.arrow.up")
                         }
                     } label: {
@@ -258,44 +258,44 @@ struct HostSection: View {
     var host: Host
     
     var body: some View {
-            HStack(spacing: 12) {
-                KFImage(URL(string: host.hostImageUrl))
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
-                    .frame(width: 45, height: 45)
+        HStack(spacing: 12) {
+            KFImage(URL(string: host.hostImageUrl))
+                .resizable()
+                .scaledToFill()
+                .clipShape(Circle())
+                .frame(width: 45, height: 45)
+            
+            HStack {
+                Text("\(host.name)")
+                    .font(.title3)
+                    .bold()
+                    .foregroundColor(Color.theme.mixerIndigo)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
                 
-                HStack {
-                    Text("\(host.name)")
-                        .font(.title3)
-                        .bold()
-                        .foregroundColor(Color.theme.mixerIndigo)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.8)
-                    
-                    Spacer()
-                    
-                    //MARK: WILL UPDATE SOON! (PEYTON)
-//                    if let isFollowed = host.isFollowed {
-//                        Button {
-//                            withAnimation(.follow) {
-//                                viewModel.updateFollow(isFollowed)
-//                            }
-//                        } label: {
-//                            Text(isFollowed ? "Following" : "Follow")
-//                                .font(.footnote)
-//                                .fontWeight(.semibold)
-//                                .foregroundColor(.white)
-//                                .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
-//                                .background {
-//                                    Capsule()
-//                                        .stroke(lineWidth: 1)
-//                                }
-//                        }
-//                        .buttonStyle(.plain)
-//                    }
-                }
+                Spacer()
+                
+                //MARK: WILL UPDATE SOON! (PEYTON)
+                //                    if let isFollowed = host.isFollowed {
+                //                        Button {
+                //                            withAnimation(.follow) {
+                //                                viewModel.updateFollow(isFollowed)
+                //                            }
+                //                        } label: {
+                //                            Text(isFollowed ? "Following" : "Follow")
+                //                                .font(.footnote)
+                //                                .fontWeight(.semibold)
+                //                                .foregroundColor(.white)
+                //                                .padding(EdgeInsets(top: 5, leading: 12, bottom: 5, trailing: 12))
+                //                                .background {
+                //                                    Capsule()
+                //                                        .stroke(lineWidth: 1)
+                //                                }
+                //                        }
+                //                        .buttonStyle(.plain)
+                //                    }
             }
+        }
     }
 }
 
@@ -313,12 +313,23 @@ struct EventDetails: View {
             }
             
             if let note = viewModel.event.note {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Notes for guest")
-                        .primaryHeading()
+                if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Notes for guest")
+                            .primaryHeading()
+                        
+                        Text("Available when you are on the guest list")
+                            .foregroundColor(.secondary)
+                    }
+                } else {
                     
-                    Text(note)
-                        .foregroundColor(.secondary)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Notes for guest")
+                            .primaryHeading()
+                        
+                        Text(note)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             
@@ -357,9 +368,11 @@ struct EventDetails: View {
 }
 
 struct AmenitiesView: View {
+    @EnvironmentObject var viewModel: EventViewModel
     var amenities: [EventAmenity]?
     var bathroomCount: Int?
     @State private var showAllAmenities = false
+    @State private var showAlert = false
     
     var body: some View {
         if amenities != nil || bathroomCount != nil {
@@ -412,28 +425,55 @@ struct AmenitiesView: View {
                 }
                 
                 if let count = amenities?.count, count > 1 {
-                    HStack {
-                        Spacer()
-                        
-                        Button {
-                            withAnimation(.spring(dampingFraction: 0.8)) {
-                                showAllAmenities.toggle()
+                    if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
+                        HStack {
+                            Spacer()
+                            
+                            Button {
+                                    showAlert = true
+                            } label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .foregroundColor(.white)
+                                        .frame(width: 350, height: 45)
+                                        .overlay {
+                                            Text("Show all \(count) amenities")
+                                                .font(.body)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.black)
+                                        }
+                                }
                             }
-                        } label: {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .foregroundColor(.white)
-                                    .frame(width: 350, height: 45)
-                                    .overlay {
-                                        Text(showAllAmenities ? "Show less" : "Show all \(count) amenities")
-                                            .font(.body)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.black)
-                                    }
-                            }
+                            
+                            Spacer()
                         }
-                        
-                        Spacer()
+                        .alert("Available when you are on the guestlist", isPresented: $showAlert) {
+                            Button("OK", role: .cancel) { }
+                        }
+                    } else {
+                        HStack {
+                            Spacer()
+                            
+                            Button {
+                                withAnimation(.spring(dampingFraction: 0.8)) {
+                                    showAllAmenities.toggle()
+                                }
+                            } label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .foregroundColor(.white)
+                                        .frame(width: 350, height: 45)
+                                        .overlay {
+                                            Text(showAllAmenities ? "Show less" : "Show all \(count) amenities")
+                                                .font(.body)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.black)
+                                        }
+                                }
+                            }
+                            
+                            Spacer()
+                        }
                     }
                 }
             }
@@ -458,7 +498,7 @@ struct LocationSection: View {
                     DetailRow(text: altAddress,
                               icon: "mappin.and.ellipse")
                 } else {
-                    DetailRow(text: "Available when you are on the guestlist",
+                    DetailRow(text: "Available when you are on the guest list",
                               icon: "mappin.and.ellipse")
                 }
             } else {
@@ -467,7 +507,7 @@ struct LocationSection: View {
                 VStack(alignment: .leading, spacing: 5) {
                     MapSnapshotView(location: .constant(location))
                         .onTapGesture { viewModel.getDirectionsToLocation(coordinates: location) }
-
+                    
                     Text("Tap the map for directions to this event!")
                         .font(.footnote)
                         .fontWeight(.semibold)
@@ -516,12 +556,12 @@ fileprivate struct GuestlistActionButton: View {
                     .font(.headline)
                     .fontWeight(.semibold)
             }
-            .foregroundColor(state.isSecondaryLabel ? .secondary : .white)
+            .foregroundColor(.white)
             .padding()
             .background {
                 Capsule()
                     .fill (
-                        (state.isSecondaryLabel ? Color.theme.secondaryBackgroundColor : Color.theme.mixerIndigo)
+                        (state.icon == "person.crop.circle.badge.checkmark" ? Color.theme.secondaryBackgroundColor : Color.theme.mixerIndigo)
                     )
                     .clipShape(Capsule())
                     .shadow(radius: 2)

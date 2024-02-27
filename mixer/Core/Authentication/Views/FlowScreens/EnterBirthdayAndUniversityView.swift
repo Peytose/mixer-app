@@ -17,18 +17,6 @@ struct EnterBirthdayAndUniversityView: View {
         FlowContainerView {
             ScrollView {
                 VStack(spacing: 50) {
-                    SignUpTextField(input: $viewModel.birthdayStr,
-                                    title: "When's your birthday?",
-                                    placeholder: "MM / DD / YYYY",
-                                    footnote: "Mixer uses your birthday for research and verification purposes. You can change the visibilty of your age in your settings.",
-                                    keyboard: .numberPad)
-                    .onChange(of: viewModel.birthdayStr) { newValue in
-                        viewModel.birthdayStr = newValue.applyPattern()
-                    }
-                    
-                    Divider()
-                        .padding(.horizontal)
-                    
                     // View for selecting a university
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Now, select your university")
@@ -38,19 +26,37 @@ struct EnterBirthdayAndUniversityView: View {
                         
                         if viewModel.universityName != "" {
                             Text(viewModel.universityName)
-                                .body()
+                                .body(color: .white)
+                                .fontWeight(.medium)
                                 .lineLimit(2)
                                 .minimumScaleFactor(0.8)
                         }
                         
+                        Divider()
+                            .padding(.horizontal)
+                        
                         VStack(alignment: .leading, spacing: 8) {
-                            UniversitySearchView(viewModel: universitySearchViewModel,
-                                                 action: viewModel.selectUniversity(_:))
+                            VStack {
+                                HStack {
+                                    Image(systemName: "text.magnifyingglass")
+                                        .imageScale(.small)
+                                        .foregroundColor(Color.secondary)
+                                    
+                                    Text("Search universities..")
+                                    
+                                    
+                                    Spacer()
+                                }
+                            }
                             .onTapGesture { isEditing.toggle() }
+                            .sheet(isPresented: $isEditing) {
+                                UniversitySearchModalView(viewModel: universitySearchViewModel,
+                                                     dismissSheet: $isEditing, action: viewModel.selectUniversity(_:))
+                            }
                             .padding(EdgeInsets(top: 12, leading: 10, bottom: 12, trailing: 10))
                             .background {
                                 RoundedRectangle(cornerRadius: 8)
-                                    .stroke(lineWidth: isEditing ? 3 : 1)
+                                    .stroke(lineWidth: 1)
                                     .foregroundColor(Color.theme.mixerIndigo)
                             }
                             .disabled(isWithoutUniversity)
@@ -80,8 +86,21 @@ struct EnterBirthdayAndUniversityView: View {
                         }
                     }
                     .textFieldFrame()
+                    
+                    SignUpTextField(input: $viewModel.birthdayStr,
+                                    title: "When's your birthday?",
+                                    note: "Date of birth",
+                                    placeholder: "MM / DD / YYYY",
+                                    footnote: "Mixer uses your birthday for research and verification purposes. You can change the visibilty of your age in your settings.",
+                                    keyboard: .numberPad)
+                    .onChange(of: viewModel.birthdayStr) { newValue in
+                        viewModel.birthdayStr = newValue.applyPattern()
+                    }
                 }
                 .padding(.bottom, 100)
+            }
+            .onTapGesture {
+                hideKeyboard()
             }
         }
     }

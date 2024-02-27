@@ -19,7 +19,7 @@ struct SignUpTextField: View {
     var isValidUsername: Bool?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 4) {
             if let title = title {
                 Text(title)
                     .largeTitle(weight: .semibold)
