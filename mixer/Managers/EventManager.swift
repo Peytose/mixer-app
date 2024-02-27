@@ -220,7 +220,7 @@ extension EventManager {
         COLLECTION_EVENTS
             .whereField("hostIds", arrayContains: hostId)
             .whereField("endDate", isLessThan: Timestamp())
-            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 86400) { snapshot, error in
+            .getDocuments { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching host past events. \(error.localizedDescription)")
                     return
@@ -241,7 +241,7 @@ extension EventManager {
         COLLECTION_USERS
             .document(userId)
             .collection("events-attended")
-            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 7200) { snapshot, _ in
+            .getDocuments { snapshot, _ in
                 guard let documents = snapshot?.documents else { return }
                 let eventIds = documents.compactMap({ $0.documentID })
                 let dispatchGroup = DispatchGroup()
@@ -281,7 +281,7 @@ extension EventManager {
         COLLECTION_EVENTS
             .whereField("endDate", isGreaterThan: Timestamp())
             .whereField("isPrivate", isEqualTo: false)
-            .fetchWithCachePriority(queryKey: queryKey, freshnessDuration: 3600) { snapshot, error in
+            .getDocuments { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching available events. \(error.localizedDescription)")
                     return

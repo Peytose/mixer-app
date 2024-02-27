@@ -173,6 +173,7 @@ class BecomeHostViewModel: ObservableObject {
                             .document(self.notificationId)
                             .delete { _ in
                                 self.userService.user?.currentHost = host
+                                self.userService.user?.hostIdToMemberTypeMap?[hostReference.documentID] = .admin
                             }
                     }
                 }

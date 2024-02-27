@@ -12,7 +12,6 @@ import Firebase
 struct NotificationCell: View {
     
     @EnvironmentObject var viewModel: NotificationsViewModel
-    @EnvironmentObject var homeViewModel: HomeViewModel
     
     @ObservedObject var cellViewModel: NotificationCellViewModel
     @ObservedObject var sharedData: SharedNotificationDataStore = .shared
@@ -37,7 +36,7 @@ struct NotificationCell: View {
                     .padding(.trailing, 8)
             
             VStack(alignment: .leading) {
-                Button {
+                NavigationLink {
                     switch cellViewModel.notification.type {
                     case .friendAccepted,
                             .friendRequest,
@@ -46,21 +45,25 @@ struct NotificationCell: View {
                             .memberInvited,
                             .memberJoined,
                             .guestlistJoined,
+                            .plannerInvited,
                             .plannerAccepted,
                             .plannerDeclined,
                             .plannerReplaced,
                             .plannerRemoved,
                             .plannerPendingReminder,
                             .hostInvited:
-                        homeViewModel.navigate(to: .close,
-                                               withUser: sharedData.users[cellViewModel.notification.uid])
+                        if let user = sharedData.users[cellViewModel.notification.uid] {
+                            ProfileView(user: user)
+                        }
                     case .guestlistAdded:
-                        homeViewModel.navigate(to: .close,
-                                               withHost: sharedData.hosts[cellViewModel.notification.hostId ?? ""])
+                        if let host = sharedData.hosts[cellViewModel.notification.hostId ?? ""] {
+                            HostDetailView(host: host, namespace: namespace)
+                        }
                     case .eventPostedWithoutPlanner:
-                        homeViewModel.navigate(to: .close,
-                                               withEvent: sharedData.events[cellViewModel.notification.eventId ?? ""])
-                    default: break
+                        if let event = sharedData.events[cellViewModel.notification.eventId ?? ""] {
+                            EventDetailView(event: event, namespace: namespace)
+                        }
+                    default: EmptyView()
                     }
                 } label: {
                     ProfileImageViews(imageUrlsString: cellViewModel.notification.imageUrl)
@@ -101,9 +104,10 @@ struct NotificationCell: View {
                     }
                 case .eventLiked, .guestlistAdded:
                     if let event = sharedData.events[cellViewModel.notification.eventId ?? ""] {
-                        NotificationSecondaryImage(imageUrl: event.eventImageUrl) {
-                            homeViewModel.navigate(to: .close,
-                                                   withEvent: sharedData.events[cellViewModel.notification.eventId ?? ""])
+                        NavigationLink {
+                            EventDetailView(event: event, namespace: namespace)
+                        } label: {
+                            NotificationSecondaryImage(imageUrl: event.eventImageUrl) { }
                         }
                     }
                 case .guestlistJoined:

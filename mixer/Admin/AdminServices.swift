@@ -10,7 +10,7 @@ import Firebase
 
 class AdminServices {
     static let shared = AdminServices()
-    let authorizedUserIds = ["DLnvVKUstSZew6EMAxv9rET66WQ2", "HFFUDxglMGTL4gQJLztpEKQu0Uz1"]
+    let authorizedUserIds = ["74voRNdWlGbMoC1L0hzepecwpK83", "HFFUDxglMGTL4gQJLztpEKQu0Uz1"]
     
     private init() { }
     

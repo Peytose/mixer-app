@@ -36,6 +36,10 @@ struct ProfileView: View {
                 StretchablePhotoBanner(imageUrl: viewModel.user.profileImageUrl,
                                        namespace: namespace)
                 
+                if viewModel.user.relationshipState != .friends, viewModel.mutuals.count > 0 {
+                    UserIconList(users: viewModel.mutuals)
+                }
+                
                 // Name, age, links, school and bio
                 profileInfo
                 
@@ -54,7 +58,23 @@ struct ProfileView: View {
                     .transition(.move(edge: .bottom).combined(with: .scale(scale: 1.3)))
             }
         }
-        .toolbar(.hidden)
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            if !viewModel.user.isCurrentUser {
+                if action == nil {
+                    ToolbarItem(placement: .topBarLeading) {
+                        PresentationBackArrowButton()
+                    }
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    EllipsisButton {
+                        viewModel.isShowingMoreProfileOptions.toggle()
+                        HapticManager.playLightImpact()
+                    }
+                }
+            }
+        }
         .overlay {
             HStack {
                 Spacer()
@@ -78,11 +98,6 @@ struct ProfileView: View {
                             .font(.title2)
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 3)
-                    }
-                } else {
-                    EllipsisButton {
-                        viewModel.isShowingMoreProfileOptions.toggle()
-                        HapticManager.playLightImpact()
                     }
                 }
             }
@@ -190,10 +205,6 @@ extension ProfileView {
                     .foregroundColor(.white.opacity(0.9))
                     .lineLimit(3)
                     .minimumScaleFactor(0.75)
-            }
-            
-            if viewModel.user.relationshipState != .friends, viewModel.mutuals.count > 0 {
-                UserIconList(users: viewModel.mutuals)
             }
         }
         .padding(.horizontal)

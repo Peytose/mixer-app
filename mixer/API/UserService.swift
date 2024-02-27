@@ -63,6 +63,7 @@ class UserService: ObservableObject {
             self.user?.associatedHosts = sortedHosts
             if let firstHost = sortedHosts.first {
                 self.user?.currentHost = firstHost
+                EventManager.shared.fetchHostMemberEvents()
             }
         }
     }
