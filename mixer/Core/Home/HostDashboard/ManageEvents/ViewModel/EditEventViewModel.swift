@@ -55,7 +55,7 @@ class EditEventViewModel: ObservableObject, SettingsConfigurable, AmenityHandlin
             ImageUploader.uploadImage(image: selectedImage, type: .event) { imageUrl in
                 COLLECTION_EVENTS
                     .document(eventId)
-                    .updateData(["hostImageUrl": imageUrl]) { _ in
+                    .updateData(["eventImageUrl": imageUrl]) { _ in
                         self.eventImageUrl = imageUrl
                         self.event.eventImageUrl = imageUrl
                         completion()

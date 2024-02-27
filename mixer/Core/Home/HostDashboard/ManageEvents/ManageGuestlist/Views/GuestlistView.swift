@@ -54,36 +54,38 @@ struct GuestlistView: View {
                     .minimumScaleFactor(0.75)
                     .padding(.horizontal)
                     
-                    switch viewModel.viewState {
-                    case .loading:
-                        LoadingView()
-                        Spacer()
-                    case .empty:
-                        emptyView
-                        Spacer()
-                    case .list:
-                        List {
-                            // Loop over each section in sectionedGuests
-                            ForEach(viewModel.sectionedGuests.keys.sorted(), id: \.self) { key in
-                                Section(header: Text(key)) {
-                                    // Loop over each guest in this section
-                                    ForEach(viewModel.sectionedGuests[key] ?? []) { guest in
-                                        GuestlistRow(guest: guest)
-                                            .environmentObject(viewModel)
+                    Group {
+                        switch viewModel.viewState {
+                        case .loading:
+                            LoadingView()
+                            Spacer()
+                        case .empty:
+                            emptyView
+                            Spacer()
+                        case .list:
+                            List {
+                                // Loop over each section in sectionedGuests
+                                ForEach(viewModel.sectionedGuests.keys.sorted(), id: \.self) { key in
+                                    Section(header: Text(key)) {
+                                        // Loop over each guest in this section
+                                        ForEach(viewModel.sectionedGuests[key] ?? []) { guest in
+                                            GuestlistRow(guest: guest)
+                                                .environmentObject(viewModel)
+                                        }
                                     }
                                 }
+                                
+                                Spacer(minLength: 100)
+                                    .listRowBackground(Color.clear)
                             }
-                            
-                            Spacer(minLength: 100)
-                                .listRowBackground(Color.clear)
+                            .scrollContentBackground(.hidden)
                         }
-                        .scrollContentBackground(.hidden)
-                        .searchable(text: $searchText, prompt: "Search guests..")
-                        .navigationTitle(viewModel.event.title)
-                        .navigationBarTitleDisplayMode(.large)
-                        .onChange(of: searchText) { newValue in
-                            viewModel.filterGuests(for: newValue)
-                        }
+                    }
+                    .searchable(text: $searchText, prompt: "Search guests..")
+                    .navigationTitle(viewModel.event.title)
+                    .navigationBarTitleDisplayMode(.large)
+                    .onChange(of: searchText) { newValue in
+                        viewModel.filterGuests(for: newValue)
                     }
                 }
             }
