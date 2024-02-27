@@ -36,25 +36,29 @@ struct ManageMembersView: View {
                 
                 Spacer()
             }
-            .padding(.top, 50)
             .sheet(isPresented: $viewModel.isShowingUsernameInputSheet) {
                 NavigationStack {
-                    List(viewModel.userResults) { result in
-                        ItemInfoCell(title: result.title,
-                                     subtitle: result.subtitle,
-                                     imageUrl: result.imageUrl)
-                        .listRowBackground(Color.theme.secondaryBackgroundColor)
-                        .onTapGesture {
-                            viewModel.inviteMember(with: result.subtitle)
-                            viewModel.isShowingUsernameInputSheet = false
+                    ZStack {
+                        Color.theme.backgroundColor
+                            .ignoresSafeArea()
+                        
+                        List(viewModel.userResults) { result in
+                            ItemInfoCell(title: result.title,
+                                         subtitle: result.subtitle,
+                                         imageUrl: result.imageUrl)
+                            .listRowBackground(Color.theme.secondaryBackgroundColor)
+                            .onTapGesture {
+                                viewModel.inviteMember(with: result.subtitle)
+                                viewModel.isShowingUsernameInputSheet = false
+                            }
                         }
+                        .scrollContentBackground(.hidden)
+                        .listStyle(.insetGrouped)
+                        .searchable(text: $viewModel.searchText)
+                        .navigationTitle("Search Users")
+                        
+                        Spacer()
                     }
-                    .listStyle(.insetGrouped)
-                    .background(Color.theme.backgroundColor.ignoresSafeArea())
-                    .searchable(text: $viewModel.searchText)
-                    .navigationTitle("Search Users")
-                    
-                    Spacer()
                 }
                 .overlay(alignment: .topTrailing) {
                     XDismissButton { viewModel.isShowingUsernameInputSheet = false }
@@ -112,7 +116,7 @@ extension ManageMembersView {
                 }
             }
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
     }
 }

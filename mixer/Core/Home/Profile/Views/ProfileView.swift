@@ -59,24 +59,12 @@ struct ProfileView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar {
-            if !viewModel.user.isCurrentUser {
-                if action == nil {
-                    ToolbarItem(placement: .topBarLeading) {
-                        PresentationBackArrowButton()
-                    }
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    EllipsisButton {
-                        viewModel.isShowingMoreProfileOptions.toggle()
-                        HapticManager.playLightImpact()
-                    }
-                }
-            }
-        }
         .overlay {
             HStack {
+                if !viewModel.user.isCurrentUser && action == nil {
+                    PresentationBackArrowButton()
+                }
+                
                 Spacer()
                 
                 if viewModel.user.isCurrentUser {
@@ -98,6 +86,11 @@ struct ProfileView: View {
                             .font(.title2)
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 3)
+                    }
+                } else {
+                    EllipsisButton {
+                        viewModel.isShowingMoreProfileOptions.toggle()
+                        HapticManager.playLightImpact()
                     }
                 }
             }
