@@ -15,7 +15,7 @@ struct ManageMembersView: View {
             Color.theme.backgroundColor
                 .ignoresSafeArea()
             
-            VStack {
+            VStack(spacing: 10) {
                 Text("Members of \(viewModel.selectedHost?.name ?? "n/a")")
                     .primaryHeading()
                     .multilineTextAlignment(.leading)
@@ -36,6 +36,7 @@ struct ManageMembersView: View {
                 
                 Spacer()
             }
+            .padding(.top, 50)
             .sheet(isPresented: $viewModel.isShowingUsernameInputSheet) {
                 NavigationStack {
                     ZStack {
