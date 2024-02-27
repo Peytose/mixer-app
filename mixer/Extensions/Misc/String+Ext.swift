@@ -9,6 +9,11 @@ import SwiftUI
 import CoreLocation
 
 extension String {
+    var cleanForAccount: String {
+        return self.trimmingCharacters(in: .whitespaces).capitalized
+    }
+    
+    
     var removedSpecialCharacters: String {
         return self.components(separatedBy: CharacterSet.punctuationCharacters).joined(separator: "")
     }
