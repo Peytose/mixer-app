@@ -70,8 +70,9 @@ final class EventViewModel: ObservableObject {
                 return
             }
             
-            print("DEBUG: LIKED EVENT!!!!")
+            self.favoritesCount += newFavoriteStatus ? 1 : -1
             self.event.isFavorited = newFavoriteStatus
+            
             HapticManager.playLightImpact()
         }
     }
