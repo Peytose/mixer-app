@@ -39,6 +39,8 @@ struct HostDashboardView: View {
                         
                         Spacer()
                     }
+                    .redacted(reason: viewModel.isLoading ? .placeholder : [])
+
                     
                     Divider()
                     
@@ -52,9 +54,15 @@ struct HostDashboardView: View {
                 .cornerRadius(10)
                 
                 VStack {
-                    SectionViewContainer(title: "Quick Stats",
-                                         quickStatistics: $viewModel.quickStatistics,
-                                         isLoading: $viewModel.isLoading)
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .secondary))
+                            .scaleEffect(2)
+                    } else {
+                        SectionViewContainer(title: "Quick Stats",
+                                             quickStatistics: $viewModel.quickStatistics,
+                                             isLoading: $viewModel.isLoading)
+                    }
                 }
             }
             .padding(.bottom, 140)
@@ -160,14 +168,16 @@ extension HostDashboardView {
                       isButton: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            
+            .redacted(reason: viewModel.isLoading ? .placeholder : [])
+
             Spacer()
             
             Label(title: "earned",
                   value: "$0",
                   isFocus: true)
             .frame(maxWidth: .infinity, alignment: .center)
-            
+            .redacted(reason: viewModel.isLoading ? .placeholder : [])
+
             Spacer()
             
             NavigationLink(destination: ManageMembersView()) {
@@ -176,6 +186,7 @@ extension HostDashboardView {
                       isButton: true)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
+            .redacted(reason: viewModel.isLoading ? .placeholder : [])
         }
     }
     
@@ -187,7 +198,6 @@ extension HostDashboardView {
                     .scaledToFill()
                     .frame(width: 120, height: 180)
                     .cornerRadius(10, corners: .topRight)
-                    .redacted(reason: viewModel.isLoading ? .placeholder : [])
             }
             
             Spacer()
@@ -263,12 +273,10 @@ struct SquareViewContainer<Content: View>: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
                 .multilineTextAlignment(.center)
-                .redacted(reason: isLoading ? .placeholder : [])
             
             Text(subtitle)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-                .redacted(reason: isLoading ? .placeholder : [])
                        
             Spacer()
 
@@ -276,7 +284,6 @@ struct SquareViewContainer<Content: View>: View {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
-                .redacted(reason: isLoading ? .placeholder : [])
             
             Divider()
             
@@ -284,7 +291,6 @@ struct SquareViewContainer<Content: View>: View {
                 Text("\(Text(secondaryValue).font(.subheadline).foregroundColor(.white)) \(Text(secondaryLabel).font(.footnote).foregroundColor(.secondary))")
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
-                    .redacted(reason: isLoading ? .placeholder : [])
                 
                 Spacer()
             }

@@ -98,7 +98,11 @@ struct EventDetailView: View {
                                   y: doubleTapLocation.y - 35)
                         .zIndex(1)
                         .id(UUID())
+                    
+                    Text("\(viewModel.favoritesCount)")
                 }
+                
+
                 
                 if isShowingModal {
                     EventImageModalView(imageUrl: viewModel.event.eventImageUrl,
@@ -173,12 +177,20 @@ struct EventHeader: View {
                 Spacer()
                 
                 if let isFavorited = viewModel.event.isFavorited {
-                    ParticleEffectButton(systemImage: "heart.fill",
-                                         status: isFavorited,
-                                         activeTint: .pink,
-                                         inActiveTint: .secondary,
-                                         frameSize: 45) {
-                        viewModel.toggleFavoriteStatus()
+                    HStack(alignment: .center, spacing: 2) {
+                        
+                        Text("\(viewModel.favoritesCount)")
+                            .font(.body)
+                        
+                        ParticleEffectButton(systemImage: "heart.fill",
+                                             status: isFavorited,
+                                             activeTint: .pink,
+                                             inActiveTint: .secondary,
+                                             frameSize: 45) {
+                            viewModel.toggleFavoriteStatus()
+                            
+
+                        }
                     }
                 }
             }

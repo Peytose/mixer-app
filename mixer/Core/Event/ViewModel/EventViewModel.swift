@@ -17,7 +17,7 @@ final class EventViewModel: ObservableObject {
     @Published var shareURL: URL? = nil
     @Published private (set) var imageLoader: ImageLoader
     @Published var alertItem: AlertItem?
-    
+    @Published var favoritesCount: Int = 0
     private var service = UserService.shared
 
     init(event: Event) {
@@ -26,6 +26,7 @@ final class EventViewModel: ObservableObject {
         
         service.fetchHosts(from: event) { hosts in
             self.hosts = hosts
+            self.getEventFavoriteCount()
         }
         
         self.generateShareURL()
@@ -138,6 +139,28 @@ final class EventViewModel: ObservableObject {
             self.event.didGuestlist = didGuestlist
             self.event.didRequest   = didRequest
         }
+    }
+    
+    func getEventFavoriteCount() {
+        guard let uid = UserService.shared.user?.id else { return }
+        guard let eventId = event.id else { return }
+        
+        COLLECTION_EVENTS
+            .document(eventId)
+            .collection("event-favorites")
+            .count
+            .getAggregation(source: .server) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: error getting favorite event count. \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let count =  snapshot?.count as? Int else { return }
+                print("DEBUG: count = \(count)")
+                DispatchQueue.main.async {
+                    self.favoritesCount = count
+                }
+            }
     }
 }
 

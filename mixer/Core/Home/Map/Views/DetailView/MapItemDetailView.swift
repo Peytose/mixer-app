@@ -40,7 +40,7 @@ struct MapItemDetailSheetView: View {
         .background(Color.theme.backgroundColor.ignoresSafeArea())
         .onAppear(perform: setupAddresses)
         .sheet(isPresented: $showMailModal) {
-            MailViewModal(isShowing: $showMailModal, subject: "mixer", recipients: ["josemartinez102001@gmail.com"])
+            MailViewModal(isShowing: $showMailModal, subject: "mixer", recipients: [selectedItem.email])
         }
     }
 }
