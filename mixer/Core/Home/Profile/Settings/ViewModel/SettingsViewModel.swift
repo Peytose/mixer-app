@@ -20,7 +20,6 @@ enum SettingSaveType {
     case locationToggle
     case location
     // User-specific save types
-    case gender
     case relationship
     case major
     case email
@@ -45,7 +44,6 @@ class SettingsViewModel: SettingsConfigurable {
     @Published var email: String           = ""
     @Published var instagramHandle: String = ""
     @Published var showAgeOnProfile: Bool  = false
-    @Published var genderStr: String       = ""
     @Published var datingStatusStr: String = ""
     @Published var majorStr: String        = ""
     @Published var confirmUsername: String = ""
@@ -82,7 +80,6 @@ class SettingsViewModel: SettingsConfigurable {
                 self.email = user.email ?? ""
                 self.instagramHandle = user.instagramHandle ?? ""
                 self.showAgeOnProfile = user.showAgeOnProfile
-                self.genderStr = user.gender.description
                 self.datingStatusStr = user.datingStatus?.description ?? ""
             }
             .store(in: &cancellable)
@@ -136,16 +133,6 @@ class SettingsViewModel: SettingsConfigurable {
             COLLECTION_USERS
                 .document(uid)
                 .updateData(["instagramHandle": instagramHandle]) { _ in
-                    completion()
-                }
-            
-        case .gender:
-            guard self.genderStr != user?.gender.description else { return }
-            guard let gender = Gender.enumCase(from: genderStr) else { return }
-            
-            COLLECTION_USERS
-                .document(uid)
-                .updateData(["gender": gender.rawValue]) { _ in
                     completion()
                 }
             
@@ -232,7 +219,7 @@ extension SettingsViewModel {
         case "Instagram":
             return Binding<String>(get: { self.instagramHandle }, set: { self.instagramHandle = $0 })
         case "Gender":
-            return Binding<String>(get: { self.genderStr }, set: { self.genderStr = $0 })
+            return .constant(user.gender.description)
         case "Relationship Status":
             return Binding<String>(get: { self.datingStatusStr }, set: { self.datingStatusStr = $0 })
         case "Major":
@@ -262,8 +249,6 @@ extension SettingsViewModel {
                 return .displayName
             case "Instagram":
                 return .instagram
-            case "Gender":
-                return .gender
             case "Relationship Status":
                 return .relationship
             case "Major":

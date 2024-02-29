@@ -35,7 +35,7 @@ struct StickyHeaderView<Item: CustomStringConvertible>: View {
                             .fontWeight(.semibold)
                             .foregroundColor(selectedIdx == CGFloat(index) ? .white : .gray)
                             .contentShape(Rectangle())
-                            .frame(width: tabWidth, height: 80)
+                            .frame(width: tabWidth, height: 70)
                             .onTapGesture {
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7, blendDuration: 0)) {
                                     selectedItem = uniqueItems[index]

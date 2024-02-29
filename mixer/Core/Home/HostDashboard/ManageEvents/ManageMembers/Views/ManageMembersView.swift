@@ -15,7 +15,7 @@ struct ManageMembersView: View {
             Color.theme.backgroundColor
                 .ignoresSafeArea()
             
-            VStack(spacing: 10) {
+            VStack(spacing: 0) {
                 Text("Members of \(viewModel.selectedHost?.name ?? "n/a")")
                     .primaryHeading()
                     .multilineTextAlignment(.leading)
@@ -30,11 +30,10 @@ struct ManageMembersView: View {
                     LoadingView()
                 case .empty:
                     emptyView
+                    Spacer()
                 case .list:
                     membersListView
                 }
-                
-                Spacer()
             }
             .padding(.top, 50)
             .sheet(isPresented: $viewModel.isShowingUsernameInputSheet) {
@@ -44,21 +43,21 @@ struct ManageMembersView: View {
                             .ignoresSafeArea()
                         
                         List(viewModel.userResults) { result in
-                            ItemInfoCell(title: result.title,
-                                         subtitle: result.subtitle,
-                                         imageUrl: result.imageUrl)
-                            .listRowBackground(Color.theme.secondaryBackgroundColor)
-                            .onTapGesture {
-                                viewModel.inviteMember(with: result.subtitle)
-                                viewModel.isShowingUsernameInputSheet = false
+                            if !viewModel.searchText.isEmpty {
+                                ItemInfoCell(title: result.title,
+                                             subtitle: result.subtitle,
+                                             imageUrl: result.imageUrl)
+                                .listRowBackground(Color.theme.secondaryBackgroundColor)
+                                .onTapGesture {
+                                    viewModel.inviteMember(with: result.subtitle)
+                                    viewModel.isShowingUsernameInputSheet = false
+                                }
                             }
                         }
                         .scrollContentBackground(.hidden)
                         .listStyle(.insetGrouped)
                         .searchable(text: $viewModel.searchText)
                         .navigationTitle("Search Users")
-                        
-                        Spacer()
                     }
                 }
                 .overlay(alignment: .topTrailing) {
@@ -80,6 +79,7 @@ struct ManageMembersView: View {
                     .padding()
             }
         }
+        .withAlerts(currentAlert: $viewModel.currentAlert)
     }
 }
 
@@ -108,16 +108,13 @@ extension ManageMembersView {
     }
     
     var membersListView: some View {
-        List {
-            ForEach(viewModel.filteredMembers) { member in
-                if let link = viewModel.hostUserLinks.first(where: { $0.id == member.id }) {
-                    MemberRow(member: member, link: link)
-                        .environmentObject(viewModel)
-                        .listRowSeparator(.hidden)
-                }
+        List(viewModel.filteredMembers) { member in
+            if let link = viewModel.hostUserLinks.first(where: { $0.id == member.id }) {
+                MemberRow(member: member, link: link)
+                    .environmentObject(viewModel)
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.inset)
         .scrollContentBackground(.hidden)
     }
 }

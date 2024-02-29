@@ -98,8 +98,6 @@ struct EventDetailView: View {
                                   y: doubleTapLocation.y - 35)
                         .zIndex(1)
                         .id(UUID())
-                    
-                    Text("\(viewModel.favoritesCount)")
                 }
                 
 

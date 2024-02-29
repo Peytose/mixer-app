@@ -129,20 +129,7 @@ struct GuestlistView: View {
                     }
                 }
             }
-            .alert(item: $viewModel.currentAlert) { alertType in
-                hideKeyboard()
-                
-                switch alertType {
-                case .regular(let alertItem):
-                    guard let item = alertItem else { break }
-                    return item.alert
-                case .confirmation(let confirmationAlertItem):
-                    guard let item = confirmationAlertItem else { break }
-                    return item.alert
-                }
-                
-                return Alert(title: Text("Unexpected Error"))
-            }
+            .withAlerts(currentAlert: $viewModel.currentAlert)
         
     }
 }

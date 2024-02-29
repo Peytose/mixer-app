@@ -44,6 +44,7 @@
 		9C2B898F29A179A20011FC56 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B898E29A179A20011FC56 /* LoadingView.swift */; };
 		9C2B899129A2DB2C0011FC56 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2B899029A2DB2C0011FC56 /* QRCodeView.swift */; };
 		9C2DC2612A735CC300494D7C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2DC2602A735CC300494D7C /* SettingsView.swift */; };
+		9C2EF2362B90C8FB003D1CE4 /* AlertModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2EF2352B90C8FB003D1CE4 /* AlertModifier.swift */; };
 		9C336FEE2A9527D3006121A0 /* MemberRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C336FED2A9527D3006121A0 /* MemberRow.swift */; };
 		9C3BADBA291F54B4009C8043 /* mixerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BADB9291F54B4009C8043 /* mixerApp.swift */; };
 		9C3BADBE291F54B5009C8043 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C3BADBD291F54B5009C8043 /* Assets.xcassets */; };
@@ -366,6 +367,7 @@
 		9C2B898E29A179A20011FC56 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		9C2B899029A2DB2C0011FC56 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
 		9C2DC2602A735CC300494D7C /* SettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		9C2EF2352B90C8FB003D1CE4 /* AlertModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertModifier.swift; sourceTree = "<group>"; };
 		9C336FED2A9527D3006121A0 /* MemberRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberRow.swift; sourceTree = "<group>"; };
 		9C3BADB6291F54B4009C8043 /* mixer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mixer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C3BADB9291F54B4009C8043 /* mixerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mixerApp.swift; sourceTree = "<group>"; };
@@ -1231,6 +1233,7 @@
 				9C79586E2A8C84A300590E1A /* AutoDismissView.swift */,
 				9C6D8BB42AA7825800BEF532 /* Ripple.swift */,
 				9C5498D02B8BB3CE00F27851 /* SettingsAlertModifier.swift */,
+				9C2EF2352B90C8FB003D1CE4 /* AlertModifier.swift */,
 			);
 			path = ViewModifiers;
 			sourceTree = "<group>";
@@ -1911,6 +1914,7 @@
 				9CDC277B2B168CFC002043F5 /* DataController.swift in Sources */,
 				9C05C1C82983BB2B00841100 /* HostDetailView.swift in Sources */,
 				A6AB6C7C2960E20F007E9BF0 /* PinchZoomImageModifier.swift in Sources */,
+				9C2EF2362B90C8FB003D1CE4 /* AlertModifier.swift in Sources */,
 				9CDFA59B2A7A056D00EE0370 /* NameAndLinksRow.swift in Sources */,
 				9C67D1A22AED8AF0007BB6F4 /* NotesSection.swift in Sources */,
 				9C3E2C9C29EA3A5900A74D05 /* SmallCornerNumber.swift in Sources */,
@@ -2278,7 +2282,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2024.02.2;
+				MARKETING_VERSION = 2024.02.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mixer.party;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2319,7 +2323,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2024.02.2;
+				MARKETING_VERSION = 2024.02.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mixer.party;
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -57,8 +57,15 @@ class ManageEventsViewModel: ObservableObject {
     
     
     private func updateEventsForSelectedState() {
-        self.eventsForSelectedState = events.filter {
+        let temp = events.filter {
             EventState(event: $0).description == currentState.description
+        }
+        
+        switch currentState {
+        case .ongoing, .upcoming:
+            self.eventsForSelectedState = temp.sortedByStartDate()
+        case .past:
+            self.eventsForSelectedState = temp.sortedByEndDate(false)
         }
     }
 

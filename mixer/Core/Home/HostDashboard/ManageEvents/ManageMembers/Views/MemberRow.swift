@@ -24,10 +24,8 @@ struct MemberRow: View {
             ItemInfoCell(title: member.displayName,
                          subtitle: subtitle,
                          imageUrl: member.profileImageUrl) {
-                if link.status == .joined {
-                    EllipsisButton(stroke: 0) {
-                        showActionSheet = true
-                    }
+                EllipsisButton(stroke: 0) {
+                    showActionSheet = true
                 }
             }
         }

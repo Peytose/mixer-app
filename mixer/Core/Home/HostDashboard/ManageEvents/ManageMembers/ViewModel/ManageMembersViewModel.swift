@@ -73,7 +73,7 @@ class ManageMembersViewModel: ObservableObject {
             }
         }
         
-        self.filteredMembers = filteredMembers
+        self.filteredMembers = filteredMembers.sorted(by: { $0.fullName < $1.fullName })
         self.viewState = filteredMembers.isEmpty ? .empty : .list
     }
     
@@ -218,16 +218,24 @@ class ManageMembersViewModel: ObservableObject {
             return ActionSheet(title: Text("No Actions Available"))
         }
         
-        // Check for memberRole
-        guard let memberRole = member.hostIdToMemberTypeMap?[hostId] else {
-            print("DEBUG: No memberRole available")
-            return ActionSheet(title: Text("No Actions Available"))
-        }
-        
         // Check for currentUserRole
         guard let currentUserRole = UserService.shared.user?.hostIdToMemberTypeMap?[hostId] else {
             print("DEBUG: No currentUserRole available")
             return ActionSheet(title: Text("No Actions Available"))
+        }
+        
+        // Check for memberRole
+        guard let memberRole = member.hostIdToMemberTypeMap?[hostId] else {
+            print("DEBUG: No memberRole available")
+            
+            buttons.append(.destructive(Text("Delete Member")) {
+                // Delete member action
+                self.removeMember(with: memberId)
+            })
+            
+            buttons.append(.cancel())
+            
+            return ActionSheet(title: Text("Manage Invitee"), message: nil, buttons: buttons)
         }
         
         // Check privilege level

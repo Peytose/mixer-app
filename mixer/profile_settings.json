@@ -30,7 +30,7 @@
             },
             {
                 "id": 1005,
-                "type": "empty",
+                "type": "readOnly",
                 "title": "Gender",
                 "icon": "figure.arms.open"
             },
