@@ -13,13 +13,15 @@ struct ItemInfoCell<Content: View>: View {
     let title: String
     let subtitle: String
     var imageUrl: String?
+    var university: String?
     var icon: String?
     var content: Content?
     
-    init(title: String, subtitle: String, imageUrl: String? = nil, icon: String? = nil, @ViewBuilder content: () -> Content? = { nil }) {
+    init(title: String, subtitle: String, imageUrl: String? = nil, university: String? = nil, icon: String? = nil, @ViewBuilder content: () -> Content? = { nil }) {
         self.title = title
         self.subtitle = subtitle
         self.imageUrl = imageUrl
+        self.university = university
         self.icon = icon
         self.content = content()
     }
@@ -40,18 +42,35 @@ struct ItemInfoCell<Content: View>: View {
                     .frame(width: 40, height: 40)
             }
             
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.callout)
-                    .foregroundColor(.white)
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.callout)
+                        .foregroundColor(.white)
+                    
+                    Text(subtitle)
+                        .font(.footnote)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.9)
+                    
+                }
+                .padding(.leading, 8)
                 
-                Text(subtitle)
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.9)
+                Spacer()
+                
+                if let university = university {
+                    HStack(spacing: 2) {
+                        Image(systemName: "graduationcap.fill")
+
+                        Text(university)
+                    }
+                    .font(.subheadline)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.secondary)
+                }
             }
-            .padding(.leading, 8)
             
             Spacer()
             
@@ -59,14 +78,16 @@ struct ItemInfoCell<Content: View>: View {
                 content
             }
         }
+        .contentShape(Rectangle())
     }
 }
 
 extension ItemInfoCell where Content == EmptyView {
-  init(title: String, subtitle: String, imageUrl: String? = nil, icon: String? = nil) {
+    init(title: String, subtitle: String, imageUrl: String? = nil, university: String? = nil, icon: String? = nil) {
       self.init(title: title,
                 subtitle: subtitle,
                 imageUrl: imageUrl,
+                university: university,
                 icon: icon,
                 content: { EmptyView() })
   }

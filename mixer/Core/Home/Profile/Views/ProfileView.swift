@@ -13,14 +13,17 @@ import PopupView
 
 struct ProfileView: View {
     @StateObject var viewModel: ProfileViewModel
+    @StateObject var friendsViewModel: FriendsViewModel
     @EnvironmentObject var settingsViewModel: SettingsViewModel
     @EnvironmentObject var homeViewModel: HomeViewModel
     
     @State private var showUsername = false
+    
     var action: ((NavigationState, Event?, Host?, User?) -> Void)?
     
     init(user: User, action: ((NavigationState, Event?, Host?, User?) -> Void)? = nil) {
         self._viewModel = StateObject(wrappedValue: ProfileViewModel(user: user))
+        self._friendsViewModel = StateObject(wrappedValue: FriendsViewModel())
         self.action     = action
     }
     
@@ -47,6 +50,7 @@ struct ProfileView: View {
                 if (viewModel.user.relationshipState == .friends || viewModel.user.isCurrentUser)
                     && (viewModel.user.datingStatus != nil || viewModel.user.major != nil) {
                     aboutSection
+                        .padding(.bottom, 180)
                 }
             }
             .ignoresSafeArea(.all)
@@ -98,6 +102,9 @@ struct ProfileView: View {
             .padding()
         }
         .withAlerts(currentAlert: $viewModel.currentAlert)
+        .onAppear {
+            friendsViewModel.fetchFriends()
+        }
     }
 }
 
@@ -194,7 +201,7 @@ extension ProfileView {
         VStack(alignment: .leading, spacing: 8) {
             Text("About")
                 .primaryHeading()
-            
+
             VStack(alignment: .leading) {
                 HStack {
                     if let status = viewModel.user.datingStatus {
@@ -215,6 +222,29 @@ extension ProfileView {
                 }
             }
             .fontWeight(.medium)
+            if viewModel.user.isCurrentUser {
+                Text("Friends")
+                    .primaryHeading()
+                    .padding(.top)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(friendsViewModel.friends.prefix(2)) { friend in
+                        NavigationLink {
+                            ProfileView(user: friend)
+                        } label: {
+                            ItemInfoCell(title: friend.firstName, subtitle: "@\(friend.username)", imageUrl: friend.profileImageUrl, university: friend.university?.shortName ?? "MIT")
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    
+                    if friendsViewModel.friends.count > 2 {
+                        NavigationLink(destination: FriendsView()) {
+                            ShowMoreFriendsButton(numOfFriends: friendsViewModel.friends.count)
+                            .padding(.top, 8)
+                        }
+                    }
+                }
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
@@ -248,5 +278,29 @@ struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         ProfileView(user: dev.mockUser)
             .environmentObject(SettingsViewModel())
+    }
+}
+
+fileprivate struct ShowMoreFriendsButton: View {
+    let numOfFriends: Int
+    
+    var body: some View {
+        HStack {
+            Spacer()
+            
+            ZStack {
+                RoundedRectangle(cornerRadius: 12)
+                    .foregroundColor(.white)
+                    .frame(width: 350, height: 45)
+                    .overlay {
+                        Text("See all \(numOfFriends) friends")
+                            .font(.body)
+                            .fontWeight(.medium)
+                            .foregroundColor(.black)
+                    }
+            }
+            
+            Spacer()
+        }
     }
 }

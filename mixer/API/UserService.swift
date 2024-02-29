@@ -53,7 +53,7 @@ class UserService: ObservableObject {
                 }
             }
     }
-
+    
     
     private func fetchAssociatedHosts() {
         guard let hostIds = user?.hostIdToMemberTypeMap?.keys else { return }
@@ -100,7 +100,7 @@ class UserService: ObservableObject {
         let userSentRelations = COLLECTION_RELATIONSHIPS.whereField("initiatorUid", isEqualTo: userId)
         let userReceivedRelations = COLLECTION_RELATIONSHIPS.whereField("recipientUid", isEqualTo: userId)
         let hostMembershipQuery = db.collectionGroup("member-list").whereField("uid", isEqualTo: userId)
-
+        
         let queries = [userNotifQuery, userSentNotifQuery, userEventLikesQuery, userSentRelations, userReceivedRelations, hostMembershipQuery]
         
         let dispatchGroup = DispatchGroup()
@@ -181,22 +181,22 @@ class UserService: ObservableObject {
             completion([])
             return
         }
-
+        
         var allUniversities: [University] = []
         let dispatchGroup = DispatchGroup()
-
+        
         for id in ids {
             dispatchGroup.enter()
             COLLECTION_UNIVERSITIES
                 .document(id)
                 .fetchWithCachePriority(freshnessDuration: 86400) { snapshot, error in
                     defer { dispatchGroup.leave() }
-
+                    
                     if let error = error {
                         print("DEBUG: Error fetching university: \(error.localizedDescription)")
                         return
                     }
-
+                    
                     guard let university = try? snapshot?.data(as: University.self) else { return }
                     // Manually setting the id of the university
                     var universityWithId = university
@@ -205,7 +205,7 @@ class UserService: ObservableObject {
                     allUniversities.append(universityWithId)
                 }
         }
-
+        
         dispatchGroup.notify(queue: .main) {
             print("DEBUG: Fetched \(allUniversities.count) universities")
             completion(allUniversities)
@@ -218,10 +218,10 @@ class UserService: ObservableObject {
                               completion: FirestoreCompletion) {
         guard let eventId = event.id else { return }
         guard let currentUserId = self.user?.id else { return }
-
+        
         let eventFavoritesReference = COLLECTION_EVENTS.document(eventId).collection("event-favorites").document(currentUserId)
         let userFavoritesReference = COLLECTION_USERS.document(currentUserId).collection("user-favorites").document(eventId)
-
+        
         let favoriteData = ["timestamp": Timestamp(), "uid": currentUserId] as [String: Any]
         let documentRefs = [eventFavoritesReference, userFavoritesReference]
         let documentRefsDataMap = Dictionary(uniqueKeysWithValues: documentRefs.map { ($0, favoriteData) })
@@ -306,8 +306,8 @@ class UserService: ObservableObject {
         
         if guestStatus == .invited {
             NotificationsViewModel.preparePlannerNotificationBatch(for: event,
-                                                               type: .guestlistJoined,
-                                                               within: batch)
+                                                                   type: .guestlistJoined,
+                                                                   within: batch)
         }
         
         batch.commit(completion: completion)
@@ -326,7 +326,7 @@ class UserService: ObservableObject {
         // First, perform the query to find guest notifications to be deleted
         let queryKey = QueryKey(collectionPath: "notifications/\(userId)/user-notifications",
                                 filters: ["eventId == \(eventId)", "type IN [\(NotificationType.guestlistAdded.rawValue)]"])
-                                
+        
         let notificationQuery = COLLECTION_NOTIFICATIONS
             .document(userId)
             .collection("user-notifications")
@@ -386,29 +386,29 @@ class UserService: ObservableObject {
     }
     
     
-//    static func leaveWaitlist(eventId: String, completion: FirestoreCompletion) {
-//        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
-//
-//        COLLECTION_WAITLISTS.document(eventId).collection("users").document(currentUid)
-//            .delete(completion: completion)
-//    }
-//
-
-//    static func fetchQueueNumber(eventId: String, completion: @escaping (Int?) -> Void) {
-//        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
-//
-//        COLLECTION_WAITLISTS.document(eventId).collection("users").order(by: "timestamp").getDocuments { snapshot, _ in
-//            guard let documents = snapshot?.documents else { return }
-//            let queueNumber = documents.firstIndex(where: { $0.documentID == currentUid }) ?? -1
-//            completion(queueNumber)
-//        }
-//    }
-
-
+    //    static func leaveWaitlist(eventId: String, completion: FirestoreCompletion) {
+    //        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+    //
+    //        COLLECTION_WAITLISTS.document(eventId).collection("users").document(currentUid)
+    //            .delete(completion: completion)
+    //    }
+    //
+    
+    //    static func fetchQueueNumber(eventId: String, completion: @escaping (Int?) -> Void) {
+    //        guard let currentUid = AuthViewModel.shared.userSession?.uid else { return }
+    //
+    //        COLLECTION_WAITLISTS.document(eventId).collection("users").order(by: "timestamp").getDocuments { snapshot, _ in
+    //            guard let documents = snapshot?.documents else { return }
+    //            let queueNumber = documents.firstIndex(where: { $0.documentID == currentUid }) ?? -1
+    //            completion(queueNumber)
+    //        }
+    //    }
+    
+    
     func checkIfHostIsFollowed(forId hostId: String,
                                completion: @escaping (Bool) -> Void) {
         guard let currentUid = self.user?.id else { return }
-
+        
         COLLECTION_FOLLOWING
             .document(currentUid)
             .collection("user-following")
@@ -468,8 +468,8 @@ class UserService: ObservableObject {
             .document(path)
             .setData(encodedRelationship, merge: true, completion: completion)
     }
-
-
+    
+    
     func sendFriendRequest(username: String,
                            uid: String,
                            completion: FirestoreCompletion) {
@@ -497,7 +497,7 @@ class UserService: ObservableObject {
             }
     }
     
-
+    
     func cancelOrDeleteRelationship(uid: String, completion: FirestoreCompletion) {
         guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
@@ -511,7 +511,7 @@ class UserService: ObservableObject {
         // Enter the dispatch group before the first asynchronous operation
         dispatchGroup.enter()
         COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: uid,
-                                                                  ofTypes: [.friendAccepted, .friendRequest]) { documentReferences in
+                                                                   ofTypes: [.friendAccepted, .friendRequest]) { documentReferences in
             if let documentReferences = documentReferences {
                 Firestore.addDeleteOperations(to: batch, for: documentReferences)
             }
@@ -522,7 +522,7 @@ class UserService: ObservableObject {
         // Enter the dispatch group before the second asynchronous operation
         dispatchGroup.enter()
         COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: currentUid,
-                                                                  ofTypes: [.friendAccepted, .friendRequest]) { documentReferences in
+                                                                   ofTypes: [.friendAccepted, .friendRequest]) { documentReferences in
             if let documentReferences = documentReferences {
                 Firestore.addDeleteOperations(to: batch, for: documentReferences)
             }
@@ -535,8 +535,8 @@ class UserService: ObservableObject {
             batch.commit(completion: completion)
         }
     }
-
-
+    
+    
     func acceptFriendRequest(uid: String,
                              completion: FirestoreCompletion) {
         guard let currentUid = self.user?.id else { return }
@@ -574,12 +574,12 @@ class UserService: ObservableObject {
     }
     
     
-
+    
     func getUserRelationship(uid: String,
                              completion: @escaping (RelationshipState) -> Void) {
         guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
-
+        
         COLLECTION_RELATIONSHIPS.document(path).getDocument { snapshot, _ in
             guard let hasRelationship = snapshot?.exists else { return }
             
@@ -591,14 +591,14 @@ class UserService: ObservableObject {
             guard let state = RelationshipState(rawValue: stateRawValue) else { return }
             
             switch state {
-                case .friends:
-                    completion(.friends)
-                case .requestSent:
-                    guard let initiatorUid = snapshot?.get("initiatorUid") as? String else { return }
-                    completion(initiatorUid == currentUid ? .requestSent : .requestReceived)
-                default:
-                    // Should not execute but here in case
-                    completion(state)
+            case .friends:
+                completion(.friends)
+            case .requestSent:
+                guard let initiatorUid = snapshot?.get("initiatorUid") as? String else { return }
+                completion(initiatorUid == currentUid ? .requestSent : .requestReceived)
+            default:
+                // Should not execute but here in case
+                completion(state)
             }
         }
     }
@@ -655,8 +655,8 @@ extension UserService {
                             completion?(error)
                         } else {
                             NotificationsViewModel.preparePlannerNotificationBatch(for: event,
-                                                                               type: actionType,
-                                                                               within: batch)
+                                                                                   type: actionType,
+                                                                                   within: batch)
                             completion?(nil)
                         }
                     }
@@ -686,11 +686,11 @@ extension UserService {
             let data: [String: Any] = ["timestamp": Timestamp(), "status": MemberInviteStatus.joined.rawValue]
             let memberReference = COLLECTION_HOSTS.document(hostId).collection("member-list").document(memberId)
             batch.updateData(data, forDocument: memberReference)
-
+            
             let updatedUserData: [String: Any] = ["hostIdToMemberTypeMap.\(hostId)": HostMemberType.member.rawValue]
             let currentUserReference = COLLECTION_USERS.document(memberId)
             batch.updateData(updatedUserData, forDocument: currentUserReference)
-
+            
             COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: memberId, ofTypes: [.memberInvited], from: userId) { documentReferences in
                 if let documentReferences = documentReferences {
                     Firestore.addDeleteOperations(to: batch, for: documentReferences)
@@ -707,7 +707,7 @@ extension UserService {
             }
         }
     }
-
+    
     func rejectMemberInvite(fromUser userId: String,
                             fromHost hostId: String,
                             memberId: String,
@@ -731,4 +731,72 @@ extension UserService {
                 batch.commit(completion: completion)
             }
     }
+    
+    func fetchFriends(completion: @escaping ([User]) -> Void) {
+        guard let currentUserId = self.user?.id else {
+            print("DEBUG: No current user id")
+            completion([])
+            return
+        }
+        
+        // Find relationships where the current user is either the initiator or recipient and the state is 'friends'
+        COLLECTION_RELATIONSHIPS
+            .whereFilter(Filter.andFilter([
+                Filter.whereField("state", isEqualTo: RelationshipState.friends.rawValue),
+                Filter.orFilter([
+                    Filter.whereField("initiatorUid", isEqualTo: currentUserId),
+                    Filter.whereField("recipientUid", isEqualTo: currentUserId)
+                ])
+            ]))
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching relationships: \(error.localizedDescription)")
+                    completion([])
+                    return
+                }
+                
+                // Extract all UIDs where the current user is part of a friends relationship
+                let friendIds = snapshot?.documents.compactMap { document -> String? in
+                    let data = document.data()
+                    if let initiatorUid = data["initiatorUid"] as? String, initiatorUid != currentUserId {
+                        return initiatorUid
+                    } else if let recipientUid = data["recipientUid"] as? String, recipientUid != currentUserId {
+                        return recipientUid
+                    }
+                    return nil
+                } ?? []
+                
+                self.fetchUsers(with: friendIds, completion: completion)
+            }
+    }
+    
+    // Helper function to fetch user documents based on array of user IDs
+    private func fetchUsers(with userIds: [String], completion: @escaping ([User]) -> Void) {
+        var friends: [User] = []
+        let group = DispatchGroup()
+        
+        for id in userIds {
+            group.enter()
+            COLLECTION_USERS.document(id).getDocument { documentSnapshot, error in
+                defer { group.leave() }
+                if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
+                    do {
+                        let friend = try documentSnapshot.data(as: User.self)
+                        friends.append(friend)
+                    } catch {
+                        print("DEBUG: Error decoding user: \(error.localizedDescription)")
+                    }
+                } else if let error = error {
+                    print("DEBUG: Error fetching user document: \(error.localizedDescription)")
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            completion(friends)
+        }
+    }
+    
 }
+
+
