@@ -13,7 +13,7 @@ import MapKit
 
 class HomeViewModel: ObservableObject {
     @Published var path = NavigationPath()
-    @Published var currentTab: TabItem = .map {
+    @Published var currentTab: TabItem = .explore {
         didSet {
             selectedNavigationStack = navigationStackTabMap[currentTab] ?? []
         }

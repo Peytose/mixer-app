@@ -21,21 +21,8 @@ struct NotificationCell: View {
     @Namespace var namespace
     
     var body: some View {
-        HStack(alignment: .top) {
-            Image(systemName: cellViewModel.notification.type.category.iconName)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 25, height: 25)
-                    .foregroundColor(.secondary)
-                    .padding(12)
-                    .background {
-                        Circle()
-                            .strokeBorder(style: StrokeStyle(lineWidth: 1))
-                            .foregroundColor(Color.secondary.opacity(0.4))
-                    }
-                    .padding(.trailing, 8)
-            
-            VStack(alignment: .leading) {
+        HStack(alignment: .center, spacing: 8) {
+            HStack {
                 NavigationLink {
                     switch cellViewModel.notification.type {
                     case .friendAccepted,
@@ -66,14 +53,18 @@ struct NotificationCell: View {
                     default: EmptyView()
                     }
                 } label: {
-                    ProfileImageViews(imageUrlsString: cellViewModel.notification.imageUrl)
+                    HStack {
+                        ProfileImageViews(imageUrlsString: cellViewModel.notification.imageUrl)
+
+                        Group {
+                            VStack(alignment: .leading) {
+                                formattedNotificationMessage
+                            }
+                        }
+                        .multilineTextAlignment(.leading)
+                    }
                 }
                 .buttonStyle(.borderless)
-                
-                Group {
-                    formattedNotificationMessage
-                }
-                .multilineTextAlignment(.leading)
             }
             
             Spacer()
@@ -142,6 +133,7 @@ struct NotificationCell: View {
             }
         }
         .padding(.trailing)
+        .padding(.bottom)
     }
 }
 
@@ -192,7 +184,7 @@ fileprivate struct ProfileImageViews: View {
 extension NotificationCell {
     private var formattedNotificationMessage: Text {
         var message = Text(cellViewModel.notification.headline)
-            .font(.footnote)
+            .font(.subheadline)
             .fontWeight(.semibold)
             .foregroundColor(Color.theme.mixerIndigo)
 
@@ -211,18 +203,18 @@ extension NotificationCell {
                     .plannerRemoved,
                     .plannerPendingReminder:
             message = message + Text(sharedData.events[cellViewModel.notification.eventId ?? ""]?.title ?? "")
-                    .font(.subheadline)
+                .font(.subheadline)
                     .foregroundColor(.white)
             case .memberInvited,
                     .memberJoined:
             message = message + Text(sharedData.hosts[cellViewModel.notification.hostId ?? ""]?.name ?? "")
-                    .font(.subheadline)
+                .font(.subheadline)
                     .foregroundColor(.white)
             default: break
         }
 
-        return message + Text(" \(cellViewModel.notification.timestampString)")
-            .font(.caption)
+        return message +                         Text(" \(cellViewModel.notification.timestampString) ago")
+            .font(.footnote)
             .foregroundColor(.secondary)
     }
 }

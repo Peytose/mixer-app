@@ -17,7 +17,7 @@ struct NotificationsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
-                HStack(spacing: 7) {
+                HStack(spacing: 10) {
                     ForEach(viewModel.availableCategories, id: \.self) { category in
                         NotificationCategoryCell(text: category.stringVal,
                                                  isSecondaryLabel: category != viewModel.currentCategory) {
@@ -29,17 +29,38 @@ struct NotificationsView: View {
                 
                 LazyVStack {
                     let now = Date()
-                    let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: now)!
-                    // Separate notifications into recent and older
-                    let recentNotifications = viewModel.notifications.filter { $0.timestamp.dateValue() >= sevenDaysAgo && ($0.type.category == viewModel.currentCategory || viewModel.currentCategory == .all) }
-                    let olderNotifications = viewModel.notifications.filter { $0.timestamp.dateValue() < sevenDaysAgo && ($0.type.category == viewModel.currentCategory || viewModel.currentCategory == .all) }
+                    let calendar = Calendar.current
+
+                    // Start of today
+                    let startOfToday = calendar.startOfDay(for: now)
+
+                    // Start of the day 7 days ago
+                    let sevenDaysAgo = calendar.date(byAdding: .day, value: -7, to: startOfToday)!
+
+                    // Separate notifications based on the corrected logic
+                    let todayNotifications = viewModel.notifications.filter {
+                        $0.timestamp.dateValue() >= startOfToday &&
+                        ($0.type.category == viewModel.currentCategory || viewModel.currentCategory == .all)
+                    }
+
+                    let recentNotifications = viewModel.notifications.filter {
+                        let notificationDate = $0.timestamp.dateValue()
+                        return notificationDate < startOfToday &&
+                               notificationDate >= sevenDaysAgo &&
+                               ($0.type.category == viewModel.currentCategory || viewModel.currentCategory == .all)
+                    }
+
+                    let olderNotifications = viewModel.notifications.filter {
+                        $0.timestamp.dateValue() < sevenDaysAgo &&
+                        ($0.type.category == viewModel.currentCategory || viewModel.currentCategory == .all)
+                    }
                     
-                    // Conditionally display "Last 7 Days" if there are recent notifications
-                    if !recentNotifications.isEmpty {
-                        VStack {
-                            NotificationHeader(text: "Last 7 Days")
+                    if !todayNotifications.isEmpty {
+                        VStack(spacing: 0) {
+                            NotificationHeader(text: "Today")
+                                .padding(.bottom)
                             
-                            ForEach(recentNotifications) { notification in
+                            ForEach(todayNotifications) { notification in
                                 NotificationCell(cellViewModel: viewModel.viewModelForNotification(notification))
                                     .environmentObject(self.viewModel)
                                     .environmentObject(homeViewModel)
@@ -68,13 +89,59 @@ struct NotificationsView: View {
                                         }
                                     }
                             }
+                            
+                            Divider()
+                                .padding(0)
+                                .padding(.bottom, 4)
+                        }
+                    }
+
+                    if !recentNotifications.isEmpty {
+                        VStack(spacing: 0) {
+                            NotificationHeader(text: "Last 7 Days")
+                                .padding(.bottom)
+                            
+                            ForEach(recentNotifications) { notification in
+                                NotificationCell(cellViewModel: viewModel.viewModelForNotification(notification))
+                                    .environmentObject(self.viewModel)
+                                    .environmentObject(homeViewModel)
+                                    .background(Color.theme.backgroundColor)
+                                    .addFullSwipeAction(menu: .slided,
+                                                        swipeColor: .red,
+                                                        swipeRole: .destructive) {
+                                        Leading { }
+                                        Trailing {
+                                            Button {
+                                                withAnimation {
+                                                    viewModel.deleteNotification(notification: notification)
+                                                }
+                                            } label: {
+                                                Image(systemName: "trash")
+                                                    .foregroundColor(.white)
+                                            }
+                                            .contentShape(Rectangle())
+                                            .frame(width: 60)
+                                            .frame(maxHeight: .infinity)
+                                            .background(Color.red)
+                                        }
+                                    } action: {
+                                        withAnimation {
+                                            viewModel.deleteNotification(notification: notification)
+                                        }
+                                    }                                
+                            }
+                            
+                            Divider()
+                                .padding(0)
+                                .padding(.bottom, 4)
                         }
                     }
                     
                     // Conditionally display "Older" if there are older notifications
                     if !olderNotifications.isEmpty {
-                        VStack {
+                        VStack(spacing: 0) {
                             NotificationHeader(text: "Older")
+                                .padding(.bottom)
                             
                             ForEach(olderNotifications) { notification in
                                 NotificationCell(cellViewModel: viewModel.viewModelForNotification(notification))
@@ -105,6 +172,10 @@ struct NotificationsView: View {
                                         }
                                     }
                             }
+                            
+                            Divider()
+                                .padding(0)
+                                .padding(.bottom, 4)
                         }
                     }
                 }
@@ -117,9 +188,9 @@ struct NotificationsView: View {
         }
         .background(Color.theme.backgroundColor)
         .navigationBarBackButtonHidden(true)
-        .navigationBarTitle("Notifications", displayMode: .inline)
+        .navigationBarTitle("Notifications", displayMode: .large)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
+            ToolbarItem(placement: .topBarLeading) {
                 PresentationBackArrowButton()
             }
         }
@@ -136,17 +207,10 @@ fileprivate struct NotificationHeader: View {
         VStack {
             HStack {
                 Text(text)
-                    .font(.title3)
-                    .fontWeight(.semibold)
+                    .font(.headline)
                     .foregroundColor(.white)
                 Spacer()
             }
-            
-            RoundedRectangle(cornerRadius: 4, style: .continuous)
-                .fill(Color.secondary)
-                .frame(height: 2)
-                .opacity(0.7)
-                .padding(.bottom, 7)
         }
     }
 }

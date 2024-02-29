@@ -21,9 +21,9 @@ struct NotificationCategoryCell: View {
                 .padding(.vertical, 10)
                 .padding(.horizontal, 12) // Adjust padding as needed
                 .background(isSecondaryLabel ? Color.clear : Color.theme.mixerIndigo)
-                .cornerRadius(3)
+                .cornerRadius(8)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 3)
+                    RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.secondary, lineWidth: isSecondaryLabel ? 1 : 0)
                 )
         }
