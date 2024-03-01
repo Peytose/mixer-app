@@ -17,12 +17,12 @@ class HostService: ObservableObject {
                       for event: Event,
                       by host: Host,
                       completion: FirestoreCompletion) {
-        guard let currentUserName = UserService.shared.user?.username,
+        guard let currentUsername = UserService.shared.user?.username,
               let eventId = event.id else { return }
         
         self.inviteUser(eventId: eventId,
                         uid: uid,
-                        invitedBy: currentUserName) { error in
+                        invitedBy: currentUsername) { error in
             NotificationsViewModel.uploadNotification(toUid: uid,
                                                       type: .guestlistAdded,
                                                       host: host,
@@ -52,11 +52,11 @@ class HostService: ObservableObject {
     func checkIn(guest: EventGuest,
                  eventId: String,
                  completion: FirestoreCompletion) {
-        guard let currentUserName = UserService.shared.user?.username,
+        guard let currentUsername = UserService.shared.user?.username,
               let uid = guest.id else { return }
         
         let data = ["status": GuestStatus.checkedIn.rawValue,
-                    "checkedInBy": currentUserName,
+                    "checkedInBy": currentUsername,
                     "timestamp": Timestamp()] as [String: Any]
         
         COLLECTION_EVENTS

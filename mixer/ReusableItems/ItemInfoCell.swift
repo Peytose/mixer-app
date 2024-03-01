@@ -47,7 +47,7 @@ struct ItemInfoCell<Content: View>: View {
                     .frame(width: 40, height: 40)
             }
             
-            HStack(alignment: .top) {
+            HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
                         .font(.callout)

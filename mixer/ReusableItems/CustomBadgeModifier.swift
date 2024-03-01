@@ -13,8 +13,8 @@ struct CustomBadgeModifier: View {
     @State var background: Color = .red
     
     var size: CGFloat = 16.0
-    var x: CGFloat = 25.0
-    var y: CGFloat = 0.0
+    var x: CGFloat = 20.0
+    var y: CGFloat = 3.0
     
     var body: some View {
         ZStack {

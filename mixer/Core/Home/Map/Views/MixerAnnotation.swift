@@ -35,7 +35,8 @@ struct MixerAnnotation: View {
                     .offset(y: -5)
                     .overlay(alignment: .bottom) {
                         CustomBadgeModifier(value: eventCountBinding,
-                                            x: 40.0)
+                                            x: 40.0,
+                                            y: 0.0)
                     }
             }
             

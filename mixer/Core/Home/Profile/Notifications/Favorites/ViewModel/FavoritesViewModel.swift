@@ -96,12 +96,13 @@ class FavoritesViewModel: ObservableObject {
         
         if endDate < Timestamp() {
             return text + " ended on \(startDate.getTimestampString(format: "MMM d, yyyy"))"
-        } else if event.isEventCurrentlyHappening() {
+        } else if event.isCurrent {
+            return text + " ends @ \(endDate.getTimestampString(format: "h:mm, a"))"
+        } else if event.isToday {
             return text + " ends @ \(startDate.getTimestampString(format: "h:mm, a"))"
         } else {
             return text + " starts \(startDate.getTimestampString(format: "MMM d, h:mm a"))"
         }
-       
     }
     
 

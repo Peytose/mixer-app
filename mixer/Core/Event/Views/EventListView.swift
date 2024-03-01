@@ -26,7 +26,7 @@ struct EventListView<CellView: View>: View {
             if !events.isEmpty {
                 ForEach(events) { event in
                     StickyDateHeader(headerView: {
-                        CellDateView(event: event, hasStarted: event.isEventCurrentlyHappening())
+                        CellDateView(event: event, isToday: event.isToday)
                     }, contentView: {
                         cellView(event, namespace)
                             .onTapGesture {
@@ -48,7 +48,7 @@ struct EventListView<CellView: View>: View {
 
 fileprivate struct CellDateView: View {
     let event: Event
-    let hasStarted: Bool
+    let isToday: Bool
     
     var body: some View {
         Rectangle()
@@ -57,14 +57,14 @@ fileprivate struct CellDateView: View {
             .overlay {
                 VStack(alignment: .center, spacing: 5) {
                     VStack {
-                        Text(hasStarted ? event.startDate.getTimestampString(format: "h:mm") : event.startDate.getTimestampString(format: "MMM"))
+                        Text(isToday ? event.startDate.getTimestampString(format: "h:mm") : event.startDate.getTimestampString(format: "MMM"))
                             .font(.headline)
                             .fontWeight(.regular)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
                         
-                        Text(hasStarted ? event.startDate.getTimestampString(format: "a") : event.startDate.getTimestampString(format: "d"))
+                        Text(isToday ? event.startDate.getTimestampString(format: "a") : event.startDate.getTimestampString(format: "d"))
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.white)

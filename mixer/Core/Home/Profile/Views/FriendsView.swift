@@ -29,7 +29,8 @@ struct FriendsView: View {
                     } label: {
                         ItemInfoCell(title: friend.firstName,
                                      subtitle: "@\(friend.username)",
-                                     imageUrl: friend.profileImageUrl)
+                                     imageUrl: friend.profileImageUrl,
+                                     university: friend.university)
                     }
                     .listRowBackground(Color.theme.secondaryBackgroundColor)
                 }

@@ -235,7 +235,7 @@ extension GuestlistViewModel {
     @MainActor
     func createGuest() {
         guard let eventId = self.event.id,
-              let currentUserName = UserService.shared.user?.username else { return }
+              let currentUsername = UserService.shared.user?.username else { return }
         
         self.selectedGuest = self.guests.first(where: { $0.username == username })
         
@@ -252,11 +252,11 @@ extension GuestlistViewModel {
             if username != "" {
                 self.fetchUserAndAddToGuestlist(eventId: eventId,
                                                 status: self.status,
-                                                invitedBy: currentUserName)
+                                                invitedBy: currentUsername)
             } else {
                 self.addGuest(eventId: eventId,
                               status: self.status,
-                              invitedBy: currentUserName)
+                              invitedBy: currentUsername)
             }
         }
     }
@@ -484,14 +484,15 @@ extension GuestlistViewModel {
               let guestId = selectedGuest.id,
               let eventId = self.event.id else { return }
         
-        if selectedGuest.status == .checkedIn && !self.isShowingUserInfoModal {
-            confirmationAlertItem = AlertContext.confirmRemoveMember {
+        if selectedGuest.status == .checkedIn && self.isShowingUserInfoModal {
+            self.isShowingUserInfoModal = false
+            
+            // MARK: Last bug - couldn't get notification to pop up
+//            confirmationAlertItem = AlertContext.confirmRemoveMember {
                 self.hostService.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in }
-            }
-        } else if selectedGuest.status == .invited || selectedGuest.status == .requested || self.isShowingUserInfoModal {
-            self.hostService.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in
-                self.isShowingUserInfoModal = false
-            }
+//            }
+        } else {
+            self.hostService.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in }
         }
     }
 }

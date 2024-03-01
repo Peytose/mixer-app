@@ -67,7 +67,29 @@ struct Event: Hashable, Identifiable, Codable, Equatable {
 }
 
 extension Event {
-    func isEventCurrentlyHappening() -> Bool {
-        return self.endDate <= Timestamp() && self.startDate >= Timestamp()
+    var isCurrent: Bool {
+        let now = Date()
+        let startDateAsDate = self.startDate.dateValue()
+        let endDateAsDate = self.endDate.dateValue()
+        return startDateAsDate <= now && endDateAsDate >= now
+    }
+    
+    var isToday: Bool {
+        let calendar = Calendar.current
+        let now = Date()
+        let startDateAsDate = self.startDate.dateValue()
+        return calendar.isDate(startDateAsDate, inSameDayAs: now)
+    }
+    
+    var isPast: Bool {
+        let now = Date()
+        let endDateAsDate = self.endDate.dateValue()
+        return endDateAsDate < now
+    }
+
+    var isFuture: Bool {
+        let now = Date()
+        let startDateAsDate = self.startDate.dateValue()
+        return startDateAsDate > now
     }
 }

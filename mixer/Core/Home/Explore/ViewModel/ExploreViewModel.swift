@@ -11,19 +11,19 @@ import Firebase
 import Combine
 
 enum EventSection: Int, CustomStringConvertible, CaseIterable {
-    case current
+    case today
     case upcoming
     
     var description: String {
         switch self {
-        case .current: return "Current Events"
-        case .upcoming: return "Upcoming Events"
+        case .today: return "Today"
+        case .upcoming: return "Upcoming"
         }
     }
 }
 
 final class ExploreViewModel: ObservableObject {
-    @Published var selectedEventSection = EventSection.current {
+    @Published var selectedEventSection = EventSection.today {
         didSet {
             updateEvents(events)
         }
@@ -69,10 +69,10 @@ final class ExploreViewModel: ObservableObject {
     
     
     private func updateEvents(_ events: [Event]) {
-        if selectedEventSection == .current {
-            eventsForSection = events.filter({ $0.isEventCurrentlyHappening() })
+        if selectedEventSection == .today {
+            eventsForSection = events.filter({ $0.isToday })
         } else if selectedEventSection == .upcoming {
-            eventsForSection = events.filter({ $0.startDate > Timestamp() })
+            eventsForSection = events.filter({ $0.isFuture && !$0.isToday })
         }
         
         eventsForSection = eventsForSection.sortedByStartDate(true)

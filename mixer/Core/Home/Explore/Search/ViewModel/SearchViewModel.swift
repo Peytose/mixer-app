@@ -36,7 +36,7 @@ final class SearchViewModel: ObservableObject {
     
     
     func performSearch() {
-        if !searchText.isEmpty {
+        if searchText.trimmingAllSpaces().count >= 2 {
             // Start loading
             showLoadingView()
             
@@ -49,6 +49,7 @@ final class SearchViewModel: ObservableObject {
                 algoliaManager.search(by: type, searchText: searchText) { [weak self] result in
                     switch result {
                     case .success(let response):
+                        print("DEBUG: GOT RESPONSE FROM \(type) : \(response.hits.count)")
                         let filteredItems = response.mapToSearchItems()
                         
                         DispatchQueue.main.async {

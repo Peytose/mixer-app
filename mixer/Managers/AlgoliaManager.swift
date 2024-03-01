@@ -53,10 +53,39 @@ class AlgoliaManager: ObservableObject {
     }
     
     
+//    func query(by type: SearchType, searchText: String) -> IndexedQuery {
+//        let now = Date().timeIntervalSince1970 // Current time as Unix timestamp
+//        switch type {
+//        case .events:
+//            var query = Query(searchText)
+//            query.filters = "isPrivate:false AND endDate > \(Int(now))"
+//            return IndexedQuery(indexName: "prod_events_search", query: query)
+//        case .hosts:
+//            let query = Query(searchText)
+//            return IndexedQuery(indexName: "prod_hosts_search", query: query)
+//        case .users:
+//            searchBlockedUsers { blockedUserIds in
+//                print("DEBUG: Blocked users \(blockedUserIds)")
+//                guard let currentUserId = UserService.shared.user?.id else { return }
+//                let allExcludedUserIds = blockedUserIds + [currentUserId]
+//                
+//                var query = Query(searchText)
+//                query.filters = allExcludedUserIds.compactMap { "NOT objectID:\($0)" }.joined(separator: " AND ")
+//                
+//                return IndexedQuery(indexName: "prod_users_search", query: query)
+//            }
+//        }
+//    }
+    
+    
     func search(by type: SearchType, searchText: String, completion: @escaping AlgoliaCompletion) {
+        let now = Date().timeIntervalSince1970
+        
         switch type {
         case .events:
-            let query = Query(searchText)
+            var query = Query(searchText)
+            
+            query.filters = "isPrivate:false AND endDate > \(Int(now * 1000))"
             eventsIndex.search(query: query, completion: completion)
         case .hosts:
             let query = Query(searchText)

@@ -564,7 +564,8 @@ class UserService: ObservableObject {
         // Enter the dispatch group before the second asynchronous operation
         dispatchGroup.enter()
         COLLECTION_NOTIFICATIONS.getNotificationDocumentReferences(forUserID: currentUid,
-                                                                   ofTypes: [.friendAccepted, .friendRequest]) { documentReferences in
+                                                                   ofTypes: [.friendAccepted, .friendRequest],
+                                                                   from: uid) { documentReferences in
             if let documentReferences = documentReferences {
                 Firestore.addDeleteOperations(to: batch, for: documentReferences)
             }
@@ -595,7 +596,8 @@ class UserService: ObservableObject {
         
         COLLECTION_NOTIFICATIONS
             .getNotificationDocumentReferences(forUserID: currentUid,
-                                               ofTypes: [.friendRequest]) { documentReferences in
+                                               ofTypes: [.friendRequest],
+                                               from: uid) { documentReferences in
                 if let documentReferences = documentReferences {
                     Firestore.addDeleteOperations(to: batch, for: documentReferences)
                 }

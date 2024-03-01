@@ -1245,7 +1245,6 @@
 		9C8F0A812A940D3F00A06D9A /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				A6D24EFD2B9121EF004BEA93 /* Friends */,
 				9C20919B2A96A1A3000E7664 /* Notifications */,
 				9C2DC25B2A735C8B00494D7C /* Settings */,
 				9C8F0A842A940D3F00A06D9A /* Views */,
@@ -1689,21 +1688,6 @@
 				9C3E40EF2B25859700977B54 /* EditAmenitiesView.swift */,
 			);
 			path = EditEvent;
-			sourceTree = "<group>";
-		};
-		A6D24EFD2B9121EF004BEA93 /* Friends */ = {
-			isa = PBXGroup;
-			children = (
-				A6D24F002B912223004BEA93 /* Views */,
-			);
-			path = Friends;
-			sourceTree = "<group>";
-		};
-		A6D24F002B912223004BEA93 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 		A6EFA7912B06A2D900DE04E8 /* Settings */ = {
@@ -2284,7 +2268,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = mixer/mixer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"mixer/Preview Content\"";
 				DEVELOPMENT_TEAM = H44T2Z74UM;
@@ -2326,7 +2310,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = mixer/mixer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"mixer/Preview Content\"";
 				DEVELOPMENT_TEAM = H44T2Z74UM;
 				ENABLE_PREVIEWS = YES;
