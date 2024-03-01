@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct FriendsView: View {
-    @StateObject private var viewModel = FriendsViewModel()
+    @ObservedObject var viewModel: FriendsViewModel
+    var navigationTitle: String = "Friends"
 
     var body: some View {
         ZStack {
@@ -20,9 +21,9 @@ struct FriendsView: View {
                 Text("No results found for \"\(viewModel.searchText)\"")
                     .foregroundColor(.secondary)
                     .padding(.top)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center) // Centers the text in the ZStack
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             } else {
-                List(viewModel.filteredFriends) { friend in
+                List(viewModel.searchText.isEmpty ? viewModel.friends : viewModel.filteredFriends) { friend in
                     NavigationLink {
                         ProfileView(user: friend)
                     } label: {
@@ -36,16 +37,13 @@ struct FriendsView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .searchable(text: $viewModel.searchText, prompt: "Search friends")
-        .navigationBar(title: "Friends", displayMode: .inline)
+        .searchable(text: $viewModel.searchText, prompt: "Search \(navigationTitle.lowercased())")
+        .navigationBar(title: navigationTitle, displayMode: .inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 PresentationBackArrowButton()
             }
-        }
-        .onAppear {
-            viewModel.fetchFriends()
         }
     }
 }

@@ -10,8 +10,15 @@ import Kingfisher
 
 struct MixerAnnotation: View {
     
-    var item: MixerMapItem
-    var number: Int
+    @ObservedObject var viewModel: MapViewModel
+    var index: Int
+    
+    private var eventCountBinding: Binding<Int> {
+        Binding<Int>(
+            get: { self.viewModel.hostEventCounts[self.viewModel.mapItems[index].id ?? ""] ?? 0 },
+            set: { self.viewModel.hostEventCounts[self.viewModel.mapItems[index].id ?? ""] = $0 }
+        )
+    }
     
     var body: some View {
         VStack {
@@ -20,26 +27,21 @@ struct MixerAnnotation: View {
                     .fill(Color.white)
                     .frame(width: 51, height: 60.71429443359375)
                 
-                KFImage(URL(string: item.imageUrl))
+                KFImage(URL(string: self.viewModel.mapItems[index].imageUrl))
                     .resizable()
                     .scaledToFill()
                     .frame(width: 40, height: 40)
                     .clipShape(Circle())
                     .offset(y: -5)
                     .overlay(alignment: .bottom) {
-                        CustomBadgeModifier(value: .constant(number))
+                        CustomBadgeModifier(value: eventCountBinding,
+                                            x: 40.0)
                     }
             }
             
-            Text(item.title)
+            Text(self.viewModel.mapItems[index].title)
                 .font(.caption)
                 .fontWeight(.semibold)
         }
-    }
-}
-
-struct MixerAnnotation_Previews: PreviewProvider {
-    static var previews: some View {
-        MixerAnnotation(item: MixerMapItem(host: dev.mockHost), number: 1)
     }
 }

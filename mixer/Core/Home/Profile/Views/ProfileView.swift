@@ -79,6 +79,7 @@ struct ProfileView: View {
                         Image(systemName: "bell")
                             .font(.title2)
                             .foregroundColor(.white)
+                            .customBadge($viewModel.notificationCount)
                             .padding(.trailing)
                             .shadow(color: .black, radius: 3)
                     }
@@ -102,9 +103,7 @@ struct ProfileView: View {
             .padding()
         }
         .withAlerts(currentAlert: $viewModel.currentAlert)
-        .onAppear {
-            friendsViewModel.fetchFriends()
-        }
+        .onAppear { viewModel.getNotificationCount() }
     }
 }
 
@@ -222,6 +221,7 @@ extension ProfileView {
                 }
             }
             .fontWeight(.medium)
+            
             if viewModel.user.isCurrentUser {
                 Text("Friends")
                     .primaryHeading()
@@ -232,13 +232,16 @@ extension ProfileView {
                         NavigationLink {
                             ProfileView(user: friend)
                         } label: {
-                            ItemInfoCell(title: friend.firstName, subtitle: "@\(friend.username)", imageUrl: friend.profileImageUrl, university: friend.university?.shortName ?? "MIT")
+                            ItemInfoCell(title: friend.firstName,
+                                         subtitle: "@\(friend.username)",
+                                         imageUrl: friend.profileImageUrl,
+                                         university: friend.university)
                         }
                         .buttonStyle(.plain)
                     }
                     
                     if friendsViewModel.friends.count > 2 {
-                        NavigationLink(destination: FriendsView()) {
+                        NavigationLink(destination: FriendsView(viewModel: friendsViewModel)) {
                             ShowMoreFriendsButton(numOfFriends: friendsViewModel.friends.count)
                             .padding(.top, 8)
                         }

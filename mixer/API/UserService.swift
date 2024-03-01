@@ -14,7 +14,13 @@ typealias FirestoreCompletion = ((Error?) -> Void)?
 class UserService: ObservableObject {
     static let shared = UserService()
     @Published var user: User?
+    @Published var friends = [User]() {
+        didSet {
+            self.fetchFriendUniversities()
+        }
+    }
     
+    private var friendUniversities: Set<String> = []
     private var listener: ListenerRegistration?
     
     init() {
@@ -23,6 +29,41 @@ class UserService: ObservableObject {
     
     deinit {
         listener?.remove()
+    }
+    
+    
+    private func fetchFriendUniversities() {
+        let friendUniversityIds = Set(friends.compactMap { $0.universityId }).filter { !$0.isEmpty }
+        let newUniversities: Set<String> = self.friendUniversities.symmetricDifference(friendUniversityIds)
+        
+        if newUniversities.isEmpty { return }
+        
+        self.friendUniversities.formUnion(newUniversities)
+        
+        self.fetchUniversities(with: Array(newUniversities)) { universities in
+            for university in universities {
+                for (index, guest) in self.friends.enumerated() {
+                    if guest.universityId == university.id {
+                        self.friends[index].university = university
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    private func fetchUser(with id: String, completion: @escaping (User) -> Void) {
+        COLLECTION_USERS
+            .document(id)
+            .fetchWithCachePriority(freshnessDuration: 7200) { snapshot, error in
+                if let error = error {
+                    print("DEBUG: Error fetching user. \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let user = try? snapshot?.data(as: User.self) else { return }
+                completion(user)
+            }
     }
     
     
@@ -51,6 +92,8 @@ class UserService: ObservableObject {
                         self.user?.university = university
                     }
                 }
+                
+                self.fetchFriends()
             }
     }
     
@@ -155,8 +198,7 @@ class UserService: ObservableObject {
     }
     
     
-    func fetchUniversity(with id: String,
-                         completion: @escaping (University) -> Void) {
+    func fetchUniversity(with id: String, completion: @escaping (University) -> Void) {
         COLLECTION_UNIVERSITIES
             .document(id)
             .fetchWithCachePriority(freshnessDuration: 86400) { snapshot, error in
@@ -532,13 +574,13 @@ class UserService: ObservableObject {
         
         // Commit the batch after both operations have completed
         dispatchGroup.notify(queue: .main) {
+            self.friends.removeAll(where: { $0.id == uid })
             batch.commit(completion: completion)
         }
     }
     
     
-    func acceptFriendRequest(uid: String,
-                             completion: FirestoreCompletion) {
+    func acceptFriendRequest(uid: String, completion: FirestoreCompletion) {
         guard let currentUid = self.user?.id else { return }
         let path = "\(min(currentUid, uid))-\(max(currentUid, uid))"
         
@@ -566,6 +608,7 @@ class UserService: ObservableObject {
                         NotificationsViewModel.uploadNotification(toUid: uid,
                                                                   type: .friendAccepted)
                         
+                        self.fetchAndAddUserToFriends(with: uid)
                         HapticManager.playSuccess()
                         completion?(nil)
                     }
@@ -573,6 +616,14 @@ class UserService: ObservableObject {
             }
     }
     
+    
+    func fetchAndAddUserToFriends(with uid: String) {
+        if !self.friends.contains(where: { $0.id == uid }) {
+            self.fetchUser(with: uid) { user in
+                self.friends.append(user)
+            }
+        }
+    }
     
     
     func getUserRelationship(uid: String,
@@ -732,12 +783,9 @@ extension UserService {
             }
     }
     
-    func fetchFriends(completion: @escaping ([User]) -> Void) {
-        guard let currentUserId = self.user?.id else {
-            print("DEBUG: No current user id")
-            completion([])
-            return
-        }
+    
+    func fetchFriends() {
+        guard let currentUserId = self.user?.id else { return }
         
         // Find relationships where the current user is either the initiator or recipient and the state is 'friends'
         COLLECTION_RELATIONSHIPS
@@ -751,7 +799,6 @@ extension UserService {
             .getDocuments { snapshot, error in
                 if let error = error {
                     print("DEBUG: Error fetching relationships: \(error.localizedDescription)")
-                    completion([])
                     return
                 }
                 
@@ -766,18 +813,22 @@ extension UserService {
                     return nil
                 } ?? []
                 
-                self.fetchUsers(with: friendIds, completion: completion)
+                self.fetchFriends(with: friendIds)
             }
     }
     
+    
     // Helper function to fetch user documents based on array of user IDs
-    private func fetchUsers(with userIds: [String], completion: @escaping ([User]) -> Void) {
+    private func fetchFriends(with userIds: [String]) {
         var friends: [User] = []
         let group = DispatchGroup()
         
         for id in userIds {
             group.enter()
-            COLLECTION_USERS.document(id).getDocument { documentSnapshot, error in
+            
+            COLLECTION_USERS
+                .document(id)
+                .fetchWithCachePriority(freshnessDuration: 7200) { documentSnapshot, error in
                 defer { group.leave() }
                 if let documentSnapshot = documentSnapshot, documentSnapshot.exists {
                     do {
@@ -793,7 +844,7 @@ extension UserService {
         }
         
         group.notify(queue: .main) {
-            completion(friends)
+            self.friends = friends
         }
     }
     

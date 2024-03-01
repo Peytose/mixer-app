@@ -12,9 +12,9 @@ struct CustomBadgeModifier: View {
     @State var foreground: Color = .white
     @State var background: Color = .red
     
-    private let size = 16.0
-    private let x = 40.0
-    private let y = 0.0
+    var size: CGFloat = 16.0
+    var x: CGFloat = 25.0
+    var y: CGFloat = 0.0
     
     var body: some View {
         ZStack {
@@ -54,6 +54,16 @@ struct CustomBadgeModifier: View {
         } else {
             // too many digits, showing 99+
             return 2.0
+        }
+    }
+}
+
+extension View {
+    func customBadge(_ count: Binding<Int>) -> some View {
+        return self.overlay(alignment: .topTrailing) {
+            if count.wrappedValue > 0 {
+                CustomBadgeModifier(value: count)
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ extension MixerMapItem: Hashable {
 struct MixerMapItem: Identifiable {
     let id: String?
     let title: String
-    let email: String
+    var email: String?
     let subtitle: String
     let imageUrl: String
     let coordinate: CLLocationCoordinate2D
@@ -41,7 +41,7 @@ struct MixerMapItem: Identifiable {
     init(event: Event) {
         self.id         = event.id
         self.title      = event.title
-        self.email      = event.title ?? "jose.martinez102001@gmail.com"
+        self.email      = nil
         self.subtitle   = String(event.description.prefix(20))
         self.imageUrl   = event.eventImageUrl
         self.coordinate = CLLocationCoordinate2D(latitude: event.geoPoint.latitude,

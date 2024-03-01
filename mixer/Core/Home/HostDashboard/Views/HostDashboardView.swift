@@ -168,7 +168,6 @@ extension HostDashboardView {
                       isButton: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .redacted(reason: viewModel.isLoading ? .placeholder : [])
 
             Spacer()
             
@@ -186,7 +185,6 @@ extension HostDashboardView {
                       isButton: true)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
-            .redacted(reason: viewModel.isLoading ? .placeholder : [])
         }
     }
     

@@ -38,16 +38,14 @@ struct MapView: View {
             Group {
                 if #available(iOS 17, *) {
                     Map(position: getCameraPositionBinding(), selection: $selectedTag) {
-                        ForEach(viewModel.mapItems.indices, id: \.self) { index in
-                            if let itemId = viewModel.mapItems[index].id {
-                                Annotation(viewModel.mapItems[index].title,
-                                           coordinate: viewModel.mapItems[index].coordinate) {
-                                    MixerAnnotation(item: viewModel.mapItems[index],
-                                                    number: viewModel.hostEventCounts[itemId] ?? 0)
-                                }
-                                           .annotationTitles(.hidden)
-                                           .tag(index)
+                        ForEach(Array(viewModel.mapItems.enumerated()), id: \.element.id) { index, item in
+                            Annotation(item.title,
+                                       coordinate: item.coordinate) {
+                                MixerAnnotation(viewModel: viewModel,
+                                                index: index)
                             }
+                                       .annotationTitles(.hidden)
+                                       .tag(index)
                         }
                         
                         UserAnnotation()
@@ -58,8 +56,8 @@ struct MapView: View {
                         MapAnnotation(coordinate: item.coordinate) {
                             if let itemId = item.id,
                                let index = viewModel.mapItems.firstIndex(where: { $0.id == itemId }) {
-                                MixerAnnotation(item: item,
-                                                number: viewModel.hostEventCounts[itemId] ?? 0)
+                                MixerAnnotation(viewModel: viewModel,
+                                                index: index)
                                 .onTapGesture {
                                     self.selectedTag = index
                                 }
@@ -132,7 +130,7 @@ struct MapView: View {
                     }
                 }
             }
-            .sheet(isPresented: $isSheetPresented) {
+            .sheet(isPresented: $isSheetPresented, onDismiss: { self.selectedTag = nil }) {
                 if let index = self.selectedTag, index < viewModel.mapItems.count {
                     // Ensure the argument labels here match the ones in your MapItemDetailSheetView initializer
                     MapItemDetailSheetView(
@@ -147,8 +145,6 @@ struct MapView: View {
                     .presentationDetents([.medium, .large])
                 }
             }
-
-
         }
     }
 }

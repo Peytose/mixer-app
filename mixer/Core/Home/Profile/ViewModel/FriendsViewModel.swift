@@ -5,7 +5,9 @@
 //  Created by Jose Martinez on 2/29/24.
 //
 
-import Foundation
+import SwiftUI
+import Combine
+
 
 class FriendsViewModel: ObservableObject {
     @Published var friends: [User] = []
@@ -13,24 +15,28 @@ class FriendsViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var searchText = "" {
         didSet {
-            searchFriends()
+            self.search(userService.friends)
         }
     }
-
+    
     private var userService = UserService.shared
-
+    private var cancellable = Set<AnyCancellable>()
+    
+    init() {
+        self.fetchFriends()
+    }
+    
+    
     func fetchFriends() {
-        isLoading = true
-        userService.fetchFriends { [weak self] users in
-            DispatchQueue.main.async {
-                self?.isLoading = false
-                self?.friends = users
-                self?.filteredFriends = users
+        userService.$friends
+            .sink { friends in
+                self.friends = friends
             }
-        }
+            .store(in: &cancellable)
     }
 
-    private func searchFriends() {
+    
+    private func search(_ friends: [User]) {
         if searchText.isEmpty {
             filteredFriends = friends
         } else {

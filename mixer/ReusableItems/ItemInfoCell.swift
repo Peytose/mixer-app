@@ -13,11 +13,16 @@ struct ItemInfoCell<Content: View>: View {
     let title: String
     let subtitle: String
     var imageUrl: String?
-    var university: String?
+    var university: University?
     var icon: String?
     var content: Content?
     
-    init(title: String, subtitle: String, imageUrl: String? = nil, university: String? = nil, icon: String? = nil, @ViewBuilder content: () -> Content? = { nil }) {
+    init(title: String,
+         subtitle: String,
+         imageUrl: String? = nil,
+         university: University? = nil,
+         icon: String? = nil,
+         @ViewBuilder content: () -> Content? = { nil }) {
         self.title = title
         self.subtitle = subtitle
         self.imageUrl = imageUrl
@@ -64,7 +69,7 @@ struct ItemInfoCell<Content: View>: View {
                     HStack(spacing: 2) {
                         Image(systemName: "graduationcap.fill")
 
-                        Text(university)
+                        Text(university.shortName ?? university.name)
                     }
                     .font(.subheadline)
                     .fontWeight(.medium)
@@ -83,7 +88,11 @@ struct ItemInfoCell<Content: View>: View {
 }
 
 extension ItemInfoCell where Content == EmptyView {
-    init(title: String, subtitle: String, imageUrl: String? = nil, university: String? = nil, icon: String? = nil) {
+    init(title: String,
+         subtitle: String,
+         imageUrl: String? = nil,
+         university: University? = nil,
+         icon: String? = nil) {
       self.init(title: title,
                 subtitle: subtitle,
                 imageUrl: imageUrl,

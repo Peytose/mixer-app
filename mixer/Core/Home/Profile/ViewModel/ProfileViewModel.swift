@@ -17,6 +17,7 @@ class ProfileViewModel: ObservableObject {
     @Published var favoritedEvents      = [Event]()
     @Published var pastEvents           = [Event]()
     @Published var mutuals              = [User]()
+    @Published var notificationCount: Int = 0
     
     @Published var currentAlert: AlertType?
     @Published var alertItem: AlertItem? {
@@ -49,6 +50,23 @@ class ProfileViewModel: ObservableObject {
                 self.user.university = university
             }
         }
+    }
+    
+    
+    func getNotificationCount() {
+        guard let uid = service.user?.id, uid == user.id else { return }
+        
+        COLLECTION_NOTIFICATIONS
+            .document(uid)
+            .collection("user-notifications")
+            .count
+            .getAggregation(source: .server) { snapshot, _ in
+                guard let count = snapshot?.count.intValue else { return }
+                
+                DispatchQueue.main.async {
+                    self.notificationCount = count
+                }
+            }
     }
     
     

@@ -199,10 +199,10 @@ extension AuthViewModel {
         
         ImageUploader.uploadImage(image: image, type: .profile) { imageUrl in
             let user = User(dateJoined: Timestamp(),
-                            firstName: self.firstName.cleanForAccount,
-                            lastName: self.lastName.cleanForAccount,
-                            displayName: self.firstName.cleanForAccount,
-                            username: self.username.lowercased(),
+                            firstName: self.firstName.trimSpaceAndCapitalize,
+                            lastName: self.lastName.trimSpaceAndCapitalize,
+                            displayName: self.firstName.trimSpaceAndCapitalize,
+                            username: self.username.removedSpecialCharacters.lowercased(),
                             profileImageUrl: imageUrl,
                             birthday: Timestamp(date: self.birthday),
                             universityId: self.universityId,

@@ -17,7 +17,7 @@ class HostService: ObservableObject {
                       for event: Event,
                       by host: Host,
                       completion: FirestoreCompletion) {
-        guard let currentUserName = UserService.shared.user?.firstName,
+        guard let currentUserName = UserService.shared.user?.username,
               let eventId = event.id else { return }
         
         self.inviteUser(eventId: eventId,
@@ -52,7 +52,7 @@ class HostService: ObservableObject {
     func checkIn(guest: EventGuest,
                  eventId: String,
                  completion: FirestoreCompletion) {
-        guard let currentUserName = UserService.shared.user?.firstName,
+        guard let currentUserName = UserService.shared.user?.username,
               let uid = guest.id else { return }
         
         let data = ["status": GuestStatus.checkedIn.rawValue,

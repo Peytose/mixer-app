@@ -236,7 +236,7 @@ extension EventManager {
 
     
     func fetchUserPastEvents(for userId: String) {
-        let queryKey = QueryKey(collectionPath: "users/events-attended")
+        let queryKey = QueryKey(collectionPath: "users/\(userId)/events-attended")
         
         COLLECTION_USERS
             .document(userId)

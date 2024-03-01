@@ -1257,6 +1257,7 @@
 		9C8F0A822A940D3F00A06D9A /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				A6D24EFE2B912208004BEA93 /* FriendsViewModel.swift */,
 				9C8F0A9A2A940DF900A06D9A /* ProfileViewModel.swift */,
 			);
 			path = ViewModel;
@@ -1265,6 +1266,7 @@
 		9C8F0A842A940D3F00A06D9A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A6D24F012B912237004BEA93 /* FriendsView.swift */,
 				9C8F0A962A940DF300A06D9A /* FriendshipButtonsView.swift */,
 				9C8F0A942A940DF300A06D9A /* MoreProfileOptions.swift */,
 				9C8F0A952A940DF300A06D9A /* ProfileView.swift */,
@@ -1693,7 +1695,6 @@
 			isa = PBXGroup;
 			children = (
 				A6D24F002B912223004BEA93 /* Views */,
-				A6D24EFE2B912208004BEA93 /* FriendsViewModel.swift */,
 			);
 			path = Friends;
 			sourceTree = "<group>";
@@ -1701,7 +1702,6 @@
 		A6D24F002B912223004BEA93 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A6D24F012B912237004BEA93 /* FriendsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -2284,7 +2284,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = mixer/mixer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_ASSET_PATHS = "\"mixer/Preview Content\"";
 				DEVELOPMENT_TEAM = H44T2Z74UM;
@@ -2306,7 +2306,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2024.02.3;
+				MARKETING_VERSION = 2024.03.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mixer.party;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2326,7 +2326,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = mixer/mixer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"mixer/Preview Content\"";
 				DEVELOPMENT_TEAM = H44T2Z74UM;
 				ENABLE_PREVIEWS = YES;
@@ -2347,7 +2347,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2024.02.3;
+				MARKETING_VERSION = 2024.03.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.mixer.party;
 				PRODUCT_NAME = "$(TARGET_NAME)";

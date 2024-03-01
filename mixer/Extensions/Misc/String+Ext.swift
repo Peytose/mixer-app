@@ -9,7 +9,7 @@ import SwiftUI
 import CoreLocation
 
 extension String {
-    var cleanForAccount: String {
+    var trimSpaceAndCapitalize: String {
         return self.trimmingCharacters(in: .whitespaces).capitalized
     }
     
