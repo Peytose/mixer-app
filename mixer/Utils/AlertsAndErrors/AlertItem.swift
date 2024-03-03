@@ -217,12 +217,6 @@ struct AlertContext {
                                                               dismissButton: .default(Text("Ok")))
     
     
-    //MARK: - LocationListView Errors
-    static let unableToGetAllCheckedInProfiles    = AlertItem(title: Text("Server"),
-                                                              message: Text("We are unable get users checked in at this time.\nPlease try again."),
-                                                              dismissButton: .default(Text("Ok")))
-    
-    
     //MARK: - ProfileView Messages/Errors
     static func confirmBlock(name: String, confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {
         ConfirmationAlertItem(title: Text("Block \(name)?"),
@@ -307,6 +301,14 @@ struct AlertContext {
                      primaryButton: .default(Text("Remove").bold(),
                                              action: confirmAction),
                      secondaryButton: .default(Text("Oops nvm")))
+    }
+    
+    
+    static func addGuestToInviteOnly(confirmAction: @escaping () -> Void) -> ConfirmationAlertItem {
+        ConfirmationAlertItem(title: Text("Confirmation Required"),
+                     message: Text("This guest isn't on the guestlist.\nAre you sure you want to add them?"),
+                     primaryButton: .default(Text("Add").bold(), action: confirmAction),
+                     secondaryButton: .default(Text("Cancel")))
     }
     
     

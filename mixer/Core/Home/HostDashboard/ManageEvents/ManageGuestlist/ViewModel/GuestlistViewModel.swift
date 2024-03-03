@@ -11,6 +11,31 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 import CodeScanner
 
+struct SmartSearchMatcher {
+    public init(searchString: String) {
+        searchTokens = searchString.split(whereSeparator: { $0.isWhitespace }).sorted { $0.count > $1.count }
+    }
+        
+    func matches(_ candidateString: String) -> Bool {
+        guard !searchTokens.isEmpty else { return true }
+        var candidateStringTokens = candidateString.split(whereSeparator: { $0.isWhitespace })
+        for searchToken in searchTokens {
+            var matchedSearchToken = false
+            for (candidateStringTokenIndex, candidateStringToken) in candidateStringTokens.enumerated () {
+                if let range = candidateStringToken.range(of: searchToken, options: [.caseInsensitive, .diacriticInsensitive]),
+                   range.lowerBound == candidateStringToken.startIndex {
+                    matchedSearchToken = true
+                    candidateStringTokens.remove(at: candidateStringTokenIndex)
+                    break
+                }
+            }
+            guard matchedSearchToken else { return false }
+        }
+        return true
+    }
+        private(set) var searchTokens: [String.SubSequence]
+}
+
 class GuestlistViewModel: ObservableObject {
     @Published private(set) var sectionedGuests: [String: [EventGuest]] = [:]
     @Published var selectedGuestSection: GuestStatus = .invited {
@@ -72,25 +97,18 @@ class GuestlistViewModel: ObservableObject {
     }
     
     
-    func filterGuests(for searchText: String) {
+    func filterGuests(for searchText: String) -> [EventGuest] {
         let trimmedSearchText = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        guard !trimmedSearchText.isEmpty else {
-            refreshViewState(with: guests)
-            return
+        guard !trimmedSearchText.isEmpty else { return [] }
+        
+        let smartSearchMatcher = SmartSearchMatcher(searchString: trimmedSearchText)
+        
+        let filtered = sectionedGuests.values.flatMap({ $0 }).filter { guest in
+            let searchableName = guest.name.folding(options: .diacriticInsensitive, locale: .current)
+            return smartSearchMatcher.matches(searchableName)
         }
-
-        // Split the search text into words for flexible matching
-        let searchWords = trimmedSearchText.split(separator: " ").map(String.init)
-
-        let filtered = guests.filter { guest in
-            // Check if each word in the search text is contained in the guest name
-            let guestNameLowercased = guest.name.lowercased()
-            return searchWords.allSatisfy { searchWord in
-                guestNameLowercased.contains(searchWord)
-            }
-        }
-
-        refreshViewState(with: filtered)
+        
+        return filtered
     }
     
     
@@ -187,7 +205,12 @@ extension GuestlistViewModel {
             let status: GuestStatus = self.event.startDate > Timestamp() ? .invited : .checkedIn
             fetchAndAddUserToGuestlist(uid: uid, status: status)
         } else {
-            print("DEBUG: User is not on guestlist")
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                self.confirmationAlertItem = AlertContext.addGuestToInviteOnly {
+                    let status: GuestStatus = self.event.startDate > Timestamp() ? .invited : .checkedIn
+                    self.fetchAndAddUserToGuestlist(uid: uid, status: status)
+                }
+            }
         }
     }
     
@@ -215,6 +238,8 @@ extension GuestlistViewModel {
                         print("DEBUG: Error adding user to guestlist. \(error.localizedDescription)")
                         return
                     }
+                    
+                    self.username = ""
                     
                     NotificationsViewModel.uploadNotification(toUid: userId,
                                                               type: .guestlistAdded,
@@ -363,68 +388,6 @@ extension GuestlistViewModel {
                 }
             }
     }
-    
-    
-    func uploadGuestlistJSON() {
-        print("DEBUG: Uploading json guestlist... ")
-        let eventId = ""
-        
-        guard let fileURL = Bundle.main.url(forResource: "guestlist", withExtension: "json") else {
-            print("File URL not found")
-            return
-        }
-
-        do {
-            let jsonData = try Data(contentsOf: fileURL)
-            if let jsonArray = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [[String: String]] {
-                for guestDict in jsonArray {
-                    print("DEBUG: Guest dict: \(guestDict)")
-                    processAndUploadGuest(guestDict, forEvent: eventId)
-                }
-            }
-        } catch {
-            print("Error reading or parsing JSON: \(error)")
-        }
-    }
-
-    private func processAndUploadGuest(_ guestDict: [String: String], forEvent eventId: String) {
-        guard let nameField = guestDict["Name"],
-              let schoolShortName = guestDict["School"],
-              let invitedBy = guestDict["Brother"] else { return }
-
-        let isTwentyOnePlus = (guestDict["21+"] != "N")
-        let age = isTwentyOnePlus ? 21 : 19
-
-        let names = nameField.components(separatedBy: "\n")
-        for name in names {
-            uploadGuestWithName(name, schoolShortName: schoolShortName, age: age, invitedBy: invitedBy, forEvent: eventId)
-        }
-    }
-
-    private func uploadGuestWithName(_ name: String, schoolShortName: String, age: Int, invitedBy: String, forEvent eventId: String) {
-        UserService.shared.fetchUniversityId(for: schoolShortName) { universityId in
-            let guest = EventGuest(name: name.trimmingCharacters(in: .whitespacesAndNewlines).capitalized,
-                                   universityId: universityId,
-                                   age: age,
-                                   gender: .preferNotToSay,  // Replace with actual gender if available
-                                   status: .invited,  // Replace with appropriate status if different
-                                   invitedBy: invitedBy,
-                                   timestamp: Timestamp())
-
-            guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
-            
-            COLLECTION_EVENTS
-                .document(eventId)
-                .collection("guestlist")
-                .addDocument(data: encodedGuest) { error in
-                    if let error = error {
-                        print("Error uploading guest: \(error.localizedDescription)")
-                    }
-                    
-                    print("DEBUG: UPLOADED GUESTS!")
-                }
-        }
-    }
 
     
     private func addGuest(eventId: String,
@@ -487,10 +450,11 @@ extension GuestlistViewModel {
         if selectedGuest.status == .checkedIn && self.isShowingUserInfoModal {
             self.isShowingUserInfoModal = false
             
-            // MARK: Last bug - couldn't get notification to pop up
-//            confirmationAlertItem = AlertContext.confirmRemoveMember {
-                self.hostService.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in }
-//            }
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5) {
+                self.confirmationAlertItem = AlertContext.confirmRemoveMember {
+                    self.hostService.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in }
+                }
+            }
         } else {
             self.hostService.removeUserFromGuestlist(with: guestId, eventId: eventId) { _ in }
         }
@@ -560,122 +524,3 @@ extension GuestlistViewModel {
         })
     }
 }
-
-
-extension GuestlistViewModel {
-    @MainActor
-    func uploadManualGuestlist() {
-        if let fileURL = Bundle.main.url(forResource: "valentines-guestlist", withExtension: "json") {
-            do {
-                let jsonData = try Data(contentsOf: fileURL)
-                let decodedArray = try JSONDecoder().decode([[String: String]].self, from: jsonData)
-
-                var universitySet = Set<String>()
-
-                for guestDict in decodedArray {
-                    if let universityStr = guestDict["University"] {
-                        if universityStr == "" {
-                            universitySet.insert("Non-university")
-                        } else {
-                            universitySet.insert(universityStr)
-                        }
-                    }
-                }
-
-                let dispatchGroup = DispatchGroup()
-                print("Starting to fetch university IDs for \(universitySet)...")
-
-                for name in universitySet {
-                    dispatchGroup.enter()
-                    
-                    userService.fetchUniversityId(for: name) { id in
-                        print("Fetched ID for \(name): \(id)")
-                        self.universityIdDict[name] = id
-                        dispatchGroup.leave()
-                    }
-                }
-
-                print("Set up dispatch group notify...")
-                dispatchGroup.notify(queue: .main) {
-                    print("All university IDs fetched, starting to upload guests...")
-                    self.uploadGuestsFromDict(guestArray: decodedArray)
-                }
-            } catch {
-                print("Failed to read or decode JSON: \(error)")
-            }
-        } else {
-            print("Failed to find test_guestlist.json in the main bundle.")
-        }
-    }
-
-    
-    
-    func uploadGuestsFromDict(guestArray: [[String:String]]) {
-        for guestDict in guestArray {
-            uploadSingleGuest(guestDict: guestDict)
-        }
-    }
-    
-    func uploadSingleGuest(guestDict: [String:String]) {
-        let name            = guestDict["Name"]!
-        let genderStr       = guestDict["Gender"]!
-        let universityStr   = guestDict["University"]!
-        let brotherFullName = guestDict["Brother"]!
-        let gender          = determineGender(genderStr)
-        
-        var guest = EventGuest(name: name,
-                               universityId: (universityIdDict[universityStr] ?? "com"),
-                               age: guestDict["21+"] == "N" ? 19 : 21,
-                               gender: gender,
-                               status: .invited,
-                               invitedBy: brotherFullName,
-                               timestamp: Timestamp())
-        
-        guard let encodedGuest = try? Firestore.Encoder().encode(guest) else { return }
-        print("\(encodedGuest)\n")
-//        let docId = "Sab0cQkG2jTm772WTbny"
-//        
-//        COLLECTION_EVENTS
-//            .document(docId)
-//            .collection("guestlist")
-//            .addDocument(data: encodedGuest) { error in
-//                if let error = error {
-//                    print("DEBUG: Error \(error.localizedDescription)")
-//                    return
-//                }
-//                
-//                print("DEBUG: \(guest.name) added!")
-//            }
-    }
-    
-    func determineGender(_ letter: String) -> Gender {
-        switch letter.lowercased() {
-            case "m": return .man
-            case "f": return .woman
-            default: return .preferNotToSay
-        }
-    }
-    
-    func extractNoteFromInvitee(_ invitee: String) -> String? {
-        var note: String? = nil
-        var plusGuests: String? = nil
-        
-        // Extract notes within parentheses
-        if let leftParenIndex = invitee.firstIndex(of: "("), let rightParenIndex = invitee.firstIndex(of: ")") {
-            note = String(invitee[leftParenIndex...rightParenIndex].dropFirst().dropLast())
-        }
-        
-        // Extract "+<number>" patterns (with potential space) indicating additional guests
-        if let range = invitee.range(of: "\\+\\s?\\d", options: .regularExpression) {
-            plusGuests = String(invitee[range]).replacingOccurrences(of: " ", with: "")  // Remove space for uniformity
-            if let existingNote = note {
-                note = "\(existingNote), \(plusGuests!) additional guests"
-            } else {
-                note = "\(plusGuests!) additional guests"
-            }
-        }
-        
-        return note
-    }
-}
-

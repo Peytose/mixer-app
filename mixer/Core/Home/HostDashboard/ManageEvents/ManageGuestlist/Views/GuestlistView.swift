@@ -28,14 +28,6 @@ struct GuestlistView: View {
                     .ignoresSafeArea()
                 
                 VStack {
-                    if viewModel.viewState != .list {
-                        Text(viewModel.event.title)
-                            .primaryHeading()
-                            .multilineTextAlignment(.trailing)
-                                       .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .leading)
-                                       .padding([.leading, .top])
-                    }
-                    
                     StickyHeaderView(items: GuestStatus.allCases,
                                      selectedItem: $viewModel.selectedGuestSection)
                     
@@ -64,10 +56,8 @@ struct GuestlistView: View {
                             Spacer()
                         case .list:
                             List {
-                                // Loop over each section in sectionedGuests
                                 ForEach(viewModel.sectionedGuests.keys.sorted(), id: \.self) { key in
                                     Section(header: Text(key)) {
-                                        // Loop over each guest in this section
                                         ForEach(viewModel.sectionedGuests[key] ?? []) { guest in
                                             GuestlistRow(guest: guest)
                                                 .environmentObject(viewModel)
@@ -81,15 +71,17 @@ struct GuestlistView: View {
                             .scrollContentBackground(.hidden)
                         }
                     }
-                    .searchable(text: $searchText, prompt: "Search guests..")
-                    .navigationTitle(viewModel.event.title)
-                    .navigationBarTitleDisplayMode(.large)
-                    .onChange(of: searchText) { newValue in
-                        viewModel.filterGuests(for: newValue)
-                    }
                 }
             }
             .navigationBarBackButtonHidden(true)
+            .navigationBar(title: viewModel.event.title, displayMode: .inline)
+            .searchable(text: $searchText, prompt: "Search guests..") {
+                ForEach(viewModel.filterGuests(for: searchText)) { guest in
+                    GuestlistRow(guest: guest)
+                        .environmentObject(viewModel)
+                }
+            }
+            .autocorrectionDisabled(true)
             .overlay(alignment: .bottom) {
                 if viewModel.event.endDate > Timestamp() {
                     QRCodeScannerButton(isShowingQRCodeScanView: $isShowingQRCodeScanView)
@@ -130,7 +122,6 @@ struct GuestlistView: View {
                 }
             }
             .withAlerts(currentAlert: $viewModel.currentAlert)
-        
     }
 }
 

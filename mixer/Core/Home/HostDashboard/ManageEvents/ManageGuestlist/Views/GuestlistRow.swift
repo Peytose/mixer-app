@@ -61,7 +61,12 @@ struct GuestlistRow: View {
 
         }
         .contentShape(Rectangle())
-        .showUserInfoModal(for: guest, viewModel: viewModel)
+        .onTapGesture {
+            withAnimation() {
+                viewModel.isShowingUserInfoModal = true
+                viewModel.selectedGuest = guest
+            }
+        }
         .listRowBackground(Color.theme.secondaryBackgroundColor)
         .swipeActions {
             Button(role: .destructive) {
@@ -79,18 +84,6 @@ struct GuestlistRow: View {
                 } label: {
                     Label("Check-in", systemImage: "list.bullet.clipboard.fill")
                 }
-            }
-        }
-    }
-}
-
-// MARK: - View-specific extension
-extension View {
-    func showUserInfoModal(for guest: EventGuest, viewModel: GuestlistViewModel) -> some View {
-        self.onTapGesture {
-            withAnimation() {
-                viewModel.isShowingUserInfoModal = true
-                viewModel.selectedGuest = guest
             }
         }
     }
