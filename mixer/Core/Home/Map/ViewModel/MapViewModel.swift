@@ -36,6 +36,9 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var isCenteredOnUserLocation = false
     @Published var isShowingLookAround = false
     @Published var travelTimes: [TransportType: TimeInterval] = [:]
+    //Added by Jose
+    @Published var hostEvents: [Event] = []
+    @Published var selectedItem: MixerMapItem?
 
     private let hostManager        = HostManager.shared
     private let eventManager       = EventManager.shared
@@ -89,6 +92,18 @@ class MapViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
                 }
             }
             .store(in: &cancellable)
+    }
+    
+    //Added by Jose
+    func fetchCurrentAndUpcomingEvents() {
+        guard let hostUid = selectedItem?.id else { return }
+        
+        let events = EventManager.shared.events.filter({
+            $0.hostIds.contains(where: { $0 == hostUid }) &&
+            $0.endDate > Timestamp()
+        })
+        
+        self.hostEvents = Array(events).sortedByStartDate()
     }
     
     private func countEventsForHost(hostId: String) -> Int {

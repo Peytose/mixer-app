@@ -92,6 +92,8 @@ struct MapView: View {
             }
             .onChange(of: selectedTag) { index in
                 isSheetPresented = index != nil
+                viewModel.selectedItem = viewModel.mapItems[index ?? 0]  // Update the selectedItem in ViewModel
+                
                 self.buttons = createButtons()
 
                 // Reset travel times when selection changes

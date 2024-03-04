@@ -121,7 +121,7 @@ fileprivate struct NameAndTaglineView: View {
     }
 }
 
-fileprivate struct ShowMoreEventsButton: View {
+struct ShowMoreEventsButton: View {
     @Binding var showMoreEvents: Bool
     let numOfEvents: Int
     

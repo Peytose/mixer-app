@@ -25,11 +25,22 @@ struct MapItemDetailSheetView: View {
     @State private var travelIcon = "car.fill"
     @State private var showMailModal = false
     
+    //Jose added
+    @Namespace var namespace
+    @State private var showMoreEvents = false
+    @State private var showEventDetail = false
+    @State private var selectedEvent: Event? = nil
+    @State private var isLoading = false // New loading state variable
+
     var body: some View {
+        NavigationView {
         ScrollView {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 8) {
                 detailHeaderView
                 buttonsView
+                if !viewModel.hostEvents.isEmpty {
+                    eventsView
+                }
                 mapView
                 travelDetailsView
                 getDirectionsButton
@@ -38,20 +49,27 @@ struct MapItemDetailSheetView: View {
             .padding(.top, 30)
         }
         .background(Color.theme.backgroundColor.ignoresSafeArea())
-        .onAppear(perform: setupAddresses)
+        .onAppear {
+            setupAddresses()
+            viewModel.fetchCurrentAndUpcomingEvents()
+        }
         .sheet(isPresented: $showMailModal) {
             MailViewModal(isShowing: $showMailModal, subject: "mixer", recipients: [selectedItem.email ?? ""])
         }
+        .overlay {
+            if isLoading {
+                LoadingView()
+            }
+        }
+    }
     }
 }
 
 extension MapItemDetailSheetView {
     var detailHeaderView: some View {
         Text(selectedItem.title)
-            .font(.title)
-            .fontWeight(.semibold)
-            .foregroundColor(Color.white)
-            .padding(.bottom)
+            .primaryHeading()
+            .minimumScaleFactor(0.8)
     }
     
     var buttonsView: some View {
@@ -65,6 +83,43 @@ extension MapItemDetailSheetView {
             }
             
             moreButton
+        }
+    }
+    
+    var eventsView: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Upcoming Events")
+                .secondaryHeading()
+            
+            ForEach(showMoreEvents ? viewModel.hostEvents : Array(viewModel.hostEvents.prefix(1))) { event in
+                SmallEventCell(title: event.title,
+                               duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
+                               visibility: "\(event.isInviteOnly ? "Closed" : "Open") Event",
+                               dateMonth: event.startDate.getTimestampString(format: "MMM"),
+                               dateNumber: event.startDate.getTimestampString(format: "d"),
+                               imageURL: event.eventImageUrl)
+                .onTapGesture {
+                    eventSelected(event)
+                }
+            }
+            
+            let numOfEvents = viewModel.hostEvents.count
+            if numOfEvents > 1 {
+                ShowMoreEventsButton(showMoreEvents: $showMoreEvents,
+                                     numOfEvents: numOfEvents)
+                .padding(.top, 8)
+            }
+        }
+        .sheet(isPresented: $showEventDetail, onDismiss: {
+            self.selectedEvent = nil // Reset selected event when the detail view is dismissed
+        }) {
+            if let event = selectedEvent {
+                EventDetailView(event: event, namespace: namespace)
+                    .overlay(alignment: .topLeading) {
+                        XDismissButton(action: { showEventDetail = false }, hasBackground: true)
+                            .padding()
+                    }
+            }
         }
     }
     
@@ -90,9 +145,7 @@ extension MapItemDetailSheetView {
         VStack(alignment: .leading) {
             HStack {
                 Text("Travel Details")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color.white)
+                    .secondaryHeading()
                 
                 Spacer()
                 
@@ -134,7 +187,7 @@ extension MapItemDetailSheetView {
     
     var moreButton: some View {
         Menu {
-//            Button("Share Host Profile", action: {})
+            //            Button("Share Host Profile", action: {})
             Button("Contact Host", action: { showMailModal.toggle() })
         } label: {
             VStack(spacing: 5) {
@@ -187,6 +240,16 @@ extension MapItemDetailSheetView {
             return formatTravelTime(unwrappedTime) // This is safe since 'unwrappedTime' is non-optional
         } else {
             return "N/A" // Handle the case where 'time' is nil
+        }
+    }
+    
+    private func eventSelected(_ event: Event) {
+        isLoading = true // Begin loading
+        // Simulate a loading delay or fetch detail data if needed
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { // Adjust delay as needed
+            self.selectedEvent = event
+            self.showEventDetail = true // This triggers the full screen cover to open
+            self.isLoading = false // End loading
         }
     }
 }
