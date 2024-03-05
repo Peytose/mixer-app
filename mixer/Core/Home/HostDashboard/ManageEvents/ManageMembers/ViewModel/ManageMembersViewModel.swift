@@ -35,7 +35,7 @@ class ManageMembersViewModel: ObservableObject {
     
     @Published var viewState: ListViewState = .loading
     @Published var isShowingUsernameInputSheet: Bool = false
-    
+
     @Published var currentAlert: AlertType?
     @Published var alertItem: AlertItem? {
         didSet {

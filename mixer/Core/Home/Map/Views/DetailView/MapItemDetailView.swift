@@ -35,7 +35,7 @@ struct MapItemDetailSheetView: View {
     var body: some View {
         NavigationView {
         ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 12) {
                 detailHeaderView
                 buttonsView
                 if !viewModel.hostEvents.isEmpty {
@@ -49,6 +49,7 @@ struct MapItemDetailSheetView: View {
             .padding(.top, 30)
         }
         .background(Color.theme.backgroundColor.ignoresSafeArea())
+        .scrollIndicators(.hidden)
         .onAppear {
             setupAddresses()
             viewModel.fetchCurrentAndUpcomingEvents()
@@ -89,7 +90,7 @@ extension MapItemDetailSheetView {
     var eventsView: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Upcoming Events")
-                .secondaryHeading()
+                .primaryHeading()
             
             ForEach(showMoreEvents ? viewModel.hostEvents : Array(viewModel.hostEvents.prefix(1))) { event in
                 SmallEventCell(title: event.title,

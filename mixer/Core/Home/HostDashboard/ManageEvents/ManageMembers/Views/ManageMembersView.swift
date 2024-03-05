@@ -9,19 +9,15 @@ import SwiftUI
 
 struct ManageMembersView: View {
     @StateObject var viewModel = ManageMembersViewModel()
-
+    @State private var selectedMember: SearchItem? = nil
+    @State private var showInviteAlert: Bool = false 
+    
     var body: some View {
         ZStack {
             Color.theme.backgroundColor
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                Text("Members of \(viewModel.selectedHost?.name ?? "n/a")")
-                    .primaryHeading()
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: DeviceTypes.ScreenSize.width, alignment: .leading)
-                    .padding([.leading, .top])
-                
                 StickyHeaderView(items: MemberInviteStatus.allCases,
                                  selectedItem: $viewModel.selectedMemberSection)
                 
@@ -35,8 +31,8 @@ struct ManageMembersView: View {
                     membersListView
                 }
             }
-            .padding(.top, 50)
-            .sheet(isPresented: $viewModel.isShowingUsernameInputSheet) {
+            .padding(.top)
+            .fullScreenCover(isPresented: $viewModel.isShowingUsernameInputSheet) {
                 NavigationStack {
                     ZStack {
                         Color.theme.backgroundColor
@@ -45,12 +41,27 @@ struct ManageMembersView: View {
                         List(viewModel.userResults) { result in
                             if !viewModel.searchText.isEmpty {
                                 ItemInfoCell(title: result.title,
-                                             subtitle: result.subtitle,
+                                             subtitle: "@\(result.subtitle)",
                                              imageUrl: result.imageUrl)
-                                .listRowBackground(Color.theme.secondaryBackgroundColor)
                                 .onTapGesture {
-                                    viewModel.inviteMember(with: result.subtitle)
-                                    viewModel.isShowingUsernameInputSheet = false
+                                    self.selectedMember = result
+                                    self.showInviteAlert = true
+                                }
+                                .listRowBackground(Color.theme.secondaryBackgroundColor)
+                                .alert(isPresented: $showInviteAlert) {
+                                    // Safely unwrap selectedMember within the alert
+                                    if let member = selectedMember {
+                                        return Alert(
+                                            title: Text("Invite @\(member.subtitle) to organization"),
+                                            primaryButton: .default(Text("Yes"), action: {
+                                                viewModel.inviteMember(with: member.subtitle)
+                                                viewModel.isShowingUsernameInputSheet = false
+                                            }),
+                                            secondaryButton: .cancel()
+                                        )
+                                    } else {
+                                        return Alert(title: Text("Error"), message: Text("Something went wrong. Please try again."))
+                                    }
                                 }
                             }
                         }
@@ -66,17 +77,18 @@ struct ManageMembersView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden)
-        .overlay(alignment: .topLeading) {
-            PresentationBackArrowButton()
-                .padding()
-        }
-        .overlay(alignment: .topTrailing) {
+        .navigationBar(title: "Manage Members", displayMode: .inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                PresentationBackArrowButton()
+            }
             if let hostId = viewModel.selectedHost?.id,
                let privileges = UserService.shared.user?.hostIdToMemberTypeMap?[hostId]?.privileges,
                privileges.contains(.inviteMembers) {
-                AddMemberButton(showAlert: $viewModel.isShowingUsernameInputSheet)
-                    .padding()
+                ToolbarItem(placement: .topBarTrailing) {
+                    AddMemberButton(showAlert: $viewModel.isShowingUsernameInputSheet)
+                }
+                
             }
         }
         .withAlerts(currentAlert: $viewModel.currentAlert)
@@ -121,7 +133,7 @@ extension ManageMembersView {
 
 fileprivate struct AddMemberButton: View {
     @Binding var showAlert: Bool
-
+    
     var body: some View {
         Button {
             HapticManager.playLightImpact()

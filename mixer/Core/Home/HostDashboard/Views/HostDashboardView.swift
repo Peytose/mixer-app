@@ -30,10 +30,22 @@ struct HostDashboardView: View {
                     Spacer()
                     
                     VStack(alignment: .leading) {
-                        Text(viewModel.recentEvent != nil ? "Most Recent" : "Post an Event")
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        HStack {
+                            Text(viewModel.recentEvent != nil ? "Most Recent" : "Post an Event")
+                                .font(.title)
+                                .fontWeight(.bold)
+                            
+                            Spacer()
+                            
+                            NavigationLink {
+                                ManageEventsView()
+                            } label: {
+                                Text("See All \(Image(systemName: "chevron.right"))")
+                                    .fontWeight(.medium)
+                                    .foregroundColor(Color.theme.mixerIndigo)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         
                         recentEventInformation
                         
@@ -41,11 +53,11 @@ struct HostDashboardView: View {
                     }
                     .redacted(reason: viewModel.isLoading ? .placeholder : [])
 
-                    
                     Divider()
                     
                     if let _ = viewModel.recentEvent {
                         seeReportButton
+                            .padding(.top, 4)
                     }
                 }
                 .frame(minHeight: 360)
@@ -237,7 +249,7 @@ extension HostDashboardView {
             NavigationLink {
                 EventDetailedChartsView(viewModel: viewModel)
             } label: {
-                Text("See charts")
+                Text("See Event Charts \(Image(systemName: "chevron.right"))")
                     .fontWeight(.medium)
                     .foregroundColor(Color.theme.mixerIndigo)
             }
@@ -402,6 +414,7 @@ private struct Label: View {
         .padding(4)
         .background(isButton ? Color.theme.tertiaryBackground : nil)
         .cornerRadius(12)
+        .shadow(radius: 4)
     }
 }
 
@@ -411,12 +424,13 @@ private struct TextRow: View {
     var body: some View {
         HStack {
             Text(title)
-            
+                .font(.subheadline)
+
             Spacer()
             
             Text(value)
-                .font(.subheadline)
-            
+                .font(.subheadline.weight(.medium))
+
         }
         .lineLimit(1)
         .minimumScaleFactor(0.8)

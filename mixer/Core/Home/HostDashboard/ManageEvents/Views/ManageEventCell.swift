@@ -71,6 +71,15 @@ struct ManageEventCell: View {
 
                 Button("Cancel", role: .cancel) { }
             }
+            .contextMenu {
+                if viewModel.currentState != .past {
+                    Button("Edit Event") { showEditEventView.toggle() }
+                }
+
+                Button("Delete Event", role: .destructive) {
+                    viewModel.delete(event: event)
+                }
+            }
             .fullScreenCover(isPresented: $showEditEventView) {
                 EditEventView(viewModel: EditEventViewModel(event: event),
                               showEditEventView: $showEditEventView)
