@@ -8,23 +8,18 @@
 import SwiftUI
 
 struct EllipsisButton: View {
-    var stroke: CGFloat = 1.3
     let action: () -> Void
+    var size: Font = .title2
     
     var body: some View {
         Button {
             action()
         } label: {
-            Image(systemName: "ellipsis")
-                .font(.callout)
+            Image(systemName: "ellipsis.circle")
+                .font(size)
                 .foregroundColor(.white)
-                .padding(10)
                 .contentShape(Rectangle())
-                .background {
-                    Circle()
-                        .stroke(lineWidth: stroke)
-                        .foregroundColor(.white)
-                }
+                .padding(10)
         }
     }
 }

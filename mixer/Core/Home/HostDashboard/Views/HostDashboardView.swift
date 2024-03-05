@@ -40,7 +40,7 @@ struct HostDashboardView: View {
                             NavigationLink {
                                 ManageEventsView()
                             } label: {
-                                Text("See All \(Image(systemName: "chevron.right"))")
+                                Text("See All Events \(Image(systemName: "chevron.right"))")
                                     .fontWeight(.medium)
                                     .foregroundColor(Color.theme.mixerIndigo)
                             }

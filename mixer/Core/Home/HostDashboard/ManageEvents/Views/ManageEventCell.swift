@@ -53,7 +53,7 @@ struct ManageEventCell: View {
                 }
             }
             .overlay(alignment: .topTrailing) {
-                EllipsisButton(stroke: 0) {
+                EllipsisButton {
                     showActionSheet.toggle()
                 }
             }

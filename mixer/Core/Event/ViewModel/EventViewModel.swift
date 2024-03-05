@@ -38,6 +38,16 @@ final class EventViewModel: ObservableObject {
     }
     
     
+    func isUserPartOfEventHosts() -> Bool {
+        guard let userHosts = UserService.shared.user?.associatedHosts, let eventHosts = self.hosts else {
+            print("Either user hosts or event hosts are nil")
+            return false
+        }
+        let isPartOfHosts = !userHosts.filter { userHost in eventHosts.contains(where: { $0.id == userHost.id }) }.isEmpty
+        print("Is user part of event hosts: \(isPartOfHosts)")
+        return isPartOfHosts
+    }
+    
     func getDirectionsToLocation(coordinates: CLLocationCoordinate2D) {
         let placemark = MKPlacemark(coordinate: coordinates)
         let mapItem   = MKMapItem(placemark: placemark)

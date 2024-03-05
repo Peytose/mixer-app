@@ -24,7 +24,7 @@ struct MemberRow: View {
             ItemInfoCell(title: member.displayName,
                          subtitle: subtitle,
                          imageUrl: member.profileImageUrl) {
-                EllipsisButton(stroke: 0) {
+                EllipsisButton {
                     showActionSheet = true
                 }
             }

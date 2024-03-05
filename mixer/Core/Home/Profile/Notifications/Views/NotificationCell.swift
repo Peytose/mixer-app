@@ -43,8 +43,8 @@ struct NotificationCell: View {
                             ProfileView(user: user)
                         }
                     case .guestlistAdded:
-                        if let host = sharedData.hosts[cellViewModel.notification.hostId ?? ""] {
-                            HostDetailView(host: host, namespace: namespace)
+                        if let event = sharedData.events[cellViewModel.notification.eventId ?? ""] {
+                            EventDetailView(event: event, namespace: namespace)
                         }
                     case .eventPostedWithoutPlanner:
                         if let event = sharedData.events[cellViewModel.notification.eventId ?? ""] {

@@ -124,10 +124,17 @@ struct EventDetailView: View {
                 viewModel.fetchGuestlistAndRequestStatus()
             }
             .overlay(alignment: .bottom) {
-                GuestlistActionButton(state: EventUserActionState(event: viewModel.event)) {
-                    viewModel.actionForState(EventUserActionState(event: viewModel.event))
+                if viewModel.isUserPartOfEventHosts() {
+                    NavigationLink(destination: GuestlistView(event: viewModel.event)) {
+                        GuestlistNavigationButton()
+                    }
+                    .padding(.bottom, 80)
+                } else {
+                    GuestlistActionButton(state: EventUserActionState(event: viewModel.event)) {
+                        viewModel.actionForState(EventUserActionState(event: viewModel.event))
+                    }
+                    .padding(.bottom, 80)
                 }
-                .padding(.bottom, 80)
             }
             .overlay(alignment: .topTrailing) {
                 if let shareURL = viewModel.shareURL {
@@ -139,10 +146,8 @@ struct EventDetailView: View {
                             Label("Share Event", image: "square.and.arrow.up")
                         }
                     } label: {
-                        EllipsisButton {}
+                        EllipsisButton(size: .title) {}
                     }
-                    .padding()
-                    .padding(.horizontal)
                 }
             }
             .alert(item: $viewModel.alertItem, content: { $0.alert })
@@ -578,6 +583,31 @@ fileprivate struct GuestlistActionButton: View {
                     .clipShape(Capsule())
                     .shadow(radius: 2)
             }
+        }
+        .preferredColorScheme(.dark)
+    }
+}
+
+fileprivate struct GuestlistNavigationButton: View {
+    var body: some View {
+        HStack {
+            Image(systemName: "list.clipboard.fill")
+                .resizable()
+                .scaledToFit()
+                .foregroundColor(.white)
+                .frame(width: 20, height: 20)
+            
+            Text("See Guest List")
+                .font(.headline)
+                .fontWeight(.semibold)
+        }
+        .foregroundColor(.white)
+        .padding()
+        .background {
+            Capsule()
+                .fill(Color.theme.mixerIndigo)
+                .clipShape(Capsule())
+                .shadow(radius: 2)
         }
         .preferredColorScheme(.dark)
     }

@@ -17,15 +17,19 @@ struct NotificationsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading) {
-                HStack(spacing: 10) {
-                    ForEach(viewModel.availableCategories, id: \.self) { category in
-                        NotificationCategoryCell(text: category.stringVal,
-                                                 isSecondaryLabel: category != viewModel.currentCategory) {
-                            viewModel.setCurrentCategory(category)
+                ScrollView(.horizontal) {
+                    HStack(spacing: 10) {
+                        ForEach(viewModel.availableCategories, id: \.self) { category in
+                            NotificationCategoryCell(text: category.stringVal,
+                                                     isSecondaryLabel: category != viewModel.currentCategory) {
+                                viewModel.setCurrentCategory(category)
+                            }
                         }
                     }
+                    .scrollIndicators(.hidden)
                 }
                 .padding(.bottom)
+
                 
                 LazyVStack {
                     let now = Date()
