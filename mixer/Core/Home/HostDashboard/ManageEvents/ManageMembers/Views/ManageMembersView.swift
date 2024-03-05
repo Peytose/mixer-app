@@ -31,7 +31,6 @@ struct ManageMembersView: View {
                     membersListView
                 }
             }
-            .padding(.top)
             .fullScreenCover(isPresented: $viewModel.isShowingUsernameInputSheet) {
                 NavigationStack {
                     ZStack {
@@ -73,6 +72,7 @@ struct ManageMembersView: View {
                 }
                 .overlay(alignment: .topTrailing) {
                     XDismissButton { viewModel.isShowingUsernameInputSheet = false }
+                        .padding()
                 }
             }
         }

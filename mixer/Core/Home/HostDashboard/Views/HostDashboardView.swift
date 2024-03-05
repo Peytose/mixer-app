@@ -15,7 +15,7 @@ struct HostDashboardView: View {
     init() {
         _viewModel = StateObject(wrappedValue: HostDashboardViewModel())
     }
-
+    
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack {
@@ -29,30 +29,39 @@ struct HostDashboardView: View {
                     
                     Spacer()
                     
-                    VStack(alignment: .leading) {
-                        HStack {
-                            Text(viewModel.recentEvent != nil ? "Most Recent" : "Post an Event")
-                                .font(.title)
-                                .fontWeight(.bold)
+                    if viewModel.recentEvent != nil {
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Text(viewModel.recentEvent != nil ? "Most Recent" : "Post an Event")
+                                    .font(.title)
+                                    .fontWeight(.bold)
+                                
+                                Spacer()
+                                
+                                NavigationLink {
+                                    ManageEventsView()
+                                } label: {
+                                    Text("See All Events \(Image(systemName: "chevron.right"))")
+                                        .fontWeight(.medium)
+                                        .foregroundColor(Color.theme.mixerIndigo)
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            
+                            recentEventInformation
                             
                             Spacer()
-                            
-                            NavigationLink {
-                                ManageEventsView()
-                            } label: {
-                                Text("See All Events \(Image(systemName: "chevron.right"))")
-                                    .fontWeight(.medium)
-                                    .foregroundColor(Color.theme.mixerIndigo)
-                            }
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
                         
-                        recentEventInformation
+                    } else {
+                        
+                        Text("Nothing to show here 🙅‍♂️")
                         
                         Spacer()
+                        
+                        Text("Recent event statistics available after an event has ended!")
                     }
-                    .redacted(reason: viewModel.isLoading ? .placeholder : [])
-
+                    
                     Divider()
                     
                     if let _ = viewModel.recentEvent {
@@ -66,15 +75,9 @@ struct HostDashboardView: View {
                 .cornerRadius(10)
                 
                 VStack {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .secondary))
-                            .scaleEffect(2)
-                    } else {
-                        SectionViewContainer(title: "Quick Stats",
-                                             quickStatistics: $viewModel.quickStatistics,
-                                             isLoading: $viewModel.isLoading)
-                    }
+                    SectionViewContainer(title: "Quick Stats",
+                                         quickStatistics: $viewModel.quickStatistics,
+                                         isLoading: $viewModel.isLoadingQuickFacts, viewModel: viewModel)
                 }
             }
             .padding(.bottom, 140)
@@ -92,7 +95,7 @@ struct HostDashboardView: View {
                 .opacity(0.8)
                 .rotationEffect(Angle(degrees: 180))
                 .offset(x: -20, y: -420)
-
+            
         }
         .overlay(alignment: .bottomTrailing) {
             if let hostId = viewModel.currentHost?.id,
@@ -124,7 +127,7 @@ struct HostMenuView: View {
     @Binding var showSettings: Bool
     
     @State private var isActive: Bool = false
-
+    
     var body: some View {
         HStack(alignment: .top) {
             if let hosts = viewModel.memberHosts {
@@ -135,7 +138,7 @@ struct HostMenuView: View {
                         } label: {
                             HStack {
                                 Text(host.name)
-
+                                
                                 if host.username == UserService.shared.user?.currentHost?.username {
                                     Image(systemName: "checkmark")
                                 }
@@ -147,7 +150,7 @@ struct HostMenuView: View {
                         Text(viewModel.currentHost?.name ?? "n/a")
                             .font(.title)
                             .fontWeight(.semibold)
-
+                        
                         if hosts.count > 1 {
                             Image(systemName: isActive ? "chevron.down" : "chevron.right")
                                 .font(.headline)
@@ -180,15 +183,15 @@ extension HostDashboardView {
                       isButton: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-
+            .redacted(reason: viewModel.isLoadingEventCount ? .placeholder : [])
+            
             Spacer()
             
             Label(title: "earned",
                   value: "$0",
                   isFocus: true)
             .frame(maxWidth: .infinity, alignment: .center)
-            .redacted(reason: viewModel.isLoading ? .placeholder : [])
-
+            
             Spacer()
             
             NavigationLink(destination: ManageMembersView()) {
@@ -197,6 +200,7 @@ extension HostDashboardView {
                       isButton: true)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
+            .redacted(reason: viewModel.isLoadingMemberCount ? .placeholder : [])
         }
     }
     
@@ -208,6 +212,7 @@ extension HostDashboardView {
                     .scaledToFill()
                     .frame(width: 120, height: 180)
                     .cornerRadius(10, corners: .topRight)
+                    .redacted(reason: viewModel.isLoadingRecentEvents ? .placeholder : [])
             }
             
             Spacer()
@@ -220,23 +225,22 @@ extension HostDashboardView {
                             .fontWeight(.bold)
                             .lineLimit(1)
                             .minimumScaleFactor(0.75)
-                            .redacted(reason: viewModel.isLoading ? .placeholder : [])
                         
                         Text("Hosted on \(event.startDate.getTimestampString(format: "MMMM dd, yyyy"))")
                             .font(.subheadline.weight(.medium))
                             .foregroundColor(.secondary)
-                            .redacted(reason: viewModel.isLoading ? .placeholder : [])
                     }
                 }
+                .redacted(reason: viewModel.isLoadingRecentEvents ? .placeholder : [])
                 
                 VStack(alignment: .leading, spacing: 12) {
                     ForEach(viewModel.recentStatistics.keys.sorted(), id: \.self) { key in
                         if let value = viewModel.recentStatistics[key] {
                             TextRow(title: key, value: value)
-                                .redacted(reason: viewModel.isLoading ? .placeholder : [])
                         }
                     }
                 }
+                .redacted(reason: viewModel.isLoadingRecentEventStatistics ? .placeholder : [])
             }
             .foregroundColor(.white)
         }
@@ -287,9 +291,9 @@ struct SquareViewContainer<Content: View>: View {
             Text(subtitle)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-                       
+            
             Spacer()
-
+            
             content
                 .frame(maxWidth: .infinity, alignment: .center)
                 .lineLimit(1)
@@ -316,13 +320,15 @@ struct SectionViewContainer: View {
     var title: String
     @Binding var quickStatistics: [String: (String, String, String)]
     @Binding var isLoading: Bool
+    @ObservedObject var viewModel: HostDashboardViewModel
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text(title)
+            Text(viewModel.recentEvent != nil ? title : "Quick Stats available after first event")
                 .font(.title2.bold())
+                .multilineTextAlignment(viewModel.recentEvent != nil ? .leading : .center)
                 .padding(.bottom)
-
+            
             let sortedStats = quickStatistics.sorted(by: { $0.key.count < $1.key.count })
             let statsCount = sortedStats.count
             
@@ -332,6 +338,7 @@ struct SectionViewContainer: View {
                                   value: stat.value.0,
                                   secondaryValue: stat.value.1,
                                   secondaryLabel: stat.value.2)
+                    
                 }
             } else {
                 VStack(alignment: .center) {
@@ -425,12 +432,12 @@ private struct TextRow: View {
         HStack {
             Text(title)
                 .font(.subheadline)
-
+            
             Spacer()
             
             Text(value)
                 .font(.subheadline.weight(.medium))
-
+            
         }
         .lineLimit(1)
         .minimumScaleFactor(0.8)

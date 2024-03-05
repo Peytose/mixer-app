@@ -21,11 +21,17 @@ final class HostDashboardViewModel: ObservableObject {
     @Published var recentStatistics: [String: String] = [:]
     @Published var quickStatistics: [String: (String, String, String)] = [:] {
         didSet {
-            self.hideLoadingView()
+//            self.hideLoadingView()
         }
     }
-    @Published var isLoading: Bool = false
     
+    //Component-specific loading states
+    @Published var isLoadingEventCount: Bool = false
+    @Published var isLoadingMemberCount: Bool = false
+    @Published var isLoadingRecentEvents: Bool = false
+    @Published var isLoadingRecentEventStatistics: Bool = false
+    @Published var isLoadingQuickFacts: Bool = false
+
     private let service = UserService.shared
     private var cancellable = Set<AnyCancellable>()
     
@@ -92,6 +98,8 @@ final class HostDashboardViewModel: ObservableObject {
             return
         }
         
+        self.isLoadingRecentEventStatistics = true
+        
         var recentStats = [String: String]()
         
         // Total Guests
@@ -126,6 +134,10 @@ final class HostDashboardViewModel: ObservableObject {
         }
         
         self.recentStatistics = recentStats
+        self.isLoadingRecentEventStatistics = false
+        
+        
+        self.isLoadingQuickFacts = true
         var quickStats = [String: (String, String, String)]()
         
         // Most Frequent University
@@ -165,16 +177,18 @@ final class HostDashboardViewModel: ObservableObject {
         }
 
         self.quickStatistics = quickStats
+        self.isLoadingQuickFacts = false
     }
     
     
     func fetchMostRecentEvent() {
         guard let hostId = currentHost?.id else { return }
-        self.showLoadingView()
+        self.isLoadingRecentEvents = true
         
         if let mostRecentEvent = Array(EventManager.shared.events).mostRecentEvent {
             DispatchQueue.main.async {
                 self.recentEvent = mostRecentEvent
+                self.isLoadingRecentEvents = false
             }
             fetchGuestListForEvent(eventId: mostRecentEvent.id ?? "")
         } else {
@@ -183,6 +197,7 @@ final class HostDashboardViewModel: ObservableObject {
                     if let event = event.first {
                         self.recentEvent = event
                         self.fetchGuestListForEvent(eventId: event.id ?? "")
+                        self.isLoadingRecentEvents = false
                     } else {
                         print("DEBUG: No event was returned. Potentially an error, or the host may not have past events.")
                     }
@@ -195,6 +210,8 @@ final class HostDashboardViewModel: ObservableObject {
     func getNumberOfEvents() {
         guard let hostId = currentHost?.id else { return }
         
+        self.isLoadingEventCount = true
+        
         COLLECTION_EVENTS
             .whereField("hostIds", arrayContains: hostId)
             .count
@@ -203,6 +220,7 @@ final class HostDashboardViewModel: ObservableObject {
                 
                 DispatchQueue.main.async {
                     self.eventCount = count
+                    self.isLoadingEventCount = false
                 }
             }
     }
@@ -210,6 +228,8 @@ final class HostDashboardViewModel: ObservableObject {
     
     func getNumberOfMembers() {
         guard let hostId = currentHost?.id else { return }
+        
+        self.isLoadingMemberCount = true
         
         COLLECTION_HOSTS
             .document(hostId)
@@ -221,6 +241,8 @@ final class HostDashboardViewModel: ObservableObject {
                 
                 DispatchQueue.main.async {
                     self.memberCount = count
+                    self.isLoadingMemberCount = false
+
                 }
             }
     }
@@ -270,7 +292,4 @@ extension HostDashboardViewModel {
         self.recentEvent = nil
         service.selectHost(host)
     }
-    
-    private func showLoadingView() { isLoading = true }
-    private func hideLoadingView() { isLoading = false }
 }
