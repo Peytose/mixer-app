@@ -35,7 +35,7 @@ struct HostInfoView: View {
                             if let action = action {
                                 SmallEventCell(title: event.title,
                                                duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
-                                               visibility: "\(event.isInviteOnly ? "Closed" : "Open") Event",
+                                               visibility: "\(event.isInviteOnly ? "Invite Only" : "Open") Event",
                                                dateMonth: event.startDate.getTimestampString(format: "MMM"),
                                                dateNumber: event.startDate.getTimestampString(format: "d"),
                                                imageURL: event.eventImageUrl)
@@ -49,7 +49,7 @@ struct HostInfoView: View {
                                 } label: {
                                     SmallEventCell(title: event.title,
                                                    duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
-                                                   visibility: "\(event.isInviteOnly ? "Closed" : "Open") Event",
+                                                   visibility: "\(event.isInviteOnly ? "Invite Only" : "Open") Event",
                                                    dateMonth: event.startDate.getTimestampString(format: "MMM"),
                                                    dateNumber: event.startDate.getTimestampString(format: "d"),
                                                    imageURL: event.eventImageUrl)

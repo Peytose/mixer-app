@@ -94,7 +94,7 @@ extension MapItemDetailSheetView {
             ForEach(showMoreEvents ? viewModel.hostEvents : Array(viewModel.hostEvents.prefix(1))) { event in
                 SmallEventCell(title: event.title,
                                duration: "\(event.startDate.getTimestampString(format: "h:mm a")) - \(event.endDate.getTimestampString(format: "h:mm a"))",
-                               visibility: "\(event.isInviteOnly ? "Closed" : "Open") Event",
+                               visibility: "\(event.isInviteOnly ? "Invite Only" : "Open") Event",
                                dateMonth: event.startDate.getTimestampString(format: "MMM"),
                                dateNumber: event.startDate.getTimestampString(format: "d"),
                                imageURL: event.eventImageUrl)

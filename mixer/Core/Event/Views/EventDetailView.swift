@@ -66,7 +66,7 @@ struct EventDetailView: View {
                         AmenitiesView(amenities: viewModel.event.amenities,
                                       bathroomCount: viewModel.event.bathroomCount)
                         .environmentObject(viewModel)
-                        
+//                        
                         LocationSection()
                             .environmentObject(viewModel)
                     }
@@ -445,7 +445,7 @@ struct AmenitiesView: View {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 12)
                                         .foregroundColor(.white)
-                                        .frame(width: 350, height: 45)
+                                        .frame(width: DeviceTypes.ScreenSize.width * 0.8, height: 45, alignment: .center)
                                         .overlay {
                                             Text("Show all \(count) amenities")
                                                 .font(.body)
@@ -453,6 +453,7 @@ struct AmenitiesView: View {
                                                 .foregroundColor(.black)
                                         }
                                 }
+                                .padding(.top)
                             }
                             
                             Spacer()
@@ -472,7 +473,7 @@ struct AmenitiesView: View {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 12)
                                         .foregroundColor(.white)
-                                        .frame(width: 350, height: 45)
+                                        .frame(width: DeviceTypes.ScreenSize.width * 0.8, height: 45, alignment: .center)
                                         .overlay {
                                             Text(showAllAmenities ? "Show less" : "Show all \(count) amenities")
                                                 .font(.body)
@@ -480,6 +481,7 @@ struct AmenitiesView: View {
                                                 .foregroundColor(.black)
                                         }
                                 }
+                                .padding(.top)
                             }
                             
                             Spacer()
