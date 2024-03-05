@@ -23,8 +23,7 @@ struct SettingsView: View {
             
             VStack(alignment: .leading) {
                 List {
-                    ChangeImageButton(imageUrl: viewModel.user?.profileImageUrl,
-                                      imageContext: .profile) { uiImage in
+                    ChangeImageButton(imageUrl: viewModel.user?.profileImageUrl, imageContext: .profile, cropHeight: DeviceTypes.ScreenSize.height / 2.5, hasCrop: true) { uiImage in
                         viewModel.save(for: .image(uiImage))
                     }
                     
@@ -38,6 +37,7 @@ struct SettingsView: View {
                 }
                 .scrollContentBackground(.hidden)
                 .listStyle(.insetGrouped)
+                .scrollIndicators(.hidden)
             }
             
             if viewModel.isLoading { LoadingView() }

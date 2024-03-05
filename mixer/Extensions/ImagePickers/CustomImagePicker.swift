@@ -91,7 +91,7 @@ fileprivate struct CustomImagePicker<Content: View>: View {
     }
 }
 
-struct CropView: View{
+struct CropView: View {
     var crop: Crop
     var image: UIImage?
     var onCrop: (UIImage?,Bool)->()

@@ -13,8 +13,13 @@ struct ChangeImageButton: View {
     
     var imageUrl: String? = ""
     var imageContext: ImageContext
+    var cropWidth: CGFloat?  // Optional crop width
+    var cropHeight: CGFloat? // Optional crop height
+    var hasCrop: Bool = false
+    
     @State private var selectedImage: PhotosPickerItem?
     @State private var uploadedImage: UIImage?
+    @State private var showingCroppingTool = false // New state to control the cropping tool presentation
     let saveFunc: (UIImage) -> Void
     
     var body: some View {
@@ -27,12 +32,27 @@ struct ChangeImageButton: View {
         .listRowBackground(Color.clear)
         .onChange(of: selectedImage) { _ in
             Task {
-                if let pickerItem = selectedImage,
-                   let data = try? await pickerItem.loadTransferable(type: Data.self) {
-                    if let image = UIImage(data: data) {
-                        uploadedImage = image
-                        saveFunc(image)
-                    }
+                guard let pickerItem = selectedImage,
+                      let data = try? await pickerItem.loadTransferable(type: Data.self),
+                      let image = UIImage(data: data) else {
+                    return
+                }
+                // Instead of immediately saving the image, we now present the cropping tool
+                self.uploadedImage = image // Temporarily store the selected image
+                if hasCrop {
+                    self.showingCroppingTool = true // Trigger the cropping tool presentation
+                } else {
+                    saveFunc(image)
+                }
+            }
+        }
+        .sheet(isPresented: $showingCroppingTool) {
+            // Use the passed cropWidth and cropHeight if available, otherwise default values
+            let targetSize = CGSize(width: cropWidth ?? DeviceTypes.ScreenSize.width,
+                                    height: cropHeight ?? DeviceTypes.ScreenSize.height)
+            CropView(crop: Crop.custom(targetSize), image: uploadedImage) { croppedImage, _ in
+                if let croppedImage = croppedImage {
+                    saveFunc(croppedImage)
                 }
             }
         }

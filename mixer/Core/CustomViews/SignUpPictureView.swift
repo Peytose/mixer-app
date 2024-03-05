@@ -29,7 +29,7 @@ struct SignUpPictureView: View {
             HStack {
                 Spacer()
                 
-                ChangeImageButton(imageContext: .profile) { uiImage in
+                ChangeImageButton(imageContext: .profile, cropHeight: DeviceTypes.ScreenSize.height / 2.5, hasCrop: true) { uiImage in
                     selectedImage = uiImage
                 }
                 

@@ -23,7 +23,7 @@ struct HostSettingsView: View {
             VStack(alignment: .leading) {
                 List {
                     ChangeImageButton(imageUrl: viewModel.hostImageUrl,
-                                      imageContext: .eventFlyer) { uiImage in
+                                      imageContext: .eventFlyer, cropHeight: DeviceTypes.ScreenSize.height / 2.5, hasCrop: true) { uiImage in
                         viewModel.save(for: .image(uiImage))
                     }
                     
