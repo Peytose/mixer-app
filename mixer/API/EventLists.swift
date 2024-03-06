@@ -15,41 +15,53 @@ enum GuestStatus: Int, Codable, CustomStringConvertible, CaseIterable {
     
     var description: String {
         switch self {
-            case .invited: return "Invites"
-            case .checkedIn: return "Check-ins"
-            case .requested: return "Requests"
+        case .invited: return "Invites"
+        case .checkedIn: return "Check-ins"
+        case .requested: return "Requests"
         }
     }
     
     var pickerTitle: String {
         switch self {
-            case .invited: return "Send Invite"
-            case .checkedIn: return "Mark as Checked-in"
-            default: return ""
+        case .invited: return "Just Invite"
+        case .checkedIn: return "Invite & Check-in"
+        default: return ""
         }
     }
     
     var icon: String {
         switch self {
-            case .invited: "list.clipboard"
-            case .checkedIn: "person.badge.minus"
-            case .requested: "hourglass"
+        case .invited: "list.clipboard"
+        case .checkedIn: "person.badge.minus"
+        case .requested: "hourglass"
         }
     }
     
     var guestlistSectionTitle: String {
         switch self {
-            case .invited: return "Invited"
-            case .checkedIn: return "Checked-in"
-            case .requested: return "Requested"
+        case .invited: return "Invited"
+        case .checkedIn: return "Checked-in"
+        case .requested: return "Requested"
         }
     }
     
     var guestlistButtonTitle: String {
         switch self {
-            case .invited: "Check in"
-            case .checkedIn: "Remove"
-            case .requested: "Accept"
+        case .invited: "Check in"
+        case .checkedIn: "Remove"
+        case .requested: "Accept"
+        }
+    }
+}
+
+enum GuestEntryType: Int, Codable, CaseIterable {
+    case username
+    case manual
+    
+    var pickerTitle: String {
+        switch self {
+        case .username: return "Username"
+        case .manual: return "Manual"
         }
     }
 }

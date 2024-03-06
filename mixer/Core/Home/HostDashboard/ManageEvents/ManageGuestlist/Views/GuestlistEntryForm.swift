@@ -12,6 +12,8 @@ struct GuestlistEntryForm: View {
     @EnvironmentObject var viewModel: GuestlistViewModel
     @State private var isWithoutUniversity: Bool = false
     @StateObject private var universitySearchViewModel = UniversitySearchViewModel()
+    @State private var showInviteAlert: Bool = false
+    @State private var selectedUser: SearchItem? = nil
 
     var body: some View {
         ZStack {
@@ -19,10 +21,15 @@ struct GuestlistEntryForm: View {
                 .ignoresSafeArea()
             
             List {
-                statusPicker
-                userSearchSection
-                guestDetailsSection
-                optionalDetailsSection
+                guestTypePicker
+                
+                if viewModel.guestEntryType != .username {
+                    guestDetailsSection
+                    universitySection
+                    optionalDetailsSection
+                } else {
+                    userSearchSection
+                }
             }
             .scrollContentBackground(.hidden)
         }
@@ -44,10 +51,66 @@ struct GuestlistEntryForm: View {
                 }
             }
         }
+        .sheet(isPresented: $viewModel.isShowingUniversityInputSheet) {
+            UniversitySearchModalView(viewModel: universitySearchViewModel,
+                                      dismissSheet: $viewModel.isShowingUniversityInputSheet, action: viewModel.selectUniversity(_:))
+        }
+        .fullScreenCover(isPresented: $viewModel.isShowingUsernameInputSheet) {
+            NavigationStack {
+                ZStack {
+                    Color.theme.backgroundColor
+                        .ignoresSafeArea()
+                    
+                    List(viewModel.userResults) { result in
+                        if !viewModel.searchText.isEmpty {
+                            ItemInfoCell(title: result.title,
+                                         subtitle: "@\(result.subtitle)",
+                                         imageUrl: result.imageUrl)
+                            .onTapGesture {
+                                self.selectedUser = result
+                                self.showInviteAlert = true
+                            }
+                            .listRowBackground(Color.theme.secondaryBackgroundColor)
+                            .alert(isPresented: $showInviteAlert) {
+                                // Safely unwrap selectedMember within the alert
+                                if let user = selectedUser {
+                                    return Alert(
+                                        title: Text("Invite \(user.title) to event"),
+                                        primaryButton: .default(Text("Yes"), action: {
+//                                            viewModel.inviteMember(with: user.subtitle)
+                                            viewModel.isShowingUsernameInputSheet = false
+                                        }),
+                                        secondaryButton: .cancel()
+                                    )
+                                } else {
+                                    return Alert(title: Text("Error"), message: Text("Something went wrong. Please try again."))
+                                }
+                            }
+                        }
+                    }
+                    .scrollContentBackground(.hidden)
+                    .listStyle(.insetGrouped)
+                    .searchable(text: $viewModel.searchText)
+                    .navigationTitle("Search Users")
+                }
+            }
+            .overlay(alignment: .topTrailing) {
+                XDismissButton { viewModel.isShowingUsernameInputSheet = false }
+                    .padding()
+            }
+        }
     }
-
-    private var statusPicker: some View {
-        Section(header: Text("Status").fontWeight(.semibold)) {
+    
+    private var guestTypePicker: some View {
+        Section(header: Text("Entry Type").fontWeight(.semibold)) {
+            Picker("", selection: $viewModel.guestEntryType) {
+                ForEach(GuestEntryType.allCases, id: \.self) { type in
+                        Text(type.pickerTitle)
+                            .tag(type.rawValue)
+                }
+            }
+            .pickerStyle(.segmented)
+            
             Picker("", selection: $viewModel.status) {
                 ForEach(GuestStatus.allCases, id: \.self) { status in
                     if status != .requested {
@@ -63,18 +126,20 @@ struct GuestlistEntryForm: View {
 
     private var userSearchSection: some View {
         Section(header: Text("Username").fontWeight(.semibold),
-                footer: Text("If user doesn't have a mixer account, continue below")) {
+                footer: Text("If user doesn't have a mixer account, choose manual")) {
             HStack {
                 Image(systemName: "text.magnifyingglass")
                     .imageScale(.small)
                     .foregroundColor(Color.secondary)
-                
-                TextField("Enter a user's username ...", text: $viewModel.username)
+
+                Text("Tap to search user")
                     .foregroundColor(.white)
-                    .autocorrectionDisabled()
-                    .disabled(viewModel.name != "")
                 
                 Spacer()
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                viewModel.isShowingUsernameInputSheet = true
             }
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)
@@ -84,10 +149,17 @@ struct GuestlistEntryForm: View {
         Section(header: Text("Guest Details").fontWeight(.semibold)) {
             TextField("Name", text: $viewModel.name)
                 .disabled(viewModel.username != "")
-            
+
+            genderField
+        }
+        .listRowBackground(Color.theme.secondaryBackgroundColor)
+    }
+    
+    private var universitySection: some View {
+        Section(header: Text("University Details").fontWeight(.semibold)) {
             HStack {
                 Toggle("No university?", isOn: $isWithoutUniversity)
-                    .toggleStyle(iOSCheckboxToggleStyle())
+                    .toggleStyle(.switch)
                     .buttonStyle(.plain)
                     .onChange(of: isWithoutUniversity) { newValue in
                         if newValue {
@@ -103,15 +175,27 @@ struct GuestlistEntryForm: View {
                 Spacer()
             }
             
-            UniversitySearchView(viewModel: universitySearchViewModel,
-                                 action: viewModel.selectUniversity(_:))
-            .disabled(viewModel.username != "" || isWithoutUniversity)
-            
-            if viewModel.universityName != "" {
-                Text(viewModel.universityName)
+            if !isWithoutUniversity {
+                HStack {
+                    Image(systemName: "text.magnifyingglass")
+                        .imageScale(.small)
+                        .foregroundColor(Color.secondary)
+                    
+                    Text("Tap to search universities")
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.isShowingUniversityInputSheet = true
+                }
             }
             
-            genderField
+            if viewModel.universityName != "" && !isWithoutUniversity  {
+                Text(viewModel.universityName)
+                    .foregroundStyle(.secondary)
+            }
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)
     }

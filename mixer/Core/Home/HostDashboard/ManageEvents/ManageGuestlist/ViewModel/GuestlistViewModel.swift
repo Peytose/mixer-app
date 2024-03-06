@@ -66,9 +66,21 @@ class GuestlistViewModel: ObservableObject {
     @Published var universityName         = ""
     @Published var note                   = ""
     @Published var status                 = GuestStatus.invited
-    @Published var gender                 = Gender.man
+    @Published var guestEntryType         = GuestEntryType.username
+    @Published var gender                 = Gender.woman
     @Published var age                    = 18
     @Published var isWithoutUniversity: Bool    = false
+    //Jose added
+    @Published var userResults: [SearchItem] = []
+    @Published var isShowingUsernameInputSheet: Bool = false
+    @Published var isShowingUniversityInputSheet: Bool = false
+    @Published var searchText: String = "" {
+        didSet {
+            self.performSearch()
+        }
+    }
+    private var users: [User] = []
+    //end
     
     @Published private(set) var guests = [EventGuest]()
     private var universityIdDict = [String:String]()
@@ -87,6 +99,27 @@ class GuestlistViewModel: ObservableObject {
         listener?.remove()
     }
     
+    
+    //Jose added
+    func performSearch() {
+        if searchText.isEmpty { userResults = [] }
+        
+        AlgoliaManager.shared.search(by: .users, searchText: self.searchText) { result in
+            switch result {
+            case .success(let response):
+                let items = response.mapToSearchItems()
+                let filteredItems = items.filter { item in
+                    return !self.users.contains(where: { $0.id == item.objectId })
+                }
+                
+                DispatchQueue.main.async {
+                    self.userResults = filteredItems
+                }
+            case .failure(let error):
+                print("DEBUG: Error searching for \(self.searchText): \(error.localizedDescription)")
+            }
+        }
+    }
     
     private func refreshViewState(with guests: [EventGuest]) {
         let statusFilteredGuests = guests.filter({ $0.status == selectedGuestSection })
@@ -283,6 +316,10 @@ extension GuestlistViewModel {
                               status: self.status,
                               invitedBy: currentUsername)
             }
+            self.universityName = ""
+            self.name = ""
+            self.age = 18
+            self.gender = .woman
         }
     }
     

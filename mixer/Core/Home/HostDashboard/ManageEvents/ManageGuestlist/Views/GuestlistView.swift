@@ -216,9 +216,13 @@ fileprivate struct AddToGuestlistButton: View {
             Image(systemName: "plus")
                 .font(.title2)
                 .imageScale(.medium)
-                .foregroundColor(.white)
-                .padding(5)
-                .contentShape(Rectangle())
+                .foregroundColor(Color.theme.backgroundColor)
+                .padding(4)
+                .background {
+                    Circle()
+                        .foregroundColor(Color.white)
+                        .shadow(radius: 20)
+                }
         }
     }
 }
