@@ -44,14 +44,17 @@ struct ProfileView: View {
                 }
                 
                 // Name, age, links, school and bio
-                profileInfo
-                
-                // Contains user relationship status and major
-                if (viewModel.user.relationshipState == .friends || viewModel.user.isCurrentUser)
-                    && (viewModel.user.datingStatus != nil || viewModel.user.major != nil) {
-                    aboutSection
-                        .padding(.bottom, 180)
+                VStack {
+                    profileInfo
+                    
+                    // Contains user relationship status and major
+                    if (viewModel.user.relationshipState == .friends || viewModel.user.isCurrentUser)
+                        && (viewModel.user.datingStatus != nil || viewModel.user.major != nil) {
+                        aboutSection
+                            .padding(.bottom, 100)
+                    }
                 }
+                .offset(y: -100)
             }
             .ignoresSafeArea(.all)
             .statusBar(hidden: true)
@@ -110,30 +113,58 @@ struct ProfileView: View {
 extension ProfileView {
     var profileInfo: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 5) {
-                    HStack {
-                        HStack(alignment: .center, spacing: 15) {
-                            Text(showUsername ? "@\(viewModel.user.username)" : viewModel.user.displayName)
-                                .largeTitle()
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.5)
-                                .textSelection(.enabled)
-                                .onTapGesture {
-                                    withAnimation(.easeInOut) {
-                                        showUsername.toggle()
-                                    }
-                                }
-                            
-                            if viewModel.user.showAgeOnProfile {
-                                Text("\(viewModel.user.age)")
-                                    .font(.title)
-                                    .fontWeight(.light)
+            VStack(alignment: .leading, spacing: 5) {
+                //Name and Age
+                HStack(alignment: .center, spacing: 15) {
+                    Text(showUsername ? "@\(viewModel.user.username)" : viewModel.user.displayName)
+                        .largeTitle()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
+                        .textSelection(.enabled)
+                        .onTapGesture {
+                            withAnimation(.easeInOut) {
+                                showUsername.toggle()
                             }
                         }
+                    
+                    if viewModel.user.showAgeOnProfile {
+                        Text("\(viewModel.user.age)")
+                            .font(.title)
+                            .fontWeight(.light)
+                    }
+                    
+                    Spacer()
+                    
+                    //University
+                    HStack {
+                        if let university = viewModel.user.university, university.id != "com" {
+                            DetailRow(text: university.shortName ?? university.name,
+                                      icon: "graduationcap.fill")
+                        }
                         
+                        if !viewModel.user.isCurrentUser {
                         Spacer()
                         
+                            RelationshipButtonsView(viewModel: viewModel)
+                        }
+                    }
+                }
+                
+                //Host Organizations
+                HStack(alignment: .bottom) {
+                    if let memberHosts = viewModel.user.associatedHosts {
+                        VStack(alignment: .leading) {
+                            
+                            ForEach(memberHosts) { host in
+                                DetailRow(text: host.name,
+                                          imageUrl: host.hostImageUrl)
+                            }
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    HStack {
                         if viewModel.user.isCurrentUser {
                             NavigationLink {
                                 if let user = settingsViewModel.user,
@@ -161,46 +192,29 @@ extension ProfileView {
                             }
                         }
                     }
-                    
-                    HStack {
-                        if let university = viewModel.user.university, university.id != "com" {
-                            DetailRow(text: university.shortName ?? university.name,
-                                      icon: "graduationcap.fill")
-                        }
-                        
-                        Spacer()
-                        
-                        if !viewModel.user.isCurrentUser {
-                            RelationshipButtonsView(viewModel: viewModel)
-                        }
-                    }
-                    
-                    if let memberHosts = viewModel.user.associatedHosts {
-                        ForEach(memberHosts) { host in
-                            DetailRow(text: host.name,
-                                      imageUrl: host.hostImageUrl)
-                        }
-                    }
                 }
-                
-                Spacer()
             }
             
             if let bio = viewModel.user.bio {
-                Text(bio)
-                    .foregroundColor(.white.opacity(0.9))
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.75)
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Bio")
+                        .primaryHeading()
+                    
+                    Text(bio)
+                        .foregroundColor(.white.opacity(0.9))
+                        .lineLimit(3)
+                        .minimumScaleFactor(0.75)
+                }
             }
         }
         .padding(.horizontal)
     }
     
     var aboutSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             Text("About")
                 .primaryHeading()
-
+            
             VStack(alignment: .leading) {
                 HStack {
                     if let status = viewModel.user.datingStatus {
@@ -222,32 +236,40 @@ extension ProfileView {
             }
             .fontWeight(.medium)
             
-            if viewModel.user.isCurrentUser {
-                Text("Friends")
-                    .primaryHeading()
-                    .padding(.top)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(friendsViewModel.friends.prefix(2)) { friend in
-                        NavigationLink {
-                            ProfileView(user: friend)
-                        } label: {
-                            ItemInfoCell(title: friend.firstName,
-                                         subtitle: "@\(friend.username)",
-                                         imageUrl: friend.profileImageUrl,
-                                         university: friend.university)
-                        }
-                        .buttonStyle(.plain)
-                    }
+            if viewModel.user.isCurrentUser && !friendsViewModel.friends.isEmpty {
+                HStack {
+                    Text("Friends")
+                        .primaryHeading()
                     
-                    if friendsViewModel.friends.count > 2 {
+                    Spacer()
+                    
+                    if friendsViewModel.friends.count > 3 {
                         NavigationLink(destination: FriendsView(viewModel: friendsViewModel)) {
-                            ShowMoreFriendsButton(numOfFriends: friendsViewModel.friends.count)
-                            .padding(.top, 8)
+                            Text("See All \(Image(systemName: "chevron.right"))")
+                                .fontWeight(.medium)
+                                .foregroundColor(Color.theme.mixerIndigo)
                         }
                     }
                 }
+                .padding(.top, 12)
+                
+                ScrollView(.horizontal) {
+                    HStack(spacing: 20) {
+                        ForEach(friendsViewModel.friends.prefix(4)) { friend in
+                            NavigationLink {
+                                ProfileView(user: friend)
+                            } label: {
+                                LargeFriendsCell(title: friend.displayName,
+                                                 subtitle: "@\(friend.username)",
+                                                 imageUrl: friend.profileImageUrl)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+                .scrollIndicators(.hidden)
             }
+            
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)

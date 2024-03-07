@@ -267,6 +267,7 @@
 		9CF84C9B29AAE337005BE430 /* EnterProfilePictureAndBioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF84C9A29AAE337005BE430 /* EnterProfilePictureAndBioView.swift */; };
 		9CFB25F12AEC106200F090E6 /* UniversitySearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFB25F02AEC106200F090E6 /* UniversitySearchView.swift */; };
 		9CFB25F32AEC111800F090E6 /* UniversitySearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFB25F22AEC111800F090E6 /* UniversitySearchViewModel.swift */; };
+		A6048B612B99785200B28FA9 /* LargeFriendsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6048B602B99785200B28FA9 /* LargeFriendsCell.swift */; };
 		A611E6E52A03123200DDFD32 /* PopupView in Frameworks */ = {isa = PBXBuildFile; productRef = A611E6E42A03123200DDFD32 /* PopupView */; };
 		A611E6E82A0317B300DDFD32 /* LikedEventNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A611E6E72A0317B300DDFD32 /* LikedEventNotification.swift */; };
 		A611E6EA2A03198700DDFD32 /* AddedToGuestlistNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = A611E6E92A03198700DDFD32 /* AddedToGuestlistNotification.swift */; };
@@ -557,6 +558,7 @@
 		9CF84C9A29AAE337005BE430 /* EnterProfilePictureAndBioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterProfilePictureAndBioView.swift; sourceTree = "<group>"; };
 		9CFB25F02AEC106200F090E6 /* UniversitySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversitySearchView.swift; sourceTree = "<group>"; };
 		9CFB25F22AEC111800F090E6 /* UniversitySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniversitySearchViewModel.swift; sourceTree = "<group>"; };
+		A6048B602B99785200B28FA9 /* LargeFriendsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeFriendsCell.swift; sourceTree = "<group>"; };
 		A611E6E72A0317B300DDFD32 /* LikedEventNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikedEventNotification.swift; sourceTree = "<group>"; };
 		A611E6E92A03198700DDFD32 /* AddedToGuestlistNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddedToGuestlistNotification.swift; sourceTree = "<group>"; };
 		A61D12B329B42D3D00AE0EED /* HostInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostInfoView.swift; sourceTree = "<group>"; };
@@ -775,6 +777,7 @@
 				9CDFC3D32A9F986E00BDFA60 /* ListCellActionButton.swift */,
 				9CDFC3D92A9FA46D00BDFA60 /* ParticleEffectButton.swift */,
 				9C5051812B8923C400543226 /* BackArrowButton.swift */,
+				A6048B602B99785200B28FA9 /* LargeFriendsCell.swift */,
 			);
 			path = ReusableItems;
 			sourceTree = "<group>";
@@ -1991,6 +1994,7 @@
 				9C567AA02934FCFF00EA5FCB /* EnterUsernameView.swift in Sources */,
 				9CDFA5A42A81594E00EE0370 /* Relationship.swift in Sources */,
 				9C05C1C52983A72000841100 /* ExploreViewModel.swift in Sources */,
+				A6048B612B99785200B28FA9 /* LargeFriendsCell.swift in Sources */,
 				A6C99FC429DA5CA50046D61B /* CheckBoxToggle.swift in Sources */,
 				9C2368212AA17A22001F20E5 /* SwipeDirection.swift in Sources */,
 				9C1E4EB22B0A7D100040FD8D /* ChangeImageButton.swift in Sources */,
