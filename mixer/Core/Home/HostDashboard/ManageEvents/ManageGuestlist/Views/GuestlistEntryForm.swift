@@ -77,8 +77,10 @@ struct GuestlistEntryForm: View {
                                     return Alert(
                                         title: Text("Invite \(user.title) to event"),
                                         primaryButton: .default(Text("Yes"), action: {
-//                                            viewModel.inviteMember(with: user.subtitle)
+                                            self.viewModel.username = user.subtitle
                                             viewModel.isShowingUsernameInputSheet = false
+                                            viewModel.createGuest()
+                                            dismiss()
                                         }),
                                         secondaryButton: .cancel()
                                     )
@@ -140,6 +142,19 @@ struct GuestlistEntryForm: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 viewModel.isShowingUsernameInputSheet = true
+            }
+            
+            if viewModel.username != "" {
+                HStack {
+                    Image(systemName: "person")
+                        .imageScale(.small)
+                        .foregroundColor(Color.secondary)
+
+                    Text("Selected user: \(viewModel.username)")
+                        .foregroundColor(.white)
+                    
+                    Spacer()
+                }
             }
         }
         .listRowBackground(Color.theme.secondaryBackgroundColor)

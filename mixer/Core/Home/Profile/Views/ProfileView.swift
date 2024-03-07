@@ -86,7 +86,8 @@ struct ProfileView: View {
                             .padding(.trailing)
                             .shadow(color: .black, radius: 3)
                     }
-                    
+                    .padding(.vertical)
+
                     NavigationLink {
                         SettingsView(viewModel: settingsViewModel)
                     } label: {
@@ -95,15 +96,18 @@ struct ProfileView: View {
                             .foregroundColor(.white)
                             .shadow(color: .black, radius: 3)
                     }
+                    .padding(.trailing)
+                    .padding(.vertical)
+
                 } else {
-                    EllipsisButton {
+                    EllipsisButton(size: .title) {
                         viewModel.isShowingMoreProfileOptions.toggle()
                         HapticManager.playLightImpact()
                     }
+                    .padding(.horizontal)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .padding()
         }
         .withAlerts(currentAlert: $viewModel.currentAlert)
         .onAppear { viewModel.getNotificationCount() }
@@ -135,25 +139,23 @@ extension ProfileView {
                     
                     Spacer()
                     
-                    //University
-                    HStack {
-                        if let university = viewModel.user.university, university.id != "com" {
-                            DetailRow(text: university.shortName ?? university.name,
-                                      icon: "graduationcap.fill")
-                        }
-                        
-                        if !viewModel.user.isCurrentUser {
+                    if !viewModel.user.isCurrentUser {
                         Spacer()
                         
-                            RelationshipButtonsView(viewModel: viewModel)
-                        }
+                        RelationshipButtonsView(viewModel: viewModel)
                     }
                 }
                 
                 //Host Organizations
                 HStack(alignment: .bottom) {
-                    if let memberHosts = viewModel.user.associatedHosts {
-                        VStack(alignment: .leading) {
+                    VStack(alignment: .leading) {
+                        //University
+                        if let university = viewModel.user.university, university.id != "com" {
+                            DetailRow(text: university.shortName ?? university.name,
+                                      icon: "graduationcap.fill")
+                        }
+                        
+                        if let memberHosts = viewModel.user.associatedHosts {
                             
                             ForEach(memberHosts) { host in
                                 DetailRow(text: host.name,
@@ -196,6 +198,7 @@ extension ProfileView {
             }
             
             if let bio = viewModel.user.bio {
+                if viewModel.user.bio != "" {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Bio")
                         .primaryHeading()
@@ -205,6 +208,7 @@ extension ProfileView {
                         .lineLimit(3)
                         .minimumScaleFactor(0.75)
                 }
+            }
             }
         }
         .padding(.horizontal)

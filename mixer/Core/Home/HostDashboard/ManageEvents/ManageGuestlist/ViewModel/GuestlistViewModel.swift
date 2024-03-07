@@ -317,6 +317,7 @@ extension GuestlistViewModel {
                               invitedBy: currentUsername)
             }
             self.universityName = ""
+            self.username = ""
             self.name = ""
             self.age = 18
             self.gender = .woman

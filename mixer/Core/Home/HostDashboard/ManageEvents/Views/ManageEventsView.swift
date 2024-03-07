@@ -20,12 +20,16 @@ struct ManageEventsView: View {
                                  selectedItem: $viewModel.currentState)
                 
                 ScrollView {
-                    LazyVGrid(columns: Array(repeating: GridItem(spacing: .zero), count: 2), spacing: 10) {
-                        ForEach(viewModel.eventsForSelectedState) { event in
-                            NavigationLink {
-                                GuestlistView(event: event)
-                            } label: {
-                                ManageEventCell(viewModel: viewModel, event: event)
+                    if viewModel.eventsForSelectedState.isEmpty {
+                        Text("No events yet")
+                    } else {
+                        LazyVGrid(columns: Array(repeating: GridItem(spacing: .zero), count: 2), spacing: 10) {
+                            ForEach(viewModel.eventsForSelectedState) { event in
+                                NavigationLink {
+                                    GuestlistView(event: event)
+                                } label: {
+                                    ManageEventCell(viewModel: viewModel, event: event)
+                                }
                             }
                         }
                     }

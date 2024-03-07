@@ -23,6 +23,14 @@ struct NotificationCell: View {
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
             HStack {
+                NavigationLink(destination: {
+                    if let user = sharedData.users[cellViewModel.notification.uid] {
+                        ProfileView(user: user)
+                    }
+                }) {
+                    ProfileImageViews(imageUrlsString: cellViewModel.notification.imageUrl)
+                }
+
                 NavigationLink {
                     switch cellViewModel.notification.type {
                     case .friendAccepted,
@@ -53,16 +61,12 @@ struct NotificationCell: View {
                     default: EmptyView()
                     }
                 } label: {
-                    HStack {
-                        ProfileImageViews(imageUrlsString: cellViewModel.notification.imageUrl)
-
                         Group {
                             VStack(alignment: .leading) {
                                 formattedNotificationMessage
                             }
                         }
                         .multilineTextAlignment(.leading)
-                    }
                 }
                 .buttonStyle(.borderless)
             }
