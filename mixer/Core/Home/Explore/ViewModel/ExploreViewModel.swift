@@ -30,6 +30,7 @@ final class ExploreViewModel: ObservableObject {
     }
     @Published var eventsForSection: [Event] = []
     @Published var hosts: [Host]             = []
+
     
     private var events: [Event] = []
     private let eventManager = EventManager.shared

@@ -89,3 +89,20 @@ struct ExploreView: View {
         }
     }
 }
+
+
+//LazyVStack(pinnedViews: [.sectionHeaders]) {
+//    Section {
+//        
+//        if selectedEventSection == EventUI.details {
+//            Rectangle()
+//        } else if selectedEventSection == EventUI.gallery {
+//            Circle()
+//        }
+// 
+//    } header: {
+//        StickyHeaderView(items: EventUI.allCases,
+//                         selectedItem: $viewModel.selectedEventSection)
+//    }
+//}
+//.padding(.bottom, 100)

@@ -298,6 +298,7 @@
 		A66E672029DF7ED500AB355E /* EventCreationActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E671F29DF7ED500AB355E /* EventCreationActionButton.swift */; };
 		A66E672429DFCE9D00AB355E /* EventGuestsAndInvitations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */; };
 		A6744C7E2B0981B100E30631 /* EventDetailedChartsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6744C7D2B0981B100E30631 /* EventDetailedChartsView.swift */; };
+		A6765AC92BACBFA8003EF24B /* MixerTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6765AC82BACBFA8003EF24B /* MixerTabView.swift */; };
 		A678594A29C647F200A2D884 /* EnterPhoneNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A678594929C647F200A2D884 /* EnterPhoneNumberView.swift */; };
 		A682CC562970915B008EA546 /* DetailRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A682CC552970915B008EA546 /* DetailRowView.swift */; };
 		A68971CA296E7E1900289516 /* TabBar in Frameworks */ = {isa = PBXBuildFile; productRef = A68971C9296E7E1900289516 /* TabBar */; };
@@ -587,6 +588,7 @@
 		A66E671F29DF7ED500AB355E /* EventCreationActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventCreationActionButton.swift; sourceTree = "<group>"; };
 		A66E672329DFCE9D00AB355E /* EventGuestsAndInvitations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventGuestsAndInvitations.swift; sourceTree = "<group>"; };
 		A6744C7D2B0981B100E30631 /* EventDetailedChartsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDetailedChartsView.swift; sourceTree = "<group>"; };
+		A6765AC82BACBFA8003EF24B /* MixerTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MixerTabView.swift; sourceTree = "<group>"; };
 		A678594929C647F200A2D884 /* EnterPhoneNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterPhoneNumberView.swift; sourceTree = "<group>"; };
 		A682CC552970915B008EA546 /* DetailRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailRowView.swift; sourceTree = "<group>"; };
 		A68DA9FA2A12BE6C0069A5E7 /* Text+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Text+Ext.swift"; sourceTree = "<group>"; };
@@ -949,6 +951,7 @@
 				9C3E40F12B2637B600977B54 /* ComingSoonView.swift */,
 				9C50517F2B8905FD00543226 /* MultilineTextField.swift */,
 				9C5498BB2B89CD7700F27851 /* SignUpPictureView.swift */,
+				A6765AC82BACBFA8003EF24B /* MixerTabView.swift */,
 			);
 			path = CustomViews;
 			sourceTree = "<group>";
@@ -1970,6 +1973,7 @@
 				A68DAA032A12DFDB0069A5E7 /* Button+Ext.swift in Sources */,
 				9CFB25F32AEC111800F090E6 /* UniversitySearchViewModel.swift in Sources */,
 				9C705F9B2A8FCB3600F1D0DB /* EventManager.swift in Sources */,
+				A6765AC92BACBFA8003EF24B /* MixerTabView.swift in Sources */,
 				A6744C7E2B0981B100E30631 /* EventDetailedChartsView.swift in Sources */,
 				9C20AF2B2A75928900F057BD /* EventCreationFlowView.swift in Sources */,
 				9C567A98292FFF1800EA5FCB /* String+Ext.swift in Sources */,

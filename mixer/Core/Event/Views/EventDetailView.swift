@@ -37,38 +37,30 @@ struct EventDetailView: View {
                     EventFlyer(imageUrl: $viewModel.event.eventImageUrl,
                                isShowingModal: $isShowingModal)
                     
-                    VStack(alignment: .leading, spacing: 20) {
+                    VStack {
                         EventHeader(viewModel: viewModel)
                         
-                        VStack(alignment: .leading) {
-                            Text("\(viewModel.event.type.description) hosted by ")
-                                .secondaryHeading()
-                            
-                            ForEach(viewModel.hosts ?? []) { host in
-                                if let action = action {
-                                    HostSection(host: host)
-                                        .onTapGesture {
-                                            action(.back, nil, host, nil)
-                                        }
-                                } else {
-                                    NavigationLink {
-                                        HostDetailView(host: host, namespace: namespace)
-                                    } label: {
-                                        HostSection(host: host)
+                        LazyVStack(pinnedViews: [.sectionHeaders]) {
+                            Section {
+                                // Dynamically selected content based on the selected tab
+                                Group {
+                                    switch viewModel.selectedEventUI {
+                                    case .details:
+                                        // Content for the 'details' tab
+                                        detailsUI
+                                        
+                                    case .gallery:
+                                        // Content for the 'gallery' tab
+                                        Circle()
+                                            .foregroundColor(.red) // Customize as needed
                                     }
                                 }
+                                
+                            } header: {
+                                MixerTabView(items: EventUI.allCases, selectedItem: $viewModel.selectedEventUI)
+                                    .padding(.bottom)
                             }
                         }
-                        
-                        EventDetails()
-                            .environmentObject(viewModel)
-                        
-                        AmenitiesView(amenities: viewModel.event.amenities,
-                                      bathroomCount: viewModel.event.bathroomCount)
-                        .environmentObject(viewModel)
-//                        
-                        LocationSection()
-                            .environmentObject(viewModel)
                     }
                     .padding()
                     .padding(.bottom, 180)
@@ -100,7 +92,7 @@ struct EventDetailView: View {
                         .id(UUID())
                 }
                 
-
+                
                 
                 if isShowingModal {
                     EventImageModalView(imageUrl: viewModel.event.eventImageUrl,
@@ -155,6 +147,42 @@ struct EventDetailView: View {
     }
 }
 
+extension EventDetailView {
+    var detailsUI: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading) {
+                Text("\(viewModel.event.type.description) hosted by ")
+                    .primaryHeading()
+
+                ForEach(viewModel.hosts ?? []) { host in
+                    if let action = action {
+                        HostSection(host: host)
+                            .onTapGesture {
+                                action(.back, nil, host, nil)
+                            }
+                    } else {
+                        NavigationLink {
+                            HostDetailView(host: host, namespace: namespace)
+                        } label: {
+                            HostSection(host: host)
+                        }
+                    }
+                }
+            }
+            
+            EventDetails()
+                .environmentObject(viewModel)
+            
+            AmenitiesView(amenities: viewModel.event.amenities,
+                          bathroomCount: viewModel.event.bathroomCount)
+            .environmentObject(viewModel)
+            //
+            LocationSection()
+                .environmentObject(viewModel)
+        }
+    }
+}
+
 struct HeartView: View {
     var body: some View {
         Image(systemName: "heart.fill")
@@ -192,7 +220,7 @@ struct EventHeader: View {
                                              frameSize: 45) {
                             viewModel.toggleFavoriteStatus()
                             
-
+                            
                         }
                     }
                 }
@@ -328,7 +356,15 @@ struct EventDetails: View {
             }
             
             if let note = viewModel.event.note {
-                if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
+                if viewModel.isUserPartOfEventHosts() {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Notes for guest")
+                            .primaryHeading()
+                        
+                        Text(note)
+                            .foregroundColor(.secondary)
+                    }
+                } else if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Notes for guest")
                             .primaryHeading()
@@ -337,7 +373,6 @@ struct EventDetails: View {
                             .foregroundColor(.secondary)
                     }
                 } else {
-                    
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Notes for guest")
                             .primaryHeading()
@@ -440,12 +475,37 @@ struct AmenitiesView: View {
                 }
                 
                 if let count = amenities?.count, count > 1 {
-                    if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
+                    if viewModel.isUserPartOfEventHosts() {
                         HStack {
                             Spacer()
                             
                             Button {
-                                    showAlert = true
+                                withAnimation(.spring(dampingFraction: 0.8)) {
+                                    showAllAmenities.toggle()
+                                }
+                            } label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .foregroundColor(.white)
+                                        .frame(width: DeviceTypes.ScreenSize.width * 0.8, height: 45, alignment: .center)
+                                        .overlay {
+                                            Text(showAllAmenities ? "Show less" : "Show all \(count) amenities")
+                                                .font(.body)
+                                                .fontWeight(.medium)
+                                                .foregroundColor(.black)
+                                        }
+                                }
+                                .padding(.top)
+                            }
+                            
+                            Spacer()
+                        }
+                    } else if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
+                        HStack {
+                            Spacer()
+                            
+                            Button {
+                                showAlert = true
                             } label: {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 12)
@@ -510,7 +570,20 @@ struct LocationSection: View {
                 InfoButton { viewModel.alertItem = AlertContext.locationDetailsInfo }
             }
             
-            if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
+            if viewModel.isUserPartOfEventHosts() {
+                let location = CLLocationCoordinate2D(latitude: viewModel.event.geoPoint.latitude,
+                                                      longitude: viewModel.event.geoPoint.longitude)
+                VStack(alignment: .leading, spacing: 5) {
+                    MapSnapshotView(location: .constant(location))
+                        .onTapGesture { viewModel.getDirectionsToLocation(coordinates: location) }
+                    
+                    Text("Tap the map for directions to this event!")
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+                }
+                
+            } else if viewModel.event.isInviteOnly && !(viewModel.event.didGuestlist ?? false) {
                 if let altAddress = viewModel.event.altAddress {
                     DetailRow(text: altAddress,
                               icon: "mappin.and.ellipse")
@@ -531,6 +604,8 @@ struct LocationSection: View {
                         .foregroundColor(.secondary)
                 }
             }
+            
+            
         }
     }
 }
@@ -618,3 +693,4 @@ fileprivate struct GuestlistNavigationButton: View {
 //        EventDetailView(event: dev.mockEvent)
 //    }
 //}
+

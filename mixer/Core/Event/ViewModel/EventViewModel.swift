@@ -11,6 +11,15 @@ import FirebaseFirestoreSwift
 import CoreLocation
 import MapKit
 
+enum EventUI: String, CaseIterable, CustomStringConvertible {
+    case details = "Details"
+    case gallery = "Gallery"
+
+    var description: String {
+        self.rawValue
+    }
+}
+
 final class EventViewModel: ObservableObject {
     @Published var event: Event
     @Published var hosts: [Host]?
@@ -19,6 +28,9 @@ final class EventViewModel: ObservableObject {
     @Published var alertItem: AlertItem?
     @Published var favoritesCount: Int = 0
     private var service = UserService.shared
+    
+    //Added by Jose
+    @Published var selectedEventUI: EventUI = .details
 
     init(event: Event) {
         self.event = event
